@@ -2,22 +2,66 @@
 import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "./firebase.js";
 import { cargarProfesores, cargarLaboratorios, cargarHerramientas } from "./inventario.js";
 
-const form = document.getElementById("form-solicitud");
-const selectProfesor = document.getElementById("profesor");
+// ---- Pantallas ----
+const pantallasBienvenida  = document.getElementById("pantalla-bienvenida");
+const pantallaTaller       = document.getElementById("pantalla-taller");
+const pantallaFormulario   = document.getElementById("pantalla-formulario");
+const pantallaEpp          = document.getElementById("pantalla-epp");
+const pantallaFinal        = document.getElementById("pantalla-final");
+
+function mostrarPantalla(el) {
+  [pantallasBienvenida, pantallaTaller, pantallaFormulario, pantallaEpp, pantallaFinal]
+    .forEach(p => p.classList.add("oculto"));
+  el.classList.remove("oculto");
+  window.scrollTo(0, 0);
+}
+
+document.getElementById("btn-ir-taller").addEventListener("click", () => {
+  mostrarPantalla(pantallaTaller);
+});
+
+document.getElementById("btn-ir-formulario").addEventListener("click", () => {
+  mostrarPantalla(pantallaFormulario);
+});
+
+// ---- Formulario ----
+const form              = document.getElementById("form-solicitud");
+const selectProfesor    = document.getElementById("profesor");
 const selectLaboratorio = document.getElementById("laboratorio");
-const gridHerramientas = document.getElementById("grid-herramientas");
-const btnEnviar = document.getElementById("btn-enviar");
-
-const mensajeEpp = document.getElementById("mensaje-epp");
-const mensajeFinal = document.getElementById("mensaje-final");
-const btnContinuar = document.getElementById("btn-continuar");
+const gridHerramientas  = document.getElementById("grid-herramientas");
+const btnEnviar         = document.getElementById("btn-enviar");
+const btnContinuar      = document.getElementById("btn-continuar");
 const btnNuevaSolicitud = document.getElementById("btn-nueva-solicitud");
-const textoNumeroSolicitud = document.getElementById("texto-numero-solicitud");
-const textoDespedida = document.getElementById("texto-despedida");
+const textoNumeroSol    = document.getElementById("texto-numero-solicitud");
+const textoDespedida    = document.getElementById("texto-despedida");
 
-let herramientasDisponibles = [];
-let cantidadesSeleccionadas = {}; // { codigo: cantidad }
-let datosSolicitudPendiente = null;
+// ---- Cámara ----
+const btnCamara       = document.getElementById("btn-camara");
+const inputCamara     = document.getElementById("input-camara");
+const fotoPreviewWrap = document.getElementById("foto-preview-wrap");
+const fotoPreview     = document.getElementById("foto-preview");
+const btnQuitarFoto   = document.getElementById("btn-quitar-foto");
+
+btnCamara.addEventListener("click", () => inputCamara.click());
+
+inputCamara.addEventListener("change", () => {
+  const file = inputCamara.files[0];
+  if (!file) return;
+  const url = URL.createObjectURL(file);
+  fotoPreview.src = url;
+  fotoPreviewWrap.classList.remove("oculto");
+});
+
+btnQuitarFoto.addEventListener("click", () => {
+  fotoPreview.src = "";
+  inputCamara.value = "";
+  fotoPreviewWrap.classList.add("oculto");
+});
+
+// ---- Estado herramientas ----
+let herramientasDisponibles   = [];
+let cantidadesSeleccionadas   = {};
+let datosSolicitudPendiente   = null;
 
 function mostrarError(msg) {
   const toast = document.createElement("div");
@@ -116,10 +160,10 @@ function validarFormulario() {
   }
 
   const campoMatricula = document.getElementById("matricula");
-  const regexMatricula = /^\d{4}-\d{4}$/;
+  const regexMatricula = /^\d-\d{2}-\d{4}$/;
   if (!regexMatricula.test(campoMatricula.value.trim())) {
     campoMatricula.classList.add("error-campo");
-    mostrarError("La matrícula debe tener el formato 0000-0000 (ej. 2024-1234).");
+    mostrarError("La matrícula debe tener el formato 0-00-0000 (ej. 1-19-0117).");
     campoMatricula.focus();
     return false;
   }
@@ -151,8 +195,7 @@ async function generarNumeroSolicitud() {
     const snap = await getDocs(query(collection(db, "solicitudes"), orderBy("creadoEn", "desc")));
     const consecutivo = snap.size + 1;
     return `${anio}-${String(consecutivo).padStart(5, "0")}`;
-  } catch (err) {
-    // Si falla la lectura (ej. reglas de Firestore o sin conexión), usamos un número basado en la hora
+  } catch {
     return `${anio}-${String(Date.now()).slice(-5)}`;
   }
 }
@@ -172,22 +215,19 @@ form.addEventListener("submit", async (e) => {
     });
 
   datosSolicitudPendiente = {
-    nombre: document.getElementById("nombre").value.trim(),
-    apellido: document.getElementById("apellido").value.trim(),
-    matricula: document.getElementById("matricula").value.trim(),
-    ciclo: document.getElementById("ciclo").value,
-    telefono: document.getElementById("telefono").value.trim(),
-    profesor: document.getElementById("profesor").value,
+    nombre:      document.getElementById("nombre").value.trim(),
+    apellido:    document.getElementById("apellido").value.trim(),
+    matricula:   document.getElementById("matricula").value.trim(),
+    ciclo:       document.getElementById("ciclo").value,
+    telefono:    document.getElementById("telefono").value.trim(),
+    profesor:    document.getElementById("profesor").value,
     laboratorio: document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
-    estado: "pendiente",
-    creadoEn: serverTimestamp()
+    estado:      "pendiente",
+    creadoEn:    serverTimestamp()
   };
 
-  // Paso 1: mostramos el recordatorio de EPP antes de guardar
-  form.classList.add("oculto");
-  mensajeEpp.classList.remove("oculto");
-
+  mostrarPantalla(pantallaEpp);
   btnEnviar.disabled = false;
   btnEnviar.textContent = "Enviar Solicitud";
 });
@@ -199,14 +239,12 @@ btnContinuar.addEventListener("click", async () => {
   try {
     const numero = await generarNumeroSolicitud();
     datosSolicitudPendiente.numeroSolicitud = numero;
-
     await addDoc(collection(db, "solicitudes"), datosSolicitudPendiente);
 
-    textoNumeroSolicitud.textContent = `Solicitud #${numero}`;
+    textoNumeroSol.textContent = `Solicitud #${numero}`;
     textoDespedida.textContent = `Gracias, ${datosSolicitudPendiente.nombre}. Tu solicitud de herramientas ha sido registrada exitosamente.`;
 
-    mensajeEpp.classList.add("oculto");
-    mensajeFinal.classList.remove("oculto");
+    mostrarPantalla(pantallaFinal);
   } catch (err) {
     console.error(err);
     mostrarError("No se pudo guardar la solicitud. Verifica tu conexión o la configuración de Firebase.");
@@ -220,8 +258,10 @@ btnNuevaSolicitud.addEventListener("click", () => {
   form.reset();
   cantidadesSeleccionadas = {};
   renderizarHerramientas(herramientasDisponibles);
-  mensajeFinal.classList.add("oculto");
-  form.classList.remove("oculto");
+  fotoPreview.src = "";
+  inputCamara.value = "";
+  fotoPreviewWrap.classList.add("oculto");
+  mostrarPantalla(pantallasBienvenida);
 });
 
 inicializar();
