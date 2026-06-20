@@ -1,233 +1,20 @@
 :root {
   --verde: #2e7d32;
-  --verde-oscuro: #1a3d1f;
   --verde-claro: #e8f5e9;
   --verde-borde: #a5d6a7;
-  --amarillo: #f9d00a;
   --texto: #2c2c2c;
   --gris: #666;
 }
 
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
 
 body {
   margin: 0;
   font-family: 'Segoe UI', Arial, sans-serif;
-  background: #f0f2f0;
+  background: #f4f6f5;
   color: var(--texto);
-  min-height: 100vh;
-}
-
-.pantalla { min-height: 100vh; }
-.oculto { display: none !important; }
-
-/* ===================== PANTALLA 1: BIENVENIDA ===================== */
-#pantalla-bienvenida {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ebebeb;
-  padding: 24px 16px;
-}
-
-.bienvenida-card {
-  background: #fff;
-  border-radius: 16px;
-  max-width: 400px;
-  width: 100%;
-  overflow: hidden;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
-}
-
-.bienvenida-logo-area {
-  padding: 32px 24px 16px;
-  position: relative;
-  min-height: 200px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.utesiano-wrap {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.corazon-amarillo {
-  position: absolute;
-  right: 8px;
-  top: -16px;
-  font-size: 100px;
-  color: var(--amarillo);
-  line-height: 1;
-  filter: drop-shadow(0 2px 4px rgba(249,208,10,0.3));
-  z-index: 1;
-}
-
-.utesiano-texto {
-  position: relative;
-  z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  line-height: 1;
-}
-
-.utesiano-grande {
-  font-family: 'Georgia', serif;
-  font-style: italic;
-  font-size: 52px;
-  font-weight: 700;
-  color: var(--verde);
-  letter-spacing: -1px;
-}
-
-.utesiano-de {
-  font-family: 'Georgia', serif;
-  font-style: italic;
-  font-size: 28px;
-  color: var(--verde);
-  margin-left: 40px;
-}
-
-.utesa-seal {
-  position: absolute;
-  left: 16px;
-  bottom: -8px;
-  z-index: 3;
-}
-
-.seal-circle {
-  width: 52px;
-  height: 52px;
-  border-radius: 50%;
-  border: 3px solid var(--verde);
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: 9px;
-  font-weight: 700;
-  color: var(--verde);
-  line-height: 1.1;
-}
-
-.seal-is {
-  font-size: 14px;
-  font-weight: 900;
-}
-
-.bienvenida-texto {
-  padding: 20px 24px 12px;
-  text-align: center;
-}
-
-.bienvenida-titulo {
-  font-weight: 700;
-  font-size: 16px;
-  margin: 0 0 4px;
-  color: var(--texto);
-}
-
-.bienvenida-sub {
-  color: var(--gris);
-  font-size: 15px;
-  margin: 0 0 4px;
-}
-
-.bienvenida-institución {
-  font-weight: 600;
-  font-size: 14px;
-  letter-spacing: 1px;
-  color: var(--texto);
-  margin: 0 0 16px;
-}
-
-.btn-bienvenida {
-  display: block;
-  width: 100%;
-  padding: 16px;
-  background: var(--verde);
-  color: #fff;
-  border: none;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  border-radius: 0 0 16px 16px;
-}
-
-.btn-bienvenida:hover { background: #256428; }
-
-/* ===================== PANTALLA 2: TALLER ===================== */
-#pantalla-taller {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background: #f0f2f0;
-}
-
-.taller-header {
-  background: var(--verde-oscuro);
-  padding: 60px 24px 50px;
-  text-align: center;
-  min-height: 260px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.taller-titulo {
-  color: #fff;
-  font-size: 24px;
-  font-weight: 800;
-  margin: 0 0 20px;
-  max-width: 300px;
-  line-height: 1.3;
-}
-
-.taller-iconos {
-  font-size: 38px;
-  letter-spacing: 4px;
-}
-
-.taller-cuerpo {
-  background: #fff;
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 0 24px;
-}
-
-.separador {
-  width: 100%;
-  height: 1px;
-  background: #ddd;
-}
-
-.btn-solicitar {
-  margin: 20px 0;
-  padding: 14px 32px;
-  background: var(--verde);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
-  font-weight: 600;
-  cursor: pointer;
-  min-width: 240px;
-}
-
-.btn-solicitar:hover { background: #256428; }
-
-/* ===================== PANTALLA 3: FORMULARIO ===================== */
-#pantalla-formulario {
-  background: #f0f2f0;
 }
 
 .contenedor {
@@ -236,25 +23,18 @@ body {
   padding: 16px;
 }
 
-.form-encabezado {
-  text-align: center;
-  padding: 20px 16px 8px;
-}
-
-.form-encabezado h1 {
-  font-size: 24px;
-  font-weight: 800;
+.encabezado h1 {
+  font-size: 20px;
   color: var(--verde);
-  margin: 0 0 12px;
-  line-height: 1.3;
+  margin-bottom: 6px;
 }
 
 .linea-verde {
-  width: 80px;
+  width: 60px;
   height: 4px;
   background: var(--verde);
   border-radius: 2px;
-  margin: 0 auto 20px;
+  margin-bottom: 16px;
 }
 
 .tarjeta {
@@ -264,30 +44,24 @@ body {
   box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
 
-/* Campos */
 .campo {
-  margin-bottom: 18px;
+  margin-bottom: 16px;
   display: flex;
   flex-direction: column;
 }
 
 .campo label {
   font-weight: 600;
-  margin-bottom: 7px;
+  margin-bottom: 6px;
   font-size: 14px;
-  color: var(--texto);
 }
 
 .campo input,
 .campo select {
-  padding: 12px 14px;
-  border: 1.5px solid #c8c8c8;
-  border-radius: 10px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
   font-size: 14px;
-  background: #fff;
-  color: var(--texto);
-  appearance: none;
-  -webkit-appearance: none;
 }
 
 .campo input:focus,
@@ -298,90 +72,14 @@ body {
 
 .campo small {
   color: var(--gris);
-  font-size: 12px;
-  margin-top: 5px;
+  font-size: 11px;
+  margin-top: 4px;
 }
 
-/* Select con flecha personalizada */
-.select-wrap {
-  position: relative;
-}
-
-.select-wrap select {
-  width: 100%;
-  padding-right: 36px;
-}
-
-.select-wrap::after {
-  content: '▾';
-  position: absolute;
-  right: 14px;
-  top: 50%;
-  transform: translateY(-50%);
-  color: var(--gris);
-  pointer-events: none;
-  font-size: 16px;
-}
-
-/* Matrícula con cámara */
-.matricula-wrap {
-  display: flex;
-  gap: 8px;
-  align-items: stretch;
-}
-
-.matricula-wrap input {
-  flex: 1;
-}
-
-.btn-camara {
-  width: 48px;
-  height: 48px;
-  background: var(--verde);
-  border: none;
-  border-radius: 10px;
-  color: #fff;
-  font-size: 20px;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.btn-camara:hover { background: #256428; }
-
-.foto-preview-wrap {
-  margin-top: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
-}
-
-.foto-preview-wrap img {
-  max-width: 100%;
-  max-height: 200px;
-  border-radius: 8px;
-  border: 2px solid var(--verde-borde);
-}
-
-.btn-quitar-foto {
-  background: #d32f2f;
-  color: #fff;
-  border: none;
-  border-radius: 6px;
-  padding: 6px 12px;
-  font-size: 13px;
-  cursor: pointer;
-}
-
-/* Grid herramientas */
 .grid-herramientas {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 10px;
-  margin-top: 4px;
 }
 
 .tarjeta-herramienta {
@@ -406,7 +104,9 @@ body {
   object-fit: contain;
 }
 
-.icono-respaldo { font-size: 26px; }
+.icono-respaldo {
+  font-size: 26px;
+}
 
 .tarjeta-herramienta .disponible {
   font-size: 10px;
@@ -450,11 +150,10 @@ body {
   min-width: 16px;
 }
 
-/* Botón principal */
 .btn-enviar {
   width: 100%;
   margin-top: 18px;
-  padding: 14px;
+  padding: 12px;
   background: var(--verde);
   color: #fff;
   border: none;
@@ -464,10 +163,15 @@ body {
   cursor: pointer;
 }
 
-.btn-enviar:hover { background: #256428; }
-.btn-enviar:disabled { background: #aaa; cursor: not-allowed; }
+.btn-enviar:hover {
+  background: #256428;
+}
 
-/* Mensajes EPP / Final */
+.btn-enviar:disabled {
+  background: #aaa;
+  cursor: not-allowed;
+}
+
 .mensaje {
   margin-top: 16px;
   text-align: center;
@@ -478,7 +182,9 @@ body {
   background: var(--verde-claro);
 }
 
-.mensaje-epp h2 { color: var(--verde); }
+.mensaje-epp h2 {
+  color: var(--verde);
+}
 
 .mensaje-epp ul {
   list-style: none;
@@ -488,7 +194,10 @@ body {
   margin: 10px auto;
 }
 
-.resaltado { font-weight: 700; color: var(--verde); }
+.resaltado {
+  font-weight: 700;
+  color: var(--verde);
+}
 
 .numero-solicitud {
   font-weight: 700;
@@ -496,8 +205,13 @@ body {
   color: var(--verde);
 }
 
-/* Errores */
-.error-campo { border-color: #d32f2f !important; }
+.oculto {
+  display: none;
+}
+
+.error-campo {
+  border-color: #d32f2f !important;
+}
 
 .toast-error {
   position: fixed;
@@ -510,5 +224,4 @@ body {
   border-radius: 6px;
   font-size: 13px;
   z-index: 50;
-  white-space: nowrap;
 }
