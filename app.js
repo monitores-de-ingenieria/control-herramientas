@@ -116,10 +116,10 @@ function validarFormulario() {
   }
 
   const campoMatricula = document.getElementById("matricula");
-  const regexMatricula = /^\d{4}-\d{4}$/;
+  const regexMatricula = /^\d-\d{2}-\d{4}$/;
   if (!regexMatricula.test(campoMatricula.value.trim())) {
     campoMatricula.classList.add("error-campo");
-    mostrarError("La matrícula debe tener el formato 0000-0000 (ej. 2024-1234).");
+    mostrarError("La matrícula debe tener el formato 0-00-0000 (ej. 1-19-0117).");
     campoMatricula.focus();
     return false;
   }
