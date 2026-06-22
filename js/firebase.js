@@ -1,8 +1,4 @@
 // js/firebase.js
-// -----------------------------------------------------------------
-// PEGA AQUÍ TU CONFIGURACIÓN DE FIREBASE
-// (Consola de Firebase > Configuración del proyecto > Tus apps > SDK config)
-// -----------------------------------------------------------------
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
   getFirestore,
@@ -15,16 +11,20 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "PEGA_TU_API_KEY",
-  authDomain: "PEGA_TU_AUTH_DOMAIN",
-  projectId: "PEGA_TU_PROJECT_ID",
-  storageBucket: "PEGA_TU_STORAGE_BUCKET",
-  messagingSenderId: "PEGA_TU_SENDER_ID",
-  appId: "PEGA_TU_APP_ID"
+  apiKey: "AIzaSyAqNViWNYRTI2uQaMlj6QMg7TGiiUZZVZQ",
+  authDomain: "taller-maquinas-herramientas.firebaseapp.com",
+  projectId: "taller-maquinas-herramientas",
+  storageBucket: "taller-maquinas-herramientas.firebasestorage.app",
+  messagingSenderId: "79762926711",
+  appId: "1:79762926711:web:83a33df56183f56d6a2a72",
+  measurementId: "G-JJ7E3E2E79"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+// true porque ya tenemos credenciales reales
+const firebaseConfigurado = true;
 
 export {
   db,
@@ -33,5 +33,6 @@ export {
   addDoc,
   query,
   orderBy,
-  serverTimestamp
+  serverTimestamp,
+  firebaseConfigurado
 };
