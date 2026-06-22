@@ -1302,7 +1302,7 @@ function renderTabla() {
           <th>Matrícula</th>
           <th>Profesor</th>
           <th>Taller / Lab</th>
-          <th>Items</th>
+          <th>Herramientas</th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -1857,7 +1857,7 @@ window.ppFiltrarDropdown = function(input) {
   const hits = HERRAMIENTAS_LISTA.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
   if (!hits.length || !q) { drop.style.display = "none"; return; }
   drop.innerHTML = hits.map(h =>
-    `<div onmousedown="event.preventDefault()" onclick="ppSeleccionarHerramienta(this,'${h.nombre}')"
+    `<div onmousedown="event.preventDefault();ppSeleccionarHerramienta(this,'${h.nombre}')"
       style="padding:8px 12px;cursor:pointer;font-size:13px"
       onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${h.nombre}</div>`
   ).join("");
@@ -1869,6 +1869,7 @@ window.ppSeleccionarHerramienta = function(item, nombre) {
   const input = drop.previousElementSibling;
   input.value = nombre;
   drop.style.display = "none";
+  input.blur();
 };
 
 window.confirmarNuevoPrestamoProf = async function() {
