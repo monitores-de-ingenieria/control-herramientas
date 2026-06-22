@@ -47,6 +47,8 @@ body {
 .img-utesiano {
   width: 100%;
   display: block;
+  object-fit: cover;
+  max-height: 220px;
 }
 
 .bienvenida-texto {
