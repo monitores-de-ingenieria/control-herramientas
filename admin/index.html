@@ -169,6 +169,11 @@
     grid-template-columns: 220px 1fr;
     grid-template-rows: 56px 1fr;
     height: 100vh;
+    transition: grid-template-columns 0.25s ease;
+  }
+
+  .shell.sidebar-colapsado {
+    grid-template-columns: 52px 1fr;
   }
 
   /* ── TOPBAR ── */
@@ -196,12 +201,27 @@
   .topbar-spacer { flex: 1; }
   .topbar-admin { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--topbar-texto); }
 
+  .btn-toggle-sidebar {
+    background: rgba(255,255,255,0.1);
+    border: none;
+    color: var(--topbar-texto);
+    font-size: 18px;
+    cursor: pointer;
+    padding: 6px 8px;
+    border-radius: 6px;
+    line-height: 1;
+    flex-shrink: 0;
+  }
+  .btn-toggle-sidebar:hover { background: rgba(255,255,255,0.2); }
+
   /* ── SIDEBAR ── */
   .sidebar {
     background: var(--sidebar);
     border-right: 1px solid var(--borde);
     overflow-y: auto;
+    overflow-x: hidden;
     padding: 12px 0;
+    transition: all 0.25s ease;
   }
 
   .nav-grupo {
@@ -211,6 +231,15 @@
     color: var(--texto-dim);
     text-transform: uppercase;
     letter-spacing: 0.08em;
+    white-space: nowrap;
+    overflow: hidden;
+    transition: opacity 0.2s, height 0.2s;
+  }
+
+  .shell.sidebar-colapsado .nav-grupo {
+    opacity: 0;
+    height: 0;
+    padding: 0;
   }
 
   .nav-item {
@@ -224,6 +253,8 @@
     color: var(--texto-dim);
     transition: background 0.15s, color 0.15s;
     position: relative;
+    white-space: nowrap;
+    overflow: hidden;
   }
 
   .nav-item:hover { background: var(--hover); color: var(--texto); }
@@ -237,13 +268,23 @@
   .nav-item.activo::before {
     content: '';
     position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
+    left: 0; top: 0; bottom: 0;
     width: 3px;
     background: var(--verde);
     border-radius: 0 2px 2px 0;
   }
+
+  .nav-icono { font-size: 16px; flex-shrink: 0; }
+
+  .nav-texto {
+    transition: opacity 0.2s;
+    overflow: hidden;
+  }
+
+  .shell.sidebar-colapsado .nav-texto { opacity: 0; width: 0; }
+  .shell.sidebar-colapsado .nav-badge { opacity: 0; width: 0; }
+  .shell.sidebar-colapsado .nav-item { padding: 9px 0; justify-content: center; }
+  .shell.sidebar-colapsado .nav-cerrar { padding: 9px 0; justify-content: center; }
 
   .nav-badge {
     margin-left: auto;
@@ -253,12 +294,253 @@
     font-weight: 700;
     padding: 2px 6px;
     border-radius: 10px;
+    flex-shrink: 0;
+    transition: opacity 0.2s;
   }
 
   .nav-cerrar {
     color: var(--rojo) !important;
     margin-top: 8px;
   }
+
+  /* ── DASHBOARD MODERNO ── */
+  .dash-bienvenida {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  .dash-bienvenida h2 {
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.3px;
+  }
+
+  .dash-bienvenida p {
+    font-size: 13px;
+    color: var(--texto-dim);
+    margin-top: 2px;
+  }
+
+  .dash-fecha {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    font-size: 13px;
+    color: var(--texto-dim);
+  }
+
+  .dash-fecha span { display: flex; align-items: center; gap: 5px; }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+
+  .kpi-card {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    padding: 18px 20px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .kpi-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  }
+
+  .kpi-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+  }
+
+  .kpi-card.amarillo::before { background: var(--amarillo); }
+  .kpi-card.verde::before { background: var(--verde); }
+  .kpi-card.azul::before { background: var(--azul); }
+  .kpi-card.morado::before { background: var(--morado); }
+
+  .kpi-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 14px;
+  }
+
+  .kpi-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--texto-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .kpi-icono {
+    width: 36px; height: 36px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+
+  .kpi-card.amarillo .kpi-icono { background: rgba(245,158,11,0.15); }
+  .kpi-card.verde .kpi-icono { background: rgba(34,197,94,0.15); }
+  .kpi-card.azul .kpi-icono { background: rgba(59,130,246,0.15); }
+  .kpi-card.morado .kpi-icono { background: rgba(139,92,246,0.15); }
+
+  .kpi-numero {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    letter-spacing: -1px;
+  }
+
+  .kpi-card.amarillo .kpi-numero { color: var(--amarillo); }
+  .kpi-card.verde .kpi-numero { color: var(--verde); }
+  .kpi-card.azul .kpi-numero { color: var(--azul); }
+  .kpi-card.morado .kpi-numero { color: var(--morado); }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--texto-dim);
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  /* DASH GRID */
+  .dash-grid {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .dash-panel {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 14px;
+    overflow: hidden;
+  }
+
+  .dash-panel-header {
+    padding: 14px 18px;
+    border-bottom: 1px solid var(--borde);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .dash-panel-header h3 {
+    font-size: 14px;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dash-panel-header .ver-link {
+    font-size: 12px;
+    color: var(--verde);
+    cursor: pointer;
+    font-weight: 600;
+  }
+
+  .dash-panel-header .ver-link:hover { text-decoration: underline; }
+
+  /* FILA PENDIENTE */
+  .fila-pend {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 18px;
+    border-bottom: 1px solid var(--borde);
+    transition: background 0.1s;
+  }
+
+  .fila-pend:last-child { border-bottom: none; }
+  .fila-pend:hover { background: var(--hover); }
+
+  .fila-pend .fp-info { flex: 1; min-width: 0; }
+  .fila-pend .fp-nombre { font-size: 13px; font-weight: 600; }
+  .fila-pend .fp-sub { font-size: 11px; color: var(--texto-dim); margin-top: 1px; }
+
+  .fila-pend .fp-her {
+    background: var(--card2);
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--texto-dim);
+    flex-shrink: 0;
+  }
+
+  /* ACTIVIDAD FEED */
+  .feed-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 18px;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .feed-item:last-child { border-bottom: none; }
+
+  .feed-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .feed-dot.pendiente { background: var(--amarillo); }
+  .feed-dot.entregada { background: var(--verde); }
+  .feed-dot.retornada { background: var(--azul); }
+  .feed-dot.cancelada { background: var(--rojo); }
+  .feed-dot.incidencia { background: #f97316; }
+
+  .feed-texto { font-size: 12px; flex: 1; }
+  .feed-texto strong { font-weight: 700; }
+  .feed-hora { font-size: 11px; color: var(--texto-dim); flex-shrink: 0; }
+
+  /* STATS ROW */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+
+  .stat-mini {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 12px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .stat-mini-icono {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .stat-mini-num { font-size: 22px; font-weight: 800; line-height: 1; }
+  .stat-mini-label { font-size: 11px; color: var(--texto-dim); margin-top: 2px; }
 
   /* ── CONTENIDO ── */
   .contenido {
@@ -702,45 +984,46 @@
 
     <!-- TOPBAR -->
     <div class="topbar">
+      <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú">☰</button>
       <span class="topbar-logo">🔧</span>
       <div>
         <div class="topbar-titulo">Control de Herramientas</div>
         <div class="topbar-sub">Taller Mecánica Industrial</div>
       </div>
       <div class="topbar-spacer"></div>
-      <button class="btn-tema" id="btn-tema" onclick="toggleTema()">🌙 Oscuro</button>
+      <button class="btn-tema" id="btn-tema" onclick="toggleTema()">☀️ Claro</button>
       <div class="topbar-admin">
         <div class="avatar" id="admin-avatar">A</div>
         <div>
           <div style="font-size:13px;font-weight:600">Administrador</div>
-          <div style="font-size:11px;color:var(--texto-dim)">Encargado del Taller</div>
+          <div style="font-size:11px;color:var(--topbar-sub)">Encargado del Taller</div>
         </div>
       </div>
     </div>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div class="nav-item activo" data-vista="dashboard">🏠 Dashboard</div>
+      <div class="nav-item activo" data-vista="dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Dashboard</span></div>
 
       <div class="nav-grupo">Gestión</div>
-      <div class="nav-item" data-vista="solicitudes">📋 Solicitudes <span class="nav-badge" id="badge-pendientes">0</span></div>
-      <div class="nav-item" data-vista="prestamos-prof">👨‍🏫 Préstamos a Profesores</div>
-      <div class="nav-item" data-vista="material-gastable">📦 Material Gastable</div>
-      <div class="nav-item" data-vista="prestadas">🔄 Herramientas Prestadas</div>
-      <div class="nav-item" data-vista="devoluciones">✅ Devoluciones</div>
+      <div class="nav-item" data-vista="solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
+      <div class="nav-item" data-vista="prestamos-prof"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span></div>
+      <div class="nav-item" data-vista="material-gastable"><span class="nav-icono">📦</span><span class="nav-texto">Material Gastable</span></div>
+      <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span></div>
+      <div class="nav-item" data-vista="devoluciones"><span class="nav-icono">✅</span><span class="nav-texto">Devoluciones</span></div>
 
       <div class="nav-grupo">Inventario</div>
-      <div class="nav-item" data-vista="inv-herramientas">🔧 Herramientas</div>
-      <div class="nav-item" data-vista="inv-materiales">🧰 Materiales Gastables</div>
-      <div class="nav-item" data-vista="laboratorios">🏭 Laboratorios / Talleres</div>
+      <div class="nav-item" data-vista="inv-herramientas"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
+      <div class="nav-item" data-vista="inv-materiales"><span class="nav-icono">🧰</span><span class="nav-texto">Materiales Gastables</span></div>
+      <div class="nav-item" data-vista="laboratorios"><span class="nav-icono">🏭</span><span class="nav-texto">Laboratorios / Talleres</span></div>
 
       <div class="nav-grupo">Reportes</div>
-      <div class="nav-item" data-vista="historial">📊 Historial de Movimientos</div>
+      <div class="nav-item" data-vista="historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial Movimientos</span></div>
 
       <div class="nav-grupo">Configuración</div>
-      <div class="nav-item" data-vista="profesores-cfg">👤 Profesores</div>
+      <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
 
-      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion">🚪 Cerrar Sesión</div>
+      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
     </div>
 
     <!-- CONTENIDO -->
@@ -748,52 +1031,104 @@
 
       <!-- ── DASHBOARD ── -->
       <div class="vista activa" id="vista-dashboard">
-        <div class="pagina-titulo">
-          <h2 id="saludo-admin">¡Bienvenido, Administrador!</h2>
-          <p>Resumen general del sistema</p>
-        </div>
 
-        <div class="grid-resumen">
-          <div class="tarjeta-resumen">
-            <div class="icono-res">📋</div>
-            <div class="numero" id="res-pendientes">—</div>
-            <div class="etiqueta">Solicitudes Pendientes</div>
-            <span class="link-ver" data-vista="solicitudes">Ver solicitudes →</span>
+        <!-- Bienvenida -->
+        <div class="dash-bienvenida">
+          <div>
+            <h2 id="saludo-admin">¡Bienvenido, Administrador!</h2>
+            <p>Resumen del sistema · Todo está bajo control</p>
           </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">🔄</div>
-            <div class="numero" id="res-prestadas">—</div>
-            <div class="etiqueta">Herramientas Prestadas</div>
-            <span class="link-ver" data-vista="prestadas">Ver detalles →</span>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">✅</div>
-            <div class="numero" id="res-hoy">—</div>
-            <div class="etiqueta">Devoluciones Hoy</div>
-            <span class="link-ver" data-vista="devoluciones">Ver historial →</span>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">📦</div>
-            <div class="numero" id="res-total">—</div>
-            <div class="etiqueta">Total Solicitudes</div>
+          <div class="dash-fecha">
+            <span>📅 <span id="dash-fecha-txt"></span></span>
+            <span>🕐 <span id="dash-hora-txt"></span></span>
           </div>
         </div>
 
-        <div class="grid-dos">
-          <div class="seccion-tabla">
-            <div class="tabla-header">
-              <h3>Solicitudes Pendientes</h3>
-              <span class="link-ver" data-vista="solicitudes">Ver todas →</span>
+        <!-- KPI Cards -->
+        <div class="kpi-grid">
+          <div class="kpi-card amarillo" data-vista="solicitudes">
+            <div class="kpi-top">
+              <span class="kpi-label">Pendientes</span>
+              <div class="kpi-icono">⏳</div>
             </div>
-            <div id="dashboard-pendientes"><div class="cargando"><div class="spinner"></div>Cargando...</div></div>
+            <div class="kpi-numero" id="res-pendientes">—</div>
+            <div class="kpi-sub">↗ solicitudes sin atender</div>
+          </div>
+          <div class="kpi-card verde" data-vista="prestadas">
+            <div class="kpi-top">
+              <span class="kpi-label">En Préstamo</span>
+              <div class="kpi-icono">🔄</div>
+            </div>
+            <div class="kpi-numero" id="res-prestadas">—</div>
+            <div class="kpi-sub">herramientas fuera del taller</div>
+          </div>
+          <div class="kpi-card azul" data-vista="devoluciones">
+            <div class="kpi-top">
+              <span class="kpi-label">Devueltas Hoy</span>
+              <div class="kpi-icono">✅</div>
+            </div>
+            <div class="kpi-numero" id="res-hoy">—</div>
+            <div class="kpi-sub">retornos registrados hoy</div>
+          </div>
+          <div class="kpi-card morado">
+            <div class="kpi-top">
+              <span class="kpi-label">Total General</span>
+              <div class="kpi-icono">📋</div>
+            </div>
+            <div class="kpi-numero" id="res-total">—</div>
+            <div class="kpi-sub">solicitudes en el sistema</div>
+          </div>
+        </div>
+
+        <!-- Stats mini row -->
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-icono" style="background:rgba(34,197,94,0.12)">🎓</div>
+            <div>
+              <div class="stat-mini-num" id="dash-entregadas-hoy">—</div>
+              <div class="stat-mini-label">Entregadas hoy</div>
+            </div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-icono" style="background:rgba(249,115,22,0.12)">⚠️</div>
+            <div>
+              <div class="stat-mini-num" id="dash-incidencias">—</div>
+              <div class="stat-mini-label">Con incidencias</div>
+            </div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-icono" style="background:rgba(139,92,246,0.12)">👨‍🏫</div>
+            <div>
+              <div class="stat-mini-num" id="dash-prof-activos">—</div>
+              <div class="stat-mini-label">Préstamos prof. activos</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel principal -->
+        <div class="dash-grid">
+
+          <!-- Solicitudes pendientes -->
+          <div class="dash-panel">
+            <div class="dash-panel-header">
+              <h3>⏳ Solicitudes Pendientes</h3>
+              <span class="ver-link" data-vista="solicitudes">Ver todas →</span>
+            </div>
+            <div id="dashboard-pendientes">
+              <div class="cargando"><div class="spinner"></div>Cargando...</div>
+            </div>
           </div>
 
-          <div class="seccion-tabla">
-            <div class="tabla-header">
-              <h3>Últimos Movimientos</h3>
+          <!-- Feed de actividad -->
+          <div class="dash-panel">
+            <div class="dash-panel-header">
+              <h3>⚡ Actividad Reciente</h3>
             </div>
-            <div id="dashboard-movimientos"><div class="cargando"><div class="spinner"></div>Cargando...</div></div>
+            <div id="dashboard-movimientos">
+              <div class="cargando"><div class="spinner"></div>Cargando...</div>
+            </div>
           </div>
+
         </div>
       </div>
 
@@ -1147,6 +1482,23 @@ onAuthStateChanged(auth, user => {
   }
 });
 
+// ── TOGGLE SIDEBAR ──
+const shell = document.querySelector(".shell");
+document.getElementById("btn-toggle-sidebar").addEventListener("click", () => {
+  shell.classList.toggle("sidebar-colapsado");
+});
+
+// ── KPI CARDS navegables ──
+document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
+  card.addEventListener("click", () => {
+    const vista = card.dataset.vista;
+    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
+    document.querySelectorAll(`.nav-item[data-vista="${vista}"]`).forEach(n => n.classList.add("activo"));
+    document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
+    document.getElementById(`vista-${vista}`)?.classList.add("activa");
+  });
+});
+
 // ── NAVEGACIÓN ──
 document.querySelectorAll("[data-vista]").forEach(el => {
   el.addEventListener("click", () => {
@@ -1159,74 +1511,108 @@ document.querySelectorAll("[data-vista]").forEach(el => {
 });
 
 // ── DASHBOARD ──
+function actualizarReloj() {
+  const ahora = new Date();
+  const fecha = ahora.toLocaleDateString("es-DO", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+  const hora  = ahora.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
+  const fechaEl = document.getElementById("dash-fecha-txt");
+  const horaEl  = document.getElementById("dash-hora-txt");
+  if (fechaEl) fechaEl.textContent = fecha.charAt(0).toUpperCase() + fecha.slice(1);
+  if (horaEl)  horaEl.textContent  = hora;
+}
+actualizarReloj();
+setInterval(actualizarReloj, 30000);
+
 async function cargarDashboard() {
   try {
-    const snap = await getDocs(collection(db, "solicitudes"));
-    const todas = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    const pendientes = todas.filter(s => s.estado === "pendiente");
-    const entregadas = todas.filter(s => s.estado === "entregada");
+    const [snapSol, snapProf] = await Promise.all([
+      getDocs(collection(db, "solicitudes")),
+      getDocs(collection(db, "prestamos_profesores"))
+    ]);
+
+    const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
+    const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
+
     const hoy = new Date(); hoy.setHours(0,0,0,0);
+
+    const pendientes  = todas.filter(s => s.estado === "pendiente");
+    const entregadas  = todas.filter(s => s.estado === "entregada");
+    const incidencias = todas.filter(s => s.tieneIncidencia);
+    const profActivos = prestProf.filter(p => p.estado === "activo");
+
     const devHoy = todas.filter(s => {
       if (s.estado !== "retornada" || !s.retornadoEn) return false;
       const d = s.retornadoEn.toDate ? s.retornadoEn.toDate() : new Date(s.retornadoEn);
       return d >= hoy;
     });
 
+    const entregadasHoy = todas.filter(s => {
+      if (!s.entregadoEn) return false;
+      const d = s.entregadoEn.toDate ? s.entregadoEn.toDate() : new Date(s.entregadoEn);
+      return d >= hoy;
+    });
+
+    // KPIs
     document.getElementById("res-pendientes").textContent = pendientes.length;
-    document.getElementById("res-prestadas").textContent = entregadas.length;
-    document.getElementById("res-hoy").textContent = devHoy.length;
-    document.getElementById("res-total").textContent = todas.length;
+    document.getElementById("res-prestadas").textContent  = entregadas.length;
+    document.getElementById("res-hoy").textContent        = devHoy.length;
+    document.getElementById("res-total").textContent      = todas.length;
     document.getElementById("badge-pendientes").textContent = pendientes.length;
 
-    // mini lista de pendientes
+    // Stats mini
+    const eHoy = document.getElementById("dash-entregadas-hoy");
+    const eInc  = document.getElementById("dash-incidencias");
+    const eProf = document.getElementById("dash-prof-activos");
+    if (eHoy)  eHoy.textContent  = entregadasHoy.length;
+    if (eInc)  eInc.textContent  = incidencias.length;
+    if (eProf) eProf.textContent = profActivos.length;
+
+    // Lista pendientes
     const wrap = document.getElementById("dashboard-pendientes");
     if (pendientes.length === 0) {
-      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>No hay solicitudes pendientes.</p></div>';
+      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>¡Sin pendientes! Todo al día.</p></div>';
     } else {
-      const items = pendientes.slice(0, 5).map(s => `
-        <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--borde)">
-          <div class="est-avatar">
-            <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")}">
-              ${iniciales(s.nombre, s.apellido)}
-            </div>
-            <div>
-              <div class="est-nombre">${s.nombre} ${s.apellido}</div>
-              <div class="est-matricula">${s.matricula} · ${s.laboratorio || ""}</div>
-            </div>
+      wrap.innerHTML = pendientes.slice(0, 6).map(s => `
+        <div class="fila-pend">
+          <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")};width:34px;height:34px;flex-shrink:0">
+            ${iniciales(s.nombre, s.apellido)}
           </div>
-          <button class="btn btn-verde" onclick="abrirModal('${s.id}')">✓ Entregar</button>
+          <div class="fp-info">
+            <div class="fp-nombre">${s.nombre} ${s.apellido}</div>
+            <div class="fp-sub">${s.matricula} · ${s.laboratorio || "—"} · ${s.profesor || "—"}</div>
+          </div>
+          <span class="fp-her">${(s.herramientas||[]).length} items</span>
+          <button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar('${s.id}')">✓ Entregar</button>
         </div>
-      `).join("");
-      wrap.innerHTML = items;
+      `).join("") + (pendientes.length > 6 ? `<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+${pendientes.length - 6} más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>` : "");
     }
 
-    // ultimos movimientos
+    // Feed actividad
     const movWrap = document.getElementById("dashboard-movimientos");
     const recientes = [...todas].sort((a,b) => {
       const fa = a.creadoEn?.toDate?.() || new Date(0);
       const fb = b.creadoEn?.toDate?.() || new Date(0);
       return fb - fa;
-    }).slice(0, 5);
+    }).slice(0, 8);
+
+    const accionTexto = { pendiente:"Solicitud creada", entregada:"Herramientas entregadas", retornada:"Herramientas retornadas", cancelada:"Solicitud cancelada", incidencia:"Retorno con incidencia" };
 
     if (recientes.length === 0) {
-      movWrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>Sin movimientos aún.</p></div>';
+      movWrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>Sin actividad aún.</p></div>';
     } else {
-      movWrap.innerHTML = recientes.map(s => `
-        <div style="display:flex;align-items:center;gap:12px;padding:10px 16px;border-bottom:1px solid var(--borde)">
-          <div style="width:32px;height:32px;border-radius:50%;background:${colorEstudiante(s.nombre||"")}22;display:flex;align-items:center;justify-content:center;color:${colorEstudiante(s.nombre||"")};font-weight:700;font-size:12px;flex-shrink:0">
-            ${iniciales(s.nombre, s.apellido)}
-          </div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:13px;font-weight:600">${s.nombre} ${s.apellido}</div>
-            <div style="font-size:11px;color:var(--texto-dim)">${formatFecha(s.creadoEn)}</div>
-          </div>
-          <span class="badge badge-${s.estado}">${s.estado}</span>
-        </div>
-      `).join("");
+      movWrap.innerHTML = recientes.map(s => {
+        const ts = s.creadoEn?.toDate?.() || new Date(0);
+        const hora = ts.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
+        return `
+          <div class="feed-item">
+            <div class="feed-dot ${s.estado}"></div>
+            <div class="feed-texto"><strong>${s.nombre} ${s.apellido}</strong> · ${accionTexto[s.estado] || s.estado}</div>
+            <span class="feed-hora">${hora}</span>
+          </div>`;
+      }).join("");
     }
-  } catch(e) {
-    console.error(e);
-  }
+
+  } catch(e) { console.error(e); }
 }
 
 // ── SOLICITUDES ──
