@@ -26,7 +26,7 @@ const LABORATORIOS_RESPALDO = [
 // imagen: ruta esperada de la foto real. Si el archivo no existe todavía,
 // se muestra automáticamente el emoji de "icono" en su lugar.
 const HERRAMIENTAS_RESPALDO = [
-  { codigo: "HER-001", nombre: "Ariosma",          icono: "🔧", cantidadDisponible: 5 },
+  { codigo: "HER-001", nombre: "Aceitera",          icono: "🔧", cantidadDisponible: 5 },
   { codigo: "HER-002", nombre: "Alicate",           icono: "🛠️", cantidadDisponible: 5 },
   { codigo: "HER-003", nombre: "Alicate de presión", icono: "🛠️", cantidadDisponible: 5 },
   { codigo: "HER-004", nombre: "Broca",             icono: "🔩", cantidadDisponible: 10 },
