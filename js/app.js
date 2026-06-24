@@ -1,5 +1,5 @@
 // js/app.js
-import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp } from "./firebase.js";
+import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc, Timestamp } from "./firebase.js";
 import { cargarProfesores, cargarLaboratorios, cargarHerramientas } from "./inventario.js";
 
 // ---- Pantallas ----
@@ -59,9 +59,14 @@ btnQuitarFoto.addEventListener("click", () => {
 });
 
 // ---- Estado herramientas ----
-let herramientasDisponibles   = [];
-let cantidadesSeleccionadas   = {};
-let datosSolicitudPendiente   = null;
+let herramientasDisponibles = [];
+let cantidadesSeleccionadas = {};
+let datosSolicitudPendiente = null;
+
+// ---- Modal duplicado ----
+let solicitudExistenteId   = null;
+let solicitudExistente     = null;
+let cantidadesModalExtra   = {};
 
 function mostrarError(msg) {
   const toast = document.createElement("div");
@@ -189,6 +194,157 @@ function validarFormulario() {
   return true;
 }
 
+// ---- Verificar matrícula duplicada hoy ----
+async function buscarSolicitudActivaHoy(matricula) {
+  const hoy = new Date();
+  const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0);
+  const fin    = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59);
+
+  const snap = await getDocs(
+    query(
+      collection(db, "solicitudes"),
+      where("matricula", "==", matricula),
+      where("creadoEn", ">=", Timestamp.fromDate(inicio)),
+      where("creadoEn", "<=", Timestamp.fromDate(fin))
+    )
+  );
+
+  if (snap.empty) return null;
+  // Busca pendiente o entregada (no completamente retornada)
+  let found = null;
+  snap.forEach(d => {
+    const datos = d.data();
+    if (datos.estado === "pendiente" || datos.estado === "entregada") {
+      found = { id: d.id, ...datos };
+    }
+  });
+  return found;
+}
+
+// ---- Modal de solicitud duplicada ----
+function abrirModalDuplicado(solicitud, herramientasDisp) {
+  solicitudExistenteId = solicitud.id;
+  solicitudExistente   = solicitud;
+  cantidadesModalExtra = {};
+
+  // Herramientas ya en la solicitud
+  const listaActual = (solicitud.herramientas || [])
+    .map(h => `<li>${h.nombre} × ${h.cantidad}</li>`)
+    .join("");
+
+  // Grid de herramientas adicionales
+  let gridHtml = "";
+  herramientasDisp.forEach(h => {
+    cantidadesModalExtra[h.codigo] = 0;
+    const max = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
+    gridHtml += `
+      <div class="tarjeta-herramienta" style="font-size:0.85rem">
+        <div class="nombre" style="font-size:0.8rem">${h.nombre}</div>
+        <div class="disponible">Disp. ${max}</div>
+        <div class="contador">
+          <button type="button" data-mcodigo="${h.codigo}" data-maccion="restar">−</button>
+          <span id="mcant-${h.codigo}">0</span>
+          <button type="button" data-mcodigo="${h.codigo}" data-maccion="sumar" ${max === 0 ? "disabled" : ""}>+</button>
+        </div>
+      </div>
+    `;
+  });
+
+  const modal = document.createElement("div");
+  modal.id = "modal-duplicado";
+  modal.style.cssText = `
+    position:fixed;inset:0;background:rgba(0,0,0,0.82);
+    display:flex;align-items:center;justify-content:center;
+    z-index:9999;padding:1rem;
+  `;
+  modal.innerHTML = `
+    <div style="background:#1a1a2e;border-radius:12px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;color:#fff">
+      <h2 style="margin:0 0 0.5rem;color:#f59e0b">⚠️ Ya tienes una solicitud activa hoy</h2>
+      <p style="margin:0 0 1rem;color:#ccc;font-size:0.9rem">Solicitud #${solicitud.numeroSolicitud || solicitud.id}</p>
+      <p style="margin:0 0 0.4rem;font-size:0.85rem;color:#aaa">Herramientas ya solicitadas:</p>
+      <ul style="margin:0 0 1rem;padding-left:1.2rem;color:#fff;font-size:0.85rem">${listaActual}</ul>
+      <p style="margin:0 0 0.6rem;font-size:0.9rem;color:#4ade80">Agregar más herramientas a esta solicitud:</p>
+      <div id="modal-grid-herramientas" class="grid-herramientas" style="margin-bottom:1rem">
+        ${gridHtml}
+      </div>
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end">
+        <button id="btn-modal-cancelar" style="padding:0.6rem 1.2rem;border-radius:8px;border:1px solid #555;background:transparent;color:#ccc;cursor:pointer">Cancelar</button>
+        <button id="btn-modal-agregar" style="padding:0.6rem 1.2rem;border-radius:8px;border:none;background:#4ade80;color:#000;font-weight:700;cursor:pointer">+ Agregar herramientas</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(modal);
+
+  // Eventos del grid del modal
+  document.getElementById("modal-grid-herramientas").addEventListener("click", (e) => {
+    const btn = e.target.closest("button[data-mcodigo]");
+    if (!btn) return;
+    const codigo = btn.dataset.mcodigo;
+    const accion = btn.dataset.maccion;
+    const info = herramientasDisp.find(h => h.codigo === codigo);
+    const max = info && Number.isFinite(info.cantidadDisponible) ? info.cantidadDisponible : 5;
+    let cant = cantidadesModalExtra[codigo] || 0;
+    if (accion === "sumar") {
+      if (cant >= max) { mostrarError(`Solo hay ${max} disponible(s).`); return; }
+      cant += 1;
+    }
+    if (accion === "restar" && cant > 0) cant -= 1;
+    cantidadesModalExtra[codigo] = cant;
+    document.getElementById(`mcant-${codigo}`).textContent = cant;
+  });
+
+  document.getElementById("btn-modal-cancelar").addEventListener("click", () => {
+    modal.remove();
+  });
+
+  document.getElementById("btn-modal-agregar").addEventListener("click", async () => {
+    const nuevas = Object.entries(cantidadesModalExtra)
+      .filter(([_, c]) => c > 0)
+      .map(([codigo, cantidad]) => {
+        const info = herramientasDisp.find(h => h.codigo === codigo);
+        return { codigo, nombre: info ? info.nombre : codigo, cantidad };
+      });
+
+    if (nuevas.length === 0) {
+      mostrarError("Selecciona al menos una herramienta para agregar.");
+      return;
+    }
+
+    const btnAgregar = document.getElementById("btn-modal-agregar");
+    btnAgregar.disabled = true;
+    btnAgregar.textContent = "Guardando...";
+
+    try {
+      // Unir con las existentes (si ya hay, sumar cantidades)
+      const existentes = solicitudExistente.herramientas || [];
+      const mapa = {};
+      existentes.forEach(h => { mapa[h.codigo] = { ...h }; });
+      nuevas.forEach(h => {
+        if (mapa[h.codigo]) {
+          mapa[h.codigo].cantidad += h.cantidad;
+        } else {
+          mapa[h.codigo] = { ...h };
+        }
+      });
+
+      await updateDoc(doc(db, "solicitudes", solicitudExistenteId), {
+        herramientas: Object.values(mapa)
+      });
+
+      modal.remove();
+      textoNumeroSol.textContent = `Solicitud #${solicitudExistente.numeroSolicitud || solicitudExistenteId}`;
+      textoDespedida.textContent = `Se agregaron ${nuevas.length} herramienta(s) a tu solicitud activa.`;
+      mostrarPantalla(pantallaFinal);
+    } catch (err) {
+      console.error(err);
+      mostrarError("No se pudo actualizar la solicitud. Revisa tu conexión.");
+      btnAgregar.disabled = false;
+      btnAgregar.textContent = "+ Agregar herramientas";
+    }
+  });
+}
+
 async function generarNumeroSolicitud() {
   const anio = new Date().getFullYear();
   try {
@@ -205,7 +361,24 @@ form.addEventListener("submit", async (e) => {
   if (!validarFormulario()) return;
 
   btnEnviar.disabled = true;
-  btnEnviar.textContent = "Enviando...";
+  btnEnviar.textContent = "Verificando...";
+
+  const matricula = document.getElementById("matricula").value.trim();
+
+  try {
+    const solicitudActiva = await buscarSolicitudActivaHoy(matricula);
+
+    if (solicitudActiva) {
+      // Abrir modal en lugar de crear nueva
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = "Enviar Solicitud";
+      abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
+      return;
+    }
+  } catch (err) {
+    console.error("Error al verificar matrícula:", err);
+    // Si falla la verificación, continuar igual
+  }
 
   const herramientasElegidas = Object.entries(cantidadesSeleccionadas)
     .filter(([_, c]) => c > 0)
@@ -215,16 +388,16 @@ form.addEventListener("submit", async (e) => {
     });
 
   datosSolicitudPendiente = {
-    nombre:      document.getElementById("nombre").value.trim(),
-    apellido:    document.getElementById("apellido").value.trim(),
-    matricula:   document.getElementById("matricula").value.trim(),
-    ciclo:       document.getElementById("ciclo").value,
-    telefono:    document.getElementById("telefono").value.trim(),
-    profesor:    document.getElementById("profesor").value,
-    laboratorio: document.getElementById("laboratorio").value,
+    nombre:       document.getElementById("nombre").value.trim(),
+    apellido:     document.getElementById("apellido").value.trim(),
+    matricula,
+    ciclo:        document.getElementById("ciclo").value,
+    telefono:     document.getElementById("telefono").value.trim(),
+    profesor:     document.getElementById("profesor").value,
+    laboratorio:  document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
-    estado:      "pendiente",
-    creadoEn:    serverTimestamp()
+    estado:       "pendiente",
+    creadoEn:     serverTimestamp()
   };
 
   mostrarPantalla(pantallaEpp);
