@@ -1059,34 +1059,41 @@
       <!-- ── SOLICITUDES ── -->
       <div class="vista" id="vista-solicitudes">
         <div class="pagina-titulo">
-          <h2>Solicitudes de Estudiantes</h2>
-          <p>Todas las solicitudes realizadas por los estudiantes</p>
+          <div>
+            <h2>Solicitudes</h2>
+            <p>Gestiona las solicitudes de herramientas y materiales</p>
+          </div>
         </div>
 
-        <div class="grid-resumen" style="grid-template-columns:repeat(4,1fr)">
-          <div class="tarjeta-resumen"><div class="icono-res">📋</div><div class="numero" id="sol-total">—</div><div class="etiqueta">Total</div></div>
-          <div class="tarjeta-resumen"><div class="icono-res" style="color:var(--amarillo)">⏳</div><div class="numero" id="sol-pend">—</div><div class="etiqueta">Pendientes</div></div>
-          <div class="tarjeta-resumen"><div class="icono-res" style="color:var(--verde)">✅</div><div class="numero" id="sol-ent">—</div><div class="etiqueta">Entregadas</div></div>
-          <div class="tarjeta-resumen"><div class="icono-res" style="color:var(--rojo)">❌</div><div class="numero" id="sol-can">—</div><div class="etiqueta">Canceladas</div></div>
+        <!-- Barra de búsqueda y filtros -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <div style="flex:1;min-width:200px;position:relative">
+            <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
+              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
+          </div>
+          <select id="filtro-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <option value="">Estado: Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="entregada">Entregada</option>
+            <option value="retornada">Retornada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+          <select id="filtro-profesor" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <option value="">Profesor: Todos</option>
+          </select>
+        </div>
+
+        <!-- Tabs de filtro rápido -->
+        <div class="tabs-filtro">
+          <button class="tab-btn activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
+          <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo)">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
+          <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde)">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
+          <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul)">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
+          <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
         </div>
 
         <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Lista de Solicitudes</h3>
-            <div class="filtros">
-              <input type="text" id="filtro-buscar" placeholder="Buscar por nombre o matrícula...">
-              <select id="filtro-estado">
-                <option value="">Todos los estados</option>
-                <option value="pendiente">Pendiente</option>
-                <option value="entregada">Entregada</option>
-                <option value="retornada">Retornada</option>
-                <option value="cancelada">Cancelada</option>
-              </select>
-              <select id="filtro-profesor">
-                <option value="">Todos los profesores</option>
-              </select>
-            </div>
-          </div>
           <div id="tabla-solicitudes-wrap">
             <div class="cargando"><div class="spinner"></div>Cargando solicitudes...</div>
           </div>
@@ -1424,6 +1431,27 @@ document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
   card.addEventListener("click", () => navegarVista(card.dataset.vista));
 });
 
+// ── TABS SOLICITUDES ──
+document.querySelectorAll(".tab-btn[data-tab-estado]").forEach(tab => {
+  tab.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("activo"));
+    tab.classList.add("activo");
+    const estado = tab.dataset.tabEstado;
+    const sel = document.getElementById("filtro-estado");
+    if (sel) { sel.value = estado; sel.dispatchEvent(new Event("change")); }
+  });
+});
+
+function actualizarTabs() {
+  const tots = todasSolicitudes;
+  const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+  set("tab-todos", tots.length);
+  set("tab-pend",  tots.filter(s => s.estado === "pendiente").length);
+  set("tab-ent",   tots.filter(s => s.estado === "entregada").length);
+  set("tab-ret",   tots.filter(s => s.estado === "retornada").length);
+  set("tab-can",   tots.filter(s => s.estado === "cancelada").length);
+}
+
 // ── NAVEGACIÓN ──
 document.querySelectorAll("[data-vista]").forEach(el => {
   el.addEventListener("click", () => {
@@ -1565,6 +1593,7 @@ async function cargarSolicitudes() {
 }
 
 function actualizarContadores() {
+  actualizarTabs();
   document.getElementById("sol-total").textContent = todasSolicitudes.length;
   document.getElementById("sol-pend").textContent = todasSolicitudes.filter(s=>s.estado==="pendiente").length;
   document.getElementById("sol-ent").textContent = todasSolicitudes.filter(s=>s.estado==="entregada").length;
