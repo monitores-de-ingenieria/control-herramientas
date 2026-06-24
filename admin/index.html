@@ -1542,18 +1542,19 @@ async function cargarDashboard() {
     if (pendientes.length === 0) {
       wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>¡Sin pendientes! Todo al día.</p></div>';
     } else {
-      wrap.innerHTML = pendientes.slice(0, 6).map(s => {
-        const c = colorEstudiante(s.nombre || "");
-        return '<div class="fila-pend">'
-          + '<div class="est-circulo" style="background:' + c + '22;color:' + c + ';width:34px;height:34px;flex-shrink:0">' + iniciales(s.nombre, s.apellido) + '</div>'
-          + '<div class="fp-info">'
-          + '<div class="fp-nombre">' + s.nombre + ' ' + s.apellido + '</div>'
-          + '<div class="fp-sub">' + s.matricula + ' · ' + (s.laboratorio || "—") + ' · ' + (s.profesor || "—") + '</div>'
-          + '</div>'
-          + '<span class="fp-her">' + (s.herramientas||[]).length + ' items</span>'
-          + '<button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar(\'' + s.id + '\')">✓ Entregar</button>'
-          + '</div>';
-      }).join("") + (pendientes.length > 6 ? '<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+' + (pendientes.length - 6) + ' más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>' : "");
+      wrap.innerHTML = pendientes.slice(0, 6).map(s => `
+        <div class="fila-pend">
+          <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")};width:34px;height:34px;flex-shrink:0">
+            ${iniciales(s.nombre, s.apellido)}
+          </div>
+          <div class="fp-info">
+            <div class="fp-nombre">${s.nombre} ${s.apellido}</div>
+            <div class="fp-sub">${s.matricula} · ${s.laboratorio || "—"} · ${s.profesor || "—"}</div>
+          </div>
+          <span class="fp-her">${(s.herramientas||[]).length} items</span>
+          <button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar('${s.id}')">✓ Entregar</button>
+        </div>
+      `).join("") + (pendientes.length > 6 ? `<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+${pendientes.length - 6} más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>` : "");
     }
 
     // Feed actividad
@@ -1675,22 +1676,22 @@ function renderTabla() {
             const taller = s.laboratorio || "Sin taller";
             if (taller !== tallerActual) {
               tallerActual = taller;
-              html += '<tr><td colspan="9" style="background:var(--card2);padding:8px 14px;font-size:12px;font-weight:700;color:var(--texto-dim);letter-spacing:0.05em;border-top:2px solid var(--borde)">🏭 ' + taller + '</td></tr>';
+              html += '<tr><td colspan="9" style="background:var(--card2);padding:8px 14px;font-size:12px;font-weight:700;color:var(--texto-dim);border-top:2px solid var(--borde)">🏭 ' + taller + '</td></tr>';
             }
-            const color = colorEstudiante(s.nombre || "");
+            const c = colorEstudiante(s.nombre || "");
             const inc = s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : '';
-            const btnEntregar = s.estado === "pendiente" ? '<button class="btn btn-verde" onclick="entregar(\'' + s.id + '\')">✓ Entregar</button>' : '';
-            const btnRetornar = s.estado === "entregada" ? '<button class="btn btn-azul" onclick="retornar(\'' + s.id + '\')">↩ Retornar</button>' : '';
+            const btnE = s.estado === "pendiente" ? '<button class="btn btn-verde" onclick="entregar(\'' + s.id + '\')">✓ Entregar</button>' : '';
+            const btnR = s.estado === "entregada" ? '<button class="btn btn-azul" onclick="retornar(\'' + s.id + '\')">↩ Retornar</button>' : '';
             html += '<tr>'
-              + '<td style="color:var(--texto-dim)">' + (inicio + i + 1) + '</td>'
+              + '<td style="color:var(--texto-dim)">' + (inicio+i+1) + '</td>'
               + '<td style="font-size:12px;color:var(--texto-dim)">' + formatFecha(s.creadoEn) + '</td>'
-              + '<td><div class="est-avatar"><div class="est-circulo" style="background:' + color + '22;color:' + color + '">' + iniciales(s.nombre, s.apellido) + '</div><div><div class="est-nombre">' + s.nombre + ' ' + s.apellido + '</div></div></div></td>'
-              + '<td style="font-size:12px">' + (s.matricula || "—") + '</td>'
-              + '<td style="font-size:12px">' + (s.profesor || "—") + '</td>'
-              + '<td style="font-size:12px">' + (s.laboratorio || "—") + '</td>'
+              + '<td><div class="est-avatar"><div class="est-circulo" style="background:' + c + '22;color:' + c + '">' + iniciales(s.nombre, s.apellido) + '</div><div><div class="est-nombre">' + s.nombre + ' ' + s.apellido + '</div></div></div></td>'
+              + '<td style="font-size:12px">' + (s.matricula||"—") + '</td>'
+              + '<td style="font-size:12px">' + (s.profesor||"—") + '</td>'
+              + '<td style="font-size:12px">' + (s.laboratorio||"—") + '</td>'
               + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">' + (s.herramientas||[]).length + '</span></td>'
               + '<td><span class="badge badge-' + s.estado + '">' + s.estado + '</span>' + inc + '</td>'
-              + '<td><div style="display:flex;gap:6px"><button class="btn btn-outline" onclick="abrirModal(\'' + s.id + '\')">👁 Ver</button>' + btnEntregar + btnRetornar + '</div></td>'
+              + '<td><div style="display:flex;gap:6px"><button class="btn btn-outline" onclick="abrirModal(\'' + s.id + '\')">👁 Ver</button>' + btnE + btnR + '</div></td>'
               + '</tr>';
           });
           return html;
@@ -1736,23 +1737,12 @@ window.abrirModal = function(id) {
       <div class="modal-campo"><label>Profesor</label><div class="valor">${s.profesor || "—"}</div></div>
       <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${s.laboratorio || "—"}</div></div>
     </div>
-    <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada">⚠️ Con incidencia</span>' : ''}</div>
+    <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
     <div class="modal-campo"><label>Fecha</label><div class="valor">${formatFecha(s.creadoEn)}</div></div>
     <div class="modal-campo">
       <label>Herramientas solicitadas</label>
       <div class="modal-herramientas">${herramientas || "—"}</div>
     </div>
-    ${s.herramientasRetorno && s.herramientasRetorno.length > 0 ? `
-    <div class="modal-campo">
-      <label>Estado de retorno</label>
-      <div class="modal-herramientas">
-        ${s.herramientasRetorno.map(h => {
-          const iconos = { retornada: '✅', no_retornada: '❌', dañada: '🔴', perdida: '⚠️' };
-          const icono = iconos[h.estadoRetorno] || '❓';
-          return `<div class="modal-herramienta-item"><span>${h.nombre}</span><span>${icono} ${h.estadoRetorno}</span></div>`;
-        }).join('')}
-      </div>
-    </div>` : ''}
   `;
 
   const acciones = document.getElementById("modal-acciones");
@@ -1776,7 +1766,7 @@ window.abrirModal = function(id) {
   if (s.estado === "retornada") {
     const b = document.createElement("div");
     b.style.cssText = "color:var(--verde);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px";
-    b.innerHTML = "✅ Herramientas retornadas" + (s.tieneIncidencias ? " <span style="color:var(--rojo)">· con incidencias</span>" : "");
+    b.innerHTML = "✅ Herramientas retornadas" + (s.tieneIncidencias ? ' <span style="color:var(--rojo)">· con incidencias</span>' : "");
     acciones.appendChild(b);
   }
 
@@ -2000,9 +1990,8 @@ window.confirmarRetorno = async function() {
     }
   });
 
-  const hayIncidencias = incidencias.length > 0;
-
   try {
+    const hayIncidencias = incidencias.length > 0;
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), {
       estado: "retornada",
       retornadoEn: serverTimestamp(),
