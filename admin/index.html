@@ -1542,19 +1542,18 @@ async function cargarDashboard() {
     if (pendientes.length === 0) {
       wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>¡Sin pendientes! Todo al día.</p></div>';
     } else {
-      wrap.innerHTML = pendientes.slice(0, 6).map(s => `
-        <div class="fila-pend">
-          <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")};width:34px;height:34px;flex-shrink:0">
-            ${iniciales(s.nombre, s.apellido)}
-          </div>
-          <div class="fp-info">
-            <div class="fp-nombre">${s.nombre} ${s.apellido}</div>
-            <div class="fp-sub">${s.matricula} · ${s.laboratorio || "—"} · ${s.profesor || "—"}</div>
-          </div>
-          <span class="fp-her">${(s.herramientas||[]).length} items</span>
-          <button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar('${s.id}')">✓ Entregar</button>
-        </div>
-      `).join("") + (pendientes.length > 6 ? `<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+${pendientes.length - 6} más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>` : "");
+      wrap.innerHTML = pendientes.slice(0, 6).map(s => {
+        const c = colorEstudiante(s.nombre || "");
+        return '<div class="fila-pend">'
+          + '<div class="est-circulo" style="background:' + c + '22;color:' + c + ';width:34px;height:34px;flex-shrink:0">' + iniciales(s.nombre, s.apellido) + '</div>'
+          + '<div class="fp-info">'
+          + '<div class="fp-nombre">' + s.nombre + ' ' + s.apellido + '</div>'
+          + '<div class="fp-sub">' + s.matricula + ' · ' + (s.laboratorio || "—") + ' · ' + (s.profesor || "—") + '</div>'
+          + '</div>'
+          + '<span class="fp-her">' + (s.herramientas||[]).length + ' items</span>'
+          + '<button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar(\'' + s.id + '\')">✓ Entregar</button>'
+          + '</div>';
+      }).join("") + (pendientes.length > 6 ? '<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+' + (pendientes.length - 6) + ' más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>' : "");
     }
 
     // Feed actividad
