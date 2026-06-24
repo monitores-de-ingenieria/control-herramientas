@@ -1,5 +1,5 @@
 // js/app.js
-import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc, Timestamp } from "./firebase.js";
+import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc } from "./firebase.js";
 import { cargarProfesores, cargarLaboratorios, cargarHerramientas } from "./inventario.js";
 
 // ---- Pantallas ----
@@ -197,20 +197,17 @@ function validarFormulario() {
 // ---- Verificar matrícula duplicada hoy ----
 async function buscarSolicitudActivaHoy(matricula) {
   const hoy = new Date();
-  const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 0, 0, 0);
-  const fin    = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59);
+  const fechaHoy = `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()}`;
 
   const snap = await getDocs(
     query(
       collection(db, "solicitudes"),
       where("matricula", "==", matricula),
-      where("creadoEn", ">=", Timestamp.fromDate(inicio)),
-      where("creadoEn", "<=", Timestamp.fromDate(fin))
+      where("fecha", "==", fechaHoy)
     )
   );
 
   if (snap.empty) return null;
-  // Busca pendiente o entregada (no completamente retornada)
   let found = null;
   snap.forEach(d => {
     const datos = d.data();
@@ -397,6 +394,7 @@ form.addEventListener("submit", async (e) => {
     laboratorio:  document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
     estado:       "pendiente",
+    fecha:        (() => { const h = new Date(); return `${h.getDate()}/${h.getMonth()+1}/${h.getFullYear()}`; })(),
     creadoEn:     serverTimestamp()
   };
 
