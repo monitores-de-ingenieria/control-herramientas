@@ -1310,7 +1310,7 @@ document.querySelectorAll(".tab-btn[data-tab-estado]").forEach(tab => {
 });
 
 function actualizarTabs() {
-  const tots = todasSolicitudes;
+  const tots = todasSolicitudes.filter(s => esMismodia(s.creadoEn));
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set("tab-todos", tots.length);
   set("tab-pend",  tots.filter(s => s.estado === "pendiente").length);
@@ -1482,11 +1482,21 @@ function cargarSelectores() {
   });
 }
 
+function esMismodia(ts) {
+  if (!ts) return false;
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const hoy = new Date();
+  return d.getFullYear() === hoy.getFullYear() &&
+         d.getMonth()    === hoy.getMonth()    &&
+         d.getDate()     === hoy.getDate();
+}
+
 function solicitudesFiltradas() {
   const buscar = document.getElementById("filtro-buscar").value.toLowerCase();
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
+    if (!esMismodia(s.creadoEn)) return false;  // solo las de hoy
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
