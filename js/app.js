@@ -100,7 +100,6 @@ btnBuscarAdicional.addEventListener("click", async () => {
       btnBuscarAdicional.textContent = "Buscar solicitud activa";
       return;
     }
-    // Verificar que la solicitud esté en estado válido
     if (solicitud.estado === "retornada" || solicitud.estado === "cancelada") {
       mostrarError(`Esta solicitud ya está ${solicitud.estado}. No se pueden agregar más herramientas.`);
       btnBuscarAdicional.disabled = false;
@@ -289,7 +288,6 @@ async function buscarSolicitudActivaHoy(matricula) {
       const data = d.data();
       const creado = data.creadoEn?.toDate?.() || new Date(data.creadoEn);
       if (creado >= inicio && creado < fin) {
-        // Solo permitir si está pendiente o entregada
         if (data.estado === "pendiente" || data.estado === "entregada") {
           found = { id: d.id, ...data };
         }
@@ -308,8 +306,9 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
   solicitudExistente = solicitud;
   cantidadesModalExtra = {};
 
+  // Mostrar herramientas existentes con indicador si son adicionales
   const listaActual = (solicitud.herramientas || [])
-    .map(h => `<li style="color:#e6edf3">${h.nombre} × ${h.cantidad}</li>`)
+    .map(h => `<li style="color:#e6edf3">${h.nombre} × ${h.cantidad}${h.adicional ? ' <span style="color:#f59e0b;font-size:0.75rem">(adicional)</span>' : ''}</li>`)
     .join("");
 
   let gridHtml = "";
@@ -378,13 +377,18 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     modal.remove();
   });
 
-  // ---- Botón AGREGAR HERRAMIENTAS (CORREGIDO) ----
+  // ---- Botón AGREGAR HERRAMIENTAS (CON MARCADOR "adicional: true") ----
   document.getElementById("btn-modal-agregar").addEventListener("click", async () => {
     const nuevas = Object.entries(cantidadesModalExtra)
       .filter(([_, c]) => c > 0)
       .map(([codigo, cantidad]) => {
         const info = herramientasDisp.find(h => h.codigo === codigo);
-        return { codigo, nombre: info ? info.nombre : codigo, cantidad };
+        return { 
+          codigo, 
+          nombre: info ? info.nombre : codigo, 
+          cantidad,
+          adicional: true  // 👈 MARCADOR: indica que fue agregada después
+        };
       });
 
     if (nuevas.length === 0) {
@@ -397,29 +401,32 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     btnAgregar.textContent = "Guardando...";
 
     try {
-      // Obtener herramientas existentes
       const existentes = solicitudExistente.herramientas || [];
       const mapa = {};
-      existentes.forEach(h => { mapa[h.codigo] = { ...h }; });
       
-      // Sumar o agregar nuevas
+      // Mantener las existentes (incluyendo su propiedad 'adicional' si la tienen)
+      existentes.forEach(h => { 
+        mapa[h.codigo] = { ...h }; 
+      });
+      
+      // Agregar o sumar nuevas (con adicional: true)
       nuevas.forEach(h => {
         if (mapa[h.codigo]) {
           mapa[h.codigo].cantidad += h.cantidad;
+          // Si ya existía pero no tenía el marcador, se lo ponemos
+          mapa[h.codigo].adicional = true;
         } else {
           mapa[h.codigo] = { ...h };
         }
       });
 
-      // Actualizar en Firestore
       await updateDoc(doc(db, "solicitudes", solicitudExistenteId), {
         herramientas: Object.values(mapa)
       });
 
-      // Cerrar modal y mostrar confirmación
       modal.remove();
       textoNumeroSol.textContent = `Solicitud #${solicitudExistente.numeroSolicitud || solicitudExistenteId}`;
-      textoDespedida.textContent = `Se agregaron ${nuevas.length} herramienta(s) a tu solicitud activa.`;
+      textoDespedida.textContent = `Se agregaron ${nuevas.length} herramienta(s) adicional(es) a tu solicitud activa.`;
       mostrarPantalla(pantallaFinal);
       
     } catch (err) {
@@ -449,7 +456,6 @@ form.addEventListener("submit", async (e) => {
   btnEnviar.disabled = true;
   btnEnviar.textContent = "Verificando...";
 
-  // Si es "adicional", ya se manejó con el botón Buscar
   if (selectTipo.value === "adicional") {
     btnEnviar.disabled = false;
     btnEnviar.textContent = "Enviar Solicitud";
@@ -473,12 +479,16 @@ form.addEventListener("submit", async (e) => {
     console.error("Error al verificar matrícula:", err);
   }
 
-  // Crear nueva solicitud
   const herramientasElegidas = Object.entries(cantidadesSeleccionadas)
     .filter(([_, c]) => c > 0)
     .map(([codigo, cantidad]) => {
       const info = herramientasDisponibles.find(h => h.codigo === codigo);
-      return { codigo, nombre: info ? info.nombre : codigo, cantidad };
+      return { 
+        codigo, 
+        nombre: info ? info.nombre : codigo, 
+        cantidad,
+        adicional: false  // Las de la solicitud original no son adicionales
+      };
     });
 
   datosSolicitudPendiente = {
