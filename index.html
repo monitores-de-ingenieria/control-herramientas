@@ -57,72 +57,83 @@
           </div>
         </div>
 
-        <div class="campo">
-          <label for="nombre">Nombre(s):</label>
-          <input type="text" id="nombre" required>
-        </div>
-
-        <div class="campo">
-          <label for="apellido">Apellido(s):</label>
-          <input type="text" id="apellido" required>
-        </div>
-
-        <div class="campo">
-          <label for="matricula">Matrícula:</label>
-          <div class="matricula-wrap">
-            <input type="text" id="matricula" placeholder="0-00-0000" required>
-            <button type="button" id="btn-camara" class="btn-camara" title="Tomar foto de carnet">📷</button>
+        <!-- CONTENEDOR PARA EL FORMULARIO COMPLETO (se oculta cuando se selecciona "adicional") -->
+        <div id="formulario-completo">
+          <div class="campo">
+            <label for="nombre">Nombre(s):</label>
+            <input type="text" id="nombre" required>
           </div>
-          <small>Haga clic en el icono de la cámara para tomar una foto.</small>
-          <!-- Input de cámara oculto -->
-          <input type="file" id="input-camara" accept="image/*" capture="environment" style="display:none">
-          <div id="foto-preview-wrap" class="foto-preview-wrap oculto">
-            <img id="foto-preview" src="" alt="Foto del carnet">
-            <button type="button" id="btn-quitar-foto" class="btn-quitar-foto">✕ Quitar foto</button>
+
+          <div class="campo">
+            <label for="apellido">Apellido(s):</label>
+            <input type="text" id="apellido" required>
           </div>
-        </div>
 
-        <div class="campo">
-          <label for="ciclo">Ciclo:</label>
-          <div class="select-wrap">
-            <select id="ciclo" required>
-              <option value="2-2026">2-2026</option>
-              <option value="1-2026">1-2026</option>
-              <option value="2-2025">2-2025</option>
-              <option value="1-2025">1-2025</option>
-            </select>
+          <div class="campo">
+            <label for="matricula">Matrícula:</label>
+            <div class="matricula-wrap">
+              <input type="text" id="matricula" placeholder="0-00-0000" required>
+              <button type="button" id="btn-camara" class="btn-camara" title="Tomar foto de carnet">📷</button>
+            </div>
+            <small>Haga clic en el icono de la cámara para tomar una foto.</small>
+            <input type="file" id="input-camara" accept="image/*" capture="environment" style="display:none">
+            <div id="foto-preview-wrap" class="foto-preview-wrap oculto">
+              <img id="foto-preview" src="" alt="Foto del carnet">
+              <button type="button" id="btn-quitar-foto" class="btn-quitar-foto">✕ Quitar foto</button>
+            </div>
           </div>
-        </div>
 
-        <div class="campo">
-          <label for="telefono">Número de teléfono:</label>
-          <input type="tel" id="telefono" placeholder="809-000-0000" required>
-        </div>
-
-        <div class="campo">
-          <label for="profesor">Profesor:</label>
-          <div class="select-wrap">
-            <select id="profesor" required>
-              <option value="">Elige un profesor</option>
-            </select>
+          <div class="campo">
+            <label for="ciclo">Ciclo:</label>
+            <div class="select-wrap">
+              <select id="ciclo" required>
+                <option value="2-2026">2-2026</option>
+                <option value="1-2026">1-2026</option>
+                <option value="2-2025">2-2025</option>
+                <option value="1-2025">1-2025</option>
+              </select>
+            </div>
           </div>
-        </div>
 
-        <div class="campo">
-          <label for="laboratorio">Laboratorio / Taller:</label>
-          <div class="select-wrap">
-            <select id="laboratorio" required>
-              <option value="">Elige un laboratorio/taller</option>
-            </select>
+          <div class="campo">
+            <label for="telefono">Número de teléfono:</label>
+            <input type="tel" id="telefono" placeholder="809-000-0000" required>
           </div>
+
+          <div class="campo">
+            <label for="profesor">Profesor:</label>
+            <div class="select-wrap">
+              <select id="profesor" required>
+                <option value="">Elige un profesor</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label for="laboratorio">Laboratorio / Taller:</label>
+            <div class="select-wrap">
+              <select id="laboratorio" required>
+                <option value="">Elige un laboratorio/taller</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="campo">
+            <label>Herramientas</label>
+            <div id="grid-herramientas" class="grid-herramientas"></div>
+          </div>
+
+          <button type="submit" id="btn-enviar" class="btn-enviar">Enviar Solicitud</button>
         </div>
 
-        <div class="campo">
-          <label>Herramientas</label>
-          <div id="grid-herramientas" class="grid-herramientas"></div>
+        <!-- SECCIÓN PARA AGREGAR ADICIONAL (solo matrícula) -->
+        <div id="seccion-adicional" style="display:none;">
+          <div class="campo">
+            <label for="matricula-adicional">Matrícula:</label>
+            <input type="text" id="matricula-adicional" placeholder="0-00-0000" style="width:100%;padding:0.75rem;border-radius:6px;border:1px solid #444;background:#1e1e2e;color:#fff;">
+          </div>
+          <button type="button" id="btn-buscar-adicional" class="btn-enviar" style="width:100%;">Buscar solicitud activa</button>
         </div>
-
-        <button type="submit" id="btn-enviar" class="btn-enviar">Enviar Solicitud</button>
 
       </form>
 
