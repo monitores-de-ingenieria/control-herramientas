@@ -1040,13 +1040,17 @@
           </select>
         </div>
 
-        <div class="tabs-filtro">
-          <button class="tab-btn activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
-          <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo)">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
-          <button class="tab-btn" data-tab-estado="entregada" style="color:var(--azul)">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
-          <button class="tab-btn" data-tab-estado="retornada" style="color:var(--verde)">Retornados <span class="tab-badge" id="tab-ret">—</span></button>
-          <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+          <div class="tabs-filtro" style="margin-bottom:0;border-bottom:none">
+            <button class="tab-btn activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
+            <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo)">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
+            <button class="tab-btn" data-tab-estado="entregada" style="color:var(--azul)">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
+            <button class="tab-btn" data-tab-estado="retornada" style="color:var(--verde)">Retornados <span class="tab-badge" id="tab-ret">—</span></button>
+            <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+          </div>
+          <div style="font-size:11px;color:var(--texto-dim);padding:4px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:6px" id="label-fecha-hoy"></div>
         </div>
+        <div style="border-bottom:1px solid var(--borde);margin-bottom:12px;margin-top:8px"></div>
 
         <div class="seccion-tabla">
           <div id="tabla-solicitudes-wrap">
@@ -1096,8 +1100,39 @@
       </div>
 
       <div class="vista" id="vista-historial">
-        <div class="pagina-titulo"><h2>Historial de Movimientos</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
+        <div class="pagina-titulo">
+          <div>
+            <h2>Historial</h2>
+            <p>Solicitudes de días anteriores — guardadas como referencia</p>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <div style="flex:1;min-width:200px;position:relative">
+            <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
+              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
+          </div>
+          <input type="date" id="hist-fecha"
+            style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+          <select id="hist-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <option value="">Estado: Todos</option>
+            <option value="pendiente">Pendiente</option>
+            <option value="entregada">Entregada</option>
+            <option value="retornada">Retornada</option>
+            <option value="cancelada">Cancelada</option>
+          </select>
+        </div>
+
+        <div class="seccion-tabla">
+          <div id="hist-tabla-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando historial...</div>
+          </div>
+          <div class="paginacion">
+            <span id="hist-pag-info" style="font-size:11px;color:var(--texto-dim)"></span>
+            <div class="paginacion-btns" id="hist-pag-btns"></div>
+          </div>
+        </div>
       </div>
 
       <div class="vista" id="vista-profesores-cfg">
@@ -1310,13 +1345,19 @@ document.querySelectorAll(".tab-btn[data-tab-estado]").forEach(tab => {
 });
 
 function actualizarTabs() {
-  const tots = todasSolicitudes;
+  const tots = todasSolicitudes.filter(s => esMismodia(s.creadoEn));
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set("tab-todos", tots.length);
   set("tab-pend",  tots.filter(s => s.estado === "pendiente").length);
   set("tab-ent",   tots.filter(s => s.estado === "entregada").length);
   set("tab-ret",   tots.filter(s => s.estado === "retornada").length);
   set("tab-can",   tots.filter(s => s.estado === "cancelada").length);
+  // Mostrar la fecha activa en el label
+  const label = document.getElementById("label-fecha-hoy");
+  if (label) {
+    const hoy = new Date();
+    label.textContent = "📅 " + hoy.toLocaleDateString("es-DO", { weekday:"long", day:"numeric", month:"long" });
+  }
 }
 
 // ── NAVEGACIÓN ──
@@ -1435,12 +1476,68 @@ async function cargarDashboard() {
     });
     renderGraficoHoras(Array.from({length:15},(_,i)=>({etiqueta:`${8+i}h`,valor:conteoHora[8+i]||0})));
 
+<<<<<<< HEAD
     // Gráfico 4 — por profesor (histórico)
     const conteoProf = {};
     todas.forEach(s => { const p = s.profesor||"Sin asignar"; conteoProf[p]=(conteoProf[p]||0)+1; });
     renderGraficoBarras("grafico-profesores",
       Object.entries(conteoProf).map(([e,v])=>({etiqueta:e,valor:v})).sort((a,b)=>b.valor-a.valor),
       "var(--amarillo)");
+=======
+    document.getElementById("res-pendientes").textContent = pendientes.length;
+    document.getElementById("res-prestadas").textContent  = entregadas.length;
+    document.getElementById("res-hoy").textContent        = devHoy.length;
+    document.getElementById("res-total").textContent      = todas.length;
+    document.getElementById("badge-pendientes").textContent = pendientes.length;
+
+    const eHoy = document.getElementById("dash-entregadas-hoy");
+    const eInc  = document.getElementById("dash-incidencias");
+    if (eHoy)  eHoy.textContent  = entregadasHoy.length;
+    if (eInc)  eInc.textContent  = incidencias.length;
+
+    const wrap = document.getElementById("dashboard-pendientes");
+    if (pendientes.length === 0) {
+      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>¡Sin pendientes! Todo al día.</p></div>';
+    } else {
+      wrap.innerHTML = pendientes.slice(0, 6).map(s => `
+        <div class="fila-pend">
+          <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")};width:34px;height:34px;flex-shrink:0">
+            ${iniciales(s.nombre, s.apellido)}
+          </div>
+          <div class="fp-info">
+            <div class="fp-nombre">${s.nombre} ${s.apellido}</div>
+            <div class="fp-sub">${s.matricula} · ${s.laboratorio || "—"} · ${s.profesor || "—"}</div>
+          </div>
+          <span class="fp-her">${(s.herramientas||[]).length} items</span>
+          <button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar('${s.id}')">✓ Entregar</button>
+        </div>
+      `).join("") + (pendientes.length > 6 ? `<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+${pendientes.length - 6} más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>` : "");
+    }
+
+    const movWrap = document.getElementById("dashboard-movimientos");
+    const recientes = [...todas].sort((a,b) => {
+      const fa = a.creadoEn?.toDate?.() || new Date(0);
+      const fb = b.creadoEn?.toDate?.() || new Date(0);
+      return fb - fa;
+    }).slice(0, 8);
+
+    const accionTexto = { pendiente:"Solicitud creada", entregada:"Herramientas entregadas", retornada:"Herramientas retornadas", cancelada:"Solicitud cancelada", incidencia:"Retorno con incidencia" };
+
+    if (recientes.length === 0) {
+      movWrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>Sin actividad aún.</p></div>';
+    } else {
+      movWrap.innerHTML = recientes.map(s => {
+        const ts = s.creadoEn?.toDate?.() || new Date(0);
+        const hora = ts.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
+        return `
+          <div class="feed-item">
+            <div class="feed-dot ${s.estado}"></div>
+            <div class="feed-texto"><strong>${s.nombre} ${s.apellido}</strong> · ${accionTexto[s.estado] || s.estado}</div>
+            <span class="feed-hora">${hora}</span>
+          </div>`;
+      }).join("");
+    }
+>>>>>>> 58c77da61ee0e01d9a097eaff2e570e3992d3e9d
 
   } catch(e) { console.error(e); }
 }
@@ -1449,6 +1546,15 @@ async function cargarDashboard() {
 let todasSolicitudes = [];
 let paginaActual = 1;
 const porPagina = 10;
+
+function esMismodia(ts) {
+  if (!ts) return false;
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const hoy = new Date();
+  return d.getFullYear() === hoy.getFullYear() &&
+         d.getMonth()    === hoy.getMonth()    &&
+         d.getDate()     === hoy.getDate();
+}
 
 async function cargarSolicitudes() {
   try {
@@ -1487,6 +1593,7 @@ function solicitudesFiltradas() {
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
+    if (!esMismodia(s.creadoEn)) return false;   // solo las de hoy
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
@@ -1913,6 +2020,102 @@ window.anular = async function(id) {
     mostrarToast("Solicitud anulada");
   } catch(e) { mostrarToast("Error al anular", "rojo"); }
 };
+
+// ── HISTORIAL ──
+let histPagina = 1;
+const histPorPagina = 15;
+
+function renderHistorial() {
+  const buscar  = (document.getElementById("hist-buscar")?.value || "").toLowerCase();
+  const estado  = document.getElementById("hist-estado")?.value || "";
+  const fechaFiltro = document.getElementById("hist-fecha")?.value || "";
+
+  const filtradas = todasSolicitudes.filter(s => {
+    if (esMismodia(s.creadoEn)) return false; // las de hoy van en Solicitudes
+
+    const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
+    const estadoMatch = !estado || s.estado === estado;
+
+    let fechaMatch = true;
+    if (fechaFiltro) {
+      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn || 0);
+      const iso = d.toISOString().slice(0, 10);
+      fechaMatch = iso === fechaFiltro;
+    }
+
+    return textoMatch && estadoMatch && fechaMatch;
+  }).sort((a, b) => {
+    const fa = a.creadoEn?.toDate?.() || new Date(0);
+    const fb = b.creadoEn?.toDate?.() || new Date(0);
+    return fb - fa;
+  });
+
+  const total = filtradas.length;
+  const inicio = (histPagina - 1) * histPorPagina;
+  const pagina = filtradas.slice(inicio, inicio + histPorPagina);
+  const wrap = document.getElementById("hist-tabla-wrap");
+
+  if (!wrap) return;
+
+  if (pagina.length === 0) {
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay solicitudes anteriores.</p></div>';
+    document.getElementById("hist-pag-info").textContent = "";
+    document.getElementById("hist-pag-btns").innerHTML = "";
+    return;
+  }
+
+  // Agrupar por fecha
+  let html = '<table><thead><tr><th>#</th><th>Fecha</th><th>Estudiante</th><th>Matrícula</th><th>Profesor</th><th>Taller / Lab</th><th>Herramientas</th><th>Estado</th></tr></thead><tbody>';
+  let fechaActual = null;
+  pagina.forEach((s, i) => {
+    const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn || 0);
+    const fechaStr = d.toLocaleDateString("es-DO", { weekday:"long", day:"numeric", month:"long", year:"numeric" });
+    if (fechaStr !== fechaActual) {
+      fechaActual = fechaStr;
+      html += `<tr class="taller-header-row"><td colspan="8">📆 ${fechaStr.charAt(0).toUpperCase() + fechaStr.slice(1)}</td></tr>`;
+    }
+    const c = colorEstudiante(s.nombre || "");
+    const her = s.herramientas || [];
+    const adicionales = her.filter(h => h.adicional).length;
+    const badgeAdic = adicionales > 0
+      ? ` <span style="background:var(--amarillo);color:#000;padding:1px 5px;border-radius:8px;font-size:10px;font-weight:800">+${adicionales}</span>`
+      : '';
+    html += `<tr>
+      <td style="color:var(--texto-dim)">${inicio+i+1}</td>
+      <td style="font-size:11px;color:var(--texto-dim)">${d.toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</td>
+      <td><div class="est-avatar"><div class="est-circulo" style="background:${c}22;color:${c}">${iniciales(s.nombre,s.apellido)}</div><div><div class="est-nombre">${s.nombre} ${s.apellido}</div></div></div></td>
+      <td style="font-size:12px">${s.matricula||"—"}</td>
+      <td style="font-size:12px">${s.profesor||"—"}</td>
+      <td style="font-size:12px">${s.laboratorio||"—"}</td>
+      <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${her.length}</span>${badgeAdic}</td>
+      <td><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada">⚠️</span>' : ''}</td>
+    </tr>`;
+  });
+  html += '</tbody></table>';
+  wrap.innerHTML = html;
+
+  const totalPags = Math.ceil(total / histPorPagina);
+  document.getElementById("hist-pag-info").textContent = `Mostrando ${inicio+1}–${Math.min(inicio+histPorPagina,total)} de ${total}`;
+  const btns = document.getElementById("hist-pag-btns");
+  btns.innerHTML = "";
+  for (let p = 1; p <= totalPags; p++) {
+    const b = document.createElement("button");
+    b.textContent = p;
+    if (p === histPagina) b.classList.add("activo");
+    b.addEventListener("click", () => { histPagina = p; renderHistorial(); });
+    btns.appendChild(b);
+  }
+}
+
+// Listeners del historial (se engancha al hacer clic en la nav)
+document.querySelectorAll(".nav-item[data-vista='historial']").forEach(el => {
+  el.addEventListener("click", () => { histPagina = 1; renderHistorial(); });
+});
+
+["hist-buscar","hist-estado","hist-fecha"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input",  () => { histPagina = 1; renderHistorial(); });
+  document.getElementById(id)?.addEventListener("change", () => { histPagina = 1; renderHistorial(); });
+});
 
 // ── TEMA ──
 function aplicarTema(tema) {
