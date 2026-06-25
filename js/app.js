@@ -28,6 +28,7 @@ document.getElementById("btn-ir-formulario").addEventListener("click", () => {
 const form              = document.getElementById("form-solicitud");
 const selectProfesor    = document.getElementById("profesor");
 const selectLaboratorio = document.getElementById("laboratorio");
+const selectTipo        = document.getElementById("tipo-solicitud");
 const gridHerramientas  = document.getElementById("grid-herramientas");
 const btnEnviar         = document.getElementById("btn-enviar");
 const btnContinuar      = document.getElementById("btn-continuar");
@@ -201,7 +202,6 @@ async function buscarSolicitudActivaHoy(matricula) {
   const fin = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
 
   try {
-    // Consulta simple: solo por matrícula
     const snap = await getDocs(
       query(
         collection(db, "solicitudes"),
@@ -211,7 +211,6 @@ async function buscarSolicitudActivaHoy(matricula) {
 
     if (snap.empty) return null;
 
-    // Filtrar en el cliente
     let found = null;
     snap.forEach(d => {
       const data = d.data();
@@ -235,12 +234,10 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
   solicitudExistente   = solicitud;
   cantidadesModalExtra = {};
 
-  // Herramientas ya en la solicitud
   const listaActual = (solicitud.herramientas || [])
     .map(h => `<li>${h.nombre} × ${h.cantidad}</li>`)
     .join("");
 
-  // Grid de herramientas adicionales
   let gridHtml = "";
   herramientasDisp.forEach(h => {
     cantidadesModalExtra[h.codigo] = 0;
@@ -284,7 +281,6 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
 
   document.body.appendChild(modal);
 
-  // Eventos del grid del modal
   document.getElementById("modal-grid-herramientas").addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-mcodigo]");
     if (!btn) return;
@@ -324,7 +320,6 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     btnAgregar.textContent = "Guardando...";
 
     try {
-      // Unir con las existentes (si ya hay, sumar cantidades)
       const existentes = solicitudExistente.herramientas || [];
       const mapa = {};
       existentes.forEach(h => { mapa[h.codigo] = { ...h }; });
@@ -372,19 +367,38 @@ form.addEventListener("submit", async (e) => {
   btnEnviar.textContent = "Verificando...";
 
   const matricula = document.getElementById("matricula").value.trim();
+  const tipo = selectTipo.value;
 
   try {
     const solicitudActiva = await buscarSolicitudActivaHoy(matricula);
 
-    if (solicitudActiva) {
+    // Si seleccionó "Agregar herramientas adicionales"
+    if (tipo === "adicional") {
+      if (!solicitudActiva) {
+        btnEnviar.disabled = false;
+        btnEnviar.textContent = "Enviar Solicitud";
+        mostrarError("No tienes una solicitud activa hoy. Selecciona 'Solicitando herramientas' para crear una nueva.");
+        return;
+      }
       btnEnviar.disabled = false;
       btnEnviar.textContent = "Enviar Solicitud";
       abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
       return;
     }
+
+    // Si seleccionó "Solicitando herramientas"
+    if (solicitudActiva) {
+      btnEnviar.disabled = false;
+      btnEnviar.textContent = "Enviar Solicitud";
+      // Preguntar si quiere agregar a la existente o crear una nueva
+      if (confirm("Ya tienes una solicitud activa hoy. ¿Quieres agregar herramientas a esa solicitud?\n\nPresiona 'Aceptar' para agregar, o 'Cancelar' para crear una nueva solicitud.")) {
+        abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
+        return;
+      }
+      // Si cancela, continúa con la creación de una nueva solicitud
+    }
   } catch (err) {
     console.error("Error al verificar matrícula:", err);
-    // Si falla la verificación, continuar igual
   }
 
   const herramientasElegidas = Object.entries(cantidadesSeleccionadas)
