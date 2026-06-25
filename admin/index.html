@@ -916,7 +916,7 @@
             <div>
               <div class="kpi-label">Pendientes hoy</div>
               <div class="kpi-numero" id="res-pendientes">—</div>
-              <div class="kpi-sub">sin entregar</div>
+              <div class="kpi-sub" id="kpi-sub-pendientes">sin entregar</div>
             </div>
           </div>
           <div class="kpi-card" data-vista="solicitudes">
@@ -1404,10 +1404,16 @@ async function cargarDashboard() {
     });
 
     // KPI solo de hoy
-    document.getElementById("res-pendientes").textContent  = deHoy.filter(s => s.estado === "pendiente").length;
+    const pendientesHoy = deHoy.filter(s => s.estado === "pendiente");
+    document.getElementById("res-pendientes").textContent  = pendientesHoy.length;
     document.getElementById("res-prestadas").textContent   = deHoy.filter(s => s.estado === "entregada").length;
     document.getElementById("res-hoy").textContent         = deHoy.filter(s => s.estado === "retornada").length;
-    document.getElementById("badge-pendientes").textContent = deHoy.filter(s => s.estado === "pendiente").length;
+    document.getElementById("badge-pendientes").textContent = pendientesHoy.length;
+    const nConAdic = pendientesHoy.filter(s => (s.herramientas || []).some(h => h.adicional)).length;
+    const kpiSubPend = document.getElementById("kpi-sub-pendientes");
+    if (kpiSubPend) kpiSubPend.innerHTML = nConAdic > 0
+      ? `sin entregar &nbsp;·&nbsp; <span style="color:var(--amarillo);font-weight:800">+adic: ${nConAdic}</span>`
+      : "sin entregar";
     const eInc = document.getElementById("dash-incidencias");
     if (eInc) eInc.textContent = todas.filter(s => s.tieneIncidencias).length;
 
