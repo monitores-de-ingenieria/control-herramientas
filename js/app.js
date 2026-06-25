@@ -148,18 +148,18 @@ function crearTarjetaHerramienta(h, cantidadKey, contadorPrefix = "") {
   const maxDisponible = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
   const card = document.createElement("div");
   card.className = "tarjeta-herramienta";
-  card.style.cssText = "background:var(--card2);border:1px solid var(--borde);border-radius:8px;padding:10px;text-align:center;color:var(--texto)";
+  card.style.cssText = "background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:10px;text-align:center;color:#e6edf3";
   card.innerHTML = `
     <div class="icono" style="font-size:26px;height:36px;display:flex;align-items:center;justify-content:center">
       <img src="${h.imagen}" alt="${h.nombre}" style="max-height:36px;max-width:100%;object-fit:contain"
            onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'icono-respaldo',textContent:'${h.icono || "🔧"}'}))">
     </div>
-    <div class="nombre" style="font-size:11px;font-weight:600;margin:4px 0;min-height:28px;line-height:1.2;color:var(--texto)">${h.nombre}</div>
-    <div class="disponible" style="font-size:10px;color:var(--texto-dim)">Disp. ${maxDisponible}</div>
+    <div class="nombre" style="font-size:11px;font-weight:600;margin:4px 0;min-height:28px;line-height:1.2;color:#e6edf3">${h.nombre}</div>
+    <div class="disponible" style="font-size:10px;color:#7d8590">Disp. ${maxDisponible}</div>
     <div class="contador" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px">
-      <button type="button" data-${contadorPrefix}codigo="${h.codigo}" data-${contadorPrefix}accion="restar" style="background:var(--bg);border:1px solid var(--borde);border-radius:4px;color:var(--texto);width:28px;height:28px;cursor:pointer;font-size:16px">−</button>
-      <span id="${contadorPrefix}cant-${h.codigo}" style="font-weight:700;font-size:16px;min-width:24px;color:var(--texto)">0</span>
-      <button type="button" data-${contadorPrefix}codigo="${h.codigo}" data-${contadorPrefix}accion="sumar" ${maxDisponible === 0 ? "disabled" : ""} style="background:var(--bg);border:1px solid var(--borde);border-radius:4px;color:var(--texto);width:28px;height:28px;cursor:pointer;font-size:16px">+</button>
+      <button type="button" data-${contadorPrefix}codigo="${h.codigo}" data-${contadorPrefix}accion="restar" style="background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#e6edf3;width:28px;height:28px;cursor:pointer;font-size:16px">−</button>
+      <span id="${contadorPrefix}cant-${h.codigo}" style="font-weight:700;font-size:16px;min-width:24px;color:#e6edf3">0</span>
+      <button type="button" data-${contadorPrefix}codigo="${h.codigo}" data-${contadorPrefix}accion="sumar" ${maxDisponible === 0 ? "disabled" : ""} style="background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#e6edf3;width:28px;height:28px;cursor:pointer;font-size:16px">+</button>
     </div>
   `;
   return card;
@@ -302,7 +302,7 @@ async function buscarSolicitudActivaHoy(matricula) {
   }
 }
 
-// ---- Modal de solicitud duplicada (con clases CSS) ----
+// ---- Modal de solicitud duplicada (con estilos inline fijos para tema oscuro) ----
 function abrirModalDuplicado(solicitud, herramientasDisp) {
   solicitudExistenteId = solicitud.id;
   solicitudExistente = solicitud;
@@ -310,7 +310,7 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
 
   // Lista de herramientas ya solicitadas (con badge si son adicionales)
   const listaActual = (solicitud.herramientas || [])
-    .map(h => `<li>${h.nombre} × ${h.cantidad}${h.adicional ? ' <span class="badge-adicional">(adicional)</span>' : ''}</li>`)
+    .map(h => `<li style="color:#e6edf3">${h.nombre} × ${h.cantidad}${h.adicional ? ' <span style="color:#f59e0b;font-size:0.75rem">(adicional)</span>' : ''}</li>`)
     .join("");
 
   // Generar grid de herramientas con la misma estructura que el formulario
@@ -319,37 +319,46 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     cantidadesModalExtra[h.codigo] = 0;
     const max = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
     gridHtml += `
-      <div class="tarjeta-herramienta">
-        <div class="icono">
-          <img src="${h.imagen}" alt="${h.nombre}"
+      <div class="tarjeta-herramienta" style="background:#1c2128;border:1px solid #30363d;border-radius:8px;padding:10px;text-align:center;color:#e6edf3">
+        <div class="icono" style="font-size:26px;height:36px;display:flex;align-items:center;justify-content:center">
+          <img src="${h.imagen}" alt="${h.nombre}" style="max-height:36px;max-width:100%;object-fit:contain"
                onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'icono-respaldo',textContent:'${h.icono || "🔧"}'}))">
         </div>
-        <div class="nombre">${h.nombre}</div>
-        <div class="disponible">Disp. ${max}</div>
-        <div class="contador">
-          <button type="button" data-mcodigo="${h.codigo}" data-maccion="restar">−</button>
-          <span id="mcant-${h.codigo}">0</span>
-          <button type="button" data-mcodigo="${h.codigo}" data-maccion="sumar" ${max === 0 ? "disabled" : ""}>+</button>
+        <div class="nombre" style="font-size:11px;font-weight:600;margin:4px 0;min-height:28px;line-height:1.2;color:#e6edf3">${h.nombre}</div>
+        <div class="disponible" style="font-size:10px;color:#7d8590">Disp. ${max}</div>
+        <div class="contador" style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:6px">
+          <button type="button" data-mcodigo="${h.codigo}" data-maccion="restar" style="background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#e6edf3;width:28px;height:28px;cursor:pointer;font-size:16px">−</button>
+          <span id="mcant-${h.codigo}" style="font-weight:700;font-size:16px;min-width:24px;color:#e6edf3">0</span>
+          <button type="button" data-mcodigo="${h.codigo}" data-maccion="sumar" ${max === 0 ? "disabled" : ""} style="background:#0d1117;border:1px solid #30363d;border-radius:4px;color:#e6edf3;width:28px;height:28px;cursor:pointer;font-size:16px">+</button>
         </div>
       </div>
     `;
   });
 
   const modal = document.createElement("div");
-  modal.className = "modal-adicional-overlay";
+  modal.style.cssText = `
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.92);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    z-index:99999;
+    padding:1rem;
+  `;
   modal.innerHTML = `
-    <div class="modal-adicional-contenedor">
-      <h2>⚠️ Ya tienes una solicitud activa hoy</h2>
-      <p class="subtitulo">Solicitud #${solicitud.numeroSolicitud || solicitud.id} · Estado: <span class="estado-solicitud">${solicitud.estado}</span></p>
-      <p class="subtitulo" style="margin-bottom:0.4rem;">Herramientas ya solicitadas:</p>
-      <ul class="lista-herramientas">${listaActual}</ul>
-      <p style="margin:0 0 0.6rem;font-size:0.9rem;color:#3fb950;">Agregar más herramientas a esta solicitud:</p>
-      <div class="grid-herramientas" id="modal-grid-herramientas">
+    <div style="background:#0d1117;border:1px solid #30363d;border-radius:12px;padding:1.5rem;max-width:520px;width:100%;max-height:90vh;overflow-y:auto;color:#e6edf3;box-shadow:0 20px 60px rgba(0,0,0,0.8)">
+      <h2 style="margin:0 0 0.5rem;color:#f59e0b;font-size:1.2rem">⚠️ Ya tienes una solicitud activa hoy</h2>
+      <p style="margin:0 0 1rem;color:#7d8590;font-size:0.9rem">Solicitud #${solicitud.numeroSolicitud || solicitud.id} · Estado: <span style="color:#3fb950;font-weight:700">${solicitud.estado}</span></p>
+      <p style="margin:0 0 0.4rem;font-size:0.85rem;color:#7d8590">Herramientas ya solicitadas:</p>
+      <ul style="margin:0 0 1rem;padding-left:1.2rem;color:#e6edf3;font-size:0.85rem">${listaActual}</ul>
+      <p style="margin:0 0 0.6rem;font-size:0.9rem;color:#3fb950">Agregar más herramientas a esta solicitud:</p>
+      <div id="modal-grid-herramientas" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:8px;margin-bottom:1rem">
         ${gridHtml}
       </div>
-      <div class="acciones-modal">
-        <button class="btn-modal-cancelar" id="btn-modal-cancelar">Cancelar</button>
-        <button class="btn-modal-agregar" id="btn-modal-agregar">+ Agregar herramientas</button>
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end;margin-top:12px">
+        <button id="btn-modal-cancelar" style="padding:0.6rem 1.2rem;border-radius:8px;border:1px solid #30363d;background:transparent;color:#e6edf3;cursor:pointer;font-weight:600">Cancelar</button>
+        <button id="btn-modal-agregar" style="padding:0.6rem 1.2rem;border-radius:8px;border:none;background:#3fb950;color:#000;font-weight:700;cursor:pointer">+ Agregar herramientas</button>
       </div>
     </div>
   `;
