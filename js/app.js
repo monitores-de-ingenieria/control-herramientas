@@ -36,6 +36,12 @@ const btnNuevaSolicitud = document.getElementById("btn-nueva-solicitud");
 const textoNumeroSol    = document.getElementById("texto-numero-solicitud");
 const textoDespedida    = document.getElementById("texto-despedida");
 
+// ---- Elementos para "Agregar adicional" ----
+const formularioCompleto = document.getElementById("formulario-completo");
+const seccionAdicional   = document.getElementById("seccion-adicional");
+const matriculaAdicional = document.getElementById("matricula-adicional");
+const btnBuscarAdicional = document.getElementById("btn-buscar-adicional");
+
 // ---- Cámara ----
 const btnCamara       = document.getElementById("btn-camara");
 const inputCamara     = document.getElementById("input-camara");
@@ -228,14 +234,14 @@ async function buscarSolicitudActivaHoy(matricula) {
   }
 }
 
-// ---- Modal de solicitud duplicada ----
+// ---- Modal de solicitud duplicada con colores corregidos ----
 function abrirModalDuplicado(solicitud, herramientasDisp) {
   solicitudExistenteId = solicitud.id;
   solicitudExistente   = solicitud;
   cantidadesModalExtra = {};
 
   const listaActual = (solicitud.herramientas || [])
-    .map(h => `<li style="color:#fff;">${h.nombre} × ${h.cantidad}</li>`)
+    .map(h => `<li style="color:#e0e0e0;">${h.nombre} × ${h.cantidad}</li>`)
     .join("");
 
   let gridHtml = "";
@@ -243,13 +249,13 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     cantidadesModalExtra[h.codigo] = 0;
     const max = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
     gridHtml += `
-      <div class="tarjeta-herramienta" style="font-size:0.85rem; color:#fff; background:rgba(255,255,255,0.05); border-radius:6px; padding:4px;">
-        <div class="nombre" style="font-size:0.8rem; color:#fff;">${h.nombre}</div>
+      <div class="tarjeta-herramienta" style="font-size:0.85rem;background:#2a2a3e;border-radius:8px;padding:0.5rem;margin-bottom:0.5rem;color:#e0e0e0;">
+        <div class="nombre" style="font-size:0.8rem;color:#e0e0e0;">${h.nombre}</div>
         <div class="disponible" style="color:#aaa;">Disp. ${max}</div>
-        <div class="contador">
-          <button type="button" data-mcodigo="${h.codigo}" data-maccion="restar" style="background:#333; color:#fff; border:1px solid #555; border-radius:4px; padding:0 8px;">−</button>
-          <span id="mcant-${h.codigo}" style="color:#fff;">0</span>
-          <button type="button" data-mcodigo="${h.codigo}" data-maccion="sumar" style="background:#333; color:#fff; border:1px solid #555; border-radius:4px; padding:0 8px;" ${max === 0 ? "disabled" : ""}>+</button>
+        <div class="contador" style="display:flex;align-items:center;gap:0.5rem;margin-top:0.3rem;">
+          <button type="button" data-mcodigo="${h.codigo}" data-maccion="restar" style="background:#444;color:#fff;border:none;border-radius:4px;padding:0.2rem 0.6rem;cursor:pointer;">−</button>
+          <span id="mcant-${h.codigo}" style="color:#fff;font-weight:bold;">0</span>
+          <button type="button" data-mcodigo="${h.codigo}" data-maccion="sumar" ${max === 0 ? "disabled" : ""} style="background:#444;color:#fff;border:none;border-radius:4px;padding:0.2rem 0.6rem;cursor:pointer;">+</button>
         </div>
       </div>
     `;
@@ -263,18 +269,18 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     z-index:9999;padding:1rem;
   `;
   modal.innerHTML = `
-    <div style="background:#1a1a2e;border-radius:12px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;color:#fff">
-      <h2 style="margin:0 0 0.5rem;color:#f59e0b">⚠️ Ya tienes una solicitud activa hoy</h2>
-      <p style="margin:0 0 1rem;color:#ccc;font-size:0.9rem">Solicitud #${solicitud.numeroSolicitud || solicitud.id}</p>
-      <p style="margin:0 0 0.4rem;font-size:0.85rem;color:#aaa">Herramientas ya solicitadas:</p>
-      <ul style="margin:0 0 1rem;padding-left:1.2rem;color:#fff;font-size:0.85rem">${listaActual}</ul>
-      <p style="margin:0 0 0.6rem;font-size:0.9rem;color:#4ade80">Agregar más herramientas a esta solicitud:</p>
-      <div id="modal-grid-herramientas" class="grid-herramientas" style="margin-bottom:1rem">
+    <div style="background:#1a1a2e;border-radius:12px;padding:1.5rem;max-width:480px;width:100%;max-height:90vh;overflow-y:auto;color:#fff;">
+      <h2 style="margin:0 0 0.5rem;color:#f59e0b;">⚠️ Ya tienes una solicitud activa hoy</h2>
+      <p style="margin:0 0 1rem;color:#ccc;font-size:0.9rem;">Solicitud #${solicitud.numeroSolicitud || solicitud.id}</p>
+      <p style="margin:0 0 0.4rem;font-size:0.85rem;color:#aaa;">Herramientas ya solicitadas:</p>
+      <ul style="margin:0 0 1rem;padding-left:1.2rem;color:#e0e0e0;font-size:0.85rem;">${listaActual}</ul>
+      <p style="margin:0 0 0.6rem;font-size:0.9rem;color:#4ade80;">Agregar más herramientas a esta solicitud:</p>
+      <div id="modal-grid-herramientas" style="margin-bottom:1rem;">
         ${gridHtml}
       </div>
-      <div style="display:flex;gap:0.75rem;justify-content:flex-end">
-        <button id="btn-modal-cancelar" style="padding:0.6rem 1.2rem;border-radius:8px;border:1px solid #555;background:transparent;color:#ccc;cursor:pointer">Cancelar</button>
-        <button id="btn-modal-agregar" style="padding:0.6rem 1.2rem;border-radius:8px;border:none;background:#4ade80;color:#000;font-weight:700;cursor:pointer">+ Agregar herramientas</button>
+      <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+        <button id="btn-modal-cancelar" style="padding:0.6rem 1.2rem;border-radius:8px;border:1px solid #555;background:transparent;color:#ccc;cursor:pointer;">Cancelar</button>
+        <button id="btn-modal-agregar" style="padding:0.6rem 1.2rem;border-radius:8px;border:none;background:#4ade80;color:#000;font-weight:700;cursor:pointer;">+ Agregar herramientas</button>
       </div>
     </div>
   `;
@@ -359,56 +365,63 @@ async function generarNumeroSolicitud() {
   }
 }
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+// ---- Evento para mostrar/ocultar según selección ----
+selectTipo.addEventListener("change", () => {
+  if (selectTipo.value === "adicional") {
+    formularioCompleto.style.display = "none";
+    seccionAdicional.style.display = "block";
+  } else {
+    formularioCompleto.style.display = "block";
+    seccionAdicional.style.display = "none";
+  }
+});
 
-  const tipo = selectTipo.value;
-  const matricula = document.getElementById("matricula").value.trim();
-
-  // Si es "adicional", solo validamos matrícula y buscamos
-  if (tipo === "adicional") {
-    // Validar formato de matrícula
-    const regexMatricula = /^\d-\d{2}-\d{4}$/;
-    if (!regexMatricula.test(matricula)) {
-      mostrarError("La matrícula debe tener el formato 0-00-0000 (ej. 1-19-0117).");
-      document.getElementById("matricula").classList.add("error-campo");
-      return;
-    }
-    document.getElementById("matricula").classList.remove("error-campo");
-
-    btnEnviar.disabled = true;
-    btnEnviar.textContent = "Buscando...";
-
-    try {
-      const solicitudActiva = await buscarSolicitudActivaHoy(matricula);
-      if (solicitudActiva) {
-        btnEnviar.disabled = false;
-        btnEnviar.textContent = "Enviar Solicitud";
-        abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
-        return;
-      } else {
-        btnEnviar.disabled = false;
-        btnEnviar.textContent = "Enviar Solicitud";
-        mostrarError("No tienes una solicitud activa hoy. Selecciona 'Solicitando herramientas' para crear una nueva.");
-        return;
-      }
-    } catch (err) {
-      console.error(err);
-      btnEnviar.disabled = false;
-      btnEnviar.textContent = "Enviar Solicitud";
-      mostrarError("Error al verificar la matrícula. Intenta de nuevo.");
-      return;
-    }
+// ---- Evento para buscar matrícula adicional ----
+btnBuscarAdicional.addEventListener("click", async () => {
+  const matricula = matriculaAdicional.value.trim();
+  if (!matricula) {
+    mostrarError("Ingresa una matrícula válida.");
+    return;
+  }
+  // Validar formato
+  const regexMatricula = /^\d-\d{2}-\d{4}$/;
+  if (!regexMatricula.test(matricula)) {
+    mostrarError("La matrícula debe tener el formato 0-00-0000 (ej. 1-19-0117).");
+    return;
   }
 
-  // Si es "solicitando", validamos todo el formulario
+  btnBuscarAdicional.disabled = true;
+  btnBuscarAdicional.textContent = "Buscando...";
+
+  try {
+    const solicitudActiva = await buscarSolicitudActivaHoy(matricula);
+    if (solicitudActiva) {
+      abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
+    } else {
+      mostrarError("No tienes una solicitud activa hoy. Selecciona 'Solicitando herramientas' para crear una nueva.");
+    }
+  } catch (err) {
+    console.error(err);
+    mostrarError("Error al buscar la solicitud. Intenta de nuevo.");
+  } finally {
+    btnBuscarAdicional.disabled = false;
+    btnBuscarAdicional.textContent = "Buscar solicitud activa";
+  }
+});
+
+// ---- Submit del formulario principal ----
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
   if (!validarFormulario()) return;
 
   btnEnviar.disabled = true;
   btnEnviar.textContent = "Verificando...";
 
+  const matricula = document.getElementById("matricula").value.trim();
+
   try {
     const solicitudActiva = await buscarSolicitudActivaHoy(matricula);
+
     if (solicitudActiva) {
       btnEnviar.disabled = false;
       btnEnviar.textContent = "Enviar Solicitud";
@@ -416,7 +429,7 @@ form.addEventListener("submit", async (e) => {
         abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
         return;
       }
-      // Si cancela, continúa creando nueva
+      // Si cancela, continúa con la creación de una nueva solicitud
     }
   } catch (err) {
     console.error("Error al verificar matrícula:", err);
@@ -476,6 +489,10 @@ btnNuevaSolicitud.addEventListener("click", () => {
   fotoPreview.src = "";
   inputCamara.value = "";
   fotoPreviewWrap.classList.add("oculto");
+  // Restaurar vista del formulario
+  formularioCompleto.style.display = "block";
+  seccionAdicional.style.display = "none";
+  selectTipo.value = "solicitando";
   mostrarPantalla(pantallasBienvenida);
 });
 
