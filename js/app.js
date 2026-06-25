@@ -194,28 +194,34 @@ function validarFormulario() {
   return true;
 }
 
-// ---- Verificar matrícula duplicada hoy ----
+// ---- Verificar matrícula duplicada hoy (CORREGIDO con timestamps) ----
 async function buscarSolicitudActivaHoy(matricula) {
   const hoy = new Date();
-  const fechaHoy = `${hoy.getDate()}/${hoy.getMonth() + 1}/${hoy.getFullYear()}`;
+  const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
+  const fin = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
 
-  const snap = await getDocs(
-    query(
-      collection(db, "solicitudes"),
-      where("matricula", "==", matricula),
-      where("fecha", "==", fechaHoy)
-    )
-  );
+  try {
+    const snap = await getDocs(
+      query(
+        collection(db, "solicitudes"),
+        where("matricula", "==", matricula),
+        where("creadoEn", ">=", inicio),
+        where("creadoEn", "<", fin),
+        where("estado", "in", ["pendiente", "entregada"])
+      )
+    );
 
-  if (snap.empty) return null;
-  let found = null;
-  snap.forEach(d => {
-    const datos = d.data();
-    if (datos.estado === "pendiente" || datos.estado === "entregada") {
-      found = { id: d.id, ...datos };
-    }
-  });
-  return found;
+    if (snap.empty) return null;
+    let found = null;
+    snap.forEach(d => {
+      found = { id: d.id, ...d.data() };
+    });
+    return found;
+  } catch (err) {
+    console.error("Error en buscarSolicitudActivaHoy:", err);
+    // Si falla la consulta (por ejemplo, falta índice), se devuelve null para no bloquear
+    return null;
+  }
 }
 
 // ---- Modal de solicitud duplicada ----
@@ -394,7 +400,7 @@ form.addEventListener("submit", async (e) => {
     laboratorio:  document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
     estado:       "pendiente",
-    fecha:        (() => { const h = new Date(); return `${h.getDate()}/${h.getMonth()+1}/${h.getFullYear()}`; })(),
+    // Ya no guardamos 'fecha' como cadena, usamos creadoEn como timestamp
     creadoEn:     serverTimestamp()
   };
 
