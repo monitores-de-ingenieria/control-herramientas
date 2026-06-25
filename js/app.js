@@ -70,13 +70,12 @@ function toggleSecciones() {
   const esAdicional = selectTipo.value === "adicional";
   formularioCompleto.style.display = esAdicional ? "none" : "block";
   seccionAdicional.style.display = esAdicional ? "block" : "none";
-  // Quitar required de campos ocultos
   document.querySelectorAll("#formulario-completo input, #formulario-completo select")
     .forEach(el => el.required = !esAdicional);
 }
 
 selectTipo.addEventListener("change", toggleSecciones);
-setTimeout(toggleSecciones, 50); // forzar al cargar
+setTimeout(toggleSecciones, 50);
 
 // ---- Buscar solicitud activa para agregar herramientas ----
 btnBuscarAdicional.addEventListener("click", async () => {
@@ -217,7 +216,6 @@ function validarFormulario() {
       inputMatriculaAdicional.focus();
       return false;
     }
-    // Para "adicional" solo se necesita matrícula, la búsqueda ya se hizo con el botón
     return true;
   }
 
@@ -296,7 +294,7 @@ async function buscarSolicitudActivaHoy(matricula) {
   }
 }
 
-// ---- Modal de solicitud duplicada (con estilos del formulario) ----
+// ---- MODAL DUPLICADO CORREGIDO ----
 function abrirModalDuplicado(solicitud, herramientasDisp) {
   solicitudExistenteId = solicitud.id;
   solicitudExistente = solicitud;
@@ -349,6 +347,7 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
 
   document.body.appendChild(modal);
 
+  // Evento para los contadores del modal
   document.getElementById("modal-grid-herramientas").addEventListener("click", (e) => {
     const btn = e.target.closest("button[data-mcodigo]");
     if (!btn) return;
@@ -366,11 +365,13 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
     document.getElementById(`mcant-${codigo}`).textContent = cant;
   });
 
+  // Cancelar
   document.getElementById("btn-modal-cancelar").addEventListener("click", () => {
     modal.remove();
   });
 
-  document.getElementById("btn-modal-agregar").addEventListener("click", async () => {
+  // ---- BOTÓN AGREGAR HERRAMIENTAS (CORREGIDO) ----
+  document.getElementById("btn-modal-agregar").addEventListener("click", async function() {
     const nuevas = Object.entries(cantidadesModalExtra)
       .filter(([_, c]) => c > 0)
       .map(([codigo, cantidad]) => {
@@ -383,12 +384,25 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
       return;
     }
 
-    const btnAgregar = document.getElementById("btn-modal-agregar");
+    const btnAgregar = this;
     btnAgregar.disabled = true;
     btnAgregar.textContent = "Guardando...";
 
     try {
-      const existentes = solicitudExistente.herramientas || [];
+      // Obtener la solicitud actualizada desde Firestore para evitar conflictos
+      const snap = await getDocs(query(
+        collection(db, "solicitudes"),
+        where("__name__", "==", solicitudExistenteId)
+      ));
+      let datosActuales = null;
+      snap.forEach(d => { datosActuales = d.data(); });
+
+      if (!datosActuales) {
+        throw new Error("No se encontró la solicitud en Firestore.");
+      }
+
+      // Combinar herramientas existentes con las nuevas
+      const existentes = datosActuales.herramientas || [];
       const mapa = {};
       existentes.forEach(h => { mapa[h.codigo] = { ...h }; });
       nuevas.forEach(h => {
@@ -399,16 +413,18 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
         }
       });
 
+      // Actualizar en Firestore
       await updateDoc(doc(db, "solicitudes", solicitudExistenteId), {
         herramientas: Object.values(mapa)
       });
 
+      // Cerrar modal y mostrar confirmación
       modal.remove();
       textoNumeroSol.textContent = `Solicitud #${solicitudExistente.numeroSolicitud || solicitudExistenteId}`;
       textoDespedida.textContent = `Se agregaron ${nuevas.length} herramienta(s) a tu solicitud activa.`;
       mostrarPantalla(pantallaFinal);
     } catch (err) {
-      console.error(err);
+      console.error("Error al agregar herramientas:", err);
       mostrarError("No se pudo actualizar la solicitud. Revisa tu conexión.");
       btnAgregar.disabled = false;
       btnAgregar.textContent = "+ Agregar herramientas";
@@ -434,9 +450,6 @@ form.addEventListener("submit", async (e) => {
   btnEnviar.disabled = true;
   btnEnviar.textContent = "Verificando...";
 
-  // Si es "adicional", ya se validó la matrícula y se buscó la solicitud con el botón.
-  // El botón "Buscar" ya abrió el modal, así que no debería llegar aquí en ese caso.
-  // Pero por si acaso, manejamos:
   if (selectTipo.value === "adicional") {
     btnEnviar.disabled = false;
     btnEnviar.textContent = "Enviar Solicitud";
@@ -460,7 +473,6 @@ form.addEventListener("submit", async (e) => {
     console.error("Error al verificar matrícula:", err);
   }
 
-  // Si no hay duplicado o el usuario cancela, crear nueva solicitud
   const herramientasElegidas = Object.entries(cantidadesSeleccionadas)
     .filter(([_, c]) => c > 0)
     .map(([codigo, cantidad]) => {
