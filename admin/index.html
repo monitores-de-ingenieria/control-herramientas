@@ -883,9 +883,7 @@
 
       <div class="nav-item activo" data-vista="solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
       <div class="nav-item" data-vista="prestamos-prof"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span></div>
-      <div class="nav-item" data-vista="material-gastable"><span class="nav-icono">📦</span><span class="nav-texto">Material Gastable</span></div>
       <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span></div>
-      <div class="nav-item" data-vista="devoluciones"><span class="nav-icono">✅</span><span class="nav-texto">Devoluciones</span></div>
       <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span></div>
 
       <div class="nav-grupo">Inventario</div>
@@ -1088,19 +1086,36 @@
         </div>
       </div>
 
-      <div class="vista" id="vista-material-gastable">
-        <div class="pagina-titulo"><h2>Material Gastable</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
-
       <div class="vista" id="vista-prestadas">
-        <div class="pagina-titulo"><h2>Herramientas Prestadas</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
+        <div class="pagina-titulo">
+          <h2>Herramientas Prestadas</h2>
+          <p>Herramientas que salen del taller hacia otros departamentos</p>
+        </div>
 
-      <div class="vista" id="vista-devoluciones">
-        <div class="pagina-titulo"><h2>Devoluciones</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
+        <!-- Botón nuevo préstamo externo -->
+        <div style="margin-bottom:16px">
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()" style="padding:10px 20px;font-size:14px">
+            ➕ Registrar salida a otro departamento
+          </button>
+        </div>
+
+        <!-- Tabla préstamos externos -->
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Historial de herramientas prestadas</h3>
+            <div class="filtros">
+              <input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px">
+              <select id="ext-filtro-estado">
+                <option value="">Todos los estados</option>
+                <option value="prestado">Prestado</option>
+                <option value="devuelto">Devuelto</option>
+              </select>
+            </div>
+          </div>
+          <div id="ext-tabla-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando préstamos...</div>
+          </div>
+        </div>
       </div>
 
       <div class="vista" id="vista-inv-herramientas">
@@ -1243,6 +1258,67 @@
     </div>
     <div id="modal-contenido"></div>
     <div class="modal-acciones" id="modal-acciones"></div>
+  </div>
+</div>
+
+<!-- ── MODAL: NUEVO PRÉSTAMO EXTERNO ── -->
+<div class="modal-overlay" id="modal-nuevo-ext">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-titulo">
+      ➕ Registrar salida a otro departamento
+      <button class="modal-cerrar" onclick="cerrarModalNuevoExt()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Departamento</label>
+      <input type="text" id="ext-departamento" placeholder="Ej. Mantenimiento, Administración..."
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Responsable que retira</label>
+      <input type="text" id="ext-responsable" placeholder="Nombre del responsable"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Herramientas que salen</label>
+      <div id="ext-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
+      </div>
+      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta</button>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
+      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()">✅ Registrar salida</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: RETORNO EXTERNO ── -->
+<div class="modal-overlay" id="modal-retorno-ext">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-titulo">
+      ↩ Retorno — <span id="ext-retorno-nombre"></span>
+      <button class="modal-cerrar" onclick="cerrarModalRetornoExt()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--texto-dim);margin-bottom:14px">Marca el estado de cada herramienta al momento de la devolución.</p>
+    <div id="ext-retorno-lista"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
+      <button class="btn btn-verde" onclick="confirmarRetornoExt()">✅ Confirmar retorno</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL: CONDUCE ── -->
+<div class="modal-overlay" id="modal-conduce">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-titulo">
+      📄 Conduce de Salida
+      <button class="modal-cerrar" onclick="cerrarModalConduce()">✕</button>
+    </div>
+    <div id="conduce-contenido"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalConduce()">Cerrar</button>
+      <button class="btn btn-verde" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
   </div>
 </div>
 
@@ -1422,6 +1498,7 @@ onAuthStateChanged(auth, user => {
     cargarDashboard();
     cargarSolicitudes();
     cargarPrestamosProf();
+    cargarPrestamosExternos();
     cargarHerramientasCfg();
     cargarProfesoresCfg();
   } else {
@@ -2209,6 +2286,8 @@ window.anular = async function(id) {
 
 let todosPrestamosProf = [];
 let ppActivoId = null;
+let todosPrestamosExt = [];
+let extActivoId = null;
 
 // Listas para los selects (reutiliza las mismas colecciones de Firestore)
 const PROFESORES_PP = [
@@ -2506,6 +2585,286 @@ document.getElementById("modal-nuevo-pp").addEventListener("click", e => {
 document.getElementById("modal-retorno-pp").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-retorno-pp")) cerrarModalRetornoProf();
 });
+
+// ══════════════════════════════════════════════
+// ── HERRAMIENTAS PRESTADAS (OTROS DEPARTAMENTOS) ──
+// ══════════════════════════════════════════════
+
+async function cargarPrestamosExternos() {
+  try {
+    onSnapshot(query(collection(db, "prestamos_externos"), orderBy("creadoEn", "desc")), snap => {
+      todosPrestamosExt = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      extRenderTabla();
+    });
+  } catch(e) {
+    document.getElementById("ext-tabla-wrap").innerHTML =
+      '<div class="cargando">Error al cargar. Verifica la conexión.</div>';
+  }
+}
+
+function extFiltrados() {
+  const buscar = (document.getElementById("ext-buscar")?.value || "").toLowerCase();
+  const estado = document.getElementById("ext-filtro-estado")?.value || "";
+  return todosPrestamosExt.filter(p => {
+    const matchBuscar = !buscar || (p.departamento || "").toLowerCase().includes(buscar);
+    const matchEstado = !estado || p.estado === estado;
+    return matchBuscar && matchEstado;
+  });
+}
+
+function extRenderTabla() {
+  const lista = extFiltrados();
+  const wrap  = document.getElementById("ext-tabla-wrap");
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="padding:40px;text-align:center;color:var(--texto-dim)">📭 No hay herramientas prestadas a otros departamentos.</div>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Departamento</th>
+          <th>Responsable</th>
+          <th>Herramientas</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lista.map(p => {
+          const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+          const color = colorEstudiante(p.departamento || "");
+          const ini   = (p.departamento || "D")[0].toUpperCase();
+          const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+          const badgeEstado = p.estado === "prestado"
+            ? '<span class="badge badge-entregada">Prestado</span>'
+            : p.tieneIncidencias
+              ? '<span class="badge badge-cancelada">Con incidencias</span>'
+              : '<span class="badge badge-retornada">Devuelto</span>';
+          const acciones = p.estado === "prestado"
+            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`;
+          return `
+            <tr>
+              <td>
+                <div class="est-avatar">
+                  <div class="est-circulo" style="background:${color};color:#fff">${ini}</div>
+                  <div class="est-nombre">${p.departamento || "—"}</div>
+                </div>
+              </td>
+              <td style="font-size:13px">${p.responsable || "—"}</td>
+              <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
+              <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+              <td>${badgeEstado}</td>
+              <td><div style="display:flex;gap:6px;flex-wrap:wrap">${acciones}</div></td>
+            </tr>`;
+        }).join("")}
+      </tbody>
+    </table>`;
+}
+
+// Filtros en tiempo real
+["ext-buscar","ext-filtro-estado"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input",  extRenderTabla);
+  document.getElementById(id)?.addEventListener("change", extRenderTabla);
+});
+
+window.abrirModalNuevoPrestamoExt = function() {
+  document.getElementById("ext-departamento").value = "";
+  document.getElementById("ext-responsable").value = "";
+  document.getElementById("ext-lista-herramientas").innerHTML = "";
+  extAgregarFila();
+  document.getElementById("modal-nuevo-ext").classList.add("abierto");
+};
+
+window.cerrarModalNuevoExt = function() {
+  document.getElementById("modal-nuevo-ext").classList.remove("abierto");
+};
+
+window.extAgregarFila = function() {
+  const contenedor = document.getElementById("ext-lista-herramientas");
+  const div = document.createElement("div");
+  div.dataset.filaHerramienta = "1";
+  div.style.cssText = "display:flex;gap:8px;align-items:center;margin-bottom:8px;position:relative";
+  div.innerHTML = `
+    <div style="flex:1;position:relative">
+      <input type="text" placeholder="Herramienta..." autocomplete="off"
+        style="width:100%;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px"
+        oninput="extFiltrarDropdown(this)" onfocus="extFiltrarDropdown(this)" onblur="setTimeout(()=>this.parentNode.querySelector('.ext-drop').style.display='none',150)">
+      <div class="ext-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card2);border:1px solid var(--borde);border-radius:7px;z-index:200;max-height:220px;min-height:110px;overflow-y:auto;margin-top:4px;box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
+    </div>
+    <input type="number" min="1" value="1" placeholder="Cant."
+      style="width:70px;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px">
+    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px">✕</button>`;
+  contenedor.appendChild(div);
+};
+
+window.extFiltrarDropdown = function(input) {
+  const q    = input.value.toLowerCase();
+  const drop = input.parentNode.querySelector(".ext-drop");
+  const hits = HERRAMIENTAS_LISTA.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
+  if (!hits.length || !q) { drop.style.display = "none"; return; }
+  drop.innerHTML = hits.map(h =>
+    `<div onmousedown="event.preventDefault();extSeleccionarHerramienta(this,'${h.nombre}')"
+      style="padding:8px 12px;cursor:pointer;font-size:13px"
+      onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${h.nombre}</div>`
+  ).join("");
+  drop.style.display = "block";
+};
+
+window.extSeleccionarHerramienta = function(item, nombre) {
+  const drop  = item.parentNode;
+  const input = drop.previousElementSibling;
+  input.value = nombre;
+  drop.style.display = "none";
+  input.blur();
+};
+
+window.confirmarNuevoPrestamoExt = async function() {
+  const departamento = document.getElementById("ext-departamento").value.trim();
+  const responsable  = document.getElementById("ext-responsable").value.trim();
+  if (!departamento) { mostrarToast("Escribe el departamento", "rojo"); return; }
+  if (!responsable)  { mostrarToast("Escribe el responsable", "rojo"); return; }
+
+  const filas = document.getElementById("ext-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
+  const herramientas = [];
+  for (const fila of filas) {
+    const inputs = fila.querySelectorAll("input");
+    const nombre   = inputs[0].value.trim();
+    const cantidad = parseInt(inputs[1].value) || 1;
+    if (nombre) herramientas.push({ nombre, cantidad });
+  }
+  if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
+
+  const btn = document.getElementById("ext-btn-confirmar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    await addDoc(collection(db, "prestamos_externos"), {
+      departamento, responsable, herramientas,
+      estado: "prestado",
+      tieneIncidencias: false,
+      creadoEn: serverTimestamp()
+    });
+    mostrarToast("✅ Salida registrada correctamente");
+    cerrarModalNuevoExt();
+  } catch(e) {
+    mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
+  } finally {
+    btn.disabled = false; btn.textContent = "✅ Registrar salida";
+  }
+};
+
+// ── MODAL RETORNO EXTERNO ──
+window.abrirRetornoExt = function(id) {
+  extActivoId = id;
+  const p = todosPrestamosExt.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById("ext-retorno-nombre").textContent = p.departamento;
+  const lista = document.getElementById("ext-retorno-lista");
+  lista.innerHTML = (p.herramientas || []).map((h, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)">
+      <span style="font-size:13px;font-weight:600">${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
+      <select id="ext-estado-r-${i}"
+        style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
+        <option value="retornada">✅ Retornada</option>
+        <option value="danada">⚠️ Dañada</option>
+        <option value="perdida">❌ Perdida</option>
+      </select>
+    </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
+  document.getElementById("modal-retorno-ext").classList.add("abierto");
+};
+
+window.cerrarModalRetornoExt = function() {
+  document.getElementById("modal-retorno-ext").classList.remove("abierto");
+  extActivoId = null;
+};
+
+window.confirmarRetornoExt = async function() {
+  if (!extActivoId) return;
+  const p = todosPrestamosExt.find(x => x.id === extActivoId);
+  if (!p) return;
+
+  const herramientas = p.herramientas || [];
+  const resultado    = [];
+  const incidencias  = [];
+
+  herramientas.forEach((h, i) => {
+    const estado = document.getElementById(`ext-estado-r-${i}`)?.value || "retornada";
+    resultado.push({ ...h, estadoRetorno: estado });
+    if (estado !== "retornada") incidencias.push({ herramienta: h.nombre, tipo: estado });
+  });
+
+  try {
+    await updateDoc(doc(db, "prestamos_externos", extActivoId), {
+      estado: "devuelto",
+      tieneIncidencias: incidencias.length > 0,
+      retornadoEn: serverTimestamp(),
+      herramientasRetorno: resultado
+    });
+
+    for (const inc of incidencias) {
+      await addDoc(collection(db, "incidencias"), {
+        tipo_prestamo: "externo",
+        nombre: p.departamento,
+        herramienta: inc.herramienta,
+        tipoIncidencia: inc.tipo,
+        prestamoId: extActivoId,
+        fecha: new Date().toLocaleDateString("es-DO"),
+        creadoEn: serverTimestamp()
+      });
+    }
+
+    cerrarModalRetornoExt();
+    if (incidencias.length > 0) {
+      mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
+    } else {
+      mostrarToast("↩ Retorno registrado correctamente");
+    }
+  } catch(e) {
+    mostrarToast("Error al registrar retorno", "rojo");
+  }
+};
+
+// ── CONDUCE DE SALIDA ──
+window.generarConduce = function(id) {
+  const p = todosPrestamosExt.find(x => x.id === id);
+  if (!p) return;
+  const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+  const herramientasHtml = (p.herramientas || []).map(h =>
+    `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="font-weight:700">×${h.cantidad}</span></div>`
+  ).join("") || "—";
+  document.getElementById("conduce-contenido").innerHTML = `
+    <div class="modal-campo"><label>Número de conduce</label><div class="valor">${p.id.slice(0,8).toUpperCase()}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="modal-campo"><label>Departamento</label><div class="valor">${p.departamento || "—"}</div></div>
+      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${p.responsable || "—"}</div></div>
+    </div>
+    <div class="modal-campo"><label>Fecha de salida</label><div class="valor">${fecha}</div></div>
+    <div class="modal-campo">
+      <label>Herramientas entregadas</label>
+      <div class="modal-herramientas">${herramientasHtml}</div>
+    </div>
+    <div class="modal-campo"><label>Estado actual</label><span class="badge badge-${p.estado === "prestado" ? "entregada" : "retornada"}">${p.estado === "prestado" ? "Prestado" : "Devuelto"}</span></div>
+  `;
+  document.getElementById("modal-conduce").classList.add("abierto");
+};
+
+window.cerrarModalConduce = function() {
+  document.getElementById("modal-conduce").classList.remove("abierto");
+};
+
+// Cerrar modales al hacer clic fuera
+document.getElementById("modal-nuevo-ext").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-nuevo-ext")) cerrarModalNuevoExt();
+});
+document.getElementById("modal-retorno-ext").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-retorno-ext")) cerrarModalRetornoExt();
+});
+document.getElementById("modal-conduce").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-conduce")) cerrarModalConduce();
+});
+
 
 // ══════════════════════════════════════════════
 // ── HERRAMIENTAS — CONFIGURACIÓN ──
