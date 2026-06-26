@@ -2466,9 +2466,10 @@ function renderHerramientasCfg(lista) {
         const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
         const codigo = h.codigo || '';
         const fotoSrc = codigo ? 'img/herramientas/' + codigo + '.jpg' : '';
+        const icono = h.icono || '🔧';
         const foto = fotoSrc
-          ? '<img src="' + fotoSrc + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="this.outerHTML='<div style=&quot;width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px&quot;>' + (h.icono || '🔧') + '</div>'">'
-          : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + (h.icono || '🔧') + '</div>';
+          ? '<img src="' + fotoSrc + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
+          : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + icono + '</div>';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
           + '<td>' + foto + '</td>'
@@ -2502,12 +2503,19 @@ window.cerrarModalHerramienta = function() {
   herCfgEditar = null;
 };
 
+window.herFotoError = function(img) {
+  const div = document.createElement("div");
+  div.style.cssText = "width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px";
+  div.textContent = "🔧";
+  img.parentNode.replaceChild(div, img);
+};
+
 window.previsualizarFotoHer = function() {
   const codigo = document.getElementById("her-input-codigo")?.value.trim();
   const preview = document.getElementById("her-foto-preview");
   if (!preview) return;
   if (codigo) {
-    preview.innerHTML = '<img src="img/herramientas/' + codigo + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.textContent='🔧'">';
+    preview.innerHTML = '<img src="img/herramientas/' + codigo + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="herFotoError(this)">';
   } else {
     preview.textContent = '🔧';
   }
