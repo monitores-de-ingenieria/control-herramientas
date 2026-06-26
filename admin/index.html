@@ -1058,25 +1058,6 @@
           <p>Registro directo de herramientas entregadas a profesores</p>
         </div>
 
-        <!-- Resumen rápido -->
-        <div class="grid-resumen" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:20px">
-          <div class="tarjeta-resumen">
-            <div class="icono-res">👨‍🏫</div>
-            <div class="numero" id="pp-total">0</div>
-            <div class="etiqueta">Total préstamos</div>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">📦</div>
-            <div class="numero" id="pp-activos">0</div>
-            <div class="etiqueta">Activos</div>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">✅</div>
-            <div class="numero" id="pp-retornados">0</div>
-            <div class="etiqueta">Retornados</div>
-          </div>
-        </div>
-
         <!-- Botón nuevo préstamo -->
         <div style="margin-bottom:16px">
           <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:14px">
@@ -1253,7 +1234,7 @@
 <div class="modal-overlay" id="modal-solicitud">
   <div class="modal">
     <div class="modal-titulo">
-      Detalle de Solicitud
+      <span id="modal-titulo-texto">Detalle de Solicitud</span>
       <button class="modal-cerrar" id="modal-cerrar">✕</button>
     </div>
     <div id="modal-contenido"></div>
@@ -1477,7 +1458,7 @@ window.verIncidencias = function() {
             ${lista.map(p => {
               const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
               const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
-              return `<tr>
+              return `<tr style="cursor:pointer" onclick="verDetalleIncidenciaProf('${p.id}')">
                 <td>${p.profesor || "—"}</td>
                 <td style="font-size:13px">${p.laboratorio || "—"}</td>
                 <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
@@ -1822,6 +1803,7 @@ function renderTabla() {
 window.abrirModal = function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
+  document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herramientas = (s.herramientas || []).map(h =>
     `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
@@ -1842,7 +1824,34 @@ window.abrirModal = function(id) {
       <label>Herramientas solicitadas</label>
       <div class="modal-herramientas">${herramientas || "—"}</div>
     </div>
+    ${s.tieneIncidencias ? `
+    <div class="modal-campo">
+      <label>⚠️ Incidencias registradas</label>
+      <div class="modal-herramientas" id="modal-incidencias-est"><div class="cargando"><div class="spinner"></div>Cargando incidencias...</div></div>
+    </div>` : ""}
   `;
+
+  if (s.tieneIncidencias) {
+    (async () => {
+      const cont = document.getElementById("modal-incidencias-est");
+      try {
+        const snap = await getDocs(query(
+          collection(db, "incidencias"),
+          where("solicitudId", "==", s.id)
+        ));
+        if (!snap.empty) {
+          cont.innerHTML = snap.docs.map(d => {
+            const i = d.data();
+            return `<div class="modal-herramienta-item"><span>${i.herramienta || "—"}</span><span style="color:var(--rojo);font-weight:700">${i.tipo || "—"}</span></div>`;
+          }).join("");
+        } else {
+          cont.innerHTML = `<div class="valor">No se encontró el detalle específico de la incidencia.</div>`;
+        }
+      } catch(e) {
+        cont.innerHTML = `<div class="valor">No se pudo cargar el detalle de la incidencia.</div>`;
+      }
+    })();
+  }
 
   const acciones = document.getElementById("modal-acciones");
   acciones.innerHTML = "";
@@ -1869,6 +1878,46 @@ window.abrirModal = function(id) {
 function cerrarModal() {
   document.getElementById("modal-solicitud").classList.remove("abierto");
 }
+
+window.verDetalleIncidenciaProf = async function(prestamoId) {
+  const p = todosPrestamosProf.find(x => x.id === prestamoId);
+  if (!p) return;
+  document.getElementById("modal-titulo-texto").textContent = "Detalle de Incidencia";
+  document.getElementById("modal-contenido").innerHTML = `<div class="cargando"><div class="spinner"></div>Cargando detalle...</div>`;
+  document.getElementById("modal-acciones").innerHTML = "";
+  document.getElementById("modal-solicitud").classList.add("abierto");
+
+  let detalleHtml = "";
+  try {
+    const snap = await getDocs(query(
+      collection(db, "incidencias"),
+      where("prestamoId", "==", prestamoId)
+    ));
+    if (!snap.empty) {
+      detalleHtml = snap.docs.map(d => {
+        const i = d.data();
+        return `<div class="modal-herramienta-item"><span>${i.herramienta || "—"}</span><span style="color:var(--rojo);font-weight:700">${i.tipoIncidencia || "—"}</span></div>`;
+      }).join("");
+    } else {
+      detalleHtml = `<div class="valor">No se encontró el detalle específico de la incidencia.</div>`;
+    }
+  } catch(e) {
+    detalleHtml = `<div class="valor">No se pudo cargar el detalle de la incidencia.</div>`;
+  }
+
+  const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+  document.getElementById("modal-contenido").innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${p.profesor || "—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${p.laboratorio || "—"}</div></div>
+    </div>
+    <div class="modal-campo"><label>Fecha del préstamo</label><div class="valor">${fecha}</div></div>
+    <div class="modal-campo">
+      <label>Herramientas con incidencia</label>
+      <div class="modal-herramientas">${detalleHtml}</div>
+    </div>
+  `;
+};
 
 document.getElementById("modal-cerrar").addEventListener("click", cerrarModal);
 document.getElementById("modal-solicitud").addEventListener("click", e => {
@@ -2174,22 +2223,12 @@ async function cargarPrestamosProf() {
           const fecha = p.creadoEn.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn);
           return fecha >= hoy;
         });
-      ppActualizarContadores();
       ppRenderTabla();
     });
   } catch(e) {
     document.getElementById("pp-tabla-wrap").innerHTML =
       '<div class="cargando">Error al cargar. Verifica la conexión.</div>';
   }
-}
-
-function ppActualizarContadores() {
-  const activos    = todosPrestamosProf.filter(p => p.estado === "activo").length;
-  const retornados = todosPrestamosProf.filter(p => p.estado === "retornado").length;
-  const incid      = todosPrestamosProf.filter(p => p.tieneIncidencias).length;
-  document.getElementById("pp-total").textContent      = todosPrestamosProf.length;
-  document.getElementById("pp-activos").textContent    = activos;
-  document.getElementById("pp-retornados").textContent = retornados;
 }
 
 function ppFiltrados() {
