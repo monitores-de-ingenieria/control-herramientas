@@ -1034,6 +1034,10 @@
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
         </div>
 
+        <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
+          <h3>⚠️ Solicitudes de Estudiantes con incidencias</h3>
+        </div>
+
         <div class="seccion-tabla">
           <div id="tabla-solicitudes-wrap">
             <div class="cargando"><div class="spinner"></div>Cargando solicitudes...</div>
@@ -1441,6 +1445,7 @@ window.verIncidencias = function() {
     }
   }, 100);
   // Mostrar panel de incidencias de préstamos a profesores
+  document.getElementById("titulo-incidencias-est")?.style.setProperty("display", "block");
   const panel = document.getElementById("panel-incidencias-prof");
   if (panel) {
     panel.style.display = "block";
@@ -1452,7 +1457,7 @@ window.verIncidencias = function() {
       wrap.innerHTML = `
         <table>
           <thead>
-            <tr><th>Profesor</th><th>Laboratorio</th><th>Herramientas</th><th>Fecha</th></tr>
+            <tr><th>Profesor</th><th>Laboratorio</th><th>Herramientas</th><th>Fecha</th><th>Acciones</th></tr>
           </thead>
           <tbody>
             ${lista.map(p => {
@@ -1463,6 +1468,7 @@ window.verIncidencias = function() {
                 <td style="font-size:13px">${p.laboratorio || "—"}</td>
                 <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
                 <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+                <td><button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')">👁 Ver</button></td>
               </tr>`;
             }).join("")}
           </tbody>
@@ -1475,6 +1481,8 @@ window.verIncidencias = function() {
 function ocultarPanelIncidenciasProf() {
   const panel = document.getElementById("panel-incidencias-prof");
   if (panel) panel.style.display = "none";
+  const titulo = document.getElementById("titulo-incidencias-est");
+  if (titulo) titulo.style.display = "none";
 }
 
 // ── TOGGLE SIDEBAR ──
@@ -1747,7 +1755,7 @@ function renderTabla() {
       </thead>
       <tbody>
         ${pagina.map((s, i) => `
-          <tr>
+          <tr style="cursor:pointer" onclick="abrirModal('${s.id}')">
             <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
             <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(s.creadoEn)}</td>
             <td>
@@ -1767,9 +1775,9 @@ function renderTabla() {
             <td><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
-                <button class="btn btn-outline" onclick="abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="entregar('${s.id}')">✓ Entregar</button>` : ""}
-                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="retornar('${s.id}')">↩ Retornar</button>` : ""}
+                <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')">✓ Entregar</button>` : ""}
+                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
