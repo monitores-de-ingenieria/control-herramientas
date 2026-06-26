@@ -1330,6 +1330,16 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
+      <label>Código (para la foto, ej: HER-001)</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="her-input-codigo" placeholder="HER-001"
+          style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px"
+          oninput="previsualizarFotoHer()">
+        <div id="her-foto-preview" style="width:48px;height:48px;border-radius:8px;border:1px solid var(--borde);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:20px">🔧</div>
+      </div>
+      <small style="color:var(--texto-dim);font-size:11px">La foto debe estar en img/herramientas/HER-001.jpg</small>
+    </div>
+    <div class="modal-campo">
       <label>Cantidad disponible</label>
       <input type="number" id="her-input-cantidad" min="0" value="1"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
@@ -2423,10 +2433,12 @@ async function cargarHerramientasCfg() {
       const enFirestore = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const nombresFirestore = new Set(enFirestore.map(h => h.nombre.toLowerCase()));
 
-      // Herramientas del respaldo que NO están en Firestore
+      // IDs eliminadas (guardadas con eliminada:true)
+      const eliminadas = new Set(enFirestore.filter(h => h.eliminada).map(h => h.nombre.toLowerCase()));
+      // Herramientas del respaldo que NO están en Firestore ni eliminadas
       const delRespaldo = HERRAMIENTAS_LISTA
-        .filter(h => !nombresFirestore.has(h.nombre.toLowerCase()))
-        .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, local: true }));
+        .filter(h => !nombresFirestore.has(h.nombre.toLowerCase()) && !eliminadas.has(h.nombre.toLowerCase()))
+        .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, codigo: h.codigo, local: true }));
 
       // Combinar: primero las de Firestore, luego las del respaldo restantes
       const lista = [...enFirestore, ...delRespaldo]
@@ -2449,31 +2461,39 @@ function renderHerramientasCfg(lista) {
     wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas registradas.</p></div>';
     return;
   }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Cantidad disponible</th><th>Acciones</th></tr></thead><tbody>'
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Código</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
     + filtrada.map((h, i) => {
-        const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
+        const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
+        const codigo = h.codigo || '';
+        const fotoSrc = codigo ? 'img/herramientas/' + codigo + '.jpg' : '';
+        const foto = fotoSrc
+          ? '<img src="' + fotoSrc + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="this.outerHTML='<div style=&quot;width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px&quot;>' + (h.icono || '🔧') + '</div>'">'
+          : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + (h.icono || '🔧') + '</div>';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
+          + '<td>' + foto + '</td>'
           + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
+          + '<td style="font-size:11px;color:var(--texto-dim)">' + (codigo || '—') + '</td>'
           + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
           + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ')">✏️ Editar</button>'
-          + (h.local ? '' : '<button class="btn btn-rojo" onclick="eliminarHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>')
+          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ',\'' + codigo + '\')">✏️ Editar</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
     + '</tbody></table>';
 }
 
-window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false) {
-  herCfgEditar   = esLocal ? null : id;
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, codigo = "") {
+  herCfgEditar      = esLocal ? null : id;
   herCfgNombreLocal = esLocal ? nombre : null;
-  document.getElementById("her-modal-titulo").textContent = id ? "✏️ Editar herramienta" : "➕ Agregar herramienta";
+  document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
   inputNombre.readOnly = esLocal;
   inputNombre.style.opacity = esLocal ? "0.6" : "1";
   document.getElementById("her-input-cantidad").value = cantidad;
+  document.getElementById("her-input-codigo").value = codigo;
+  previsualizarFotoHer();
   document.getElementById("modal-herramienta-cfg").classList.add("abierto");
 };
 
@@ -2482,29 +2502,42 @@ window.cerrarModalHerramienta = function() {
   herCfgEditar = null;
 };
 
+window.previsualizarFotoHer = function() {
+  const codigo = document.getElementById("her-input-codigo")?.value.trim();
+  const preview = document.getElementById("her-foto-preview");
+  if (!preview) return;
+  if (codigo) {
+    preview.innerHTML = '<img src="img/herramientas/' + codigo + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="this.parentNode.textContent='🔧'">';
+  } else {
+    preview.textContent = '🔧';
+  }
+};
+
 window.guardarHerramienta = async function() {
   const nombre   = document.getElementById("her-input-nombre").value.trim();
   const cantidad = parseInt(document.getElementById("her-input-cantidad").value) || 0;
+  const codigo   = document.getElementById("her-input-codigo").value.trim().toUpperCase();
   if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
   const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   const nombreFinal = herCfgNombreLocal || nombre;
+  const datos = { nombre: nombreFinal, cantidadDisponible: cantidad };
+  if (codigo) datos.codigo = codigo;
   try {
     if (herCfgEditar) {
-      await updateDoc(doc(db, "herramientas", herCfgEditar), { nombre: nombreFinal, cantidadDisponible: cantidad });
+      await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
     } else if (herCfgNombreLocal) {
-      // Local: buscar si ya existe en Firestore para no duplicar
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
-        await updateDoc(doc(db, "herramientas", snap.docs[0].id), { cantidadDisponible: cantidad });
-        mostrarToast("✅ Cantidad actualizada");
+        await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
+        mostrarToast("✅ Herramienta actualizada");
       } else {
-        await addDoc(collection(db, "herramientas"), { nombre: nombreFinal, cantidadDisponible: cantidad, creadoEn: serverTimestamp() });
+        await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast("✅ Herramienta guardada en inventario");
       }
     } else {
-      await addDoc(collection(db, "herramientas"), { nombre: nombreFinal, cantidadDisponible: cantidad, creadoEn: serverTimestamp() });
+      await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
       mostrarToast("✅ Herramienta agregada");
     }
     cerrarModalHerramienta();
@@ -2512,10 +2545,15 @@ window.guardarHerramienta = async function() {
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
-window.eliminarHerramienta = async function(id, nombre) {
+window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
   if (!confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) return;
   try {
-    await deleteDoc(doc(db, "herramientas", id));
+    if (esLocal) {
+      // Para las del respaldo, guardarla en Firestore con cantidad 0 y marcada como eliminada
+      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: 0, eliminada: true, creadoEn: serverTimestamp() });
+    } else {
+      await deleteDoc(doc(db, "herramientas", id));
+    }
     mostrarToast("Herramienta eliminada");
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
