@@ -1043,6 +1043,12 @@
             <div class="paginacion-btns" id="pag-btns"></div>
           </div>
         </div>
+        <div class="seccion-tabla" id="panel-incidencias-prof" style="display:none;margin-top:16px">
+          <div class="tabla-header">
+            <h3>⚠️ Préstamos a Profesores con incidencias</h3>
+          </div>
+          <div id="tabla-incidencias-prof-wrap"></div>
+        </div>
       </div>
 
       <!-- ── OTRAS VISTAS (próximamente) ── -->
@@ -1068,11 +1074,6 @@
             <div class="icono-res">✅</div>
             <div class="numero" id="pp-retornados">0</div>
             <div class="etiqueta">Retornados</div>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">⚠️</div>
-            <div class="numero" id="pp-incidencias">0</div>
-            <div class="etiqueta">Con incidencias</div>
           </div>
         </div>
 
@@ -1444,7 +1445,7 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-// ── VER INCIDENCIAS DESDE DASHBOARD ──
+// ── VER INCIDENCIAS DESDE DASHBOARD / MENÚ ──
 window.verIncidencias = function() {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
   document.querySelectorAll(`.nav-item[data-vista="solicitudes"]`).forEach(n => n.classList.add("activo"));
@@ -1458,7 +1459,42 @@ window.verIncidencias = function() {
       filtroEstado.dispatchEvent(new Event("change"));
     }
   }, 100);
+  // Mostrar panel de incidencias de préstamos a profesores
+  const panel = document.getElementById("panel-incidencias-prof");
+  if (panel) {
+    panel.style.display = "block";
+    const wrap = document.getElementById("tabla-incidencias-prof-wrap");
+    const lista = (todosPrestamosProf || []).filter(p => p.tieneIncidencias);
+    if (!lista.length) {
+      wrap.innerHTML = '<div class="vacio" style="padding:20px;text-align:center;color:var(--texto-dim)">📭 No hay préstamos a profesores con incidencias.</div>';
+    } else {
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Profesor</th><th>Laboratorio</th><th>Herramientas</th><th>Fecha</th></tr>
+          </thead>
+          <tbody>
+            ${lista.map(p => {
+              const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+              const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+              return `<tr>
+                <td>${p.profesor || "—"}</td>
+                <td style="font-size:13px">${p.laboratorio || "—"}</td>
+                <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
+                <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+    }
+  }
 };
+
+// Ocultar el panel de incidencias de profesores al navegar normalmente
+function ocultarPanelIncidenciasProf() {
+  const panel = document.getElementById("panel-incidencias-prof");
+  if (panel) panel.style.display = "none";
+}
 
 // ── TOGGLE SIDEBAR ──
 const shell = document.querySelector(".shell");
@@ -1474,6 +1510,7 @@ function navegarVista(vista) {
   document.querySelectorAll(`.nav-item[data-vista="${vista}"]`).forEach(n => n.classList.add("activo"));
   document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
   document.getElementById(`vista-${vista}`)?.classList.add("activa");
+  ocultarPanelIncidenciasProf();
 }
 
 document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
@@ -1518,6 +1555,7 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(`.nav-item[data-vista="${vista}"]`).forEach(n => n.classList.add("activo"));
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
+    ocultarPanelIncidenciasProf();
   });
 });
 
@@ -2152,7 +2190,6 @@ function ppActualizarContadores() {
   document.getElementById("pp-total").textContent      = todosPrestamosProf.length;
   document.getElementById("pp-activos").textContent    = activos;
   document.getElementById("pp-retornados").textContent = retornados;
-  document.getElementById("pp-incidencias").textContent= incid;
 }
 
 function ppFiltrados() {
