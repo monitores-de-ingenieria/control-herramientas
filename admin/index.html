@@ -886,6 +886,7 @@
       <div class="nav-item" data-vista="material-gastable"><span class="nav-icono">📦</span><span class="nav-texto">Material Gastable</span></div>
       <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span></div>
       <div class="nav-item" data-vista="devoluciones"><span class="nav-icono">✅</span><span class="nav-texto">Devoluciones</span></div>
+      <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span></div>
 
       <div class="nav-grupo">Inventario</div>
       <div class="nav-item" data-vista="inv-herramientas"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
@@ -923,7 +924,7 @@
         </div>
 
         <!-- KPI Cards — solo hoy -->
-        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="kpi-card amarillo" data-vista="solicitudes" data-estado="pendiente">
             <div class="kpi-icono">📋</div>
             <div>
@@ -946,14 +947,6 @@
               <div class="kpi-label">Retornadas hoy</div>
               <div class="kpi-numero" id="res-hoy">—</div>
               <div class="kpi-sub">devueltas</div>
-            </div>
-          </div>
-          <div class="kpi-card rojo" style="cursor:pointer" onclick="verIncidencias()">
-            <div class="kpi-icono">⚠️</div>
-            <div>
-              <div class="kpi-label">Incidencias</div>
-              <div class="kpi-numero" id="dash-incidencias">—</div>
-              <div class="kpi-sub">acumuladas</div>
             </div>
           </div>
         </div>
@@ -1473,6 +1466,8 @@ document.getElementById("btn-toggle-sidebar").addEventListener("click", () => {
   shell.classList.toggle("sidebar-colapsado");
 });
 
+document.getElementById("nav-incidencias").addEventListener("click", verIncidencias);
+
 // ── KPI CARDS navegables ──
 function navegarVista(vista) {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
@@ -1690,7 +1685,7 @@ function solicitudesFiltradas() {
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
-    if (!esMismodia(s.creadoEn)) return false;  // solo las de hoy
+    if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;  // solo las de hoy (excepto incidencias)
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
