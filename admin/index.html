@@ -11,24 +11,22 @@
   :root {
     --bg:        #0d1117;
     --sidebar:   #161b22;
-    --card:      #161b22;
-    --card2:     #1c2128;
-    --verde:     #2ea043;
-    --verde-dim: #1e7a34;
-    --verde-glow:rgba(46,160,67,0.08);
+    --card:      #1c2128;
+    --card2:     #22272e;
+    --verde:     #3fb950;
+    --verde-dim: #2ea043;
+    --verde-glow:rgba(63,185,80,0.15);
     --amarillo:  #d29922;
     --rojo:      #f85149;
     --azul:      #388bfd;
-    --azul-dim:  #1f6feb;
-    --azul-glow: rgba(56,139,253,0.08);
     --texto:     #e6edf3;
-    --texto-dim: #8b949e;
+    --texto-dim: #7d8590;
     --borde:     #30363d;
-    --hover:     #161b22;
+    --hover:     #262c34;
     --tb-bg:     #161b22;
     --tb-txt:    #e6edf3;
-    --tb-sub:    #8b949e;
-    --av-bg:     #2ea043;
+    --tb-sub:    #7d8590;
+    --av-bg:     #3fb950;
     --av-txt:    #000;
   }
 
@@ -42,12 +40,10 @@
     --card2:     #f0f7f0;
     --verde:     #2e7d32;
     --verde-dim: #1b5e20;
-    --verde-glow:rgba(46,125,50,0.08);
+    --verde-glow:rgba(46,125,50,0.1);
     --amarillo:  #b45309;
     --rojo:      #cf222e;
     --azul:      #0969da;
-    --azul-dim:  #0550ae;
-    --azul-glow: rgba(9,105,218,0.08);
     --texto:     #1f2328;
     --texto-dim: #636c76;
     --borde:     #d0d7de;
@@ -167,7 +163,7 @@
   .btn-tema:hover { background: rgba(255,255,255,0.2); }
 
   /* ═══════════════════════════════════════════
-     SIDEBAR
+     SIDEBAR con efectos hover animados
   ═══════════════════════════════════════════ */
   .sidebar {
     background: var(--sidebar);
@@ -178,6 +174,7 @@
     transition: all .25s ease;
   }
 
+  /* Logo en sidebar */
   .sb-brand {
     display: flex;
     align-items: center;
@@ -206,6 +203,7 @@
   .shell.sidebar-colapsado .sb-brand-sub { display: none; }
   .shell.sidebar-colapsado .sb-brand { justify-content: center; padding: 10px 0; }
 
+  /* Grupos y items */
   .nav-grupo {
     padding: 14px 16px 3px;
     font-size: 9px;
@@ -234,6 +232,7 @@
     transition: color .2s;
   }
 
+  /* Línea izquierda animada */
   .nav-item::before {
     content: '';
     position: absolute;
@@ -245,6 +244,7 @@
     transition: transform .25s cubic-bezier(.4,0,.2,1);
   }
 
+  /* Fondo hover deslizante */
   .nav-item::after {
     content: '';
     position: absolute;
@@ -296,10 +296,12 @@
   .nav-cerrar:hover { color: var(--rojo) !important; }
   .nav-cerrar:hover .nav-icono { color: var(--rojo) !important; }
 
+  /* Sidebar colapsado */
   .shell.sidebar-colapsado .nav-texto,
   .shell.sidebar-colapsado .nav-badge { opacity: 0; width: 0; }
   .shell.sidebar-colapsado .nav-item { padding: 9px 0; justify-content: center; }
 
+  /* Turno actual (bottom sidebar) */
   .sb-turno {
     padding: 10px 14px;
     margin: 8px 8px 0;
@@ -349,6 +351,7 @@
 
   .dash-fecha span { display: flex; align-items: center; gap: 5px; }
 
+  /* KPI COMPACTAS — fila horizontal */
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
@@ -395,8 +398,8 @@
   }
 
   .kpi-card:hover .kpi-icono { transform: scale(1.1); }
-  .kpi-card.amarillo .kpi-icono { background: rgba(210,153,34,0.08); }
-  .kpi-card.rojo .kpi-icono { background: rgba(248,81,73,0.08); }
+  .kpi-card.amarillo .kpi-icono { background: rgba(210,153,34,0.12); }
+  .kpi-card.rojo .kpi-icono { background: rgba(248,81,73,0.12); }
 
   .kpi-label { font-size: 9px; font-weight: 800; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1px; }
   .kpi-numero { font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -1px; color: var(--verde); }
@@ -405,6 +408,7 @@
   .kpi-sub { font-size: 9px; color: var(--texto-dim); margin-top: 1px; }
   .kpi-top { margin-bottom: 1px; }
 
+  /* DASH GRID */
   .dash-grid {
     display: grid;
     grid-template-columns: 1fr 300px;
@@ -430,6 +434,7 @@
   .ver-link { font-size: 11px; color: var(--verde); cursor: pointer; font-weight: 600; }
   .ver-link:hover { text-decoration: underline; }
 
+  /* Filas pendientes */
   .fila-pend {
     display: flex; align-items: center; gap: 10px;
     padding: 9px 14px; border-bottom: 1px solid var(--borde);
@@ -450,6 +455,7 @@
   .fp-det { font-size: 10px; color: var(--texto-dim); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .fp-badge { background: var(--card2); border-radius: 20px; padding: 2px 7px; font-size: 10px; font-weight: 700; color: var(--texto-dim); flex-shrink: 0; }
 
+  /* Feed actividad */
   .feed-item {
     display: flex; align-items: flex-start; gap: 9px;
     padding: 9px 14px; border-bottom: 1px solid var(--borde);
@@ -464,14 +470,15 @@
   }
 
   .feed-dot.pendiente { background: var(--amarillo); }
-  .feed-dot.entregada { background: var(--azul); }
-  .feed-dot.retornada { background: var(--verde); }
+  .feed-dot.entregada { background: var(--verde); }
+  .feed-dot.retornada { background: var(--azul); }
   .feed-dot.cancelada { background: var(--rojo); }
 
   .feed-texto { flex: 1; color: var(--texto-dim); line-height: 1.4; }
   .feed-texto strong { color: var(--texto); }
   .feed-hora { font-size: 10px; color: var(--texto-dim); margin-top: 1px; }
 
+  /* Acciones rápidas */
   .acciones-rapidas {
     display: grid;
     grid-template-columns: repeat(5, 1fr);
@@ -499,6 +506,7 @@
   .accion-rapida-label { font-size: 10px; font-weight: 700; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .04em; }
   .accion-rapida:hover .accion-rapida-label { color: var(--verde); }
 
+  /* Stats mini */
   .stats-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -525,18 +533,17 @@
   .stat-mini-label { font-size: 10px; color: var(--texto-dim); margin-top: 1px; }
 
   /* ═══════════════════════════════════════════
-     PÁGINAS INTERNAS — SOLICITUDES (SIMPLIFICADO)
+     PÁGINAS INTERNAS
   ═══════════════════════════════════════════ */
   .pagina-titulo {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
+    display: flex; align-items: flex-start; justify-content: space-between;
     margin-bottom: 18px; gap: 12px;
   }
 
   .pagina-titulo h2 { font-size: 20px; font-weight: 800; letter-spacing: -.3px; }
   .pagina-titulo p { font-size: 12px; color: var(--texto-dim); margin-top: 3px; }
 
+  /* Tabs de filtro (estilo imagen referencia) */
   .tabs-filtro {
     display: flex;
     gap: 4px;
@@ -563,6 +570,7 @@
   }
 
   .tab-btn:hover { color: var(--texto); }
+
   .tab-btn.activo { color: var(--verde); border-bottom-color: var(--verde); }
 
   .tab-badge {
@@ -577,8 +585,40 @@
 
   .tab-btn.activo .tab-badge { background: var(--verde); color: #000; }
 
+  /* Resumen cards internas */
+  .grid-resumen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+
+  .tarjeta-resumen {
+    background: var(--card);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 14px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .15s;
+  }
+
+  .tarjeta-resumen:hover { transform: translateY(-1px); }
+
+  .tarjeta-resumen::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0; height: 2px;
+    background: var(--verde);
+  }
+
+  .tarjeta-resumen .icono-res { font-size: 18px; margin-bottom: 6px; }
+  .tarjeta-resumen .numero { font-size: 24px; font-weight: 800; color: var(--verde); line-height: 1; }
+  .tarjeta-resumen .etiqueta { font-size: 11px; color: var(--texto-dim); margin-top: 4px; }
+  .tarjeta-resumen .link-ver { font-size: 11px; color: var(--verde); cursor: pointer; margin-top: 5px; display: inline-block; }
+
   /* ═══════════════════════════════════════════
-     TABLA — SIMPLIFICADA
+     TABLA
   ═══════════════════════════════════════════ */
   .seccion-tabla {
     background: var(--card);
@@ -615,92 +655,84 @@
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
 
   th {
-    padding: 9px 12px;
+    padding: 9px 14px;
     text-align: left;
     font-size: 10px;
     font-weight: 800;
     color: var(--texto-dim);
     text-transform: uppercase;
-    letter-spacing: .05em;
+    letter-spacing: .07em;
     border-bottom: 1px solid var(--borde);
     background: var(--card2);
     white-space: nowrap;
   }
 
-  td { padding: 8px 12px; border-bottom: 1px solid var(--borde); vertical-align: middle; }
+  td { padding: 10px 14px; border-bottom: 1px solid var(--borde); vertical-align: middle; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--hover); }
 
-  /* ---- Encabezado de taller (sin verde brillante) ---- */
-  .taller-header-row td {
-    background: var(--card2) !important;
-    padding: 8px 16px !important;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--texto);
-    border-top: 1px solid var(--borde);
-    border-bottom: 1px solid var(--borde);
-    letter-spacing: 0.03em;
-  }
-
-  /* ---- Badges simplificados ---- */
+  /* ═══════════════════════════════════════════
+     BADGES
+  ═══════════════════════════════════════════ */
   .badge {
     display: inline-flex; align-items: center;
-    padding: 2px 8px; border-radius: 20px;
-    font-size: 10px; font-weight: 600; letter-spacing: .02em;
-    border: 1px solid transparent;
+    padding: 3px 9px; border-radius: 20px;
+    font-size: 10px; font-weight: 700; letter-spacing: .02em;
   }
 
-  .badge-pendiente  { background: rgba(210,153,34,0.12); color: var(--amarillo); border-color: rgba(210,153,34,0.25); }
-  .badge-entregada  { background: rgba(56,139,253,0.10); color: var(--azul); border-color: rgba(56,139,253,0.2); }
-  .badge-retornada  { background: rgba(46,160,67,0.10); color: var(--verde); border-color: rgba(46,160,67,0.2); }
-  .badge-cancelada  { background: rgba(248,81,73,0.08); color: var(--rojo); border-color: rgba(248,81,73,0.2); }
+  .badge-pendiente  { background: rgba(210,153,34,0.15); color: var(--amarillo); border: 1px solid rgba(210,153,34,0.3); }
+  .badge-entregada  { background: var(--verde-glow); color: var(--verde); border: 1px solid rgba(63,185,80,0.3); }
+  .badge-retornada  { background: rgba(56,139,253,0.12); color: var(--azul); border: 1px solid rgba(56,139,253,0.25); }
+  .badge-cancelada  { background: rgba(248,81,73,0.1); color: var(--rojo); border: 1px solid rgba(248,81,73,0.25); }
 
-  /* ---- Botones simplificados ---- */
+  /* ═══════════════════════════════════════════
+     BOTONES
+  ═══════════════════════════════════════════ */
   .btn {
-    padding: 4px 9px; border-radius: 6px; border: none;
-    font-size: 10px; font-weight: 600; cursor: pointer;
-    display: inline-flex; align-items: center; gap: 3px;
+    padding: 6px 12px; border-radius: 7px; border: none;
+    font-size: 11px; font-weight: 700; cursor: pointer;
+    display: inline-flex; align-items: center; gap: 5px;
     transition: all .15s;
-    white-space: nowrap;
   }
 
   .btn-verde  { background: var(--verde); color: #000; }
   .btn-verde:hover { background: var(--verde-dim); color: #fff; }
-  .btn-azul   { background: var(--azul); color: #fff; }
-  .btn-azul:hover { background: var(--azul-dim); color: #fff; }
   .btn-outline { background: transparent; border: 1px solid var(--borde); color: var(--texto-dim); }
   .btn-outline:hover { border-color: var(--verde); color: var(--verde); }
-  .btn-rojo    { background: rgba(248,81,73,0.08); color: var(--rojo); border: 1px solid rgba(248,81,73,0.15); }
+  .btn-rojo   { background: rgba(248,81,73,0.1); color: var(--rojo); border: 1px solid rgba(248,81,73,0.2); }
   .btn-rojo:hover { background: var(--rojo); color: #fff; border-color: var(--rojo); }
+  .btn-azul   { background: rgba(56,139,253,0.1); color: var(--azul); border: 1px solid rgba(56,139,253,0.2); }
+  .btn-azul:hover { background: var(--azul); color: #fff; border-color: var(--azul); }
   .btn:disabled { opacity: .35; cursor: not-allowed; }
 
-  /* ---- Badge de acción en columna ---- */
-  .badge-accion {
-    display: inline-flex; align-items: center; gap: 4px;
-    padding: 2px 8px; border-radius: 20px;
-    font-size: 10px; font-weight: 600;
-    border: 1px solid transparent;
+  /* ═══════════════════════════════════════════
+     AVATAR ESTUDIANTE
+  ═══════════════════════════════════════════ */
+  .est-avatar { display: flex; align-items: center; gap: 8px; }
+  .est-circulo { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
+  .est-nombre { font-weight: 600; font-size: 12px; }
+  .est-matricula { font-size: 10px; color: var(--texto-dim); }
+
+  /* ═══════════════════════════════════════════
+     PAGINACIÓN
+  ═══════════════════════════════════════════ */
+  .paginacion {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 10px 16px; border-top: 1px solid var(--borde);
+    font-size: 11px; color: var(--texto-dim);
   }
 
-  .badge-accion.retornada {
-    background: rgba(46,160,67,0.10);
-    color: var(--verde);
-    border-color: rgba(46,160,67,0.2);
+  .paginacion-btns { display: flex; gap: 4px; }
+
+  .paginacion-btns button {
+    padding: 4px 9px;
+    background: var(--card2); border: 1px solid var(--borde);
+    border-radius: 6px; color: var(--texto); font-size: 11px; cursor: pointer;
+    transition: border-color .15s;
   }
 
-  .badge-accion.cancelada {
-    background: rgba(248,81,73,0.08);
-    color: var(--rojo);
-    border-color: rgba(248,81,73,0.2);
-  }
-
-  .acciones-celda {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    flex-wrap: nowrap;
-  }
+  .paginacion-btns button.activo { background: var(--verde); color: #000; border-color: var(--verde); font-weight: 800; }
+  .paginacion-btns button:hover:not(.activo) { border-color: var(--verde); }
 
   /* ═══════════════════════════════════════════
      MODAL
@@ -740,6 +772,21 @@
 
   .modal-acciones { display: flex; gap: 8px; margin-top: 18px; justify-content: flex-end; }
 
+  .grid-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+
+  /* ═══════════════════════════════════════════
+     ESTADOS / UTILIDADES
+  ═══════════════════════════════════════════ */
+  .cargando { text-align: center; padding: 36px; color: var(--texto-dim); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+
+  .spinner { width: 24px; height: 24px; border: 2px solid var(--borde); border-top-color: var(--verde); border-radius: 50%; animation: spin .7s linear infinite; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .vacio { text-align: center; padding: 44px 20px; color: var(--texto-dim); }
+  .vacio-icono { font-size: 32px; margin-bottom: 8px; }
+  .vacio p { font-size: 13px; }
+
   /* ═══════════════════════════════════════════
      TOAST
   ═══════════════════════════════════════════ */
@@ -758,19 +805,6 @@
   #toast.rojo { background: var(--rojo); color: #fff; }
 
   /* ═══════════════════════════════════════════
-     UTILIDADES
-  ═══════════════════════════════════════════ */
-  .cargando { text-align: center; padding: 36px; color: var(--texto-dim); font-size: 13px; display: flex; flex-direction: column; align-items: center; gap: 10px; }
-
-  .spinner { width: 24px; height: 24px; border: 2px solid var(--borde); border-top-color: var(--verde); border-radius: 50%; animation: spin .7s linear infinite; }
-
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .vacio { text-align: center; padding: 44px 20px; color: var(--texto-dim); }
-  .vacio-icono { font-size: 32px; margin-bottom: 8px; }
-  .vacio p { font-size: 13px; }
-
-  /* ═══════════════════════════════════════════
      ENTREGA / RETORNO
   ═══════════════════════════════════════════ */
   .fila-herramienta { display: flex; align-items: center; gap: 10px; padding: 9px 10px; border-bottom: 1px solid var(--borde); font-size: 13px; }
@@ -787,31 +821,6 @@
   .fila-adicional input:focus { outline: none; border-color: var(--verde); }
   .fila-adicional .cant-adicional { width: 60px; }
   .btn-quitar-fila { background: none; border: none; color: var(--rojo); font-size: 16px; cursor: pointer; padding: 0 4px; }
-
-  .paginacion {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 10px 16px; border-top: 1px solid var(--borde);
-    font-size: 11px; color: var(--texto-dim);
-  }
-
-  .paginacion-btns { display: flex; gap: 4px; }
-
-  .paginacion-btns button {
-    padding: 4px 9px;
-    background: var(--card2); border: 1px solid var(--borde);
-    border-radius: 6px; color: var(--texto); font-size: 11px; cursor: pointer;
-    transition: border-color .15s;
-  }
-
-  .paginacion-btns button.activo { background: var(--verde); color: #000; border-color: var(--verde); font-weight: 800; }
-  .paginacion-btns button:hover:not(.activo) { border-color: var(--verde); }
-
-  .est-avatar { display: flex; align-items: center; gap: 8px; }
-  .est-circulo { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; flex-shrink: 0; }
-  .est-nombre { font-weight: 600; font-size: 12px; }
-  .est-matricula { font-size: 10px; color: var(--texto-dim); }
-
-  .grid-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
 </style>
 </head>
 <body>
@@ -861,6 +870,7 @@
 
     <!-- SIDEBAR -->
     <div class="sidebar">
+      <!-- Logo marca -->
       <div class="sb-brand">
         <div class="sb-brand-icon">⚙️</div>
         <div>
@@ -887,10 +897,16 @@
 
       <div class="nav-grupo">Configuración</div>
       <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="herramientas-cfg"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
 
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
-
+      <!-- Turno actual -->
+      <div class="sb-turno">
+        <div class="sb-turno-titulo">⏰ Turno actual</div>
+        <div class="sb-turno-hora">L–V 5:30 p.m. – 10:00 p.m.</div>
+        <div class="sb-turno-encargado">Encargado: <span style="color:var(--verde);font-weight:700">Taller</span></div>
+      </div>
     </div>
 
     <!-- CONTENIDO -->
@@ -898,6 +914,8 @@
 
       <!-- ── DASHBOARD ── -->
       <div class="vista activa" id="vista-dashboard">
+
+        <!-- Bienvenida -->
         <div class="dash-bienvenida">
           <div>
             <h2 id="saludo-admin">¡Bienvenido, Administrador!</h2>
@@ -909,91 +927,133 @@
           </div>
         </div>
 
-        <!-- KPI HOY -->
-        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
+        <!-- KPI Cards — 6 métricas -->
+        <div class="kpi-grid">
           <div class="kpi-card amarillo" data-vista="solicitudes">
             <div class="kpi-icono">📋</div>
             <div>
-              <div class="kpi-label">Pendientes hoy</div>
+              <div class="kpi-top"><div class="kpi-label">Pendientes</div></div>
               <div class="kpi-numero" id="res-pendientes">—</div>
-              <div class="kpi-sub" id="kpi-sub-pendientes">sin entregar</div>
+              <div class="kpi-sub">solicitudes</div>
             </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes">
-            <div class="kpi-icono">✅</div>
+          <div class="kpi-card" data-vista="prestadas">
+            <div class="kpi-icono">🔧</div>
             <div>
-              <div class="kpi-label">Entregadas hoy</div>
+              <div class="kpi-top"><div class="kpi-label">Herramientas fuera</div></div>
               <div class="kpi-numero" id="res-prestadas">—</div>
-              <div class="kpi-sub">en el taller</div>
+              <div class="kpi-sub">en préstamo</div>
             </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes">
+          <div class="kpi-card amarillo" data-vista="devoluciones">
             <div class="kpi-icono">↩</div>
             <div>
-              <div class="kpi-label">Retornadas hoy</div>
+              <div class="kpi-top"><div class="kpi-label">Dev. pendientes</div></div>
               <div class="kpi-numero" id="res-hoy">—</div>
-              <div class="kpi-sub">devueltas</div>
+              <div class="kpi-sub">por retornar</div>
             </div>
           </div>
-          <div class="kpi-card rojo" style="cursor:pointer" onclick="verIncidencias()">
-            <div class="kpi-icono">⚠️</div>
+          <div class="kpi-card" data-vista="prestamos-prof">
+            <div class="kpi-icono">👨‍🏫</div>
             <div>
-              <div class="kpi-label">Incidencias</div>
-              <div class="kpi-numero" id="dash-incidencias">—</div>
-              <div class="kpi-sub">acumuladas</div>
+              <div class="kpi-top"><div class="kpi-label">Préstamos prof.</div></div>
+              <div class="kpi-numero" id="dash-prof-activos">—</div>
+              <div class="kpi-sub">activos</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icono">🔧</div>
+            <div>
+              <div class="kpi-top"><div class="kpi-label">Herramientas disp.</div></div>
+              <div class="kpi-numero">127</div>
+              <div class="kpi-sub">disponibles</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-icono">📦</div>
+            <div>
+              <div class="kpi-top"><div class="kpi-label">Material disp.</div></div>
+              <div class="kpi-numero" id="res-total">—</div>
+              <div class="kpi-sub">en inventario</div>
             </div>
           </div>
         </div>
 
-        <!-- GRÁFICOS -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <!-- Stats mini row -->
+        <div class="stats-row">
+          <div class="stat-mini">
+            <div class="stat-mini-icono" style="background:rgba(34,197,94,0.12)">🎓</div>
+            <div>
+              <div class="stat-mini-num" id="dash-entregadas-hoy">—</div>
+              <div class="stat-mini-label">Entregadas hoy</div>
+            </div>
+          </div>
+          <div class="stat-mini" style="cursor:pointer" onclick="verIncidencias()" title="Ver solicitudes con incidencias">
+            <div class="stat-mini-icono" style="background:rgba(249,115,22,0.12)">⚠️</div>
+            <div>
+              <div class="stat-mini-num" id="dash-incidencias">—</div>
+              <div class="stat-mini-label">Con incidencias</div>
+            </div>
+          </div>
+          <div class="stat-mini">
+            <div class="stat-mini-icono" style="background:rgba(139,92,246,0.12)">👨‍🏫</div>
+            <div>
+              <div class="stat-mini-num" id="dash-prof-activos">—</div>
+              <div class="stat-mini-label">Préstamos prof. activos</div>
+            </div>
+          </div>
+        </div>
 
-          <!-- Herramientas más solicitadas -->
+        <!-- Panel principal -->
+        <div class="dash-grid">
+
+          <!-- Solicitudes pendientes -->
           <div class="dash-panel">
             <div class="dash-panel-header">
-              <h3>🔧 Herramientas más solicitadas</h3>
-              <span style="font-size:10px;color:var(--texto-dim)" id="grafico-her-periodo">histórico</span>
+              <h3>⏳ Solicitudes Pendientes</h3>
+              <span class="ver-link" data-vista="solicitudes">Ver todas →</span>
             </div>
-            <div id="grafico-herramientas" style="padding:14px">
-              <div class="cargando"><div class="spinner"></div>Calculando...</div>
+            <div id="dashboard-pendientes">
+              <div class="cargando"><div class="spinner"></div>Cargando...</div>
             </div>
           </div>
 
-          <!-- Solicitudes por laboratorio -->
+          <!-- Feed de actividad -->
           <div class="dash-panel">
             <div class="dash-panel-header">
-              <h3>🏭 Solicitudes por laboratorio</h3>
-              <span style="font-size:10px;color:var(--texto-dim)">histórico</span>
+              <h3>⚡ Actividad Reciente</h3>
             </div>
-            <div id="grafico-laboratorios" style="padding:14px">
-              <div class="cargando"><div class="spinner"></div>Calculando...</div>
-            </div>
-          </div>
-
-          <!-- Solicitudes por hora del día -->
-          <div class="dash-panel">
-            <div class="dash-panel-header">
-              <h3>🕐 Solicitudes por hora del día</h3>
-              <span style="font-size:10px;color:var(--texto-dim)">histórico</span>
-            </div>
-            <div id="grafico-horas" style="padding:14px">
-              <div class="cargando"><div class="spinner"></div>Calculando...</div>
-            </div>
-          </div>
-
-          <!-- Solicitudes por profesor -->
-          <div class="dash-panel">
-            <div class="dash-panel-header">
-              <h3>👨‍🏫 Solicitudes por profesor</h3>
-              <span style="font-size:10px;color:var(--texto-dim)">histórico</span>
-            </div>
-            <div id="grafico-profesores" style="padding:14px">
-              <div class="cargando"><div class="spinner"></div>Calculando...</div>
+            <div id="dashboard-movimientos">
+              <div class="cargando"><div class="spinner"></div>Cargando...</div>
             </div>
           </div>
 
         </div>
 
+        <!-- Acciones rápidas -->
+        <div style="margin-top:14px;margin-bottom:8px;font-size:10px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.08em">Acciones Rápidas</div>
+        <div class="acciones-rapidas">
+          <div class="accion-rapida" onclick="navegarVista('solicitudes')">
+            <div class="accion-rapida-icon">➕</div>
+            <div class="accion-rapida-label">Nueva Solicitud</div>
+          </div>
+          <div class="accion-rapida" onclick="navegarVista('devoluciones')">
+            <div class="accion-rapida-icon">↩</div>
+            <div class="accion-rapida-label">Registrar Devolución</div>
+          </div>
+          <div class="accion-rapida" onclick="navegarVista('inv-herramientas')">
+            <div class="accion-rapida-icon">🗃️</div>
+            <div class="accion-rapida-label">Inventario Herramientas</div>
+          </div>
+          <div class="accion-rapida" onclick="navegarVista('inv-materiales')">
+            <div class="accion-rapida-icon">📦</div>
+            <div class="accion-rapida-label">Inventario Material</div>
+          </div>
+          <div class="accion-rapida" onclick="navegarVista('historial')">
+            <div class="accion-rapida-icon">📊</div>
+            <div class="accion-rapida-label">Reporte Diario</div>
+          </div>
+        </div>
 
       </div>
 
@@ -1006,6 +1066,7 @@
           </div>
         </div>
 
+        <!-- Barra de búsqueda y filtros -->
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
@@ -1025,11 +1086,12 @@
           </select>
         </div>
 
+        <!-- Tabs de filtro rápido -->
         <div class="tabs-filtro">
           <button class="tab-btn activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
           <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo)">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
-          <button class="tab-btn" data-tab-estado="entregada" style="color:var(--azul)">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
-          <button class="tab-btn" data-tab-estado="retornada" style="color:var(--verde)">Retornados <span class="tab-badge" id="tab-ret">—</span></button>
+          <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde)">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
+          <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul)">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
         </div>
 
@@ -1044,21 +1106,45 @@
         </div>
       </div>
 
-      <!-- ── OTRAS VISTAS ── -->
+      <!-- ── OTRAS VISTAS (próximamente) ── -->
       <div class="vista" id="vista-prestamos-prof">
         <div class="pagina-titulo">
           <h2>Préstamos a Profesores</h2>
           <p>Registro directo de herramientas entregadas a profesores</p>
         </div>
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:16px">
-          <div class="kpi-card"><div class="kpi-icono">👨‍🏫</div><div><div class="kpi-label">Total préstamos</div><div class="kpi-numero" id="pp-total">0</div></div></div>
-          <div class="kpi-card amarillo"><div class="kpi-icono">📦</div><div><div class="kpi-label">Activos</div><div class="kpi-numero" id="pp-activos">0</div></div></div>
-          <div class="kpi-card"><div class="kpi-icono">✅</div><div><div class="kpi-label">Retornados</div><div class="kpi-numero" id="pp-retornados">0</div></div></div>
-          <div class="kpi-card rojo"><div class="kpi-icono">⚠️</div><div><div class="kpi-label">Con incidencias</div><div class="kpi-numero" id="pp-incidencias">0</div></div></div>
+
+        <!-- Resumen rápido -->
+        <div class="grid-resumen" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:20px">
+          <div class="tarjeta-resumen">
+            <div class="icono-res">👨‍🏫</div>
+            <div class="numero" id="pp-total">0</div>
+            <div class="etiqueta">Total préstamos</div>
+          </div>
+          <div class="tarjeta-resumen">
+            <div class="icono-res">📦</div>
+            <div class="numero" id="pp-activos">0</div>
+            <div class="etiqueta">Activos</div>
+          </div>
+          <div class="tarjeta-resumen">
+            <div class="icono-res">✅</div>
+            <div class="numero" id="pp-retornados">0</div>
+            <div class="etiqueta">Retornados</div>
+          </div>
+          <div class="tarjeta-resumen">
+            <div class="icono-res">⚠️</div>
+            <div class="numero" id="pp-incidencias">0</div>
+            <div class="etiqueta">Con incidencias</div>
+          </div>
         </div>
+
+        <!-- Botón nuevo préstamo -->
         <div style="margin-bottom:16px">
-          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:13px">➕ Registrar préstamo a profesor</button>
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:14px">
+            ➕ Registrar préstamo a profesor
+          </button>
         </div>
+
+        <!-- Tabla préstamos -->
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Historial de préstamos</h3>
@@ -1097,6 +1183,28 @@
         <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
       </div>
 
+      <!-- ── HERRAMIENTAS CFG ── -->
+      <div class="vista" id="vista-herramientas-cfg">
+        <div class="pagina-titulo">
+          <div>
+            <h2>Herramientas</h2>
+            <p>Gestión del inventario de herramientas disponibles</p>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Inventario</h3>
+            <div class="filtros">
+              <input type="text" id="her-buscar" placeholder="Buscar herramienta...">
+            </div>
+          </div>
+          <div id="her-cfg-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando herramientas...</div>
+          </div>
+        </div>
+      </div>
+
       <div class="vista" id="vista-inv-materiales">
         <div class="pagina-titulo"><h2>Materiales Gastables</h2><p>Próximamente</p></div>
         <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
@@ -1107,130 +1215,19 @@
         <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
       </div>
 
-      <!-- ── HISTORIAL ── -->
       <div class="vista" id="vista-historial">
-        <div class="pagina-titulo">
-          <div>
-            <h2>Historial de Movimientos</h2>
-            <p>Registro completo de solicitudes y préstamos a profesores</p>
-          </div>
-          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-            <input type="text" id="hist-buscar" placeholder="Buscar nombre, matrícula..."
-              style="padding:7px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;width:200px">
-            <select id="hist-tipo" style="padding:7px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-              <option value="">Todo</option>
-              <option value="solicitud">Solicitudes estudiantes</option>
-              <option value="profesor">Préstamos profesores</option>
-            </select>
-            <select id="hist-estado" style="padding:7px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-              <option value="">Todos los estados</option>
-              <option value="pendiente">Pendiente</option>
-              <option value="entregada">Entregada</option>
-              <option value="retornada">Retornada</option>
-              <option value="cancelada">Cancelada</option>
-              <option value="activo">Activo (prof.)</option>
-              <option value="retornado">Retornado (prof.)</option>
-            </select>
-          </div>
-        </div>
-        <div class="seccion-tabla">
-          <div id="hist-tabla-wrap">
-            <div class="cargando"><div class="spinner"></div>Cargando historial...</div>
-          </div>
-        </div>
+        <div class="pagina-titulo"><h2>Historial de Movimientos</h2><p>Próximamente</p></div>
+        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
       </div>
 
-      <!-- ── PROFESORES CFG ── -->
       <div class="vista" id="vista-profesores-cfg">
-        <div class="pagina-titulo">
-          <div>
-            <h2>Profesores</h2>
-            <p>Gestión de profesores registrados en el sistema</p>
-          </div>
-          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px">➕ Agregar profesor</button>
-        </div>
-        <div class="seccion-tabla">
-          <div id="prof-cfg-wrap">
-            <div class="cargando"><div class="spinner"></div>Cargando profesores...</div>
-          </div>
-        </div>
+        <div class="pagina-titulo"><h2>Profesores</h2><p>Próximamente</p></div>
+        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
       </div>
 
     </div><!-- /contenido -->
   </div><!-- /shell -->
 </div><!-- /app -->
-
-<!-- ── MODALES ── -->
-<div class="modal-overlay" id="modal-solicitud">
-  <div class="modal">
-    <div class="modal-titulo">
-      Detalle de Solicitud
-      <button class="modal-cerrar" id="modal-cerrar">✕</button>
-    </div>
-    <div id="modal-contenido"></div>
-    <div class="modal-acciones" id="modal-acciones"></div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-entrega">
-  <div class="modal" style="max-width:560px">
-    <div class="modal-titulo">
-      ✓ Entregar Herramientas
-      <button class="modal-cerrar" onclick="cerrarModalEntrega()">✕</button>
-    </div>
-    <div id="alerta-incidencia" style="display:none;background:rgba(248,81,73,0.08);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--rojo)"></div>
-    <div id="info-entrega" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
-      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()">Marcar todas</button>
-    </div>
-    <div id="lista-entrega" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:260px;overflow-y:auto"></div>
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-        <button class="btn btn-outline" onclick="agregarFilaAdicional()">+ Agregar</button>
-      </div>
-      <div id="lista-adicionales"></div>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
-      <button class="btn btn-verde" onclick="confirmarEntrega()">✓ Confirmar Entrega</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-retorno">
-  <div class="modal" style="max-width:560px">
-    <div class="modal-titulo">
-      ↩ Registrar Retorno
-      <button class="modal-cerrar" onclick="cerrarModalRetorno()">✕</button>
-    </div>
-    <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
-      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()">Marcar todas ✅</button>
-    </div>
-    <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
-      <button class="btn btn-verde" onclick="confirmarRetorno()">↩ Confirmar Retorno</button>
-    </div>
-  </div>
-</div>
-
-<!-- ── MODAL: DETALLE HISTORIAL ── -->
-<div class="modal-overlay" id="modal-historial">
-  <div class="modal" style="max-width:560px">
-    <div class="modal-titulo">
-      📋 Detalle del registro
-      <button class="modal-cerrar" onclick="cerrarModalHistorial()">✕</button>
-    </div>
-    <div id="hist-modal-contenido"></div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalHistorial()">Cerrar</button>
-    </div>
-  </div>
-</div>
 
 <!-- ── MODAL: NUEVO PRÉSTAMO PROFESOR ── -->
 <div class="modal-overlay" id="modal-nuevo-pp">
@@ -1253,7 +1250,8 @@
     </div>
     <div class="modal-campo">
       <label>Herramientas entregadas</label>
-      <div id="pp-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible"></div>
+      <div id="pp-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
+      </div>
       <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta</button>
     </div>
     <div class="modal-acciones">
@@ -1279,26 +1277,91 @@
   </div>
 </div>
 
-<!-- ── MODAL: AGREGAR / EDITAR PROFESOR ── -->
-<div class="modal-overlay" id="modal-profesor-cfg">
-  <div class="modal" style="max-width:420px">
+<!-- ── MODAL VER SOLICITUD ── -->
+<div class="modal-overlay" id="modal-solicitud">
+  <div class="modal">
     <div class="modal-titulo">
-      <span id="prof-modal-titulo">➕ Agregar profesor</span>
-      <button class="modal-cerrar" onclick="cerrarModalProfesor()">✕</button>
+      Detalle de Solicitud
+      <button class="modal-cerrar" id="modal-cerrar">✕</button>
     </div>
-    <div class="modal-campo">
-      <label>Nombre completo</label>
-      <input type="text" id="prof-input-nombre" placeholder="Ej: José Peña"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    <div id="modal-contenido"></div>
+    <div class="modal-acciones" id="modal-acciones"></div>
+  </div>
+</div>
+
+<!-- ── MODAL ENTREGA ── -->
+<div class="modal-overlay" id="modal-entrega">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-titulo">
+      ✓ Entregar Herramientas
+      <button class="modal-cerrar" onclick="cerrarModalEntrega()">✕</button>
+    </div>
+    <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--rojo)"></div>
+    <div id="info-entrega" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
+      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()">Marcar todas</button>
+    </div>
+    <div id="lista-entrega" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:260px;overflow-y:auto"></div>
+    <div style="margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
+        <button class="btn btn-outline" onclick="agregarFilaAdicional()">+ Agregar</button>
+      </div>
+      <div id="lista-adicionales"></div>
     </div>
     <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
-      <button class="btn btn-verde" id="prof-btn-guardar" onclick="guardarProfesor()">✅ Guardar</button>
+      <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
+      <button class="btn btn-verde" onclick="confirmarEntrega()">✓ Confirmar Entrega</button>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODAL RETORNO ── -->
+<div class="modal-overlay" id="modal-retorno">
+  <div class="modal" style="max-width:560px">
+    <div class="modal-titulo">
+      ↩ Registrar Retorno
+      <button class="modal-cerrar" onclick="cerrarModalRetorno()">✕</button>
+    </div>
+    <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
+      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()">Marcar todas ✅</button>
+    </div>
+    <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
+      <button class="btn btn-azul" onclick="confirmarRetorno()">↩ Confirmar Retorno</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
+
+<!-- ── MODAL: AGREGAR / EDITAR HERRAMIENTA ── -->
+<div class="modal-overlay" id="modal-herramienta-cfg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span id="her-modal-titulo">➕ Agregar herramienta</span>
+      <button class="modal-cerrar" onclick="cerrarModalHerramienta()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Nombre</label>
+      <input type="text" id="her-input-nombre" placeholder="Ej: Martillo"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Cantidad disponible</label>
+      <input type="number" id="her-input-cantidad" min="0" value="1"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalHerramienta()">Cancelar</button>
+      <button class="btn btn-verde" id="her-btn-guardar" onclick="guardarHerramienta()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
 
 <!-- ── FIREBASE ── -->
 <script type="module">
@@ -1315,12 +1378,12 @@ import {
   getDocs,
   doc,
   updateDoc,
-  deleteDoc,
   query,
   orderBy,
   where,
   serverTimestamp,
   addDoc,
+  limit,
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -1338,7 +1401,7 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 // ── UTILIDADES ──
-const colores = ["#2ea043","#388bfd","#d29922","#8b5cf6","#f85149","#14b8a6","#f97316"];
+const colores = ["#22c55e","#3b82f6","#f59e0b","#8b5cf6","#ef4444","#14b8a6","#f97316"];
 function colorEstudiante(nombre) {
   let h = 0; for (const c of nombre) h = (h * 31 + c.charCodeAt(0)) % colores.length;
   return colores[h];
@@ -1392,19 +1455,20 @@ onAuthStateChanged(auth, user => {
     cargarDashboard();
     cargarSolicitudes();
     cargarPrestamosProf();
-    cargarProfesoresCfg();
+    cargarHerramientasCfg();
   } else {
     document.getElementById("pantalla-login").style.display = "flex";
     document.getElementById("app").style.display = "none";
   }
 });
 
-// ── VER INCIDENCIAS ──
+// ── VER INCIDENCIAS DESDE DASHBOARD ──
 window.verIncidencias = function() {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
   document.querySelectorAll(`.nav-item[data-vista="solicitudes"]`).forEach(n => n.classList.add("activo"));
   document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
   document.getElementById("vista-solicitudes")?.classList.add("activa");
+  // Aplicar filtro automático
   setTimeout(() => {
     const filtroEstado = document.getElementById("filtro-estado");
     if (filtroEstado) {
@@ -1432,7 +1496,7 @@ document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
   card.addEventListener("click", () => navegarVista(card.dataset.vista));
 });
 
-// ── TABS ──
+// ── TABS SOLICITUDES ──
 document.querySelectorAll(".tab-btn[data-tab-estado]").forEach(tab => {
   tab.addEventListener("click", () => {
     document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("activo"));
@@ -1444,7 +1508,7 @@ document.querySelectorAll(".tab-btn[data-tab-estado]").forEach(tab => {
 });
 
 function actualizarTabs() {
-  const tots = todasSolicitudes.filter(s => esMismodia(s.creadoEn));
+  const tots = todasSolicitudes;
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set("tab-todos", tots.length);
   set("tab-pend",  tots.filter(s => s.estado === "pendiente").length);
@@ -1477,110 +1541,94 @@ function actualizarReloj() {
 actualizarReloj();
 setInterval(actualizarReloj, 30000);
 
-// ── UTILIDAD: barra horizontal ──
-function barraH(valor, max, color) {
-  const pct = max > 0 ? Math.round((valor / max) * 100) : 0;
-  return `<div style="flex:1;background:var(--borde);border-radius:4px;height:8px;overflow:hidden">
-    <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:width .5s ease"></div>
-  </div>`;
-}
-
-function renderGraficoBarras(contenedorId, datos, color) {
-  const el = document.getElementById(contenedorId);
-  if (!el) return;
-  if (datos.length === 0) {
-    el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>';
-    return;
-  }
-  const max = datos[0].valor;
-  el.innerHTML = datos.slice(0, 8).map(d => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
-      <div style="width:120px;font-size:11px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${d.etiqueta}">${d.etiqueta}</div>
-      ${barraH(d.valor, max, color)}
-      <div style="width:26px;text-align:right;font-size:11px;font-weight:800;color:${color}">${d.valor}</div>
-    </div>
-  `).join("");
-}
-
-function renderGraficoHoras(datos) {
-  const el = document.getElementById("grafico-horas");
-  if (!el) return;
-  if (datos.every(d => d.valor === 0)) {
-    el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>';
-    return;
-  }
-  const max = Math.max(...datos.map(d => d.valor), 1);
-  const altMax = 56;
-  el.innerHTML = `
-    <div style="display:flex;align-items:flex-end;gap:2px;height:${altMax+28}px;padding-bottom:22px;position:relative">
-      ${datos.map(d => {
-        const h = max > 0 ? Math.round((d.valor / max) * altMax) : 0;
-        const col = d.valor > 0 ? "var(--verde)" : "var(--borde)";
-        return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
-          <div style="font-size:9px;color:var(--verde);font-weight:800;height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
-          <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:3px 3px 0 0"></div>
-          <div style="position:absolute;bottom:-18px;font-size:8px;color:var(--texto-dim)">${d.etiqueta}</div>
-        </div>`;
-      }).join("")}
-    </div>`;
-}
-
 async function cargarDashboard() {
   try {
-    const todas = todasSolicitudes.length > 0
-      ? todasSolicitudes
-      : (await getDocs(collection(db, "solicitudes"))).docs.map(d => ({ id: d.id, ...d.data() }));
+    const [snapSol, snapProf] = await Promise.all([
+      getDocs(collection(db, "solicitudes")),
+      getDocs(collection(db, "prestamos_profesores"))
+    ]);
+
+    const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
+    const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const hoy = new Date(); hoy.setHours(0,0,0,0);
-    const deHoy = todas.filter(s => {
-      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn || 0);
+
+    const pendientes  = todas.filter(s => s.estado === "pendiente");
+    const entregadas  = todas.filter(s => s.estado === "entregada");
+    const incidencias = todas.filter(s => s.tieneIncidencias);
+    const profActivos = prestProf.filter(p => p.estado === "activo");
+
+    const devHoy = todas.filter(s => {
+      if (s.estado !== "retornada" || !s.retornadoEn) return false;
+      const d = s.retornadoEn.toDate ? s.retornadoEn.toDate() : new Date(s.retornadoEn);
       return d >= hoy;
     });
 
-    // KPI solo de hoy
-    const pendientesHoy = deHoy.filter(s => s.estado === "pendiente");
-    document.getElementById("res-pendientes").textContent  = pendientesHoy.length;
-    document.getElementById("res-prestadas").textContent   = deHoy.filter(s => s.estado === "entregada").length;
-    document.getElementById("res-hoy").textContent         = deHoy.filter(s => s.estado === "retornada").length;
-    document.getElementById("badge-pendientes").textContent = pendientesHoy.length;
-    const nConAdic = pendientesHoy.filter(s => (s.herramientas || []).some(h => h.adicional)).length;
-    const kpiSubPend = document.getElementById("kpi-sub-pendientes");
-    if (kpiSubPend) kpiSubPend.innerHTML = nConAdic > 0
-      ? `sin entregar &nbsp;·&nbsp; <span style="color:var(--amarillo);font-weight:800">+adic: ${nConAdic}</span>`
-      : "sin entregar";
-    const eInc = document.getElementById("dash-incidencias");
-    if (eInc) eInc.textContent = todas.filter(s => s.tieneIncidencias).length;
-
-    // Gráfico 1 — herramientas más solicitadas (histórico)
-    const conteoHer = {};
-    todas.forEach(s => (s.herramientas || []).forEach(h => {
-      conteoHer[h.nombre] = (conteoHer[h.nombre] || 0) + (h.cantidad || 1);
-    }));
-    renderGraficoBarras("grafico-herramientas",
-      Object.entries(conteoHer).map(([e,v])=>({etiqueta:e,valor:v})).sort((a,b)=>b.valor-a.valor),
-      "var(--verde)");
-
-    // Gráfico 2 — por laboratorio (histórico)
-    const conteoLab = {};
-    todas.forEach(s => { const l = s.laboratorio||"Sin lab"; conteoLab[l]=(conteoLab[l]||0)+1; });
-    renderGraficoBarras("grafico-laboratorios",
-      Object.entries(conteoLab).map(([e,v])=>({etiqueta:e,valor:v})).sort((a,b)=>b.valor-a.valor),
-      "var(--azul)");
-
-    // Gráfico 3 — por hora del día (histórico, rango 8–22)
-    const conteoHora = Array(24).fill(0);
-    todas.forEach(s => {
-      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
-      if (d.getFullYear() > 2000) conteoHora[d.getHours()]++;
+    const entregadasHoy = todas.filter(s => {
+      if (!s.entregadoEn) return false;
+      const d = s.entregadoEn.toDate ? s.entregadoEn.toDate() : new Date(s.entregadoEn);
+      return d >= hoy;
     });
-    renderGraficoHoras(Array.from({length:15},(_,i)=>({etiqueta:`${8+i}h`,valor:conteoHora[8+i]||0})));
 
-    // Gráfico 4 — por profesor (histórico)
-    const conteoProf = {};
-    todas.forEach(s => { const p = s.profesor||"Sin asignar"; conteoProf[p]=(conteoProf[p]||0)+1; });
-    renderGraficoBarras("grafico-profesores",
-      Object.entries(conteoProf).map(([e,v])=>({etiqueta:e,valor:v})).sort((a,b)=>b.valor-a.valor),
-      "var(--amarillo)");
+    // KPIs
+    document.getElementById("res-pendientes").textContent = pendientes.length;
+    document.getElementById("res-prestadas").textContent  = entregadas.length;
+    document.getElementById("res-hoy").textContent        = devHoy.length;
+    document.getElementById("res-total").textContent      = todas.length;
+    document.getElementById("badge-pendientes").textContent = pendientes.length;
+
+    // Stats mini
+    const eHoy = document.getElementById("dash-entregadas-hoy");
+    const eInc  = document.getElementById("dash-incidencias");
+    const eProf = document.getElementById("dash-prof-activos");
+    if (eHoy)  eHoy.textContent  = entregadasHoy.length;
+    if (eInc)  eInc.textContent  = incidencias.length;
+    if (eProf) eProf.textContent = profActivos.length;
+
+    // Lista pendientes
+    const wrap = document.getElementById("dashboard-pendientes");
+    if (pendientes.length === 0) {
+      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>¡Sin pendientes! Todo al día.</p></div>';
+    } else {
+      wrap.innerHTML = pendientes.slice(0, 6).map(s => `
+        <div class="fila-pend">
+          <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")};width:34px;height:34px;flex-shrink:0">
+            ${iniciales(s.nombre, s.apellido)}
+          </div>
+          <div class="fp-info">
+            <div class="fp-nombre">${s.nombre} ${s.apellido}</div>
+            <div class="fp-sub">${s.matricula} · ${s.laboratorio || "—"} · ${s.profesor || "—"}</div>
+          </div>
+          <span class="fp-her">${(s.herramientas||[]).length} items</span>
+          <button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar('${s.id}')">✓ Entregar</button>
+        </div>
+      `).join("") + (pendientes.length > 6 ? `<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+${pendientes.length - 6} más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>` : "");
+    }
+
+    // Feed actividad
+    const movWrap = document.getElementById("dashboard-movimientos");
+    const recientes = [...todas].sort((a,b) => {
+      const fa = a.creadoEn?.toDate?.() || new Date(0);
+      const fb = b.creadoEn?.toDate?.() || new Date(0);
+      return fb - fa;
+    }).slice(0, 8);
+
+    const accionTexto = { pendiente:"Solicitud creada", entregada:"Herramientas entregadas", retornada:"Herramientas retornadas", cancelada:"Solicitud cancelada", incidencia:"Retorno con incidencia" };
+
+    if (recientes.length === 0) {
+      movWrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>Sin actividad aún.</p></div>';
+    } else {
+      movWrap.innerHTML = recientes.map(s => {
+        const ts = s.creadoEn?.toDate?.() || new Date(0);
+        const hora = ts.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
+        return `
+          <div class="feed-item">
+            <div class="feed-dot ${s.estado}"></div>
+            <div class="feed-texto"><strong>${s.nombre} ${s.apellido}</strong> · ${accionTexto[s.estado] || s.estado}</div>
+            <span class="feed-hora">${hora}</span>
+          </div>`;
+      }).join("");
+    }
 
   } catch(e) { console.error(e); }
 }
@@ -1598,8 +1646,6 @@ async function cargarSolicitudes() {
       cargarSelectores();
       renderTabla();
       cargarDashboard();
-      renderHistorial();
-      renderProfesoresCfg([]); // refresca conteo de vinculadas
     });
   } catch(e) { console.error(e); }
 }
@@ -1624,21 +1670,11 @@ function cargarSelectores() {
   });
 }
 
-function esMismodia(ts) {
-  if (!ts) return false;
-  const d = ts.toDate ? ts.toDate() : new Date(ts);
-  const hoy = new Date();
-  return d.getFullYear() === hoy.getFullYear() &&
-         d.getMonth()    === hoy.getMonth()    &&
-         d.getDate()     === hoy.getDate();
-}
-
 function solicitudesFiltradas() {
   const buscar = document.getElementById("filtro-buscar").value.toLowerCase();
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
-    if (!esMismodia(s.creadoEn)) return false;  // solo las de hoy
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
@@ -1654,8 +1690,7 @@ function renderTabla() {
   const filtradas = solicitudesFiltradas();
   const total = filtradas.length;
   const inicio = (paginaActual - 1) * porPagina;
-  const porTaller = [...filtradas].sort((a,b) => (a.laboratorio||"Sin taller").localeCompare(b.laboratorio||"Sin taller"));
-  const pagina = porTaller.slice(inicio, inicio + porPagina);
+  const pagina = filtradas.slice(inicio, inicio + porPagina);
   const wrap = document.getElementById("tabla-solicitudes-wrap");
 
   if (pagina.length === 0) {
@@ -1681,46 +1716,39 @@ function renderTabla() {
         </tr>
       </thead>
       <tbody>
-        ${(() => {
-          let html = "";
-          let tallerActual = null;
-          pagina.forEach((s, i) => {
-            const taller = s.laboratorio || "Sin taller";
-            if (taller !== tallerActual) {
-              tallerActual = taller;
-              html += '<tr class="taller-header-row"><td colspan="9">🏭 ' + taller.toUpperCase() + '</td></tr>';
-            }
-            const c = colorEstudiante(s.nombre || "");
-            const inc = s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : '';
-            const btnE = s.estado === "pendiente" ? '<button class="btn btn-verde" onclick="entregar(\'' + s.id + '\')">✓ Entregar</button>' : '';
-            const btnR = s.estado === "entregada" ? '<button class="btn btn-verde" onclick="retornar(\'' + s.id + '\')">↩ Retornar</button>' : '';
-            const btnCancelada = s.estado === "cancelada" ? '<span class="badge-accion cancelada">❌ Cancelada</span>' : '';
-            const btnRetornada = s.estado === "retornada" ? '<span class="badge-accion retornada">✅ Retornada</span>' : '';
-            html += '<tr>'
-              + '<td style="color:var(--texto-dim)">' + (inicio+i+1) + '</td>'
-              + '<td style="font-size:12px;color:var(--texto-dim)">' + formatFecha(s.creadoEn) + '</td>'
-              + '<td><div class="est-avatar"><div class="est-circulo" style="background:' + c + '22;color:' + c + '">' + iniciales(s.nombre, s.apellido) + '</div><div><div class="est-nombre">' + s.nombre + ' ' + s.apellido + '</div></div></div></td>'
-              + '<td style="font-size:12px">' + (s.matricula||"—") + '</td>'
-              + '<td style="font-size:12px">' + (s.profesor||"—") + '</td>'
-              + '<td style="font-size:12px">' + (s.laboratorio||"—") + '</td>'
-              + (() => {
-                const herrs = s.herramientas || [];
-                const nAdic = herrs.filter(h => h.adicional).length;
-                const badgeAdic = nAdic > 0
-                  ? ' <span style="background:rgba(210,153,34,0.18);color:var(--amarillo);padding:2px 6px;border-radius:12px;font-size:10px;font-weight:800;margin-left:4px" title="' + nAdic + ' herramienta(s) adicional(es)">+' + nAdic + '</span>'
-                  : '';
-                return '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">' + herrs.length + '</span>' + badgeAdic + '</td>';
-              })()
-              + '<td><span class="badge badge-' + s.estado + '">' + s.estado + '</span>' + inc + '</td>'
-              + '<td><div class="acciones-celda"><button class="btn btn-outline" onclick="abrirModal(\'' + s.id + '\')">👁 Ver</button>' + btnE + btnR + btnRetornada + btnCancelada + '</div></td>'
-              + '</tr>';
-          });
-          return html;
-        })()}
+        ${pagina.map((s, i) => `
+          <tr>
+            <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
+            <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(s.creadoEn)}</td>
+            <td>
+              <div class="est-avatar">
+                <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")}">
+                  ${iniciales(s.nombre, s.apellido)}
+                </div>
+                <div>
+                  <div class="est-nombre">${s.nombre} ${s.apellido}</div>
+                </div>
+              </div>
+            </td>
+            <td style="font-size:12px">${s.matricula || "—"}</td>
+            <td style="font-size:12px">${s.profesor || "—"}</td>
+            <td style="font-size:12px">${s.laboratorio || "—"}</td>
+            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${(s.herramientas||[]).length}</span></td>
+            <td><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
+            <td>
+              <div style="display:flex;gap:6px">
+                <button class="btn btn-outline" onclick="abrirModal('${s.id}')">👁 Ver</button>
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="entregar('${s.id}')">✓ Entregar</button>` : ""}
+                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="retornar('${s.id}')">↩ Retornar</button>` : ""}
+              </div>
+            </td>
+          </tr>
+        `).join("")}
       </tbody>
     </table>
   `;
 
+  // paginación
   const totalPags = Math.ceil(total / porPagina);
   document.getElementById("pag-info").textContent = `Mostrando ${inicio+1}-${Math.min(inicio+porPagina, total)} de ${total}`;
   const btns = document.getElementById("pag-btns");
@@ -1739,23 +1767,13 @@ function renderTabla() {
   document.getElementById(id)?.addEventListener("change", () => { paginaActual = 1; renderTabla(); });
 });
 
-// ── MODAL (CORREGIDO CON BADGE "➕ Adicional") ──
+// ── MODAL ──
 window.abrirModal = function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
-  
-  const herrsOriginales = (s.herramientas || []).filter(h => !h.adicional);
-  const herrsAdicionales = (s.herramientas || []).filter(h => h.adicional);
-  const renderItem = h => `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`;
-  const separadorModal = herrsAdicionales.length > 0
-    ? `<div style="display:flex;align-items:center;gap:8px;margin:8px 0 4px">
-        <div style="flex:1;height:1px;background:var(--borde)"></div>
-        <span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 10px;border-radius:20px;border:1px solid rgba(210,153,34,0.25)">➕ ADICIONALES (${herrsAdicionales.length})</span>
-        <div style="flex:1;height:1px;background:var(--borde)"></div>
-      </div>`
-    : '';
-  const herramientas = herrsOriginales.map(renderItem).join("") + separadorModal +
-    herrsAdicionales.map(h => `<div class="modal-herramienta-item" style="background:rgba(210,153,34,0.05);border-radius:6px;margin-bottom:2px"><span>${h.nombre}</span><span style="color:var(--amarillo);font-weight:700">x${h.cantidad}</span></div>`).join("");
+  const herramientas = (s.herramientas || []).map(h =>
+    `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
+  ).join("");
 
   document.getElementById("modal-contenido").innerHTML = `
     <div class="modal-campo"><label>Número de solicitud</label><div class="valor">${s.numeroSolicitud || s.id.slice(0,8)}</div></div>
@@ -1789,20 +1807,8 @@ window.abrirModal = function(id) {
   }
   if (s.estado === "entregada") {
     const b = document.createElement("button");
-    b.className = "btn btn-verde"; b.textContent = "↩ Retornar";
+    b.className = "btn btn-azul"; b.textContent = "↩ Retornar";
     b.onclick = () => { cerrarModal(); retornar(id); };
-    acciones.appendChild(b);
-  }
-  if (s.estado === "retornada" || s.estado === "retornado") {
-    const b = document.createElement("div");
-    b.style.cssText = "color:var(--verde);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;padding:8px 12px;background:var(--verde-glow);border-radius:8px;border:1px solid rgba(46,160,67,0.2)";
-    b.innerHTML = "✅ Herramientas retornadas" + (s.tieneIncidencias ? ' <span style="color:var(--rojo);margin-left:8px">⚠️ con incidencias</span>' : "");
-    acciones.appendChild(b);
-  }
-  if (s.estado === "cancelada") {
-    const b = document.createElement("div");
-    b.style.cssText = "color:var(--rojo);font-weight:700;font-size:14px;display:flex;align-items:center;gap:6px;padding:8px 12px;background:rgba(248,81,73,0.08);border-radius:8px;border:1px solid rgba(248,81,73,0.15)";
-    b.innerHTML = "❌ Solicitud cancelada";
     acciones.appendChild(b);
   }
 
@@ -1827,6 +1833,7 @@ window.entregar = async function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
 
+  // Verificar historial de incidencias
   const alertaEl = document.getElementById("alerta-incidencia");
   try {
     const snapHist = await getDocs(query(
@@ -1846,29 +1853,15 @@ window.entregar = async function(id) {
   document.getElementById("info-entrega").innerHTML =
     `<strong>${s.nombre} ${s.apellido}</strong> · ${s.matricula} · ${s.laboratorio || ""}`;
 
-  const herrsE = s.herramientas || [];
-  const originalesE = herrsE.filter(h => !h.adicional);
-  const adicionalesE = herrsE.filter(h => h.adicional);
-  const separadorEntrega = adicionalesE.length > 0
-    ? `<div style="display:flex;align-items:center;gap:8px;margin:6px 0 4px;padding:0 10px">
-        <div style="flex:1;height:1px;background:var(--borde)"></div>
-        <span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 10px;border-radius:20px;border:1px solid rgba(210,153,34,0.25)">➕ ADICIONALES</span>
-        <div style="flex:1;height:1px;background:var(--borde)"></div>
-      </div>`
-    : '';
-  const renderFilaEntrega = (h, i) => `
+  // Renderizar lista de herramientas con checkboxes
+  const lista = document.getElementById("lista-entrega");
+  lista.innerHTML = (s.herramientas || []).map((h, i) => `
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-e-${i}" data-idx="${i}" checked>
       <span class="h-nombre">${h.nombre}</span>
-      <span class="h-cant" style="color:${h.adicional ? 'var(--amarillo)' : 'var(--verde)'}">x${h.cantidad}</span>
-    </div>`;
-
-  const lista = document.getElementById("lista-entrega");
-  lista.innerHTML = herrsE.length === 0
-    ? "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>"
-    : originalesE.map((h, i) => renderFilaEntrega(h, herrsE.indexOf(h))).join("") +
-      separadorEntrega +
-      adicionalesE.map((h, i) => renderFilaEntrega(h, herrsE.indexOf(h))).join("");
+      <span class="h-cant">x${h.cantidad}</span>
+    </div>
+  `).join("") || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
 
   document.getElementById("lista-adicionales").innerHTML = "";
   document.getElementById("btn-toggle-entrega").textContent = "Desmarcar todas";
@@ -1930,6 +1923,7 @@ window.confirmarEntrega = async function() {
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
 
+  // Herramientas marcadas
   const checks = document.querySelectorAll("#lista-entrega input[type='checkbox']");
   const herramientasEntregadas = [];
   checks.forEach((chk, i) => {
@@ -1938,6 +1932,7 @@ window.confirmarEntrega = async function() {
     }
   });
 
+  // Adicionales
   document.querySelectorAll("#lista-adicionales .fila-adicional").forEach(fila => {
     const nombre = fila.querySelector(".nombre-adicional").value.trim();
     const cantidad = parseInt(fila.querySelector(".cant-adicional").value) || 1;
@@ -1985,6 +1980,7 @@ window.retornar = function(id) {
     </div>
   `).join("") || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
 
+  // Al desmarcar checkbox, el select cambia a "no_retornada"
   herramientas.forEach((_, i) => {
     const chk = document.getElementById(`chk-r-${i}`);
     const sel = document.getElementById(`estado-r-${i}`);
@@ -2037,14 +2033,13 @@ window.confirmarRetorno = async function() {
   });
 
   try {
-    const hayIncidencias = incidencias.length > 0;
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), {
       estado: "retornada",
       retornadoEn: serverTimestamp(),
-      herramientasRetorno: resultado,
-      tieneIncidencias: hayIncidencias
+      herramientasRetorno: resultado
     });
 
+    // Registrar incidencias si las hay
     for (const inc of incidencias) {
       await addDoc(collection(db, "incidencias"), {
         matricula: s.matricula,
@@ -2058,11 +2053,7 @@ window.confirmarRetorno = async function() {
     }
 
     const sx = todasSolicitudes.find(x => x.id === solicitudActivaId);
-    if (sx) {
-      sx.estado = "retornada";
-      sx.tieneIncidencias = hayIncidencias;
-      sx.herramientasRetorno = resultado;
-    }
+    if (sx) sx.estado = "retornada";
     actualizarContadores();
     renderTabla();
     cargarDashboard();
@@ -2076,9 +2067,9 @@ window.confirmarRetorno = async function() {
   } catch(e) { mostrarToast("Error al registrar retorno", "rojo"); }
 };
 
-// ── HERRAMIENTAS LISTA ──
+// ── HERRAMIENTAS LISTA (para buscador de adicionales) ──
 const HERRAMIENTAS_LISTA = [
-  "Aceitera","Alicate","Alicate de presión","Broca","Brocha","Cepillo de alambre",
+  "Ariosma","Alicate","Alicate de presión","Broca","Brocha","Cepillo de alambre",
   "Cinta adhesiva","Cinta métrica","Cuchilla","Destornillador plano","Destornillador estrella",
   "Electrodo","Escuadra falsa","Gira tuerca","Granetero","Guantes","Lente",
   "Lima cuadrada","Lima triangular","Lima media caña","Lima redonda","Llave ajustable",
@@ -2094,7 +2085,6 @@ window.anular = async function(id) {
     mostrarToast("Solicitud anulada");
   } catch(e) { mostrarToast("Error al anular", "rojo"); }
 };
-
 // ══════════════════════════════════════════════
 // ── PRÉSTAMOS A PROFESORES ──
 // ══════════════════════════════════════════════
@@ -2102,7 +2092,10 @@ window.anular = async function(id) {
 let todosPrestamosProf = [];
 let ppActivoId = null;
 
-const PROFESORES_PP = ["Daniel Camejo","José Peña","Julio Durán","Víctor Félix"];
+// Listas para los selects (reutiliza las mismas colecciones de Firestore)
+const PROFESORES_PP = [
+  "Daniel Camejo","José Peña","Julio Durán","Víctor Félix"
+];
 const LABORATORIOS_PP = [
   "Taller mecánica básica","Lab. ciencia de los materiales","Máquinas especiales",
   "Taller de procesos industriales","Taller de soldadura",
@@ -2112,27 +2105,31 @@ const LABORATORIOS_PP = [
 async function cargarPrestamosProf() {
   try {
     onSnapshot(query(collection(db, "prestamos_profesores"), orderBy("creadoEn", "desc")), snap => {
-      const hoy = new Date(); hoy.setHours(0,0,0,0);
-      todosPrestamosProf = snap.docs.map(d => ({ id: d.id, ...d.data() })).filter(p => {
-        const f = p.creadoEn?.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn || 0);
-        return f >= hoy;
-      });
+      const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+      todosPrestamosProf = snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(p => {
+          if (!p.creadoEn) return false;
+          const fecha = p.creadoEn.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn);
+          return fecha >= hoy;
+        });
       ppActualizarContadores();
       ppRenderTabla();
-      renderHistorial();
     });
   } catch(e) {
-    const w = document.getElementById("pp-tabla-wrap");
-    if (w) w.innerHTML = '<div class="cargando">Error al cargar. Verifica la conexión.</div>';
+    document.getElementById("pp-tabla-wrap").innerHTML =
+      '<div class="cargando">Error al cargar. Verifica la conexión.</div>';
   }
 }
 
 function ppActualizarContadores() {
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set("pp-total",       todosPrestamosProf.length);
-  set("pp-activos",     todosPrestamosProf.filter(p => p.estado === "activo").length);
-  set("pp-retornados",  todosPrestamosProf.filter(p => p.estado === "retornado").length);
-  set("pp-incidencias", todosPrestamosProf.filter(p => p.tieneIncidencias).length);
+  const activos    = todosPrestamosProf.filter(p => p.estado === "activo").length;
+  const retornados = todosPrestamosProf.filter(p => p.estado === "retornado").length;
+  const incid      = todosPrestamosProf.filter(p => p.tieneIncidencias).length;
+  document.getElementById("pp-total").textContent      = todosPrestamosProf.length;
+  document.getElementById("pp-activos").textContent    = activos;
+  document.getElementById("pp-retornados").textContent = retornados;
+  document.getElementById("pp-incidencias").textContent= incid;
 }
 
 function ppFiltrados() {
@@ -2146,58 +2143,78 @@ function ppFiltrados() {
 }
 
 function ppRenderTabla() {
-  const wrap = document.getElementById("pp-tabla-wrap");
-  if (!wrap) return;
   const lista = ppFiltrados();
+  const wrap  = document.getElementById("pp-tabla-wrap");
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="padding:40px"><div class="vacio-icono">📭</div><p>No hay préstamos registrados.</p></div>';
+    wrap.innerHTML = '<div class="vacio" style="padding:40px;text-align:center;color:var(--texto-dim)">📭 No hay préstamos registrados.</div>';
     return;
   }
   wrap.innerHTML = `
     <table>
-      <thead><tr>
-        <th>Profesor</th><th>Laboratorio</th><th>Herramientas</th><th>Fecha</th><th>Estado</th><th>Acciones</th>
-      </tr></thead>
+      <thead>
+        <tr>
+          <th>Profesor</th>
+          <th>Laboratorio</th>
+          <th>Herramientas</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
       <tbody>
         ${lista.map(p => {
           const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
-          const c = colorEstudiante(p.profesor || "");
-          const ini = (p.profesor || "P")[0].toUpperCase();
-          const herr = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
-          const badge = p.estado === "activo"
+          const color = colorEstudiante(p.profesor || "");
+          const ini   = (p.profesor || "P")[0].toUpperCase();
+          const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+          const badgeEstado = p.estado === "activo"
             ? '<span class="badge badge-entregada">Activo</span>'
             : p.tieneIncidencias
               ? '<span class="badge badge-cancelada">Con incidencias</span>'
               : '<span class="badge badge-retornada">Retornado</span>';
-          const accion = p.estado === "activo"
-            ? `<button class="btn btn-verde" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
+          const acciones = p.estado === "activo"
+            ? `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
             : `<span style="font-size:12px;color:var(--texto-dim)">Cerrado</span>`;
-          return `<tr>
-            <td><div class="est-avatar"><div class="est-circulo" style="background:${c}22;color:${c}">${ini}</div><div class="est-nombre">${p.profesor || "—"}</div></div></td>
-            <td style="font-size:12px">${p.laboratorio || "—"}</td>
-            <td style="font-size:11px;color:var(--texto-dim);max-width:200px">${herr}</td>
-            <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
-            <td>${badge}</td>
-            <td>${accion}</td>
-          </tr>`;
+          return `
+            <tr>
+              <td>
+                <div class="est-avatar">
+                  <div class="est-circulo" style="background:${color};color:#fff">${ini}</div>
+                  <div class="est-nombre">${p.profesor || "—"}</div>
+                </div>
+              </td>
+              <td style="font-size:13px">${p.laboratorio || "—"}</td>
+              <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
+              <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+              <td>${badgeEstado}</td>
+              <td>${acciones}</td>
+            </tr>`;
         }).join("")}
       </tbody>
     </table>`;
 }
 
+// Filtros en tiempo real
 ["pp-buscar","pp-filtro-estado"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  ppRenderTabla);
   document.getElementById(id)?.addEventListener("change", ppRenderTabla);
 });
 
+// ── MODAL NUEVO PRÉSTAMO ──
 function ppPoblarSelects() {
   const selProf = document.getElementById("pp-select-profesor");
   const selLab  = document.getElementById("pp-select-laboratorio");
+  // Limpiar y rellenar profesores
   selProf.innerHTML = '<option value="">Selecciona un profesor</option>';
-  selLab.innerHTML  = '<option value="">Selecciona un laboratorio</option>';
+  PROFESORES_PP.forEach(p => {
+    const o = document.createElement("option"); o.value = o.textContent = p; selProf.appendChild(o);
+  });
+  // Limpiar y rellenar laboratorios
+  selLab.innerHTML = '<option value="">Selecciona un laboratorio</option>';
   LABORATORIOS_PP.forEach(l => {
     const o = document.createElement("option"); o.value = o.textContent = l; selLab.appendChild(o);
   });
+  // Intentar cargar desde Firestore si hay datos
   getDocs(collection(db, "profesores")).then(snap => {
     if (!snap.empty) {
       selProf.innerHTML = '<option value="">Selecciona un profesor</option>';
@@ -2205,20 +2222,22 @@ function ppPoblarSelects() {
         const o = document.createElement("option");
         o.value = o.textContent = d.data().nombre; selProf.appendChild(o);
       });
-    } else {
-      PROFESORES_PP.forEach(p => {
-        const o = document.createElement("option"); o.value = o.textContent = p; selProf.appendChild(o);
+    }
+  }).catch(() => {});
+  getDocs(collection(db, "laboratorios")).then(snap => {
+    if (!snap.empty) {
+      selLab.innerHTML = '<option value="">Selecciona un laboratorio</option>';
+      snap.docs.forEach(d => {
+        const o = document.createElement("option");
+        o.value = o.textContent = d.data().nombre; selLab.appendChild(o);
       });
     }
-  }).catch(() => {
-    PROFESORES_PP.forEach(p => {
-      const o = document.createElement("option"); o.value = o.textContent = p; selProf.appendChild(o);
-    });
-  });
+  }).catch(() => {});
 }
 
 window.abrirModalNuevoPrestamoProf = function() {
   ppPoblarSelects();
+  // Reiniciar lista de herramientas con una fila vacía
   document.getElementById("pp-lista-herramientas").innerHTML = "";
   ppAgregarFila();
   document.getElementById("modal-nuevo-pp").classList.add("abierto");
@@ -2230,6 +2249,7 @@ window.cerrarModalNuevoProf = function() {
 
 window.ppAgregarFila = function() {
   const contenedor = document.getElementById("pp-lista-herramientas");
+  const idx = contenedor.children.length;
   const div = document.createElement("div");
   div.dataset.filaHerramienta = "1";
   div.style.cssText = "display:flex;gap:8px;align-items:center;margin-bottom:8px;position:relative";
@@ -2238,11 +2258,11 @@ window.ppAgregarFila = function() {
       <input type="text" placeholder="Herramienta..." autocomplete="off"
         style="width:100%;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px"
         oninput="ppFiltrarDropdown(this)" onfocus="ppFiltrarDropdown(this)" onblur="setTimeout(()=>this.parentNode.querySelector('.pp-drop').style.display='none',150)">
-      <div class="pp-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card2);border:1px solid var(--borde);border-radius:7px;z-index:200;max-height:220px;overflow-y:auto;margin-top:4px;box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
+      <div class="pp-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card2);border:1px solid var(--borde);border-radius:7px;z-index:200;max-height:220px;min-height:110px;overflow-y:auto;margin-top:4px;box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
     </div>
     <input type="number" min="1" value="1" placeholder="Cant."
       style="width:70px;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px">
-    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(248,81,73,0.1);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px">✕</button>`;
+    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px">✕</button>`;
   contenedor.appendChild(div);
 };
 
@@ -2264,6 +2284,7 @@ window.ppSeleccionarHerramienta = function(item, nombre) {
   const input = drop.previousElementSibling;
   input.value = nombre;
   drop.style.display = "none";
+  input.blur();
 };
 
 window.confirmarNuevoPrestamoProf = async function() {
@@ -2271,6 +2292,7 @@ window.confirmarNuevoPrestamoProf = async function() {
   const laboratorio = document.getElementById("pp-select-laboratorio").value.trim();
   if (!profesor)    { mostrarToast("Selecciona un profesor", "rojo"); return; }
   if (!laboratorio) { mostrarToast("Selecciona un laboratorio", "rojo"); return; }
+
   const filas = document.getElementById("pp-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
   const herramientas = [];
   for (const fila of filas) {
@@ -2280,12 +2302,14 @@ window.confirmarNuevoPrestamoProf = async function() {
     if (nombre) herramientas.push({ nombre, cantidad });
   }
   if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
+
   const btn = document.getElementById("pp-btn-confirmar");
   btn.disabled = true; btn.textContent = "Guardando...";
   try {
     await addDoc(collection(db, "prestamos_profesores"), {
       profesor, laboratorio, herramientas,
-      estado: "activo", tieneIncidencias: false,
+      estado: "activo",
+      tieneIncidencias: false,
       creadoEn: serverTimestamp()
     });
     mostrarToast("✅ Préstamo registrado correctamente");
@@ -2297,6 +2321,7 @@ window.confirmarNuevoPrestamoProf = async function() {
   }
 };
 
+// ── MODAL RETORNO PROFESOR ──
 window.abrirRetornoProf = function(id) {
   ppActivoId = id;
   const p = todosPrestamosProf.find(x => x.id === id);
@@ -2306,12 +2331,13 @@ window.abrirRetornoProf = function(id) {
   lista.innerHTML = (p.herramientas || []).map((h, i) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)">
       <span style="font-size:13px;font-weight:600">${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
-      <select id="pp-estado-r-${i}" style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
+      <select id="pp-estado-r-${i}"
+        style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
         <option value="retornada">✅ Retornada</option>
         <option value="danada">⚠️ Dañada</option>
         <option value="perdida">❌ Perdida</option>
       </select>
-    </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas.</p>';
+    </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
   document.getElementById("modal-retorno-pp").classList.add("abierto");
 };
 
@@ -2324,34 +2350,49 @@ window.confirmarRetornoProf = async function() {
   if (!ppActivoId) return;
   const p = todosPrestamosProf.find(x => x.id === ppActivoId);
   if (!p) return;
+
   const herramientas = p.herramientas || [];
-  const resultado = [], incidencias = [];
+  const resultado    = [];
+  const incidencias  = [];
+
   herramientas.forEach((h, i) => {
     const estado = document.getElementById(`pp-estado-r-${i}`)?.value || "retornada";
     resultado.push({ ...h, estadoRetorno: estado });
     if (estado !== "retornada") incidencias.push({ herramienta: h.nombre, tipo: estado });
   });
+
   try {
     await updateDoc(doc(db, "prestamos_profesores", ppActivoId), {
-      estado: "retornado", tieneIncidencias: incidencias.length > 0,
-      retornadoEn: serverTimestamp(), herramientasRetorno: resultado
+      estado: "retornado",
+      tieneIncidencias: incidencias.length > 0,
+      retornadoEn: serverTimestamp(),
+      herramientasRetorno: resultado
     });
+
     for (const inc of incidencias) {
       await addDoc(collection(db, "incidencias"), {
-        tipo_prestamo: "profesor", nombre: p.profesor,
-        herramienta: inc.herramienta, tipoIncidencia: inc.tipo,
+        tipo_prestamo: "profesor",
+        nombre: p.profesor,
+        herramienta: inc.herramienta,
+        tipoIncidencia: inc.tipo,
         prestamoId: ppActivoId,
         fecha: new Date().toLocaleDateString("es-DO"),
         creadoEn: serverTimestamp()
       });
     }
+
     cerrarModalRetornoProf();
-    mostrarToast(incidencias.length > 0
-      ? `↩ Retorno registrado · ${incidencias.length} incidencia(s)` : "↩ Retorno registrado correctamente",
-      incidencias.length > 0 ? "rojo" : "verde");
-  } catch(e) { mostrarToast("Error al registrar retorno", "rojo"); }
+    if (incidencias.length > 0) {
+      mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
+    } else {
+      mostrarToast("↩ Retorno registrado correctamente");
+    }
+  } catch(e) {
+    mostrarToast("Error al registrar retorno", "rojo");
+  }
 };
 
+// Cerrar modales al hacer clic fuera
 document.getElementById("modal-nuevo-pp").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-nuevo-pp")) cerrarModalNuevoProf();
 });
@@ -2360,259 +2401,98 @@ document.getElementById("modal-retorno-pp").addEventListener("click", e => {
 });
 
 // ══════════════════════════════════════════════
-// ── PROFESORES — CONFIGURACIÓN ──
+// ── HERRAMIENTAS — CONFIGURACIÓN ──
 // ══════════════════════════════════════════════
 
-let profCfgEditar = null;
+let herCfgEditar = null;
 
-async function cargarProfesoresCfg() {
+async function cargarHerramientasCfg() {
   try {
-    onSnapshot(query(collection(db, "profesores"), orderBy("nombre", "asc")), snap => {
-      const lista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderProfesoresCfg(lista);
+    onSnapshot(query(collection(db, "herramientas"), orderBy("nombre", "asc")), snap => {
+      if (snap.empty) {
+        // Si Firestore está vacío, mostrar las del respaldo
+        renderHerramientasCfg(HERRAMIENTAS_LISTA.map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: 5, local: true })));
+      } else {
+        renderHerramientasCfg(snap.docs.map(d => ({ id: d.id, ...d.data() })));
+      }
     });
   } catch(e) {
-    const w = document.getElementById("prof-cfg-wrap");
-    if (w) w.innerHTML = '<div class="cargando">Error al cargar profesores.</div>';
+    const w = document.getElementById("her-cfg-wrap");
+    if (w) w.innerHTML = '<div class="cargando">Error al cargar herramientas.</div>';
   }
 }
 
-function renderProfesoresCfg(lista) {
-  const wrap = document.getElementById("prof-cfg-wrap");
+function renderHerramientasCfg(lista) {
+  const wrap = document.getElementById("her-cfg-wrap");
   if (!wrap) return;
-  if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">👤</div><p>No hay profesores registrados. Agrega el primero.</p></div>';
+  const buscar = (document.getElementById("her-buscar")?.value || "").toLowerCase();
+  const filtrada = buscar ? lista.filter(h => h.nombre.toLowerCase().includes(buscar)) : lista;
+  if (!filtrada.length) {
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas registradas.</p></div>';
     return;
   }
-  wrap.innerHTML = `
-    <table>
-      <thead><tr><th>#</th><th>Nombre</th><th>Solicitudes vinculadas</th><th>Acciones</th></tr></thead>
-      <tbody>
-        ${lista.map((p, i) => {
-          const vinculadas = todasSolicitudes.filter(s => s.profesor === p.nombre).length;
-          const c = colorEstudiante(p.nombre);
-          const ini = (p.nombre || "P")[0].toUpperCase();
-          return `<tr>
-            <td style="color:var(--texto-dim)">${i + 1}</td>
-            <td><div class="est-avatar">
-              <div class="est-circulo" style="background:${c}22;color:${c}">${ini}</div>
-              <div class="est-nombre">${p.nombre}</div>
-            </div></td>
-            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${vinculadas}</span></td>
-            <td><div class="acciones-celda">
-              <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${p.nombre.replace(/'/g,"\\'")}')">✏️ Editar</button>
-              <button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${p.nombre.replace(/'/g,"\\'")}')">🗑 Eliminar</button>
-            </div></td>
-          </tr>`;
-        }).join("")}
-      </tbody>
-    </table>`;
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Cantidad disponible</th><th>Acciones</th></tr></thead><tbody>'
+    + filtrada.map((h, i) => {
+        const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
+        return '<tr>'
+          + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
+          + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
+          + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
+          + '<td><div class="acciones-celda">'
+          + (h.local ? '' : '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ')">✏️ Editar</button>')
+          + (h.local ? '<span style="font-size:11px;color:var(--texto-dim)">Solo lectura</span>' : '<button class="btn btn-rojo" onclick="eliminarHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>')
+          + '</div></td>'
+          + '</tr>';
+      }).join("")
+    + '</tbody></table>';
 }
 
-window.abrirModalProfesor = function(id = null, nombre = "") {
-  profCfgEditar = id;
-  document.getElementById("prof-modal-titulo").textContent = id ? "✏️ Editar profesor" : "➕ Agregar profesor";
-  document.getElementById("prof-input-nombre").value = nombre;
-  document.getElementById("modal-profesor-cfg").classList.add("abierto");
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1) {
+  herCfgEditar = id;
+  document.getElementById("her-modal-titulo").textContent = id ? "✏️ Editar herramienta" : "➕ Agregar herramienta";
+  document.getElementById("her-input-nombre").value = nombre;
+  document.getElementById("her-input-cantidad").value = cantidad;
+  document.getElementById("modal-herramienta-cfg").classList.add("abierto");
 };
 
-window.cerrarModalProfesor = function() {
-  document.getElementById("modal-profesor-cfg").classList.remove("abierto");
-  profCfgEditar = null;
+window.cerrarModalHerramienta = function() {
+  document.getElementById("modal-herramienta-cfg").classList.remove("abierto");
+  herCfgEditar = null;
 };
 
-window.guardarProfesor = async function() {
-  const nombre = document.getElementById("prof-input-nombre").value.trim();
-  if (!nombre) { mostrarToast("Escribe el nombre del profesor", "rojo"); return; }
-  const btn = document.getElementById("prof-btn-guardar");
+window.guardarHerramienta = async function() {
+  const nombre   = document.getElementById("her-input-nombre").value.trim();
+  const cantidad = parseInt(document.getElementById("her-input-cantidad").value) || 0;
+  if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
+  const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   try {
-    if (profCfgEditar) {
-      await updateDoc(doc(db, "profesores", profCfgEditar), { nombre });
-      mostrarToast("✅ Profesor actualizado");
+    if (herCfgEditar) {
+      await updateDoc(doc(db, "herramientas", herCfgEditar), { nombre, cantidadDisponible: cantidad });
+      mostrarToast("✅ Herramienta actualizada");
     } else {
-      await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
-      mostrarToast("✅ Profesor agregado");
+      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: cantidad, creadoEn: serverTimestamp() });
+      mostrarToast("✅ Herramienta agregada");
     }
-    cerrarModalProfesor();
+    cerrarModalHerramienta();
   } catch(e) { mostrarToast("Error al guardar", "rojo"); }
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
-window.eliminarProfesor = async function(id, nombre) {
-  if (!confirm(`¿Eliminar al profesor "${nombre}"? Esta acción no se puede deshacer.`)) return;
+window.eliminarHerramienta = async function(id, nombre) {
+  if (!confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) return;
   try {
-    await deleteDoc(doc(db, "profesores", id));
-    mostrarToast("Profesor eliminado");
+    await deleteDoc(doc(db, "herramientas", id));
+    mostrarToast("Herramienta eliminada");
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
-document.getElementById("modal-profesor-cfg").addEventListener("click", e => {
-  if (e.target === document.getElementById("modal-profesor-cfg")) cerrarModalProfesor();
+document.getElementById("her-buscar")?.addEventListener("input", () => {
+  // re-render with filter — snapshot already has data
 });
 
-// ══════════════════════════════════════════════
-// ── HISTORIAL ──
-// ══════════════════════════════════════════════
-
-function renderHistorial() {
-  const wrap = document.getElementById("hist-tabla-wrap");
-  if (!wrap) return;
-  const buscar = (document.getElementById("hist-buscar")?.value || "").toLowerCase();
-  const tipo   = document.getElementById("hist-tipo")?.value || "";
-  const estado = document.getElementById("hist-estado")?.value || "";
-
-  const solicitudes = todasSolicitudes.map(s => ({
-    _tipo: "solicitud", _ref: s,
-    nombre: `${s.nombre || ""} ${s.apellido || ""}`.trim(),
-    sub: s.matricula || "—",
-    lab: s.laboratorio || "—",
-    herramientas: (s.herramientas || []).length,
-    estado: s.estado,
-    fecha: s.creadoEn
-  }));
-
-  const prestamos = todosPrestamosProf.map(p => ({
-    _tipo: "profesor", _ref: p,
-    nombre: p.profesor || "—",
-    sub: "Profesor",
-    lab: p.laboratorio || "—",
-    herramientas: (p.herramientas || []).length,
-    estado: p.estado,
-    fecha: p.creadoEn
-  }));
-
-  let items = [...solicitudes, ...prestamos].sort((a, b) => {
-    const fa = a.fecha?.toDate ? a.fecha.toDate() : new Date(a.fecha || 0);
-    const fb = b.fecha?.toDate ? b.fecha.toDate() : new Date(b.fecha || 0);
-    return fb - fa;
-  });
-
-  if (tipo)   items = items.filter(x => x._tipo === tipo);
-  if (estado) items = items.filter(x => x.estado === estado);
-  if (buscar) items = items.filter(x => x.nombre.toLowerCase().includes(buscar) || x.sub.toLowerCase().includes(buscar));
-
-  if (!items.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>Sin registros que coincidan.</p></div>';
-    return;
-  }
-
-  // Guardar referencia global para el modal
-  window._histItems = items;
-
-  wrap.innerHTML = `
-    <table>
-      <thead><tr>
-        <th>Tipo</th><th>Nombre</th><th>Taller / Lab</th>
-        <th>Herramientas</th><th>Estado</th><th>Fecha</th>
-      </tr></thead>
-      <tbody>
-        ${items.map((x, idx) => {
-          const c = colorEstudiante(x.nombre);
-          const ini = (x.nombre || "?")[0].toUpperCase();
-          const tipoBadge = x._tipo === "solicitud"
-            ? '<span class="badge badge-pendiente">Estudiante</span>'
-            : '<span class="badge badge-entregada">Profesor</span>';
-          const estadoBadge = `<span class="badge badge-${x.estado === 'activo' ? 'entregada' : x.estado === 'retornado' ? 'retornada' : x.estado}">${x.estado}</span>`;
-          const fecha = x.fecha?.toDate ? x.fecha.toDate().toLocaleString("es-DO") : "—";
-          return `<tr style="cursor:pointer" onclick="abrirModalHistorial(${idx})" title="Ver detalle">
-            <td>${tipoBadge}</td>
-            <td><div class="est-avatar">
-              <div class="est-circulo" style="background:${c}22;color:${c}">${ini}</div>
-              <div><div class="est-nombre">${x.nombre}</div><div class="est-matricula">${x.sub}</div></div>
-            </div></td>
-            <td style="font-size:12px">${x.lab}</td>
-            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${x.herramientas}</span></td>
-            <td>${estadoBadge}</td>
-            <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
-          </tr>`;
-        }).join("")}
-      </tbody>
-    </table>`;
-}
-
-["hist-buscar","hist-tipo","hist-estado"].forEach(id => {
-  document.getElementById(id)?.addEventListener("input",  renderHistorial);
-  document.getElementById(id)?.addEventListener("change", renderHistorial);
-});
-
-// ── MODAL DETALLE HISTORIAL ──
-window.abrirModalHistorial = function(idx) {
-  const x = window._histItems?.[idx];
-  if (!x) return;
-  const r = x._ref;
-  const esProf = x._tipo === "profesor";
-  const fecha  = x.fecha?.toDate ? x.fecha.toDate().toLocaleString("es-DO") : "—";
-
-  // Herramientas — para estudiante usa herramientasEntregadas o herramientas; para prof usa herramientasRetorno o herramientas
-  const herrs = esProf
-    ? (r.herramientasRetorno || r.herramientas || [])
-    : (r.herramientasEntregadas || r.herramientas || []);
-
-  const renderHerr = h => {
-    const estadoH = h.estadoRetorno || h.estadoEntrega || null;
-    let color = "var(--texto-dim)";
-    let icono = "";
-    if (estadoH === "retornada")     { color = "var(--verde)";    icono = "✅ "; }
-    else if (estadoH === "entregada"){ color = "var(--azul)";     icono = "📦 "; }
-    else if (estadoH === "dañada" || estadoH === "danada") { color = "var(--amarillo)"; icono = "⚠️ "; }
-    else if (estadoH === "perdida")  { color = "var(--rojo)";     icono = "❌ "; }
-    else if (estadoH === "no_retornada") { color = "var(--rojo)"; icono = "⚠️ "; }
-    const adicBadge = h.adicional ? '<span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:9px;font-weight:800;padding:1px 7px;border-radius:12px;margin-left:6px">+adicional</span>' : '';
-    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--borde)">
-      <span style="font-size:13px">${icono}${h.nombre}${adicBadge}</span>
-      <span style="display:flex;align-items:center;gap:10px">
-        <span style="color:var(--verde);font-weight:700;font-size:12px">×${h.cantidad || 1}</span>
-        ${estadoH ? `<span style="color:${color};font-size:11px;font-weight:700">${estadoH}</span>` : ""}
-      </span>
-    </div>`;
-  };
-
-  // Incidencias — solo para estudiantes (tieneIncidencias)
-  const incSection = (!esProf && r.tieneIncidencias)
-    ? `<div style="margin-top:14px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:8px;padding:10px 14px">
-        <div style="font-size:11px;font-weight:800;color:var(--rojo);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">⚠️ Incidencias registradas</div>
-        ${(r.herramientasRetorno || []).filter(h => h.estadoRetorno && h.estadoRetorno !== "retornada")
-          .map(h => `<div style="font-size:12px;padding:3px 0;color:var(--rojo)">• ${h.nombre} — ${h.estadoRetorno}</div>`).join("") || "Ver incidencias en Firestore"}
-      </div>`
-    : (esProf && r.tieneIncidencias)
-      ? `<div style="margin-top:14px;background:rgba(248,81,73,0.08);border:1px solid rgba(248,81,73,0.2);border-radius:8px;padding:10px 14px">
-          <div style="font-size:11px;font-weight:800;color:var(--rojo);margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">⚠️ Incidencias registradas</div>
-          ${(r.herramientasRetorno || []).filter(h => h.estadoRetorno && h.estadoRetorno !== "retornada")
-            .map(h => `<div style="font-size:12px;padding:3px 0;color:var(--rojo)">• ${h.nombre} — ${h.estadoRetorno}</div>`).join("")}
-        </div>`
-      : "";
-
-  document.getElementById("hist-modal-contenido").innerHTML = `
-    <div class="grid-dos" style="margin-bottom:12px">
-      <div class="modal-campo"><label>${esProf ? "Profesor" : "Estudiante"}</label><div class="valor">${x.nombre}</div></div>
-      <div class="modal-campo"><label>${esProf ? "Tipo" : "Matrícula"}</label><div class="valor">${x.sub}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${x.lab}</div></div>
-      <div class="modal-campo"><label>Fecha</label><div class="valor">${fecha}</div></div>
-      ${!esProf ? `<div class="modal-campo"><label>Ciclo</label><div class="valor">${r.ciclo || "—"}</div></div>` : ""}
-      ${!esProf ? `<div class="modal-campo"><label>Profesor</label><div class="valor">${r.profesor || "—"}</div></div>` : ""}
-    </div>
-    <div class="modal-campo">
-      <label>Estado</label>
-      <span class="badge badge-${x.estado === 'activo' ? 'entregada' : x.estado === 'retornado' ? 'retornada' : x.estado}">${x.estado}</span>
-    </div>
-    <div class="modal-campo" style="margin-top:12px">
-      <label>Herramientas (${herrs.length})</label>
-      <div class="modal-herramientas" style="margin-top:6px">
-        ${herrs.length ? herrs.map(renderHerr).join("") : '<div style="padding:10px;color:var(--texto-dim);font-size:13px">Sin herramientas registradas</div>'}
-      </div>
-    </div>
-    ${incSection}`;
-
-  document.getElementById("modal-historial").classList.add("abierto");
-};
-
-window.cerrarModalHistorial = function() {
-  document.getElementById("modal-historial").classList.remove("abierto");
-};
-
-document.getElementById("modal-historial").addEventListener("click", e => {
-  if (e.target === document.getElementById("modal-historial")) cerrarModalHistorial();
+document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-herramienta-cfg")) cerrarModalHerramienta();
 });
 
 // ── TEMA ──
@@ -2632,6 +2512,7 @@ window.toggleTema = function() {
   aplicarTema(actual === 'oscuro' ? 'claro' : 'oscuro');
 };
 
+// Aplicar tema guardado al cargar
 aplicarTema(localStorage.getItem('tema-admin') || 'oscuro');
 </script>
 </body>
