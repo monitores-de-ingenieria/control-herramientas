@@ -1005,42 +1005,34 @@
         </div>
 
         <!-- Panel principal -->
-        <div class="dash-grid">
+        <!-- GRÁFICOS -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
 
-          <!-- Solicitudes pendientes -->
           <div class="dash-panel">
-            <div class="dash-panel-header">
-              <h3>⏳ Solicitudes Pendientes</h3>
-              <span class="ver-link" data-vista="solicitudes">Ver todas →</span>
-            </div>
-            <div id="dashboard-pendientes">
-              <div class="cargando"><div class="spinner"></div>Cargando...</div>
-            </div>
+            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
-          <!-- Feed de actividad -->
           <div class="dash-panel">
-            <div class="dash-panel-header">
-              <h3>⚡ Actividad Reciente</h3>
-            </div>
-            <div id="dashboard-movimientos">
-              <div class="cargando"><div class="spinner"></div>Cargando...</div>
-            </div>
+            <div class="dash-panel-header"><h3>🏭 Por laboratorio</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div id="grafico-laboratorios" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3>🕐 Solicitudes por hora</h3><span style="font-size:10px;color:var(--texto-dim)">histórico 8h–22h</span></div>
+            <div id="grafico-horas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3>👨‍🏫 Por profesor</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div id="grafico-profesores" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
         </div>
 
         <!-- Acciones rápidas -->
-        <div style="margin-top:14px;margin-bottom:8px;font-size:10px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.08em">Acciones Rápidas</div>
+        <div style="margin-top:4px;margin-bottom:8px;font-size:10px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.08em">Acciones Rápidas</div>
         <div class="acciones-rapidas">
-          <div class="accion-rapida" onclick="navegarVista('solicitudes')">
-            <div class="accion-rapida-icon">➕</div>
-            <div class="accion-rapida-label">Nueva Solicitud</div>
-          </div>
-          <div class="accion-rapida" onclick="navegarVista('devoluciones')">
-            <div class="accion-rapida-icon">↩</div>
-            <div class="accion-rapida-label">Registrar Devolución</div>
-          </div>
           <div class="accion-rapida" onclick="navegarVista('inv-herramientas')">
             <div class="accion-rapida-icon">🗃️</div>
             <div class="accion-rapida-label">Inventario Herramientas</div>
@@ -1541,7 +1533,7 @@ document.querySelectorAll(".tab-btn[data-tab-estado]").forEach(tab => {
 });
 
 function actualizarTabs() {
-  const tots = todasSolicitudes;
+  const tots = todasSolicitudes.filter(s => esMismodia(s.creadoEn));
   const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
   set("tab-todos", tots.length);
   set("tab-pend",  tots.filter(s => s.estado === "pendiente").length);
@@ -1574,94 +1566,102 @@ function actualizarReloj() {
 actualizarReloj();
 setInterval(actualizarReloj, 30000);
 
+// ── GRÁFICOS DASHBOARD ──
+function barraH(valor, max, color) {
+  const pct = max > 0 ? Math.round((valor / max) * 100) : 0;
+  return `<div style="flex:1;background:var(--borde);border-radius:4px;height:8px;overflow:hidden">
+    <div style="width:${pct}%;height:100%;background:${color};border-radius:4px;transition:width .5s ease"></div>
+  </div>`;
+}
+
+function renderGraficoBarras(contenedorId, datos, color) {
+  const el = document.getElementById(contenedorId);
+  if (!el) return;
+  if (!datos.length) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const max = datos[0].valor;
+  el.innerHTML = datos.slice(0, 8).map(d => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
+      <div style="width:120px;font-size:11px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${d.etiqueta}">${d.etiqueta}</div>
+      ${barraH(d.valor, max, color)}
+      <div style="width:26px;text-align:right;font-size:11px;font-weight:800;color:${color}">${d.valor}</div>
+    </div>`).join("");
+}
+
+function renderGraficoHoras(datos) {
+  const el = document.getElementById("grafico-horas");
+  if (!el) return;
+  if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const max = Math.max(...datos.map(d => d.valor), 1);
+  const altMax = 56;
+  el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:2px;height:${altMax+28}px;padding-bottom:22px;position:relative">
+    ${datos.map(d => {
+      const h = Math.round((d.valor / max) * altMax);
+      const col = d.valor > 0 ? "var(--verde)" : "var(--borde)";
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
+        <div style="font-size:9px;color:var(--verde);font-weight:800;height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
+        <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:3px 3px 0 0"></div>
+        <div style="position:absolute;bottom:-18px;font-size:8px;color:var(--texto-dim)">${d.etiqueta}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
 async function cargarDashboard() {
   try {
     const [snapSol, snapProf] = await Promise.all([
       getDocs(collection(db, "solicitudes")),
       getDocs(collection(db, "prestamos_profesores"))
     ]);
-
     const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
     const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    const hoy = new Date(); hoy.setHours(0,0,0,0);
+    // KPIs — solo hoy
+    const deHoy      = todas.filter(s => esMismodia(s.creadoEn));
+    const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
+    const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
+    const retHoy     = deHoy.filter(s => s.estado === "retornada").length;
+    const incidencias = todas.filter(s => s.tieneIncidencias).length;
+    const profActivos = prestProf.filter(p => p.estado === "activo").length;
 
-    const pendientes  = todas.filter(s => s.estado === "pendiente");
-    const entregadas  = todas.filter(s => s.estado === "entregada");
-    const incidencias = todas.filter(s => s.tieneIncidencias);
-    const profActivos = prestProf.filter(p => p.estado === "activo");
+    const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
+    set("res-pendientes", pendHoy);
+    set("res-prestadas",  entregHoy);
+    set("res-hoy",        retHoy);
+    set("badge-pendientes", pendHoy);
+    set("dash-incidencias",  incidencias);
+    set("dash-prof-activos", profActivos);
+    set("res-total", deHoy.length);
 
-    const devHoy = todas.filter(s => {
-      if (s.estado !== "retornada" || !s.retornadoEn) return false;
-      const d = s.retornadoEn.toDate ? s.retornadoEn.toDate() : new Date(s.retornadoEn);
-      return d >= hoy;
+    // Gráfico 1 — herramientas más solicitadas (histórico)
+    const conteoHer = {};
+    todas.forEach(s => (s.herramientas || []).forEach(h => {
+      conteoHer[h.nombre] = (conteoHer[h.nombre] || 0) + (h.cantidad || 1);
+    }));
+    renderGraficoBarras("grafico-herramientas",
+      Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
+      "var(--verde)");
+
+    // Gráfico 2 — por laboratorio (histórico)
+    const conteoLab = {};
+    todas.forEach(s => { const l = s.laboratorio||"Sin lab"; conteoLab[l]=(conteoLab[l]||0)+1; });
+    renderGraficoBarras("grafico-laboratorios",
+      Object.entries(conteoLab).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
+      "var(--azul)");
+
+    // Gráfico 3 — por hora (histórico, 8h–22h)
+    const conteoHora = Array(24).fill(0);
+    todas.forEach(s => {
+      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
+      if (d.getFullYear() > 2000) conteoHora[d.getHours()]++;
     });
+    renderGraficoHoras(Array.from({length:15}, (_,i) => ({etiqueta:`${8+i}h`, valor:conteoHora[8+i]||0})));
 
-    const entregadasHoy = todas.filter(s => {
-      if (!s.entregadoEn) return false;
-      const d = s.entregadoEn.toDate ? s.entregadoEn.toDate() : new Date(s.entregadoEn);
-      return d >= hoy;
-    });
-
-    // KPIs
-    document.getElementById("res-pendientes").textContent = pendientes.length;
-    document.getElementById("res-prestadas").textContent  = entregadas.length;
-    document.getElementById("res-hoy").textContent        = devHoy.length;
-    document.getElementById("res-total").textContent      = todas.length;
-    document.getElementById("badge-pendientes").textContent = pendientes.length;
-
-    // Stats mini
-    const eHoy = document.getElementById("dash-entregadas-hoy");
-    const eInc  = document.getElementById("dash-incidencias");
-    const eProf = document.getElementById("dash-prof-activos");
-    if (eHoy)  eHoy.textContent  = entregadasHoy.length;
-    if (eInc)  eInc.textContent  = incidencias.length;
-    if (eProf) eProf.textContent = profActivos.length;
-
-    // Lista pendientes
-    const wrap = document.getElementById("dashboard-pendientes");
-    if (pendientes.length === 0) {
-      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🎉</div><p>¡Sin pendientes! Todo al día.</p></div>';
-    } else {
-      wrap.innerHTML = pendientes.slice(0, 6).map(s => `
-        <div class="fila-pend">
-          <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")};width:34px;height:34px;flex-shrink:0">
-            ${iniciales(s.nombre, s.apellido)}
-          </div>
-          <div class="fp-info">
-            <div class="fp-nombre">${s.nombre} ${s.apellido}</div>
-            <div class="fp-sub">${s.matricula} · ${s.laboratorio || "—"} · ${s.profesor || "—"}</div>
-          </div>
-          <span class="fp-her">${(s.herramientas||[]).length} items</span>
-          <button class="btn btn-verde" style="font-size:11px;padding:5px 10px" onclick="entregar('${s.id}')">✓ Entregar</button>
-        </div>
-      `).join("") + (pendientes.length > 6 ? `<div style="padding:10px 18px;font-size:12px;color:var(--texto-dim);text-align:center">+${pendientes.length - 6} más → <span class="ver-link" data-vista="solicitudes" style="cursor:pointer">ver todas</span></div>` : "");
-    }
-
-    // Feed actividad
-    const movWrap = document.getElementById("dashboard-movimientos");
-    const recientes = [...todas].sort((a,b) => {
-      const fa = a.creadoEn?.toDate?.() || new Date(0);
-      const fb = b.creadoEn?.toDate?.() || new Date(0);
-      return fb - fa;
-    }).slice(0, 8);
-
-    const accionTexto = { pendiente:"Solicitud creada", entregada:"Herramientas entregadas", retornada:"Herramientas retornadas", cancelada:"Solicitud cancelada", incidencia:"Retorno con incidencia" };
-
-    if (recientes.length === 0) {
-      movWrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>Sin actividad aún.</p></div>';
-    } else {
-      movWrap.innerHTML = recientes.map(s => {
-        const ts = s.creadoEn?.toDate?.() || new Date(0);
-        const hora = ts.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
-        return `
-          <div class="feed-item">
-            <div class="feed-dot ${s.estado}"></div>
-            <div class="feed-texto"><strong>${s.nombre} ${s.apellido}</strong> · ${accionTexto[s.estado] || s.estado}</div>
-            <span class="feed-hora">${hora}</span>
-          </div>`;
-      }).join("");
-    }
+    // Gráfico 4 — por profesor (histórico)
+    const conteoProf = {};
+    todas.forEach(s => { const p = s.profesor||"Sin asignar"; conteoProf[p]=(conteoProf[p]||0)+1; });
+    renderGraficoBarras("grafico-profesores",
+      Object.entries(conteoProf).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
+      "var(--amarillo)");
 
   } catch(e) { console.error(e); }
 }
@@ -1703,11 +1703,21 @@ function cargarSelectores() {
   });
 }
 
+function esMismodia(ts) {
+  if (!ts) return false;
+  const d = ts.toDate ? ts.toDate() : new Date(ts);
+  const hoy = new Date();
+  return d.getFullYear() === hoy.getFullYear() &&
+         d.getMonth()    === hoy.getMonth()    &&
+         d.getDate()     === hoy.getDate();
+}
+
 function solicitudesFiltradas() {
   const buscar = document.getElementById("filtro-buscar").value.toLowerCase();
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
+    if (!esMismodia(s.creadoEn)) return false;  // solo las de hoy
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
