@@ -2281,7 +2281,7 @@ function ppRenderTabla() {
               : '<span class="badge badge-retornada">Retornado</span>';
           const acciones = p.estado === "activo"
             ? `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
-            : `<span style="font-size:12px;color:var(--texto-dim)">Cerrado</span>`;
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>`;
           return `
             <tr>
               <td>
