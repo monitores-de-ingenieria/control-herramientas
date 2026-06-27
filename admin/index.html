@@ -1763,34 +1763,36 @@ function renderTabla() {
     return;
   }
 
-  wrap.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Fecha y Hora</th>
-          <th>Estudiante</th>
-          <th>Matrícula</th>
-          <th>Profesor</th>
-          <th>Taller / Lab</th>
-          <th>Herramientas</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${pagina.map((s, i) => `
+  // Agrupar por taller/laboratorio
+  const grupos = {};
+  pagina.forEach(s => {
+    const taller = s.laboratorio || "Sin taller asignado";
+    if (!grupos[taller]) grupos[taller] = [];
+    grupos[taller].push(s);
+  });
+
+  let filas = "";
+  let contador = inicio;
+  Object.entries(grupos).forEach(([taller, solicitudes]) => {
+    filas += `
+      <tr>
+        <td colspan="9" style="padding:10px 16px 6px;background:var(--card2);border-bottom:2px solid var(--verde)">
+          <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--verde)">🏭 ${taller}</span>
+          <span style="font-size:11px;color:var(--texto-dim);margin-left:8px">${solicitudes.length} solicitud(es)</span>
+        </td>
+      </tr>`;
+    solicitudes.forEach(s => {
+      contador++;
+      filas += `
           <tr style="cursor:pointer" onclick="abrirModal('${s.id}')">
-            <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
+            <td style="color:var(--texto-dim)">${contador}</td>
             <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(s.creadoEn)}</td>
             <td>
               <div class="est-avatar">
                 <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")}">
                   ${iniciales(s.nombre, s.apellido)}
                 </div>
-                <div>
-                  <div class="est-nombre">${s.nombre} ${s.apellido}</div>
-                </div>
+                <div><div class="est-nombre">${s.nombre} ${s.apellido}</div></div>
               </div>
             </td>
             <td style="font-size:12px">${s.matricula || "—"}</td>
@@ -1807,9 +1809,19 @@ function renderTabla() {
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
             </td>
-          </tr>
-        `).join("")}
-      </tbody>
+          </tr>`;
+    });
+  });
+
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Fecha y Hora</th><th>Estudiante</th><th>Matrícula</th>
+          <th>Profesor</th><th>Taller / Lab</th><th>Herramientas</th><th>Estado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>${filas}</tbody>
     </table>
   `;
 
@@ -1827,9 +1839,30 @@ function renderTabla() {
   }
 }
 
-["filtro-buscar","filtro-estado","filtro-profesor"].forEach(id => {
+["filtro-buscar","filtro-profesor"].forEach(id => {
   document.getElementById(id)?.addEventListener("input", () => { paginaActual = 1; renderTabla(); });
   document.getElementById(id)?.addEventListener("change", () => { paginaActual = 1; renderTabla(); });
+});
+
+// Sincronizar select-estado con tabs
+document.getElementById("filtro-estado")?.addEventListener("change", () => {
+  const val = document.getElementById("filtro-estado").value;
+  document.querySelectorAll(".tab-btn").forEach(b => {
+    b.classList.toggle("activo", b.dataset.tabEstado === val);
+  });
+  paginaActual = 1;
+  renderTabla();
+});
+
+// Sincronizar tabs con select-estado
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
+    btn.classList.add("activo");
+    document.getElementById("filtro-estado").value = btn.dataset.tabEstado;
+    paginaActual = 1;
+    renderTabla();
+  });
 });
 
 // ── MODAL ──
