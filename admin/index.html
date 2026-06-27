@@ -825,7 +825,6 @@
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
 <div id="pantalla-login">
   <div class="login-box">
     <div class="login-logo">🔧</div>
@@ -845,11 +844,9 @@
   </div>
 </div>
 
-<!-- ══ APP ══ -->
 <div id="app">
   <div class="shell">
 
-    <!-- TOPBAR -->
     <div class="topbar">
       <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú">☰</button>
       <span class="topbar-logo">🔧</span>
@@ -868,9 +865,7 @@
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
-      <!-- Logo marca -->
       <div class="sb-brand">
         <div class="sb-brand-icon">⚙️</div>
         <div>
@@ -903,13 +898,10 @@
 
     </div>
 
-    <!-- CONTENIDO -->
     <div class="contenido">
 
-      <!-- ── DASHBOARD ── -->
       <div class="vista" id="vista-dashboard">
 
-        <!-- Bienvenida -->
         <div class="dash-bienvenida">
           <div>
             <h2 id="saludo-admin">¡Bienvenido, Administrador!</h2>
@@ -921,7 +913,6 @@
           </div>
         </div>
 
-        <!-- KPI Cards — solo hoy -->
         <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
           <div class="kpi-card amarillo" data-vista="solicitudes" data-estado="pendiente">
             <div class="kpi-icono">📋</div>
@@ -949,8 +940,6 @@
           </div>
         </div>
 
-        <!-- Panel principal -->
-        <!-- GRÁFICOS -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
@@ -975,26 +964,8 @@
 
         </div>
 
-        <!-- Acciones rápidas -->
-        <div style="margin-top:4px;margin-bottom:8px;font-size:10px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.08em">Acciones Rápidas</div>
-        <div class="acciones-rapidas">
-          <div class="accion-rapida" onclick="navegarVista('inv-herramientas')">
-            <div class="accion-rapida-icon">🗃️</div>
-            <div class="accion-rapida-label">Inventario Herramientas</div>
-          </div>
-          <div class="accion-rapida" onclick="navegarVista('inv-materiales')">
-            <div class="accion-rapida-icon">📦</div>
-            <div class="accion-rapida-label">Inventario Material</div>
-          </div>
-          <div class="accion-rapida" onclick="navegarVista('historial')">
-            <div class="accion-rapida-icon">📊</div>
-            <div class="accion-rapida-label">Reporte Diario</div>
-          </div>
-        </div>
-
       </div>
 
-      <!-- ── SOLICITUDES ── -->
       <div class="vista activa" id="vista-solicitudes">
         <div class="pagina-titulo">
           <div>
@@ -1003,7 +974,6 @@
           </div>
         </div>
 
-        <!-- Barra de búsqueda y filtros -->
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
@@ -1023,7 +993,6 @@
           </select>
         </div>
 
-        <!-- Tabs de filtro rápido -->
         <div class="tabs-filtro">
           <button class="tab-btn activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
           <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo)">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
@@ -1053,21 +1022,18 @@
         </div>
       </div>
 
-      <!-- ── OTRAS VISTAS (próximamente) ── -->
       <div class="vista" id="vista-prestamos-prof">
         <div class="pagina-titulo">
           <h2>Préstamos a Profesores</h2>
           <p>Registro directo de herramientas entregadas a profesores</p>
         </div>
 
-        <!-- Botón nuevo préstamo -->
         <div style="margin-bottom:16px">
           <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:14px">
             ➕ Registrar préstamo a profesor
           </button>
         </div>
 
-        <!-- Tabla préstamos -->
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Historial de préstamos</h3>
@@ -1092,14 +1058,12 @@
           <p>Herramientas que salen del taller hacia otros departamentos</p>
         </div>
 
-        <!-- Botón nuevo préstamo externo -->
         <div style="margin-bottom:16px">
           <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()" style="padding:10px 20px;font-size:14px">
             ➕ Registrar salida a otro departamento
           </button>
         </div>
 
-        <!-- Tabla préstamos externos -->
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Historial de herramientas prestadas</h3>
@@ -1123,7 +1087,6 @@
         <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
       </div>
 
-      <!-- ── HERRAMIENTAS CFG ── -->
       <div class="vista" id="vista-herramientas-cfg">
         <div class="pagina-titulo">
           <div>
@@ -1178,12 +1141,7 @@
         </div>
       </div>
 
-    </div><!-- /contenido -->
-  </div><!-- /shell -->
-</div><!-- /app -->
-
-<!-- ── MODAL: PROFESOR CFG ── -->
-<div class="modal-overlay" id="modal-profesor-cfg">
+    </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
   <div class="modal" style="max-width:400px">
     <div class="modal-titulo">
       <span id="prof-modal-titulo">➕ Agregar profesor</span>
@@ -1201,7 +1159,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: NUEVO PRÉSTAMO PROFESOR ── -->
 <div class="modal-overlay" id="modal-nuevo-pp">
   <div class="modal" style="max-width:560px;overflow:visible">
     <div class="modal-titulo">
@@ -1233,7 +1190,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: RETORNO PROFESOR ── -->
 <div class="modal-overlay" id="modal-retorno-pp">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1249,7 +1205,6 @@
   </div>
 </div>
 
-<!-- ── MODAL VER SOLICITUD ── -->
 <div class="modal-overlay" id="modal-solicitud">
   <div class="modal">
     <div class="modal-titulo">
@@ -1261,7 +1216,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: NUEVO PRÉSTAMO EXTERNO ── -->
 <div class="modal-overlay" id="modal-nuevo-ext">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1291,7 +1245,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: RETORNO EXTERNO ── -->
 <div class="modal-overlay" id="modal-retorno-ext">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1307,7 +1260,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: CONDUCE ── -->
 <div class="modal-overlay" id="modal-conduce">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1322,7 +1274,6 @@
   </div>
 </div>
 
-<!-- ── MODAL ENTREGA ── -->
 <div class="modal-overlay" id="modal-entrega">
   <div class="modal" style="max-width:560px">
     <div class="modal-titulo">
@@ -1350,7 +1301,6 @@
   </div>
 </div>
 
-<!-- ── MODAL RETORNO ── -->
 <div class="modal-overlay" id="modal-retorno">
   <div class="modal" style="max-width:560px">
     <div class="modal-titulo">
@@ -1372,7 +1322,6 @@
 
 <div id="toast"></div>
 
-<!-- ── MODAL: AGREGAR / EDITAR HERRAMIENTA ── -->
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
@@ -1406,7 +1355,6 @@
   </div>
 </div>
 
-<!-- ── FIREBASE ── -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -2289,16 +2237,6 @@ let ppActivoId = null;
 let todosPrestamosExt = [];
 let extActivoId = null;
 
-// Listas para los selects (reutiliza las mismas colecciones de Firestore)
-const PROFESORES_PP = [
-  "Daniel Camejo","José Peña","Julio Durán","Víctor Félix"
-];
-const LABORATORIOS_PP = [
-  "Taller mecánica básica","Lab. ciencia de los materiales","Máquinas especiales",
-  "Taller de procesos industriales","Taller de soldadura",
-  "Taller máquinas y herramientas I","Taller máquinas y herramientas II"
-];
-
 async function cargarPrestamosProf() {
   try {
     onSnapshot(query(collection(db, "prestamos_profesores"), orderBy("creadoEn", "desc")), snap => {
@@ -2387,6 +2325,15 @@ function ppRenderTabla() {
 });
 
 // ── MODAL NUEVO PRÉSTAMO ──
+const PROFESORES_PP = [
+  "Daniel Camejo","José Peña","Julio Durán","Víctor Félix"
+];
+const LABORATORIOS_PP = [
+  "Taller mecánica básica","Lab. ciencia de los materiales","Máquinas especiales",
+  "Taller de procesos industriales","Taller de soldadura",
+  "Taller máquinas y herramientas I","Taller máquinas y herramientas II"
+];
+
 function ppPoblarSelects() {
   const selProf = document.getElementById("pp-select-profesor");
   const selLab  = document.getElementById("pp-select-laboratorio");
