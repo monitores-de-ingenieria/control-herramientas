@@ -34,25 +34,25 @@
      VARIABLES — TEMA CLARO
   ═══════════════════════════════════════════ */
   body.tema-claro {
-    --bg:        #f0f4f8;
+    --bg:        #f6f8fa;
     --sidebar:   #ffffff;
     --card:      #ffffff;
-    --card2:     #e8f5e9;
-    --verde:     #1a5c28;
-    --verde-dim: #134520;
-    --verde-glow:rgba(26,92,40,0.10);
-    --amarillo:  #92400e;
-    --rojo:      #b91c1c;
-    --azul:      #1d4ed8;
-    --texto:     #0f172a;
-    --texto-dim: #475569;
-    --borde:     #cbd5e1;
-    --hover:     #dcfce7;
-    --tb-bg:     #134520;
+    --card2:     #f0f7f0;
+    --verde:     #2e7d32;
+    --verde-dim: #1b5e20;
+    --verde-glow:rgba(46,125,50,0.1);
+    --amarillo:  #b45309;
+    --rojo:      #cf222e;
+    --azul:      #0969da;
+    --texto:     #1f2328;
+    --texto-dim: #636c76;
+    --borde:     #d0d7de;
+    --hover:     #eaf5ea;
+    --tb-bg:     #1b5e20;
     --tb-txt:    #ffffff;
-    --tb-sub:    rgba(255,255,255,0.72);
+    --tb-sub:    rgba(255,255,255,0.65);
     --av-bg:     #ffffff;
-    --av-txt:    #1a5c28;
+    --av-txt:    #2e7d32;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -825,7 +825,6 @@
 </head>
 <body>
 
-<!-- ══ LOGIN ══ -->
 <div id="pantalla-login">
   <div class="login-box">
     <div class="login-logo">🔧</div>
@@ -845,11 +844,9 @@
   </div>
 </div>
 
-<!-- ══ APP ══ -->
 <div id="app">
   <div class="shell">
 
-    <!-- TOPBAR -->
     <div class="topbar">
       <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú">☰</button>
       <span class="topbar-logo">🔧</span>
@@ -868,9 +865,7 @@
       </div>
     </div>
 
-    <!-- SIDEBAR -->
     <div class="sidebar">
-      <!-- Logo marca -->
       <div class="sb-brand">
         <div class="sb-brand-icon">⚙️</div>
         <div>
@@ -879,13 +874,12 @@
         </div>
       </div>
 
-      <div class="nav-item activo" data-vista="dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Inicio</span></div>
+      <div class="nav-item" data-vista="dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Dashboard</span></div>
 
-      <div class="nav-item" data-vista="solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
+      <div class="nav-item activo" data-vista="solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
       <div class="nav-item" data-vista="prestamos-prof"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span></div>
-      <div class="nav-item" data-vista="material-gastable"><span class="nav-icono">📦</span><span class="nav-texto">Material Gastable</span></div>
       <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span></div>
-      <div class="nav-item" data-vista="devoluciones"><span class="nav-icono">✅</span><span class="nav-texto">Devoluciones</span></div>
+      <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span></div>
 
       <div class="nav-grupo">Inventario</div>
       <div class="nav-item" data-vista="inv-herramientas"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
@@ -904,13 +898,10 @@
 
     </div>
 
-    <!-- CONTENIDO -->
     <div class="contenido">
 
-      <!-- ── DASHBOARD ── -->
-      <div class="vista activa" id="vista-dashboard">
+      <div class="vista" id="vista-dashboard">
 
-        <!-- Bienvenida -->
         <div class="dash-bienvenida">
           <div>
             <h2 id="saludo-admin">¡Bienvenido, Administrador!</h2>
@@ -922,9 +913,8 @@
           </div>
         </div>
 
-        <!-- KPI Cards — solo hoy -->
-        <div class="kpi-grid" style="grid-template-columns:repeat(4,1fr)">
-          <div class="kpi-card amarillo" data-vista="solicitudes">
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kpi-card amarillo" data-vista="solicitudes" data-estado="pendiente">
             <div class="kpi-icono">📋</div>
             <div>
               <div class="kpi-label">Pendientes hoy</div>
@@ -932,7 +922,7 @@
               <div class="kpi-sub">sin entregar</div>
             </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada">
             <div class="kpi-icono">✅</div>
             <div>
               <div class="kpi-label">Entregadas hoy</div>
@@ -940,7 +930,7 @@
               <div class="kpi-sub">en el taller</div>
             </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada">
             <div class="kpi-icono">↩</div>
             <div>
               <div class="kpi-label">Retornadas hoy</div>
@@ -948,67 +938,35 @@
               <div class="kpi-sub">devueltas</div>
             </div>
           </div>
-          <div class="kpi-card rojo" style="cursor:pointer" onclick="verIncidencias()">
-            <div class="kpi-icono">⚠️</div>
-            <div>
-              <div class="kpi-label">Incidencias</div>
-              <div class="kpi-numero" id="dash-incidencias">—</div>
-              <div class="kpi-sub">acumuladas</div>
-            </div>
-          </div>
         </div>
 
-        <!-- Panel principal -->
-        <!-- GRÁFICOS -->
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
 
-          <!-- Gráfico 1: Herramientas más solicitadas (barras horizontales) -->
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🔧 Top herramientas</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
             <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
-          <!-- Gráfico 2: Estados de solicitudes hoy (donut SVG) -->
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>📊 Estados hoy</h3><span style="font-size:10px;color:var(--texto-dim)">distribución</span></div>
-            <div id="grafico-estados" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>🏭 Por laboratorio</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div id="grafico-laboratorios" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
-          <!-- Gráfico 3: Solicitudes por hora (barras verticales) -->
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🕐 Actividad por hora</h3><span style="font-size:10px;color:var(--texto-dim)">hoy · 5pm–10pm</span></div>
+            <div class="dash-panel-header"><h3>🕐 Solicitudes por hora</h3><span style="font-size:10px;color:var(--texto-dim)">histórico 8h–22h</span></div>
             <div id="grafico-horas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
-          <!-- Gráfico 4: Actividad últimos 7 días (barras verticales) -->
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>📅 Últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">solicitudes por día</span></div>
-            <div id="grafico-semana" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>👨‍🏫 Por profesor</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div id="grafico-profesores" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
-        </div>
-
-        <!-- Acciones rápidas -->
-        <div style="margin-top:4px;margin-bottom:8px;font-size:10px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.08em">Acciones Rápidas</div>
-        <div class="acciones-rapidas">
-          <div class="accion-rapida" onclick="navegarVista('inv-herramientas')">
-            <div class="accion-rapida-icon">🗃️</div>
-            <div class="accion-rapida-label">Inventario Herramientas</div>
-          </div>
-          <div class="accion-rapida" onclick="navegarVista('inv-materiales')">
-            <div class="accion-rapida-icon">📦</div>
-            <div class="accion-rapida-label">Inventario Material</div>
-          </div>
-          <div class="accion-rapida" onclick="navegarVista('historial')">
-            <div class="accion-rapida-icon">📊</div>
-            <div class="accion-rapida-label">Reporte Diario</div>
-          </div>
         </div>
 
       </div>
 
-      <!-- ── SOLICITUDES ── -->
-      <div class="vista" id="vista-solicitudes">
+      <div class="vista activa" id="vista-solicitudes">
         <div class="pagina-titulo">
           <div>
             <h2>Solicitudes</h2>
@@ -1016,14 +974,13 @@
           </div>
         </div>
 
-        <!-- Barra de búsqueda y filtros -->
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
-              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s">
             <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
           </div>
-          <select id="filtro-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+          <select id="filtro-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s">
             <option value="">Estado: Todos</option>
             <option value="pendiente">Pendiente</option>
             <option value="entregada">Entregada</option>
@@ -1031,18 +988,28 @@
             <option value="cancelada">Cancelada</option>
             <option value="incidencia">⚠️ Con Incidencia</option>
           </select>
-          <select id="filtro-profesor" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+          <select id="filtro-profesor" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s">
             <option value="">Profesor: Todos</option>
           </select>
         </div>
 
-        <!-- Tabs de filtro rápido -->
+        <!-- Tags de filtros activos -->
+        <div id="filtros-activos-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros activos:</span>
+          <div id="filtros-tags" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+          <button id="btn-limpiar-filtros" style="padding:4px 10px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">✕ Limpiar filtros</button>
+        </div>
+
         <div class="tabs-filtro">
           <button class="tab-btn activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
           <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo)">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
           <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde)">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul)">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+        </div>
+
+        <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
+          <h3>⚠️ Solicitudes de Estudiantes con incidencias</h3>
         </div>
 
         <div class="seccion-tabla">
@@ -1054,47 +1021,26 @@
             <div class="paginacion-btns" id="pag-btns"></div>
           </div>
         </div>
+        <div class="seccion-tabla" id="panel-incidencias-prof" style="display:none;margin-top:16px">
+          <div class="tabla-header">
+            <h3>⚠️ Préstamos a Profesores con incidencias</h3>
+          </div>
+          <div id="tabla-incidencias-prof-wrap"></div>
+        </div>
       </div>
 
-      <!-- ── OTRAS VISTAS (próximamente) ── -->
       <div class="vista" id="vista-prestamos-prof">
         <div class="pagina-titulo">
           <h2>Préstamos a Profesores</h2>
           <p>Registro directo de herramientas entregadas a profesores</p>
         </div>
 
-        <!-- Resumen rápido -->
-        <div class="grid-resumen" style="grid-template-columns:repeat(auto-fit,minmax(140px,1fr));margin-bottom:20px">
-          <div class="tarjeta-resumen">
-            <div class="icono-res">👨‍🏫</div>
-            <div class="numero" id="pp-total">0</div>
-            <div class="etiqueta">Total préstamos</div>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">📦</div>
-            <div class="numero" id="pp-activos">0</div>
-            <div class="etiqueta">Activos</div>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">✅</div>
-            <div class="numero" id="pp-retornados">0</div>
-            <div class="etiqueta">Retornados</div>
-          </div>
-          <div class="tarjeta-resumen">
-            <div class="icono-res">⚠️</div>
-            <div class="numero" id="pp-incidencias">0</div>
-            <div class="etiqueta">Con incidencias</div>
-          </div>
-        </div>
-
-        <!-- Botón nuevo préstamo -->
         <div style="margin-bottom:16px">
           <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:14px">
             ➕ Registrar préstamo a profesor
           </button>
         </div>
 
-        <!-- Tabla préstamos -->
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Historial de préstamos</h3>
@@ -1113,19 +1059,34 @@
         </div>
       </div>
 
-      <div class="vista" id="vista-material-gastable">
-        <div class="pagina-titulo"><h2>Material Gastable</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
-
       <div class="vista" id="vista-prestadas">
-        <div class="pagina-titulo"><h2>Herramientas Prestadas</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
+        <div class="pagina-titulo">
+          <h2>Herramientas Prestadas</h2>
+          <p>Herramientas que salen del taller hacia otros departamentos</p>
+        </div>
 
-      <div class="vista" id="vista-devoluciones">
-        <div class="pagina-titulo"><h2>Devoluciones</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
+        <div style="margin-bottom:16px">
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()" style="padding:10px 20px;font-size:14px">
+            ➕ Registrar salida a otro departamento
+          </button>
+        </div>
+
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Historial de herramientas prestadas</h3>
+            <div class="filtros">
+              <input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px">
+              <select id="ext-filtro-estado">
+                <option value="">Todos los estados</option>
+                <option value="prestado">Prestado</option>
+                <option value="devuelto">Devuelto</option>
+              </select>
+            </div>
+          </div>
+          <div id="ext-tabla-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando préstamos...</div>
+          </div>
+        </div>
       </div>
 
       <div class="vista" id="vista-inv-herramientas">
@@ -1133,7 +1094,6 @@
         <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
       </div>
 
-      <!-- ── HERRAMIENTAS CFG ── -->
       <div class="vista" id="vista-herramientas-cfg">
         <div class="pagina-titulo">
           <div>
@@ -1166,8 +1126,61 @@
       </div>
 
       <div class="vista" id="vista-historial">
-        <div class="pagina-titulo"><h2>Historial de Movimientos</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
+        <div class="pagina-titulo">
+          <h2>📊 Historial de Movimientos</h2>
+          <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
+        </div>
+
+        <!-- Filtros -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <div style="flex:1;min-width:200px;position:relative">
+            <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..."
+              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
+          </div>
+          <select id="hist-tipo" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <option value="">Tipo: Todos</option>
+            <option value="estudiante">🎓 Estudiante</option>
+            <option value="profesor">👨‍🏫 Profesor</option>
+          </select>
+          <select id="hist-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+            <option value="">Estado: Todos</option>
+            <option value="pendiente">⏳ Pendiente</option>
+            <option value="entregada">✅ Entregada</option>
+            <option value="retornada">↩ Retornada</option>
+            <option value="cancelada">❌ Cancelada</option>
+            <option value="incidencia">⚠️ Con Incidencia</option>
+          </select>
+          <input type="date" id="hist-fecha" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+          <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✕ Limpiar</button>
+        </div>
+
+        <!-- Tags activos -->
+        <div id="hist-tags-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros:</span>
+          <div id="hist-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+        </div>
+
+        <div class="seccion-tabla">
+          <div id="hist-tabla-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando historial...</div>
+          </div>
+          <div class="paginacion" id="hist-paginacion">
+            <span id="hist-pag-info"></span>
+            <div class="paginacion-btns" id="hist-pag-btns"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- MODAL DETALLE HISTORIAL -->
+      <div class="modal-overlay" id="modal-hist">
+        <div class="modal" style="max-width:560px">
+          <div class="modal-titulo">
+            <span id="modal-hist-titulo">Detalle</span>
+            <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')">✕</button>
+          </div>
+          <div id="modal-hist-contenido"></div>
+        </div>
       </div>
 
       <div class="vista" id="vista-profesores-cfg">
@@ -1188,12 +1201,7 @@
         </div>
       </div>
 
-    </div><!-- /contenido -->
-  </div><!-- /shell -->
-</div><!-- /app -->
-
-<!-- ── MODAL: PROFESOR CFG ── -->
-<div class="modal-overlay" id="modal-profesor-cfg">
+    </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
   <div class="modal" style="max-width:400px">
     <div class="modal-titulo">
       <span id="prof-modal-titulo">➕ Agregar profesor</span>
@@ -1211,7 +1219,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: NUEVO PRÉSTAMO PROFESOR ── -->
 <div class="modal-overlay" id="modal-nuevo-pp">
   <div class="modal" style="max-width:560px;overflow:visible">
     <div class="modal-titulo">
@@ -1243,7 +1250,6 @@
   </div>
 </div>
 
-<!-- ── MODAL: RETORNO PROFESOR ── -->
 <div class="modal-overlay" id="modal-retorno-pp">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1259,11 +1265,10 @@
   </div>
 </div>
 
-<!-- ── MODAL VER SOLICITUD ── -->
 <div class="modal-overlay" id="modal-solicitud">
   <div class="modal">
     <div class="modal-titulo">
-      Detalle de Solicitud
+      <span id="modal-titulo-texto">Detalle de Solicitud</span>
       <button class="modal-cerrar" id="modal-cerrar">✕</button>
     </div>
     <div id="modal-contenido"></div>
@@ -1271,7 +1276,64 @@
   </div>
 </div>
 
-<!-- ── MODAL ENTREGA ── -->
+<div class="modal-overlay" id="modal-nuevo-ext">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-titulo">
+      ➕ Registrar salida a otro departamento
+      <button class="modal-cerrar" onclick="cerrarModalNuevoExt()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Departamento</label>
+      <input type="text" id="ext-departamento" placeholder="Ej. Mantenimiento, Administración..."
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Responsable que retira</label>
+      <input type="text" id="ext-responsable" placeholder="Nombre del responsable"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Herramientas que salen</label>
+      <div id="ext-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
+      </div>
+      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta</button>
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
+      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()">✅ Registrar salida</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-retorno-ext">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-titulo">
+      ↩ Retorno — <span id="ext-retorno-nombre"></span>
+      <button class="modal-cerrar" onclick="cerrarModalRetornoExt()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--texto-dim);margin-bottom:14px">Marca el estado de cada herramienta al momento de la devolución.</p>
+    <div id="ext-retorno-lista"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
+      <button class="btn btn-verde" onclick="confirmarRetornoExt()">✅ Confirmar retorno</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-conduce">
+  <div class="modal" style="max-width:520px">
+    <div class="modal-titulo">
+      📄 Conduce de Salida
+      <button class="modal-cerrar" onclick="cerrarModalConduce()">✕</button>
+    </div>
+    <div id="conduce-contenido"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalConduce()">Cerrar</button>
+      <button class="btn btn-verde" onclick="window.print()">🖨️ Imprimir</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-entrega">
   <div class="modal" style="max-width:560px">
     <div class="modal-titulo">
@@ -1299,7 +1361,6 @@
   </div>
 </div>
 
-<!-- ── MODAL RETORNO ── -->
 <div class="modal-overlay" id="modal-retorno">
   <div class="modal" style="max-width:560px">
     <div class="modal-titulo">
@@ -1321,7 +1382,6 @@
 
 <div id="toast"></div>
 
-<!-- ── MODAL: AGREGAR / EDITAR HERRAMIENTA ── -->
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
@@ -1332,6 +1392,16 @@
       <label>Nombre</label>
       <input type="text" id="her-input-nombre" placeholder="Ej: Martillo"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Código (para la foto, ej: HER-001)</label>
+      <div style="display:flex;gap:8px;align-items:center">
+        <input type="text" id="her-input-codigo" placeholder="HER-001"
+          style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px"
+          oninput="previsualizarFotoHer()">
+        <div id="her-foto-preview" style="width:48px;height:48px;border-radius:8px;border:1px solid var(--borde);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:20px">🔧</div>
+      </div>
+      <small style="color:var(--texto-dim);font-size:11px">La foto debe estar en img/herramientas/HER-001.jpg</small>
     </div>
     <div class="modal-campo">
       <label>Cantidad disponible</label>
@@ -1345,7 +1415,6 @@
   </div>
 </div>
 
-<!-- ── FIREBASE ── -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
@@ -1437,6 +1506,7 @@ onAuthStateChanged(auth, user => {
     cargarDashboard();
     cargarSolicitudes();
     cargarPrestamosProf();
+    cargarPrestamosExternos();
     cargarHerramientasCfg();
     cargarProfesoresCfg();
   } else {
@@ -1445,7 +1515,7 @@ onAuthStateChanged(auth, user => {
   }
 });
 
-// ── VER INCIDENCIAS DESDE DASHBOARD ──
+// ── VER INCIDENCIAS DESDE DASHBOARD / MENÚ ──
 window.verIncidencias = function() {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
   document.querySelectorAll(`.nav-item[data-vista="solicitudes"]`).forEach(n => n.classList.add("activo"));
@@ -1459,7 +1529,46 @@ window.verIncidencias = function() {
       filtroEstado.dispatchEvent(new Event("change"));
     }
   }, 100);
+  // Mostrar panel de incidencias de préstamos a profesores
+  document.getElementById("titulo-incidencias-est")?.style.setProperty("display", "block");
+  const panel = document.getElementById("panel-incidencias-prof");
+  if (panel) {
+    panel.style.display = "block";
+    const wrap = document.getElementById("tabla-incidencias-prof-wrap");
+    const lista = (todosPrestamosProf || []).filter(p => p.tieneIncidencias);
+    if (!lista.length) {
+      wrap.innerHTML = '<div class="vacio" style="padding:20px;text-align:center;color:var(--texto-dim)">📭 No hay préstamos a profesores con incidencias.</div>';
+    } else {
+      wrap.innerHTML = `
+        <table>
+          <thead>
+            <tr><th>Profesor</th><th>Laboratorio</th><th>Herramientas</th><th>Fecha</th><th>Acciones</th></tr>
+          </thead>
+          <tbody>
+            ${lista.map(p => {
+              const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+              const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+              return `<tr style="cursor:pointer" onclick="verDetalleIncidenciaProf('${p.id}')">
+                <td>${p.profesor || "—"}</td>
+                <td style="font-size:13px">${p.laboratorio || "—"}</td>
+                <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
+                <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+                <td><button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')">👁 Ver</button></td>
+              </tr>`;
+            }).join("")}
+          </tbody>
+        </table>`;
+    }
+  }
 };
+
+// Ocultar el panel de incidencias de profesores al navegar normalmente
+function ocultarPanelIncidenciasProf() {
+  const panel = document.getElementById("panel-incidencias-prof");
+  if (panel) panel.style.display = "none";
+  const titulo = document.getElementById("titulo-incidencias-est");
+  if (titulo) titulo.style.display = "none";
+}
 
 // ── TOGGLE SIDEBAR ──
 const shell = document.querySelector(".shell");
@@ -1467,16 +1576,28 @@ document.getElementById("btn-toggle-sidebar").addEventListener("click", () => {
   shell.classList.toggle("sidebar-colapsado");
 });
 
+document.getElementById("nav-incidencias").addEventListener("click", verIncidencias);
+
 // ── KPI CARDS navegables ──
 function navegarVista(vista) {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
   document.querySelectorAll(`.nav-item[data-vista="${vista}"]`).forEach(n => n.classList.add("activo"));
   document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
   document.getElementById(`vista-${vista}`)?.classList.add("activa");
+  ocultarPanelIncidenciasProf();
 }
 
 document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
-  card.addEventListener("click", () => navegarVista(card.dataset.vista));
+  card.addEventListener("click", () => {
+    navegarVista(card.dataset.vista);
+    const estado = card.dataset.estado;
+    if (estado !== undefined) {
+      setTimeout(() => {
+        const tab = document.querySelector(`.tab-btn[data-tab-estado="${estado}"]`);
+        if (tab) tab.click();
+      }, 50);
+    }
+  });
 });
 
 // ── TABS SOLICITUDES ──
@@ -1508,6 +1629,7 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(`.nav-item[data-vista="${vista}"]`).forEach(n => n.classList.add("activo"));
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
+    ocultarPanelIncidenciasProf();
   });
 });
 
@@ -1545,65 +1667,7 @@ function renderGraficoBarras(contenedorId, datos, color) {
     </div>`).join("");
 }
 
-function renderGraficoDonut(contenedorId, datos) {
-  const el = document.getElementById(contenedorId);
-  if (!el) return;
-  const total = datos.reduce((s, d) => s + d.valor, 0);
-  if (!total) {
-    el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos hoy.</p></div>';
-    return;
-  }
-  // Construir arcos SVG
-  const r = 48; const cx = 70; const cy = 60;
-  let startAngle = -Math.PI / 2;
-  let paths = "";
-  datos.forEach(d => {
-    if (!d.valor) return;
-    const angle = (d.valor / total) * 2 * Math.PI;
-    const x1 = cx + r * Math.cos(startAngle);
-    const y1 = cy + r * Math.sin(startAngle);
-    const x2 = cx + r * Math.cos(startAngle + angle);
-    const y2 = cy + r * Math.sin(startAngle + angle);
-    const large = angle > Math.PI ? 1 : 0;
-    paths += `<path d="M${cx},${cy} L${x1.toFixed(1)},${y1.toFixed(1)} A${r},${r} 0 ${large},1 ${x2.toFixed(1)},${y2.toFixed(1)} Z" fill="${d.color}" opacity="0.9"/>`;
-    startAngle += angle;
-  });
-  // Círculo central (donut)
-  paths += `<circle cx="${cx}" cy="${cy}" r="28" fill="var(--card)"/>`;
-  paths += `<text x="${cx}" y="${cy+5}" text-anchor="middle" font-size="14" font-weight="800" fill="var(--texto)">${total}</text>`;
-  const leyenda = datos.filter(d => d.valor > 0).map(d =>
-    `<div style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--texto-dim)">
-      <div style="width:8px;height:8px;border-radius:50%;background:${d.color};flex-shrink:0"></div>
-      <span>${d.etiqueta}</span><span style="font-weight:800;color:var(--texto)">${d.valor}</span>
-    </div>`).join("");
-  el.innerHTML = `
-    <div style="display:flex;align-items:center;gap:16px">
-      <svg width="140" height="120" viewBox="0 0 140 120">${paths}</svg>
-      <div style="display:flex;flex-direction:column;gap:6px">${leyenda}</div>
-    </div>`;
-}
-
-function renderGraficoSemana(contenedorId, datos) {
-  const el = document.getElementById(contenedorId);
-  if (!el) return;
-  const max = Math.max(...datos.map(d => d.valor), 1);
-  const altMax = 60;
-  const hoy = new Date();
-  el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:4px;height:${altMax+30}px;padding-bottom:22px;position:relative">
-    ${datos.map(d => {
-      const h = Math.round((d.valor / max) * altMax);
-      const esHoy = d.fecha.toDateString() === hoy.toDateString();
-      const col = esHoy ? "var(--verde)" : "var(--azul)";
-      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
-        <div style="font-size:9px;font-weight:800;color:${col};height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
-        <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:3px 3px 0 0;opacity:${esHoy ? 1 : 0.5}"></div>
-        <div style="position:absolute;bottom:-18px;font-size:9px;color:${esHoy ? "var(--verde)" : "var(--texto-dim)"};font-weight:${esHoy ? 800 : 400}">${d.etiqueta}</div>
-      </div>`;
-    }).join("")}
-  </div>`;
-}
-
-function renderGraficoHoras(datos, subtitulo = "") {
+function renderGraficoHoras(datos) {
   const el = document.getElementById("grafico-horas");
   if (!el) return;
   if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
@@ -1648,7 +1712,7 @@ async function cargarDashboard() {
     set("dash-prof-activos", profActivos);
     set("res-total", deHoy.length);
 
-    // Gráfico 1 — top herramientas más solicitadas (histórico, barras)
+    // Gráfico 1 — herramientas más solicitadas (histórico)
     const conteoHer = {};
     todas.forEach(s => (s.herramientas || []).forEach(h => {
       conteoHer[h.nombre] = (conteoHer[h.nombre] || 0) + (h.cantidad || 1);
@@ -1657,50 +1721,27 @@ async function cargarDashboard() {
       Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
       "var(--verde)");
 
-    // Gráfico 2 — distribución de estados hoy (donut SVG)
-    renderGraficoDonut("grafico-estados", [
-      { etiqueta:"Pendientes", valor: pendHoy,   color:"var(--amarillo)" },
-      { etiqueta:"Entregadas", valor: entregHoy, color:"var(--verde)"    },
-      { etiqueta:"Retornadas", valor: retHoy,    color:"var(--azul)"     },
-      { etiqueta:"Canceladas", valor: deHoy.filter(s=>s.estado==="cancelada").length, color:"var(--rojo)" }
-    ]);
+    // Gráfico 2 — por laboratorio (histórico)
+    const conteoLab = {};
+    todas.forEach(s => { const l = s.laboratorio||"Sin lab"; conteoLab[l]=(conteoLab[l]||0)+1; });
+    renderGraficoBarras("grafico-laboratorios",
+      Object.entries(conteoLab).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
+      "var(--azul)");
 
-    // Gráfico 3 — actividad por hora HOY (5pm–10pm, franja de trabajo)
-    const conteoHoraHoy = Array(24).fill(0);
-    deHoy.forEach(s => {
-      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
-      if (d.getFullYear() > 2000) conteoHoraHoy[d.getHours()]++;
-    });
-    // Si no hay datos hoy, mostrar histórico 8h-22h
-    const hayDatosHoy = conteoHoraHoy.some(v => v > 0);
-    if (hayDatosHoy) {
-      renderGraficoHoras(Array.from({length:6}, (_,i) => ({etiqueta:`${17+i}h`, valor:conteoHoraHoy[17+i]||0})));
-    } else {
-      const conteoHoraHist = Array(24).fill(0);
-      todas.forEach(s => {
-        const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
-        if (d.getFullYear() > 2000) conteoHoraHist[d.getHours()]++;
-      });
-      renderGraficoHoras(Array.from({length:6}, (_,i) => ({etiqueta:`${17+i}h`, valor:conteoHoraHist[17+i]||0})), "histórico");
-    }
-
-    // Gráfico 4 — últimos 7 días (barras verticales por día)
-    const hoy7 = new Date(); hoy7.setHours(0,0,0,0);
-    const dias7 = Array.from({length:7}, (_,i) => {
-      const d = new Date(hoy7); d.setDate(d.getDate() - (6-i));
-      return { fecha: d, etiqueta: d.toLocaleDateString("es-DO", {weekday:"short"}).slice(0,3), valor: 0 };
-    });
+    // Gráfico 3 — por hora (histórico, 8h–22h)
+    const conteoHora = Array(24).fill(0);
     todas.forEach(s => {
       const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
-      if (d.getFullYear() > 2000) {
-        const idx = dias7.findIndex(x =>
-          x.fecha.getFullYear() === d.getFullYear() &&
-          x.fecha.getMonth()    === d.getMonth()    &&
-          x.fecha.getDate()     === d.getDate());
-        if (idx >= 0) dias7[idx].valor++;
-      }
+      if (d.getFullYear() > 2000) conteoHora[d.getHours()]++;
     });
-    renderGraficoSemana("grafico-semana", dias7);
+    renderGraficoHoras(Array.from({length:15}, (_,i) => ({etiqueta:`${8+i}h`, valor:conteoHora[8+i]||0})));
+
+    // Gráfico 4 — por profesor (histórico)
+    const conteoProf = {};
+    todas.forEach(s => { const p = s.profesor||"Sin asignar"; conteoProf[p]=(conteoProf[p]||0)+1; });
+    renderGraficoBarras("grafico-profesores",
+      Object.entries(conteoProf).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
+      "var(--amarillo)");
 
   } catch(e) { console.error(e); }
 }
@@ -1756,7 +1797,7 @@ function solicitudesFiltradas() {
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
-    if (!esMismodia(s.creadoEn)) return false;  // solo las de hoy
+    if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;  // solo las de hoy (excepto incidencias)
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
@@ -1782,34 +1823,36 @@ function renderTabla() {
     return;
   }
 
-  wrap.innerHTML = `
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Fecha y Hora</th>
-          <th>Estudiante</th>
-          <th>Matrícula</th>
-          <th>Profesor</th>
-          <th>Taller / Lab</th>
-          <th>Herramientas</th>
-          <th>Estado</th>
-          <th>Acciones</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${pagina.map((s, i) => `
-          <tr>
-            <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
+  // Agrupar por taller/laboratorio
+  const grupos = {};
+  pagina.forEach(s => {
+    const taller = s.laboratorio || "Sin taller asignado";
+    if (!grupos[taller]) grupos[taller] = [];
+    grupos[taller].push(s);
+  });
+
+  let filas = "";
+  let contador = inicio;
+  Object.entries(grupos).forEach(([taller, solicitudes]) => {
+    filas += `
+      <tr>
+        <td colspan="9" style="padding:10px 16px 6px;background:var(--card2);border-bottom:2px solid var(--verde)">
+          <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--verde)">🏭 ${taller}</span>
+          <span style="font-size:11px;color:var(--texto-dim);margin-left:8px">${solicitudes.length} solicitud(es)</span>
+        </td>
+      </tr>`;
+    solicitudes.forEach(s => {
+      contador++;
+      filas += `
+          <tr style="cursor:pointer" onclick="abrirModal('${s.id}')">
+            <td style="color:var(--texto-dim)">${contador}</td>
             <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(s.creadoEn)}</td>
             <td>
               <div class="est-avatar">
                 <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")}">
                   ${iniciales(s.nombre, s.apellido)}
                 </div>
-                <div>
-                  <div class="est-nombre">${s.nombre} ${s.apellido}</div>
-                </div>
+                <div><div class="est-nombre">${s.nombre} ${s.apellido}</div></div>
               </div>
             </td>
             <td style="font-size:12px">${s.matricula || "—"}</td>
@@ -1819,22 +1862,36 @@ function renderTabla() {
             <td><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
-                <button class="btn btn-outline" onclick="abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="entregar('${s.id}')">✓ Entregar</button>` : ""}
-                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="retornar('${s.id}')">↩ Retornar</button>` : ""}
+                <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')">✓ Entregar</button>` : ""}
+                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
             </td>
-          </tr>
-        `).join("")}
-      </tbody>
+          </tr>`;
+    });
+  });
+
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th><th>Fecha y Hora</th><th>Estudiante</th><th>Matrícula</th>
+          <th>Profesor</th><th>Taller / Lab</th><th>Herramientas</th><th>Estado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>${filas}</tbody>
     </table>
   `;
 
   // paginación
   const totalPags = Math.ceil(total / porPagina);
-  document.getElementById("pag-info").textContent = `Mostrando ${inicio+1}-${Math.min(inicio+porPagina, total)} de ${total}`;
+  const desde = inicio + 1;
+  const hasta = Math.min(inicio + porPagina, total);
+  document.getElementById("pag-info").textContent = total > 0
+    ? `Mostrando ${desde}–${hasta} de ${total} solicitud${total !== 1 ? "es" : ""}`
+    : "";
   const btns = document.getElementById("pag-btns");
   btns.innerHTML = "";
   for (let p = 1; p <= totalPags; p++) {
@@ -1846,15 +1903,84 @@ function renderTabla() {
   }
 }
 
-["filtro-buscar","filtro-estado","filtro-profesor"].forEach(id => {
-  document.getElementById(id)?.addEventListener("input", () => { paginaActual = 1; renderTabla(); });
-  document.getElementById(id)?.addEventListener("change", () => { paginaActual = 1; renderTabla(); });
+// ── FILTROS UI: resaltado, tags y limpiar ──
+function actualizarFiltrosUI() {
+  const buscar  = document.getElementById("filtro-buscar").value.trim();
+  const estado  = document.getElementById("filtro-estado").value;
+  const profesor = document.getElementById("filtro-profesor").value;
+
+  // Resaltar campos activos en verde
+  const estiloBorde = (activo) => activo
+    ? "border:1.5px solid var(--verde)!important;background:rgba(34,197,94,.06)!important"
+    : "";
+
+  const elBuscar  = document.getElementById("filtro-buscar");
+  const elEstado  = document.getElementById("filtro-estado");
+  const elProfesor = document.getElementById("filtro-profesor");
+
+  elBuscar.style.borderColor   = buscar   ? "var(--verde)" : "";
+  elBuscar.style.background    = buscar   ? "rgba(34,197,94,.06)" : "";
+  elEstado.style.borderColor   = estado   ? "var(--verde)" : "";
+  elEstado.style.background    = estado   ? "rgba(34,197,94,.06)" : "";
+  elProfesor.style.borderColor = profesor ? "var(--verde)" : "";
+  elProfesor.style.background  = profesor ? "rgba(34,197,94,.06)" : "";
+
+  // Tags de filtros activos
+  const bar  = document.getElementById("filtros-activos-bar");
+  const tags = document.getElementById("filtros-tags");
+  const hayFiltro = buscar || estado || profesor;
+
+  bar.style.display = hayFiltro ? "flex" : "none";
+  tags.innerHTML = "";
+
+  if (buscar) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">🔍 "${buscar}"</span>`;
+  if (estado) {
+    const etiquetas = { pendiente:"⏳ Pendiente", entregada:"✅ Entregada", retornada:"↩ Retornada", cancelada:"❌ Cancelada", incidencia:"⚠️ Con Incidencia" };
+    tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${etiquetas[estado]||estado}</span>`;
+  }
+  if (profesor) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">👤 ${profesor}</span>`;
+}
+
+document.getElementById("btn-limpiar-filtros")?.addEventListener("click", () => {
+  document.getElementById("filtro-buscar").value  = "";
+  document.getElementById("filtro-estado").value  = "";
+  document.getElementById("filtro-profesor").value = "";
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
+  document.querySelector(".tab-btn[data-tab-estado='']")?.classList.add("activo");
+  actualizarFiltrosUI();
+  paginaActual = 1;
+  renderTabla();
+});
+
+["filtro-buscar","filtro-profesor"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input", () => { actualizarFiltrosUI(); paginaActual = 1; renderTabla(); });
+  document.getElementById(id)?.addEventListener("change", () => { actualizarFiltrosUI(); paginaActual = 1; renderTabla(); });
+});
+
+document.getElementById("filtro-estado")?.addEventListener("change", () => {
+  const val = document.getElementById("filtro-estado").value;
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("activo", b.dataset.tabEstado === val));
+  actualizarFiltrosUI();
+  paginaActual = 1;
+  renderTabla();
+});
+
+document.querySelectorAll(".tab-btn").forEach(btn => {
+  btn.addEventListener("click", () => {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
+    btn.classList.add("activo");
+    document.getElementById("filtro-estado").value = btn.dataset.tabEstado;
+    actualizarFiltrosUI();
+    paginaActual = 1;
+    renderTabla();
+  });
 });
 
 // ── MODAL ──
 window.abrirModal = function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
+  document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herramientas = (s.herramientas || []).map(h =>
     `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
@@ -1875,7 +2001,34 @@ window.abrirModal = function(id) {
       <label>Herramientas solicitadas</label>
       <div class="modal-herramientas">${herramientas || "—"}</div>
     </div>
+    ${s.tieneIncidencias ? `
+    <div class="modal-campo">
+      <label>⚠️ Incidencias registradas</label>
+      <div class="modal-herramientas" id="modal-incidencias-est"><div class="cargando"><div class="spinner"></div>Cargando incidencias...</div></div>
+    </div>` : ""}
   `;
+
+  if (s.tieneIncidencias) {
+    (async () => {
+      const cont = document.getElementById("modal-incidencias-est");
+      try {
+        const snap = await getDocs(query(
+          collection(db, "incidencias"),
+          where("solicitudId", "==", s.id)
+        ));
+        if (!snap.empty) {
+          cont.innerHTML = snap.docs.map(d => {
+            const i = d.data();
+            return `<div class="modal-herramienta-item"><span>${i.herramienta || "—"}</span><span style="color:var(--rojo);font-weight:700">${i.tipo || "—"}</span></div>`;
+          }).join("");
+        } else {
+          cont.innerHTML = `<div class="valor">No se encontró el detalle específico de la incidencia.</div>`;
+        }
+      } catch(e) {
+        cont.innerHTML = `<div class="valor">No se pudo cargar el detalle de la incidencia.</div>`;
+      }
+    })();
+  }
 
   const acciones = document.getElementById("modal-acciones");
   acciones.innerHTML = "";
@@ -1902,6 +2055,46 @@ window.abrirModal = function(id) {
 function cerrarModal() {
   document.getElementById("modal-solicitud").classList.remove("abierto");
 }
+
+window.verDetalleIncidenciaProf = async function(prestamoId) {
+  const p = todosPrestamosProf.find(x => x.id === prestamoId);
+  if (!p) return;
+  document.getElementById("modal-titulo-texto").textContent = "Detalle de Incidencia";
+  document.getElementById("modal-contenido").innerHTML = `<div class="cargando"><div class="spinner"></div>Cargando detalle...</div>`;
+  document.getElementById("modal-acciones").innerHTML = "";
+  document.getElementById("modal-solicitud").classList.add("abierto");
+
+  let detalleHtml = "";
+  try {
+    const snap = await getDocs(query(
+      collection(db, "incidencias"),
+      where("prestamoId", "==", prestamoId)
+    ));
+    if (!snap.empty) {
+      detalleHtml = snap.docs.map(d => {
+        const i = d.data();
+        return `<div class="modal-herramienta-item"><span>${i.herramienta || "—"}</span><span style="color:var(--rojo);font-weight:700">${i.tipoIncidencia || "—"}</span></div>`;
+      }).join("");
+    } else {
+      detalleHtml = `<div class="valor">No se encontró el detalle específico de la incidencia.</div>`;
+    }
+  } catch(e) {
+    detalleHtml = `<div class="valor">No se pudo cargar el detalle de la incidencia.</div>`;
+  }
+
+  const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+  document.getElementById("modal-contenido").innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${p.profesor || "—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${p.laboratorio || "—"}</div></div>
+    </div>
+    <div class="modal-campo"><label>Fecha del préstamo</label><div class="valor">${fecha}</div></div>
+    <div class="modal-campo">
+      <label>Herramientas con incidencia</label>
+      <div class="modal-herramientas">${detalleHtml}</div>
+    </div>
+  `;
+};
 
 document.getElementById("modal-cerrar").addEventListener("click", cerrarModal);
 document.getElementById("modal-solicitud").addEventListener("click", e => {
@@ -2163,7 +2356,7 @@ window.confirmarRetorno = async function() {
 
 // ── HERRAMIENTAS LISTA (para buscador de adicionales) ──
 const HERRAMIENTAS_LISTA = [
-  "Ariosma","Alicate","Alicate de presión","Broca","Brocha","Cepillo de alambre",
+  "Aceitera","Alicate","Alicate de presión","Broca","Brocha","Cepillo de alambre",
   "Cinta adhesiva","Cinta métrica","Cuchilla","Destornillador plano","Destornillador estrella",
   "Electrodo","Escuadra falsa","Gira tuerca","Granetero","Guantes","Lente",
   "Lima cuadrada","Lima triangular","Lima media caña","Lima redonda","Llave ajustable",
@@ -2185,16 +2378,8 @@ window.anular = async function(id) {
 
 let todosPrestamosProf = [];
 let ppActivoId = null;
-
-// Listas para los selects (reutiliza las mismas colecciones de Firestore)
-const PROFESORES_PP = [
-  "Daniel Camejo","José Peña","Julio Durán","Víctor Félix"
-];
-const LABORATORIOS_PP = [
-  "Taller mecánica básica","Lab. ciencia de los materiales","Máquinas especiales",
-  "Taller de procesos industriales","Taller de soldadura",
-  "Taller máquinas y herramientas I","Taller máquinas y herramientas II"
-];
+let todosPrestamosExt = [];
+let extActivoId = null;
 
 async function cargarPrestamosProf() {
   try {
@@ -2207,23 +2392,12 @@ async function cargarPrestamosProf() {
           const fecha = p.creadoEn.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn);
           return fecha >= hoy;
         });
-      ppActualizarContadores();
       ppRenderTabla();
     });
   } catch(e) {
     document.getElementById("pp-tabla-wrap").innerHTML =
       '<div class="cargando">Error al cargar. Verifica la conexión.</div>';
   }
-}
-
-function ppActualizarContadores() {
-  const activos    = todosPrestamosProf.filter(p => p.estado === "activo").length;
-  const retornados = todosPrestamosProf.filter(p => p.estado === "retornado").length;
-  const incid      = todosPrestamosProf.filter(p => p.tieneIncidencias).length;
-  document.getElementById("pp-total").textContent      = todosPrestamosProf.length;
-  document.getElementById("pp-activos").textContent    = activos;
-  document.getElementById("pp-retornados").textContent = retornados;
-  document.getElementById("pp-incidencias").textContent= incid;
 }
 
 function ppFiltrados() {
@@ -2268,7 +2442,7 @@ function ppRenderTabla() {
               : '<span class="badge badge-retornada">Retornado</span>';
           const acciones = p.estado === "activo"
             ? `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
-            : `<span style="font-size:12px;color:var(--texto-dim)">Cerrado</span>`;
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>`;
           return `
             <tr>
               <td>
@@ -2295,6 +2469,15 @@ function ppRenderTabla() {
 });
 
 // ── MODAL NUEVO PRÉSTAMO ──
+const PROFESORES_PP = [
+  "Daniel Camejo","José Peña","Julio Durán","Víctor Félix"
+];
+const LABORATORIOS_PP = [
+  "Taller mecánica básica","Lab. ciencia de los materiales","Máquinas especiales",
+  "Taller de procesos industriales","Taller de soldadura",
+  "Taller máquinas y herramientas I","Taller máquinas y herramientas II"
+];
+
 function ppPoblarSelects() {
   const selProf = document.getElementById("pp-select-profesor");
   const selLab  = document.getElementById("pp-select-laboratorio");
@@ -2495,6 +2678,286 @@ document.getElementById("modal-retorno-pp").addEventListener("click", e => {
 });
 
 // ══════════════════════════════════════════════
+// ── HERRAMIENTAS PRESTADAS (OTROS DEPARTAMENTOS) ──
+// ══════════════════════════════════════════════
+
+async function cargarPrestamosExternos() {
+  try {
+    onSnapshot(query(collection(db, "prestamos_externos"), orderBy("creadoEn", "desc")), snap => {
+      todosPrestamosExt = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      extRenderTabla();
+    });
+  } catch(e) {
+    document.getElementById("ext-tabla-wrap").innerHTML =
+      '<div class="cargando">Error al cargar. Verifica la conexión.</div>';
+  }
+}
+
+function extFiltrados() {
+  const buscar = (document.getElementById("ext-buscar")?.value || "").toLowerCase();
+  const estado = document.getElementById("ext-filtro-estado")?.value || "";
+  return todosPrestamosExt.filter(p => {
+    const matchBuscar = !buscar || (p.departamento || "").toLowerCase().includes(buscar);
+    const matchEstado = !estado || p.estado === estado;
+    return matchBuscar && matchEstado;
+  });
+}
+
+function extRenderTabla() {
+  const lista = extFiltrados();
+  const wrap  = document.getElementById("ext-tabla-wrap");
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="padding:40px;text-align:center;color:var(--texto-dim)">📭 No hay herramientas prestadas a otros departamentos.</div>';
+    return;
+  }
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>Departamento</th>
+          <th>Responsable</th>
+          <th>Herramientas</th>
+          <th>Fecha</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lista.map(p => {
+          const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+          const color = colorEstudiante(p.departamento || "");
+          const ini   = (p.departamento || "D")[0].toUpperCase();
+          const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+          const badgeEstado = p.estado === "prestado"
+            ? '<span class="badge badge-entregada">Prestado</span>'
+            : p.tieneIncidencias
+              ? '<span class="badge badge-cancelada">Con incidencias</span>'
+              : '<span class="badge badge-retornada">Devuelto</span>';
+          const acciones = p.estado === "prestado"
+            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`;
+          return `
+            <tr>
+              <td>
+                <div class="est-avatar">
+                  <div class="est-circulo" style="background:${color};color:#fff">${ini}</div>
+                  <div class="est-nombre">${p.departamento || "—"}</div>
+                </div>
+              </td>
+              <td style="font-size:13px">${p.responsable || "—"}</td>
+              <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
+              <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+              <td>${badgeEstado}</td>
+              <td><div style="display:flex;gap:6px;flex-wrap:wrap">${acciones}</div></td>
+            </tr>`;
+        }).join("")}
+      </tbody>
+    </table>`;
+}
+
+// Filtros en tiempo real
+["ext-buscar","ext-filtro-estado"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input",  extRenderTabla);
+  document.getElementById(id)?.addEventListener("change", extRenderTabla);
+});
+
+window.abrirModalNuevoPrestamoExt = function() {
+  document.getElementById("ext-departamento").value = "";
+  document.getElementById("ext-responsable").value = "";
+  document.getElementById("ext-lista-herramientas").innerHTML = "";
+  extAgregarFila();
+  document.getElementById("modal-nuevo-ext").classList.add("abierto");
+};
+
+window.cerrarModalNuevoExt = function() {
+  document.getElementById("modal-nuevo-ext").classList.remove("abierto");
+};
+
+window.extAgregarFila = function() {
+  const contenedor = document.getElementById("ext-lista-herramientas");
+  const div = document.createElement("div");
+  div.dataset.filaHerramienta = "1";
+  div.style.cssText = "display:flex;gap:8px;align-items:center;margin-bottom:8px;position:relative";
+  div.innerHTML = `
+    <div style="flex:1;position:relative">
+      <input type="text" placeholder="Herramienta..." autocomplete="off"
+        style="width:100%;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px"
+        oninput="extFiltrarDropdown(this)" onfocus="extFiltrarDropdown(this)" onblur="setTimeout(()=>this.parentNode.querySelector('.ext-drop').style.display='none',150)">
+      <div class="ext-drop" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card2);border:1px solid var(--borde);border-radius:7px;z-index:200;max-height:220px;min-height:110px;overflow-y:auto;margin-top:4px;box-shadow:0 4px 12px rgba(0,0,0,0.3)"></div>
+    </div>
+    <input type="number" min="1" value="1" placeholder="Cant."
+      style="width:70px;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px">
+    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px">✕</button>`;
+  contenedor.appendChild(div);
+};
+
+window.extFiltrarDropdown = function(input) {
+  const q    = input.value.toLowerCase();
+  const drop = input.parentNode.querySelector(".ext-drop");
+  const hits = HERRAMIENTAS_LISTA.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
+  if (!hits.length || !q) { drop.style.display = "none"; return; }
+  drop.innerHTML = hits.map(h =>
+    `<div onmousedown="event.preventDefault();extSeleccionarHerramienta(this,'${h.nombre}')"
+      style="padding:8px 12px;cursor:pointer;font-size:13px"
+      onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${h.nombre}</div>`
+  ).join("");
+  drop.style.display = "block";
+};
+
+window.extSeleccionarHerramienta = function(item, nombre) {
+  const drop  = item.parentNode;
+  const input = drop.previousElementSibling;
+  input.value = nombre;
+  drop.style.display = "none";
+  input.blur();
+};
+
+window.confirmarNuevoPrestamoExt = async function() {
+  const departamento = document.getElementById("ext-departamento").value.trim();
+  const responsable  = document.getElementById("ext-responsable").value.trim();
+  if (!departamento) { mostrarToast("Escribe el departamento", "rojo"); return; }
+  if (!responsable)  { mostrarToast("Escribe el responsable", "rojo"); return; }
+
+  const filas = document.getElementById("ext-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
+  const herramientas = [];
+  for (const fila of filas) {
+    const inputs = fila.querySelectorAll("input");
+    const nombre   = inputs[0].value.trim();
+    const cantidad = parseInt(inputs[1].value) || 1;
+    if (nombre) herramientas.push({ nombre, cantidad });
+  }
+  if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
+
+  const btn = document.getElementById("ext-btn-confirmar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    await addDoc(collection(db, "prestamos_externos"), {
+      departamento, responsable, herramientas,
+      estado: "prestado",
+      tieneIncidencias: false,
+      creadoEn: serverTimestamp()
+    });
+    mostrarToast("✅ Salida registrada correctamente");
+    cerrarModalNuevoExt();
+  } catch(e) {
+    mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
+  } finally {
+    btn.disabled = false; btn.textContent = "✅ Registrar salida";
+  }
+};
+
+// ── MODAL RETORNO EXTERNO ──
+window.abrirRetornoExt = function(id) {
+  extActivoId = id;
+  const p = todosPrestamosExt.find(x => x.id === id);
+  if (!p) return;
+  document.getElementById("ext-retorno-nombre").textContent = p.departamento;
+  const lista = document.getElementById("ext-retorno-lista");
+  lista.innerHTML = (p.herramientas || []).map((h, i) => `
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)">
+      <span style="font-size:13px;font-weight:600">${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
+      <select id="ext-estado-r-${i}"
+        style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
+        <option value="retornada">✅ Retornada</option>
+        <option value="danada">⚠️ Dañada</option>
+        <option value="perdida">❌ Perdida</option>
+      </select>
+    </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
+  document.getElementById("modal-retorno-ext").classList.add("abierto");
+};
+
+window.cerrarModalRetornoExt = function() {
+  document.getElementById("modal-retorno-ext").classList.remove("abierto");
+  extActivoId = null;
+};
+
+window.confirmarRetornoExt = async function() {
+  if (!extActivoId) return;
+  const p = todosPrestamosExt.find(x => x.id === extActivoId);
+  if (!p) return;
+
+  const herramientas = p.herramientas || [];
+  const resultado    = [];
+  const incidencias  = [];
+
+  herramientas.forEach((h, i) => {
+    const estado = document.getElementById(`ext-estado-r-${i}`)?.value || "retornada";
+    resultado.push({ ...h, estadoRetorno: estado });
+    if (estado !== "retornada") incidencias.push({ herramienta: h.nombre, tipo: estado });
+  });
+
+  try {
+    await updateDoc(doc(db, "prestamos_externos", extActivoId), {
+      estado: "devuelto",
+      tieneIncidencias: incidencias.length > 0,
+      retornadoEn: serverTimestamp(),
+      herramientasRetorno: resultado
+    });
+
+    for (const inc of incidencias) {
+      await addDoc(collection(db, "incidencias"), {
+        tipo_prestamo: "externo",
+        nombre: p.departamento,
+        herramienta: inc.herramienta,
+        tipoIncidencia: inc.tipo,
+        prestamoId: extActivoId,
+        fecha: new Date().toLocaleDateString("es-DO"),
+        creadoEn: serverTimestamp()
+      });
+    }
+
+    cerrarModalRetornoExt();
+    if (incidencias.length > 0) {
+      mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
+    } else {
+      mostrarToast("↩ Retorno registrado correctamente");
+    }
+  } catch(e) {
+    mostrarToast("Error al registrar retorno", "rojo");
+  }
+};
+
+// ── CONDUCE DE SALIDA ──
+window.generarConduce = function(id) {
+  const p = todosPrestamosExt.find(x => x.id === id);
+  if (!p) return;
+  const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+  const herramientasHtml = (p.herramientas || []).map(h =>
+    `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="font-weight:700">×${h.cantidad}</span></div>`
+  ).join("") || "—";
+  document.getElementById("conduce-contenido").innerHTML = `
+    <div class="modal-campo"><label>Número de conduce</label><div class="valor">${p.id.slice(0,8).toUpperCase()}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="modal-campo"><label>Departamento</label><div class="valor">${p.departamento || "—"}</div></div>
+      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${p.responsable || "—"}</div></div>
+    </div>
+    <div class="modal-campo"><label>Fecha de salida</label><div class="valor">${fecha}</div></div>
+    <div class="modal-campo">
+      <label>Herramientas entregadas</label>
+      <div class="modal-herramientas">${herramientasHtml}</div>
+    </div>
+    <div class="modal-campo"><label>Estado actual</label><span class="badge badge-${p.estado === "prestado" ? "entregada" : "retornada"}">${p.estado === "prestado" ? "Prestado" : "Devuelto"}</span></div>
+  `;
+  document.getElementById("modal-conduce").classList.add("abierto");
+};
+
+window.cerrarModalConduce = function() {
+  document.getElementById("modal-conduce").classList.remove("abierto");
+};
+
+// Cerrar modales al hacer clic fuera
+document.getElementById("modal-nuevo-ext").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-nuevo-ext")) cerrarModalNuevoExt();
+});
+document.getElementById("modal-retorno-ext").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-retorno-ext")) cerrarModalRetornoExt();
+});
+document.getElementById("modal-conduce").addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-conduce")) cerrarModalConduce();
+});
+
+
+// ══════════════════════════════════════════════
 // ── HERRAMIENTAS — CONFIGURACIÓN ──
 // ══════════════════════════════════════════════
 
@@ -2504,12 +2967,22 @@ let herCfgNombreLocal = null;
 async function cargarHerramientasCfg() {
   try {
     onSnapshot(query(collection(db, "herramientas"), orderBy("nombre", "asc")), snap => {
-      if (snap.empty) {
-        // Si Firestore está vacío, mostrar las del respaldo
-        renderHerramientasCfg(HERRAMIENTAS_LISTA.map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: 5, local: true })));
-      } else {
-        renderHerramientasCfg(snap.docs.map(d => ({ id: d.id, ...d.data() })));
-      }
+      // Herramientas en Firestore
+      const enFirestore = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const nombresFirestore = new Set(enFirestore.map(h => h.nombre.toLowerCase()));
+
+      // IDs eliminadas (guardadas con eliminada:true)
+      const eliminadas = new Set(enFirestore.filter(h => h.eliminada).map(h => h.nombre.toLowerCase()));
+      // Herramientas del respaldo que NO están en Firestore ni eliminadas
+      const delRespaldo = HERRAMIENTAS_LISTA
+        .filter(h => !nombresFirestore.has(h.nombre.toLowerCase()) && !eliminadas.has(h.nombre.toLowerCase()))
+        .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, codigo: h.codigo, local: true }));
+
+      // Combinar: primero las de Firestore, luego las del respaldo restantes
+      const lista = [...enFirestore, ...delRespaldo]
+        .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+      renderHerramientasCfg(lista);
     });
   } catch(e) {
     const w = document.getElementById("her-cfg-wrap");
@@ -2526,31 +2999,40 @@ function renderHerramientasCfg(lista) {
     wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas registradas.</p></div>';
     return;
   }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Cantidad disponible</th><th>Acciones</th></tr></thead><tbody>'
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Código</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
     + filtrada.map((h, i) => {
-        const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
+        const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
+        const codigo = h.codigo || '';
+        const fotoSrc = codigo ? 'img/herramientas/' + codigo + '.jpg' : '';
+        const icono = h.icono || '🔧';
+        const foto = fotoSrc
+          ? '<img src="' + fotoSrc + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
+          : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + icono + '</div>';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
+          + '<td>' + foto + '</td>'
           + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
+          + '<td style="font-size:11px;color:var(--texto-dim)">' + (codigo || '—') + '</td>'
           + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
           + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ')">✏️ Editar</button>'
-          + (h.local ? '' : '<button class="btn btn-rojo" onclick="eliminarHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>')
+          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ',\'' + codigo + '\')">✏️ Editar</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
     + '</tbody></table>';
 }
 
-window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false) {
-  herCfgEditar   = esLocal ? null : id;
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, codigo = "") {
+  herCfgEditar      = esLocal ? null : id;
   herCfgNombreLocal = esLocal ? nombre : null;
-  document.getElementById("her-modal-titulo").textContent = id ? "✏️ Editar herramienta" : "➕ Agregar herramienta";
+  document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
   inputNombre.readOnly = esLocal;
   inputNombre.style.opacity = esLocal ? "0.6" : "1";
   document.getElementById("her-input-cantidad").value = cantidad;
+  document.getElementById("her-input-codigo").value = codigo;
+  previsualizarFotoHer();
   document.getElementById("modal-herramienta-cfg").classList.add("abierto");
 };
 
@@ -2559,29 +3041,49 @@ window.cerrarModalHerramienta = function() {
   herCfgEditar = null;
 };
 
+window.herFotoError = function(img) {
+  const div = document.createElement("div");
+  div.style.cssText = "width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px";
+  div.textContent = "🔧";
+  img.parentNode.replaceChild(div, img);
+};
+
+window.previsualizarFotoHer = function() {
+  const codigo = document.getElementById("her-input-codigo")?.value.trim();
+  const preview = document.getElementById("her-foto-preview");
+  if (!preview) return;
+  if (codigo) {
+    preview.innerHTML = '<img src="img/herramientas/' + codigo + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="herFotoError(this)">';
+  } else {
+    preview.textContent = '🔧';
+  }
+};
+
 window.guardarHerramienta = async function() {
   const nombre   = document.getElementById("her-input-nombre").value.trim();
   const cantidad = parseInt(document.getElementById("her-input-cantidad").value) || 0;
+  const codigo   = document.getElementById("her-input-codigo").value.trim().toUpperCase();
   if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
   const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   const nombreFinal = herCfgNombreLocal || nombre;
+  const datos = { nombre: nombreFinal, cantidadDisponible: cantidad };
+  if (codigo) datos.codigo = codigo;
   try {
     if (herCfgEditar) {
-      await updateDoc(doc(db, "herramientas", herCfgEditar), { nombre: nombreFinal, cantidadDisponible: cantidad });
+      await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
     } else if (herCfgNombreLocal) {
-      // Local: buscar si ya existe en Firestore para no duplicar
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
-        await updateDoc(doc(db, "herramientas", snap.docs[0].id), { cantidadDisponible: cantidad });
-        mostrarToast("✅ Cantidad actualizada");
+        await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
+        mostrarToast("✅ Herramienta actualizada");
       } else {
-        await addDoc(collection(db, "herramientas"), { nombre: nombreFinal, cantidadDisponible: cantidad, creadoEn: serverTimestamp() });
+        await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast("✅ Herramienta guardada en inventario");
       }
     } else {
-      await addDoc(collection(db, "herramientas"), { nombre: nombreFinal, cantidadDisponible: cantidad, creadoEn: serverTimestamp() });
+      await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
       mostrarToast("✅ Herramienta agregada");
     }
     cerrarModalHerramienta();
@@ -2589,10 +3091,15 @@ window.guardarHerramienta = async function() {
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
-window.eliminarHerramienta = async function(id, nombre) {
+window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
   if (!confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) return;
   try {
-    await deleteDoc(doc(db, "herramientas", id));
+    if (esLocal) {
+      // Para las del respaldo, guardarla en Firestore con cantidad 0 y marcada como eliminada
+      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: 0, eliminada: true, creadoEn: serverTimestamp() });
+    } else {
+      await deleteDoc(doc(db, "herramientas", id));
+    }
     mostrarToast("Herramienta eliminada");
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
@@ -2726,7 +3233,248 @@ window.toggleTema = function() {
 };
 
 // Aplicar tema guardado al cargar
-aplicarTema(localStorage.getItem('tema-admin') || 'claro');
+aplicarTema(localStorage.getItem('tema-admin') || 'oscuro');
+
+// ── HISTORIAL DE MOVIMIENTOS ──
+let historialDatos = [];
+let histPagina = 1;
+const histPorPagina = 15;
+let histCargado = false;
+
+async function cargarHistorial() {
+  if (histCargado) return;
+  try {
+    const [snapSol, snapProf] = await Promise.all([
+      getDocs(query(collection(db, "solicitudes"), orderBy("creadoEn", "desc"))),
+      getDocs(query(collection(db, "prestamos_profesores"), orderBy("creadoEn", "desc")))
+    ]);
+
+    const solicitudes = snapSol.docs.map(d => ({ id: d.id, tipo: "estudiante", ...d.data() }));
+    const profesores  = snapProf.docs.map(d => ({ id: d.id, tipo: "profesor",   ...d.data() }));
+
+    historialDatos = [...solicitudes, ...profesores].sort((a, b) => {
+      const fa = a.creadoEn?.toDate?.() || new Date(0);
+      const fb = b.creadoEn?.toDate?.() || new Date(0);
+      return fb - fa;
+    });
+
+    histCargado = true;
+    histRenderTabla();
+  } catch(e) {
+    console.error(e);
+    document.getElementById("hist-tabla-wrap").innerHTML =
+      '<div class="vacio"><div class="vacio-icono">⚠️</div><p>Error al cargar el historial.</p></div>';
+  }
+}
+
+function histFiltrados() {
+  const buscar  = document.getElementById("hist-buscar")?.value.toLowerCase() || "";
+  const tipo    = document.getElementById("hist-tipo")?.value || "";
+  const estado  = document.getElementById("hist-estado")?.value || "";
+  const fecha   = document.getElementById("hist-fecha")?.value || "";
+
+  return historialDatos.filter(r => {
+    const nombre = `${r.nombre||""} ${r.apellido||""} ${r.matricula||""} ${r.profesor||r.nombreProfesor||""}`.toLowerCase();
+    const textoOk  = !buscar || nombre.includes(buscar);
+    const tipoOk   = !tipo   || r.tipo === tipo;
+    const estadoOk = !estado || (estado === "incidencia" ? r.tieneIncidencias : r.estado === estado);
+    let fechaOk = true;
+    if (fecha && r.creadoEn) {
+      const d = r.creadoEn.toDate ? r.creadoEn.toDate() : new Date(r.creadoEn);
+      fechaOk = d.toISOString().slice(0,10) === fecha;
+    }
+    return textoOk && tipoOk && estadoOk && fechaOk;
+  });
+}
+
+function histActualizarFiltrosUI() {
+  const buscar = document.getElementById("hist-buscar")?.value.trim() || "";
+  const tipo   = document.getElementById("hist-tipo")?.value || "";
+  const estado = document.getElementById("hist-estado")?.value || "";
+  const fecha  = document.getElementById("hist-fecha")?.value || "";
+  const hay    = buscar || tipo || estado || fecha;
+
+  const limpiar = document.getElementById("hist-btn-limpiar");
+  const bar     = document.getElementById("hist-tags-bar");
+  const tags    = document.getElementById("hist-tags");
+  if (limpiar) limpiar.style.display = hay ? "block" : "none";
+  if (bar)     bar.style.display     = hay ? "flex"  : "none";
+  if (!tags)   return;
+
+  tags.innerHTML = "";
+  const chip = (txt) => `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${txt}</span>`;
+  if (buscar) tags.innerHTML += chip(`🔍 "${buscar}"`);
+  if (tipo)   tags.innerHTML += chip(tipo === "estudiante" ? "🎓 Estudiante" : "👨‍🏫 Profesor");
+  if (estado) {
+    const et = { pendiente:"⏳ Pendiente", entregada:"✅ Entregada", retornada:"↩ Retornada", cancelada:"❌ Cancelada", incidencia:"⚠️ Con Incidencia" };
+    tags.innerHTML += chip(et[estado] || estado);
+  }
+  if (fecha)  tags.innerHTML += chip(`📅 ${fecha}`);
+
+  // Resaltar campos activos
+  ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const activo = el.value.trim() !== "";
+    el.style.borderColor = activo ? "var(--verde)" : "";
+    el.style.background  = activo ? "rgba(34,197,94,.06)" : "";
+  });
+}
+
+function histRenderTabla() {
+  const filtrados = histFiltrados();
+  const total  = filtrados.length;
+  const inicio = (histPagina - 1) * histPorPagina;
+  const pagina = filtrados.slice(inicio, inicio + histPorPagina);
+  const wrap   = document.getElementById("hist-tabla-wrap");
+
+  if (pagina.length === 0) {
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay registros que coincidan.</p></div>';
+    document.getElementById("hist-pag-info").textContent = "";
+    document.getElementById("hist-pag-btns").innerHTML = "";
+    return;
+  }
+
+  const tipoIcono  = { estudiante:"🎓", profesor:"👨‍🏫" };
+  const tipoLabel  = { estudiante:"Estudiante", profesor:"Profesor" };
+
+  wrap.innerHTML = `
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Fecha y Hora</th>
+          <th>Tipo</th>
+          <th>Nombre</th>
+          <th>Matrícula / Ref.</th>
+          <th>Herramientas</th>
+          <th>Estado</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${pagina.map((r, i) => `
+          <tr style="cursor:pointer" onclick="abrirModalHist('${r.id}','${r.tipo}')">
+            <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
+            <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(r.creadoEn)}</td>
+            <td><span style="font-size:13px">${tipoIcono[r.tipo]||"📋"}</span> <span style="font-size:11px;color:var(--texto-dim)">${tipoLabel[r.tipo]||r.tipo}</span></td>
+            <td>
+              <div class="est-avatar">
+                <div class="est-circulo" style="background:${colorEstudiante(r.nombre||"")}22;color:${colorEstudiante(r.nombre||"")}">
+                  ${iniciales(r.nombre, r.apellido)}
+                </div>
+                <div class="est-nombre">${r.nombre||""} ${r.apellido||""}</div>
+              </div>
+            </td>
+            <td style="font-size:12px">${r.matricula || r.numeroSolicitud || "—"}</td>
+            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${(r.herramientas||[]).length}</span></td>
+            <td>
+              <span class="badge badge-${r.estado}">${r.estado||"—"}</span>
+              ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:4px">⚠️</span>' : ""}
+            </td>
+          </tr>`).join("")}
+      </tbody>
+    </table>`;
+
+  // Paginación
+  const totalPags = Math.ceil(total / histPorPagina);
+  const desde = inicio + 1;
+  const hasta = Math.min(inicio + histPorPagina, total);
+  document.getElementById("hist-pag-info").textContent = `Mostrando ${desde}–${hasta} de ${total} registro${total !== 1 ? "s" : ""}`;
+  const btns = document.getElementById("hist-pag-btns");
+  btns.innerHTML = "";
+  for (let p = 1; p <= totalPags; p++) {
+    const b = document.createElement("button");
+    b.textContent = p;
+    if (p === histPagina) b.classList.add("activo");
+    b.addEventListener("click", () => { histPagina = p; histRenderTabla(); });
+    btns.appendChild(b);
+  }
+}
+
+// Eventos filtros historial
+["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
+  document.getElementById(id)?.addEventListener("input",  () => { histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); });
+  document.getElementById(id)?.addEventListener("change", () => { histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); });
+});
+
+document.getElementById("hist-btn-limpiar")?.addEventListener("click", () => {
+  ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) { el.value = ""; el.style.borderColor = ""; el.style.background = ""; }
+  });
+  histActualizarFiltrosUI();
+  histPagina = 1;
+  histRenderTabla();
+});
+
+// Cargar cuando navegas a historial
+document.querySelectorAll(".nav-item[data-vista='historial']").forEach(el => {
+  el.addEventListener("click", () => setTimeout(cargarHistorial, 50));
+});
+
+// Modal detalle historial
+window.abrirModalHist = function(id, tipo) {
+  const r = historialDatos.find(x => x.id === id && x.tipo === tipo);
+  if (!r) return;
+
+  const estadoIcono = { retornada:"✅", no_retornada:"❌", danada:"🔴", perdida:"⚠️", entregada:"✅" };
+  const estadoColor = { retornada:"var(--verde)", no_retornada:"var(--rojo)", danada:"var(--rojo)", perdida:"var(--naranja,#f97316)", entregada:"var(--verde)" };
+
+  const herramientasHtml = (r.herramientas||[]).map(h => `
+    <div class="modal-herramienta-item">
+      <span>${h.nombre}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span>
+      <span style="color:var(--verde);font-weight:700">x${h.cantidad}</span>
+    </div>`).join("") || "<p style='color:var(--texto-dim);font-size:13px'>Sin herramientas</p>";
+
+  const retornoHtml = r.herramientasRetorno ? `
+    <div class="modal-campo">
+      <label>Estado de retorno por herramienta</label>
+      <div class="modal-herramientas">
+        ${r.herramientasRetorno.map(h => `
+          <div class="modal-herramienta-item">
+            <span>${h.nombre}</span>
+            <span style="color:${estadoColor[h.estadoRetorno]||"var(--texto-dim)"};font-weight:700">
+              ${estadoIcono[h.estadoRetorno]||""} ${h.estadoRetorno||"—"}
+            </span>
+          </div>`).join("")}
+      </div>
+    </div>` : "";
+
+  document.getElementById("modal-hist-titulo").textContent =
+    tipo === "estudiante" ? "🎓 Solicitud de Estudiante" : "👨‍🏫 Préstamo a Profesor";
+
+  document.getElementById("modal-hist-contenido").innerHTML = `
+    <div class="modal-campo"><label>Número / Referencia</label>
+      <div class="valor">${r.numeroSolicitud || r.id.slice(0,10)}</div></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="modal-campo"><label>Nombre</label><div class="valor">${r.nombre||""} ${r.apellido||""}</div></div>
+      <div class="modal-campo"><label>Matrícula</label><div class="valor">${r.matricula||"—"}</div></div>
+      ${r.ciclo    ? `<div class="modal-campo"><label>Ciclo</label><div class="valor">${r.ciclo}</div></div>` : ""}
+      ${r.telefono ? `<div class="modal-campo"><label>Teléfono</label><div class="valor">${r.telefono}</div></div>` : ""}
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${r.profesor||r.nombreProfesor||"—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${r.laboratorio||r.taller||"—"}</div></div>
+    </div>
+    <div class="modal-campo"><label>Estado</label>
+      <span class="badge badge-${r.estado}">${r.estado||"—"}</span>
+      ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:6px">⚠️ Con incidencias</span>' : ""}
+    </div>
+    <div class="modal-campo"><label>Fecha de solicitud</label><div class="valor">${formatFecha(r.creadoEn)}</div></div>
+    ${r.entregadoEn  ? `<div class="modal-campo"><label>Fecha de entrega</label><div class="valor">${formatFecha(r.entregadoEn)}</div></div>` : ""}
+    ${r.retornadoEn  ? `<div class="modal-campo"><label>Fecha de retorno</label><div class="valor">${formatFecha(r.retornadoEn)}</div></div>` : ""}
+    <div class="modal-campo">
+      <label>Herramientas solicitadas</label>
+      <div class="modal-herramientas">${herramientasHtml}</div>
+    </div>
+    ${retornoHtml}
+  `;
+
+  document.getElementById("modal-hist").classList.add("abierto");
+};
+
+document.getElementById("modal-hist")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-hist"))
+    document.getElementById("modal-hist").classList.remove("abierto");
+});
 </script>
 </body>
 </html>
