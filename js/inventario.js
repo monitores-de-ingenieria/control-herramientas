@@ -1,10 +1,6 @@
 // js/inventario.js
 import { db, collection, getDocs } from "./firebase.js";
 
-// Listas de respaldo: se usan SOLO si la colección de Firestore aún está vacía,
-// para que el formulario funcione desde el primer momento.
-// Cuando crees las colecciones reales en Firestore, estas se dejarán de usar automáticamente.
-
 const PROFESORES_RESPALDO = [
   "Daniel Camejo",
   "José Peña",
@@ -22,9 +18,6 @@ const LABORATORIOS_RESPALDO = [
   "Taller máquinas y herramientas II"
 ];
 
-// codigo, nombre, icono (emoji de respaldo si no hay foto), cantidadDisponible
-// imagen: ruta esperada de la foto real. Si el archivo no existe todavía,
-// se muestra automáticamente el emoji de "icono" en su lugar.
 const HERRAMIENTAS_RESPALDO = [
   { codigo: "HER-001", nombre: "Aceitera",          icono: "🔧", cantidadDisponible: 5 },
   { codigo: "HER-002", nombre: "Alicate",           icono: "🛠️", cantidadDisponible: 5 },
@@ -64,7 +57,7 @@ const HERRAMIENTAS_RESPALDO = [
   { codigo: "HER-036", nombre: "Piqueta",           icono: "⛏️", cantidadDisponible: 5 },
   { codigo: "HER-037", nombre: "Porta broca",       icono: "🔧", cantidadDisponible: 5 },
   { codigo: "HER-038", nombre: "Segueta",           icono: "🪚", cantidadDisponible: 5 },
-  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",  icono: "🔧", cantidadDisponible: 5 }
+  { codigo: "HER-039", nombre: "Tarraja de 1/2x13", icono: "🔧", cantidadDisponible: 5 }
 ].map(h => ({ ...h, imagen: `img/herramientas/${h.codigo}.jpg` }));
 
 async function obtenerColeccionOTexto(nombreColeccion, listaRespaldo, campo = "nombre") {
@@ -74,9 +67,8 @@ async function obtenerColeccionOTexto(nombreColeccion, listaRespaldo, campo = "n
       return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
     }
   } catch (err) {
-    console.warn(`No se pudo leer la colección "${nombreColeccion}" de Firestore, usando datos de respaldo.`, err);
+    console.warn(`No se pudo leer "${nombreColeccion}", usando respaldo.`, err);
   }
-  // Respaldo local
   return listaRespaldo.map((valor, i) =>
     typeof valor === "string" ? { id: `local-${i}`, [campo]: valor } : valor
   );
@@ -91,5 +83,34 @@ export async function cargarLaboratorios() {
 }
 
 export async function cargarHerramientas() {
-  return obtenerColeccionOTexto("herramientas", HERRAMIENTAS_RESPALDO, "nombre");
+  try {
+    const snap = await getDocs(collection(db, "herramientas"));
+
+    // Herramientas en Firestore (excluir eliminadas)
+    const enFirestore = snap.docs
+      .map(d => ({ id: d.id, ...d.data() }))
+      .filter(h => !h.eliminada);
+
+    const nombresFirestore = new Set(enFirestore.map(h => h.nombre.toLowerCase()));
+
+    // Herramientas del respaldo que NO están en Firestore
+    const delRespaldo = HERRAMIENTAS_RESPALDO.filter(
+      h => !nombresFirestore.has(h.nombre.toLowerCase())
+    );
+
+    // Combinar — las de Firestore usan su cantidad actualizada
+    // y construimos la imagen con el código disponible
+    const firestoreConImagen = enFirestore.map(h => ({
+      ...h,
+      imagen: h.codigo ? `img/herramientas/${h.codigo}.jpg` : (h.imagen || ''),
+      icono:  h.icono  || '🔧'
+    }));
+
+    return [...firestoreConImagen, ...delRespaldo]
+      .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+  } catch (err) {
+    console.warn("Error al cargar herramientas de Firestore, usando respaldo.", err);
+    return HERRAMIENTAS_RESPALDO;
+  }
 }
