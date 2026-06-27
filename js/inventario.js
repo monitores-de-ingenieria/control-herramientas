@@ -1,9 +1,6 @@
 // js/inventario.js
 import { db, collection, getDocs } from "./firebase.js";
 
-const PROFESORES_RESPALDO = ["Daniel Camejo", "José Peña", "Julio Durán", "Víctor Félix"];
-const LABORATORIOS_RESPALDO = ["Taller mecánica básica", "Lab. ciencia de los materiales", "Máquinas especiales", "Taller de procesos industriales", "Taller de soldadura", "Taller máquinas y herramientas I", "Taller máquinas y herramientas II"];
-
 const HERRAMIENTAS_RESPALDO = [
   { codigo: "HER-001", nombre: "Aceitera", icono: "🔧", cantidadDisponible: 5 },
   { codigo: "HER-002", nombre: "Alicate", icono: "🛠️", cantidadDisponible: 5 },
@@ -35,7 +32,7 @@ const HERRAMIENTAS_RESPALDO = [
   { codigo: "HER-028", nombre: "Marcador numérico", icono: "🔢", cantidadDisponible: 5 },
   { codigo: "HER-029", nombre: "Martillo", icono: "🔨", cantidadDisponible: 8 },
   { codigo: "HER-030", nombre: "Mazo de goma", icono: "🔨", cantidadDisponible: 5 },
-  { codigo: "HER-031", nombre: "Macho de 1/2", icono: "🔧", cantidadDisponible: 5 },
+  { codigo: "HER-031", nombre: "Nacho de 1/2", icono: "🔧", cantidadDisponible: 5 },
   { codigo: "HER-032", nombre: "Nivel magnético", icono: "📐", cantidadDisponible: 5 },
   { codigo: "HER-033", nombre: "Nivel 90", icono: "📐", cantidadDisponible: 5 },
   { codigo: "HER-034", nombre: "Pie de rey", icono: "📏", cantidadDisponible: 5 },
@@ -46,56 +43,32 @@ const HERRAMIENTAS_RESPALDO = [
   { codigo: "HER-039", nombre: "Tarraja de 1/2x13", icono: "🔧", cantidadDisponible: 5 }
 ];
 
-async function obtenerColeccionOTexto(nombreColeccion, listaRespaldo, campo = "nombre") {
+async function obtenerColeccionOTexto(nombreColeccion, listaRespaldo) {
   try {
     const snap = await getDocs(collection(db, nombreColeccion));
+    const respaldo = listaRespaldo.map(h => ({ ...h, imagen: `img/herramientas/${h.codigo}.jpg` }));
     
-    // Convertimos el respaldo a un formato manejable
-    let respaldoProcesado = listaRespaldo.map((item, i) => ({
-      id: `local-${i}`,
-      imagen: `img/herramientas/${item.codigo}.jpg`,
-      ...item
+    if (snap.empty) return respaldo;
+
+    const datosFirestore = snap.docs.map(doc => ({ 
+      id: doc.id, 
+      imagen: `img/herramientas/${doc.data().codigo}.jpg`,
+      ...doc.data() 
     }));
 
-    if (snap.empty) return respaldoProcesado;
-
-    // Si hay datos en Firestore, los procesamos
-    const datosFirestore = snap.docs.map(doc => {
-      const data = doc.data();
-      return {
-        id: doc.id,
-        imagen: `img/herramientas/${data.codigo}.jpg`, // Forzamos la ruta de imagen
-        ...data
-      };
-    });
-
-    // Fusionamos: Si el código ya existe en Firestore, usamos Firestore, si no, el respaldo
+    // Fusionamos: Firestore + lo que falte del respaldo
     const listaFinal = [...datosFirestore];
-    respaldoProcesado.forEach(itemRespaldo => {
-      if (!datosFirestore.find(itemDB => itemDB.codigo === itemRespaldo.codigo)) {
-        listaFinal.push(itemRespaldo);
+    respaldo.forEach(itemR => {
+      if (!listaFinal.find(itemF => itemF.codigo === itemR.codigo)) {
+        listaFinal.push(itemR);
       }
     });
-
     return listaFinal;
   } catch (err) {
-    console.warn("Error leyendo Firestore, usando respaldo:", err);
-    return listaRespaldo.map((item, i) => ({
-      id: `local-${i}`,
-      imagen: `img/herramientas/${item.codigo}.jpg`,
-      ...item
-    }));
+    return listaRespaldo.map(h => ({ ...h, imagen: `img/herramientas/${h.codigo}.jpg` }));
   }
 }
 
-export async function cargarProfesores() {
-  return obtenerColeccionOTexto("profesores", PROFESORES_RESPALDO.map(n => ({nombre: n})), "nombre");
-}
-
-export async function cargarLaboratorios() {
-  return obtenerColeccionOTexto("laboratorios", LABORATORIOS_RESPALDO.map(n => ({nombre: n})), "nombre");
-}
-
 export async function cargarHerramientas() {
-  return obtenerColeccionOTexto("herramientas", HERRAMIENTAS_RESPALDO, "nombre");
+  return obtenerColeccionOTexto("herramientas", HERRAMIENTAS_RESPALDO);
 }
