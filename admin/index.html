@@ -1246,6 +1246,11 @@
     <h3 style="margin-bottom:6px">Debes crear tu contraseña</h3>
     <p style="font-size:13px;color:var(--texto-dim);margin-bottom:20px">Es tu primera vez accediendo. Por seguridad, define tu propia contraseña antes de continuar.</p>
     <div class="modal-campo" style="text-align:left">
+      <label>Contraseña temporal (la que usaste para entrar)</label>
+      <input type="password" id="pass-temporal-input" placeholder="Contraseña con la que iniciaste sesión"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo" style="text-align:left">
       <label>Nueva contraseña</label>
       <input type="password" id="nueva-pass-input" placeholder="Mínimo 8 caracteres"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
@@ -1679,16 +1684,20 @@ async function aplicarRolUsuario(user) {
 
         try {
           // Reautenticar con la contraseña temporal antes de cambiar
-          const credencial = EmailAuthProvider.credential(user.email, _lastLoginPass);
+          const passTemp = document.getElementById("pass-temporal-input")?.value || _lastLoginPass;
+          const credencial = EmailAuthProvider.credential(user.email, passTemp);
           await reauthenticateWithCredential(user, credencial);
           await updatePassword(user, nueva);
           await updateDoc(doc(db, "usuarios", user.uid), { debeCambiarContrasena: false });
-          _lastLoginPass = nueva;
+          _lastLoginPass = nueva; // actualizar en memoria con la nueva contraseña
           document.getElementById("modal-cambiar-pass").classList.remove("abierto");
           mostrarToast("✅ Contraseña guardada correctamente");
         } catch(err) {
-          console.error("Error cambio contraseña:", err.code, err.message);
-          errEl.textContent = `Error: ${err.code || err.message}`;
+          console.error(err);
+          const msg = err.code === "auth/wrong-password" || err.code === "auth/invalid-credential"
+            ? "Error de autenticación. Cierra sesión y vuelve a entrar."
+            : "Error al cambiar la contraseña. Intenta de nuevo.";
+          errEl.textContent = msg;
           errEl.style.display = "block";
         }
       };
