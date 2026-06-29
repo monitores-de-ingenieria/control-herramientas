@@ -1255,11 +1255,8 @@
       <input type="email" id="usr-input-email" placeholder="usuario@taller.com" autocomplete="off"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
-    <div class="modal-campo">
-      <label>Contraseña</label>
-      <input type="password" id="usr-input-pass" placeholder="Mínimo 6 caracteres" autocomplete="new-password"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-      <small style="color:var(--texto-dim);font-size:11px">Déjala en blanco al editar para no cambiarla.</small>
+    <div class="modal-campo" id="usr-pass-info" style="background:rgba(56,139,253,0.08);border:1px solid rgba(56,139,253,0.25);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--texto-dim)">
+      🔒 Al crear la cuenta se le enviará un correo a este usuario para que él mismo defina su contraseña. Tú nunca la verás ni la asignas.
     </div>
     <div class="modal-campo">
       <label>Rol</label>
@@ -1494,6 +1491,7 @@ import {
   getAuth,
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -1505,6 +1503,7 @@ import {
   setDoc,
   getDoc,
   updateDoc,
+  deleteDoc,
   query,
   orderBy,
   where,
@@ -1600,6 +1599,7 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ── ROLES Y PERMISOS ──
+const ADMIN_RAIZ = ["utesamonitores@outlook.com"]; // cuentas que SIEMPRE son administrador, aunque no tengan registro en "usuarios"
 let rolActual = "administrador";
 let seccionesPermitidas = null; // null = todas (administrador)
 
@@ -1607,12 +1607,18 @@ async function aplicarRolUsuario(user) {
   try {
     const snap = await getDoc(doc(db, "usuarios", user.uid));
     if (!snap.exists()) {
-      // Sin registro en "usuarios" => se trata como administrador (cuenta original del taller)
-      rolActual = "administrador";
-      seccionesPermitidas = null;
-      mostrarSoloSecciones(null);
-      document.getElementById("topbar-admin-nombre").textContent = "Administrador";
-      document.getElementById("topbar-admin-rol").textContent = "Encargado del Taller";
+      const esRaiz = ADMIN_RAIZ.includes((user.email || "").toLowerCase());
+      if (esRaiz) {
+        rolActual = "administrador";
+        seccionesPermitidas = null;
+        mostrarSoloSecciones(null);
+        document.getElementById("topbar-admin-nombre").textContent = "Administrador";
+        document.getElementById("topbar-admin-rol").textContent = "Administrador";
+      } else {
+        // Sin registro y no es cuenta raíz => su acceso fue eliminado/revocado
+        mostrarToast("Tu cuenta no tiene acceso. Contacta al administrador.", "rojo");
+        await signOut(auth);
+      }
       return;
     }
     const datos = snap.data();
@@ -1623,9 +1629,17 @@ async function aplicarRolUsuario(user) {
     document.getElementById("topbar-admin-rol").textContent = rolActual === "administrador" ? "Administrador" : "Encargado";
   } catch(e) {
     console.error("Error al aplicar rol:", e);
-    rolActual = "administrador";
-    seccionesPermitidas = null;
-    mostrarSoloSecciones(null);
+    if (ADMIN_RAIZ.includes((user.email || "").toLowerCase())) {
+      // Nunca bloquear a la cuenta raíz por un error transitorio de lectura
+      rolActual = "administrador";
+      seccionesPermitidas = null;
+      mostrarSoloSecciones(null);
+      document.getElementById("topbar-admin-nombre").textContent = "Administrador";
+      document.getElementById("topbar-admin-rol").textContent = "Administrador";
+      return;
+    }
+    mostrarToast("No se pudo verificar tu acceso.", "rojo");
+    await signOut(auth);
   }
 }
 
@@ -1643,14 +1657,15 @@ function mostrarSoloSecciones(secciones) {
   const navUsr = document.getElementById("nav-usuarios");
   if (navUsr) navUsr.style.display = secciones ? "none" : "";
 
-  if (secciones) {
-    // Navegar a la primera sección permitida
-    const primera = secciones[0] || "dashboard";
-    document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
-    document.querySelectorAll(`.nav-item[data-vista="${primera}"]`).forEach(n => n.classList.add("activo"));
-    document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
-    document.getElementById(`vista-${primera}`)?.classList.add("activa");
-  }
+  // Determinar a qué vista navegar al iniciar sesión:
+  // Solicitudes si hay acceso a ella, o la primera sección permitida (administrador = todas).
+  const primera = !secciones
+    ? "solicitudes"
+    : secciones.includes("solicitudes") ? "solicitudes" : (secciones[0] || "dashboard");
+  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
+  document.querySelectorAll(`.nav-item[data-vista="${primera}"]`).forEach(n => n.classList.add("activo"));
+  document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
+  document.getElementById(`vista-${primera}`)?.classList.add("activa");
 }
 
 // ── VER INCIDENCIAS DESDE DASHBOARD / MENÚ ──
@@ -3462,7 +3477,7 @@ function renderUsuariosCfg() {
           <td style="font-size:12px">${u.email || "—"}</td>
           <td>${rolBadge}</td>
           <td style="max-width:240px">${secciones}</td>
-          <td><button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')">✏️ Editar</button></td>
+          <td><button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')">✏️ Editar</button> <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')">🗑 Eliminar</button></td>
         </tr>`;
       }).join("")
     + '</tbody></table>';
@@ -3483,7 +3498,6 @@ window.abrirModalUsuario = function(id = null) {
   document.getElementById("usr-input-email").value = u?.email || "";
   document.getElementById("usr-input-email").readOnly = !!id; // no se puede cambiar el correo al editar
   document.getElementById("usr-input-email").style.opacity = id ? "0.6" : "1";
-  document.getElementById("usr-input-pass").value = "";
   document.getElementById("usr-input-rol").value = u?.rol || "administrador";
   usrToggleSecciones();
   document.querySelectorAll(".usr-seccion-chk").forEach(chk => {
@@ -3500,7 +3514,6 @@ window.cerrarModalUsuario = function() {
 window.guardarUsuario = async function() {
   const nombre = document.getElementById("usr-input-nombre").value.trim();
   const email  = document.getElementById("usr-input-email").value.trim();
-  const pass   = document.getElementById("usr-input-pass").value;
   const rol    = document.getElementById("usr-input-rol").value;
   const secciones = rol === "encargado"
     ? [...document.querySelectorAll(".usr-seccion-chk:checked")].map(c => c.value)
@@ -3520,16 +3533,18 @@ window.guardarUsuario = async function() {
       mostrarToast("✅ Usuario actualizado");
       cerrarModalUsuario();
     } else {
-      // Crear cuenta nueva en Auth usando la app secundaria (no afecta tu sesión)
-      if (!pass || pass.length < 6) { mostrarToast("La contraseña debe tener al menos 6 caracteres", "rojo"); btn.disabled=false; btn.textContent="✅ Guardar"; return; }
-      const cred = await createUserWithEmailAndPassword(authSecundaria, email, pass);
+      // Crear cuenta nueva en Auth con una contraseña temporal aleatoria que NADIE conoce.
+      // El usuario recibe un correo para definir la suya antes de poder entrar.
+      const passTemporal = crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).slice(2) + Date.now();
+      const cred = await createUserWithEmailAndPassword(authSecundaria, email, passTemporal);
       const uid = cred.user.uid;
+      await sendPasswordResetEmail(authSecundaria, email);
       await signOut(authSecundaria); // cerrar la sesión de la app secundaria
       await setDoc(doc(db, "usuarios", uid), {
         uid, nombre, email, rol, secciones,
         creadoEn: serverTimestamp()
       });
-      mostrarToast("✅ Usuario creado correctamente");
+      mostrarToast("✅ Usuario creado. Le llegará un correo para definir su contraseña.");
       cerrarModalUsuario();
     }
   } catch(e) {
@@ -3539,6 +3554,16 @@ window.guardarUsuario = async function() {
     mostrarToast(msg, "rojo");
   } finally {
     btn.disabled = false; btn.textContent = "✅ Guardar";
+  }
+};
+
+window.eliminarUsuario = async function(id, nombre) {
+  if (!confirm(`¿Eliminar el acceso de "${nombre}"? Ya no podrá iniciar sesión en el panel.`)) return;
+  try {
+    await deleteDoc(doc(db, "usuarios", id));
+    mostrarToast("Usuario eliminado, su acceso fue revocado");
+  } catch(e) {
+    mostrarToast("Error al eliminar el usuario", "rojo");
   }
 };
 
