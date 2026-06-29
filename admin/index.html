@@ -2172,7 +2172,9 @@ function renderTabla() {
             <td style="font-size:12px">${s.matricula || "—"}</td>
             <td style="font-size:12px">${s.profesor || "—"}</td>
             <td style="font-size:12px">${s.laboratorio || "—"}</td>
-            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${(s.herramientas||[]).length}</span></td>
+            <td style="font-size:12px;color:var(--texto-dim);max-width:220px">
+              ${(s.herramientas||[]).map(h => h.nombre + ' ×' + h.cantidad + (h.adicional ? '<span style="color:var(--azul);font-size:10px;margin-left:3px">(adic)</span>' : '')).join(', ') || '—'}
+            </td>
             <td><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
@@ -2296,7 +2298,7 @@ window.abrirModal = function(id) {
   if (!s) return;
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herramientas = (s.herramientas || []).map(h =>
-    `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
+    `<div class="modal-herramienta-item"><span>${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
 
   document.getElementById("modal-contenido").innerHTML = `
@@ -2451,7 +2453,7 @@ window.entregar = async function(id) {
   const renderFilas = (arr, offset) => arr.map((h, i) => `
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-e-${offset+i}" data-idx="${offset+i}" checked>
-      <span class="h-nombre">${h.nombre}</span>
+      <span class="h-nombre">${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
     </div>`).join("");
   let listaHtml = renderFilas(herOrig, 0);
@@ -2877,13 +2879,14 @@ window.confirmarNuevoPrestamoProf = async function() {
   if (!laboratorio) { mostrarToast("Selecciona un laboratorio", "rojo"); return; }
 
   const filas = document.getElementById("pp-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
-  const herramientas = [];
+  const mapaHerr = {};
   for (const fila of filas) {
     const inputs = fila.querySelectorAll("input");
     const nombre   = inputs[0].value.trim();
     const cantidad = parseInt(inputs[1].value) || 1;
-    if (nombre) herramientas.push({ nombre, cantidad });
+    if (nombre) mapaHerr[nombre] = (mapaHerr[nombre] || 0) + cantidad;
   }
+  const herramientas = Object.entries(mapaHerr).map(([nombre, cantidad]) => ({ nombre, cantidad }));
   if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
 
   const btn = document.getElementById("pp-btn-confirmar");
@@ -3125,13 +3128,14 @@ window.confirmarNuevoPrestamoExt = async function() {
   if (!responsable)  { mostrarToast("Escribe el responsable", "rojo"); return; }
 
   const filas = document.getElementById("ext-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
-  const herramientas = [];
+  const mapaHerrExt = {};
   for (const fila of filas) {
     const inputs = fila.querySelectorAll("input");
     const nombre   = inputs[0].value.trim();
     const cantidad = parseInt(inputs[1].value) || 1;
-    if (nombre) herramientas.push({ nombre, cantidad });
+    if (nombre) mapaHerrExt[nombre] = (mapaHerrExt[nombre] || 0) + cantidad;
   }
+  const herramientas = Object.entries(mapaHerrExt).map(([nombre, cantidad]) => ({ nombre, cantidad }));
   if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
 
   const btn = document.getElementById("ext-btn-confirmar");
