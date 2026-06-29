@@ -75,7 +75,18 @@ async function obtenerColeccionOTexto(nombreColeccion, listaRespaldo, campo = "n
 }
 
 export async function cargarProfesores() {
-  return obtenerColeccionOTexto("profesores", PROFESORES_RESPALDO, "nombre");
+  try {
+    const snap = await getDocs(collection(db, "profesores"));
+    if (!snap.empty) {
+      return snap.docs
+        .map(d => ({ id: d.id, ...d.data() }))
+        .filter(p => !p.eliminado)
+        .sort((a, b) => a.nombre.localeCompare(b.nombre));
+    }
+  } catch (err) {
+    console.warn('No se pudo leer "profesores", usando respaldo.', err);
+  }
+  return PROFESORES_RESPALDO.map((valor, i) => ({ id: `local-${i}`, nombre: valor }));
 }
 
 export async function cargarLaboratorios() {
