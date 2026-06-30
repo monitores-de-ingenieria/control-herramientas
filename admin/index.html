@@ -826,6 +826,7 @@
 </head>
 <body>
 
+<!-- ══ LOGIN ══ -->
 <div id="pantalla-login">
   <div class="login-box">
     <div class="login-logo">🔧</div>
@@ -845,6 +846,16 @@
   </div>
 </div>
 
+<!-- ══ LOADING SCREEN ══ -->
+<div id="loading-screen" style="position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:99999;font-size:18px;font-weight:700;color:var(--texto)">
+  <div style="text-align:center">
+    <div style="font-size:36px;margin-bottom:12px">🔧</div>
+    <div class="spinner" style="margin:0 auto 12px"></div>
+    Cargando...
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
 <div id="app">
   <div class="shell">
 
@@ -890,18 +901,23 @@
       <div class="nav-item" data-vista="historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial</span></div>
 
       <div class="nav-grupo">Configuración</div>
-      <div class="nav-item" data-vista="materiales-cfg"><span class="nav-icono">🧰</span><span class="nav-texto">Materiales Gastables</span></div>
       <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
       <div class="nav-item" data-vista="herramientas-cfg"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
+      <div class="nav-item" data-vista="materiales-cfg"><span class="nav-icono">🧰</span><span class="nav-texto">Materiales Gastables</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
-
+      <div class="sb-turno">
+        <div class="sb-turno-titulo">⏰ Turno actual</div>
+        <div class="sb-turno-hora">L–V 5:30 p.m. – 10:00 p.m.</div>
+        <div class="sb-turno-encargado">Encargado: <span style="color:var(--verde);font-weight:700">Taller</span></div>
+      </div>
     </div>
 
     <div class="contenido">
 
+      <!-- ── DASHBOARD ── -->
       <div class="vista" id="vista-dashboard">
 
         <div class="dash-bienvenida">
@@ -968,6 +984,7 @@
 
       </div>
 
+      <!-- ── SOLICITUDES ── -->
       <div class="vista activa" id="vista-solicitudes">
         <div class="pagina-titulo">
           <div>
@@ -1031,6 +1048,7 @@
         </div>
       </div>
 
+      <!-- ── PRÉSTAMOS PROFESORES ── -->
       <div class="vista" id="vista-prestamos-prof">
         <div class="pagina-titulo">
           <h2>Préstamos a Profesores</h2>
@@ -1061,6 +1079,7 @@
         </div>
       </div>
 
+      <!-- ── HERRAMIENTAS PRESTADAS ── -->
       <div class="vista" id="vista-prestadas">
         <div class="pagina-titulo">
           <h2>Herramientas Prestadas</h2>
@@ -1091,22 +1110,40 @@
         </div>
       </div>
 
+      <!-- ── INVENTARIO HERRAMIENTAS ── -->
       <div class="vista" id="vista-inv-herramientas">
-        <div class="pagina-titulo"><h2>Inventario de Herramientas</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
-
-      <div class="vista" id="vista-herramientas-cfg">
         <div class="pagina-titulo">
           <div>
-            <h2>Herramientas</h2>
-            <p>Gestión del inventario de herramientas disponibles</p>
+            <h2>Inventario de Herramientas</h2>
+            <p>Visualización del stock de herramientas disponibles</p>
           </div>
           <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Inventario</h3>
+            <div class="filtros">
+              <input type="text" id="inv-her-buscar" placeholder="Buscar herramienta...">
+            </div>
+          </div>
+          <div id="inv-her-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando herramientas...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── HERRAMIENTAS CFG ── -->
+      <div class="vista" id="vista-herramientas-cfg">
+        <div class="pagina-titulo">
+          <div>
+            <h2>Gestión de Herramientas</h2>
+            <p>Administra el catálogo de herramientas del taller</p>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Catálogo</h3>
             <div class="filtros">
               <input type="text" id="her-buscar" placeholder="Buscar herramienta...">
             </div>
@@ -1117,17 +1154,40 @@
         </div>
       </div>
 
+      <!-- ── INVENTARIO MATERIALES ── -->
       <div class="vista" id="vista-inv-materiales">
         <div class="pagina-titulo">
           <div>
             <h2>Materiales Gastables</h2>
-            <p>Ítems que se consumen en la práctica · aparecen en retorno con etiqueta especial</p>
+            <p>Stock de materiales que se consumen en las prácticas</p>
           </div>
           <button class="btn btn-verde" onclick="abrirModalMaterial()" style="padding:9px 18px;font-size:13px">➕ Agregar material</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
-            <h3>Lista de materiales gastables</h3>
+            <h3>Inventario de Materiales Gastables</h3>
+            <div class="filtros">
+              <input type="text" id="inv-mat-buscar" placeholder="Buscar material...">
+            </div>
+          </div>
+          <div id="inv-mat-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando materiales...</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── MATERIALES CFG ── -->
+      <div class="vista" id="vista-materiales-cfg">
+        <div class="pagina-titulo">
+          <div>
+            <h2>Gestión de Materiales Gastables</h2>
+            <p>Administra el catálogo de materiales gastables</p>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalMaterial()" style="padding:9px 18px;font-size:13px">➕ Agregar material</button>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Catálogo</h3>
             <div class="filtros">
               <input type="text" id="mat-buscar" placeholder="Buscar material...">
             </div>
@@ -1138,18 +1198,13 @@
         </div>
       </div>
 
-      <div class="vista" id="vista-laboratorios">
-        <div class="pagina-titulo"><h2>Laboratorios / Talleres</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
-
+      <!-- ── HISTORIAL ── -->
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
           <h2>📊 Historial de Movimientos</h2>
           <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
         </div>
 
-        <!-- Filtros -->
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..."
@@ -1174,7 +1229,6 @@
           <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✕ Limpiar</button>
         </div>
 
-        <!-- Tags activos -->
         <div id="hist-tags-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros:</span>
           <div id="hist-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
@@ -1191,39 +1245,7 @@
         </div>
       </div>
 
-      <!-- MODAL DETALLE HISTORIAL -->
-      <div class="modal-overlay" id="modal-hist">
-        <div class="modal" style="max-width:560px">
-          <div class="modal-titulo">
-            <span id="modal-hist-titulo">Detalle</span>
-            <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')">✕</button>
-          </div>
-          <div id="modal-hist-contenido"></div>
-        </div>
-      </div>
-
-      <!-- ── MATERIALES CFG ── -->
-      <div class="vista" id="vista-materiales-cfg">
-        <div class="pagina-titulo">
-          <div>
-            <h2>Materiales Gastables</h2>
-            <p>Define qué ítems son gastables · aparecen con etiqueta especial en retornos</p>
-          </div>
-          <button class="btn btn-verde" onclick="abrirModalMaterial()" style="padding:9px 18px;font-size:13px">➕ Agregar material</button>
-        </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Lista de materiales gastables</h3>
-            <div class="filtros">
-              <input type="text" id="mat-buscar" placeholder="Buscar material...">
-            </div>
-          </div>
-          <div id="mat-cfg-wrap">
-            <div class="cargando"><div class="spinner"></div>Cargando materiales...</div>
-          </div>
-        </div>
-      </div>
-
+      <!-- ── PROFESORES CFG ── -->
       <div class="vista" id="vista-profesores-cfg">
         <div class="pagina-titulo">
           <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
@@ -1242,6 +1264,7 @@
         </div>
       </div>
 
+      <!-- ── USUARIOS CFG ── -->
       <div class="vista" id="vista-usuarios-cfg">
         <div class="pagina-titulo">
           <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
@@ -1260,7 +1283,12 @@
         </div>
       </div>
 
-    </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
+    </div>
+  </div>
+</div>
+
+<!-- ── MODALES ── -->
+<div class="modal-overlay" id="modal-profesor-cfg">
   <div class="modal" style="max-width:400px">
     <div class="modal-titulo">
       <span id="prof-modal-titulo">➕ Agregar profesor</span>
@@ -1278,7 +1306,7 @@
   </div>
 </div>
 
-<!-- MODAL CAMBIO OBLIGATORIO DE CONTRASEÑA -->
+<!-- ── MODAL CAMBIO OBLIGATORIO DE CONTRASEÑA ── -->
 <div class="modal-overlay" id="modal-cambiar-pass" style="z-index:999">
   <div class="modal" style="max-width:400px;text-align:center">
     <div style="font-size:36px;margin-bottom:8px">🔐</div>
@@ -1305,6 +1333,7 @@
   </div>
 </div>
 
+<!-- ── MODAL USUARIO ── -->
 <div class="modal-overlay" id="modal-usuario-cfg">
   <div class="modal" style="max-width:460px">
     <div class="modal-titulo">
@@ -1364,6 +1393,7 @@
   </div>
 </div>
 
+<!-- ── MODAL NUEVO PRÉSTAMO PROFESOR ── -->
 <div class="modal-overlay" id="modal-nuevo-pp">
   <div class="modal" style="max-width:560px;overflow:visible">
     <div class="modal-titulo">
@@ -1395,6 +1425,7 @@
   </div>
 </div>
 
+<!-- ── MODAL RETORNO PROFESOR ── -->
 <div class="modal-overlay" id="modal-retorno-pp">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1410,6 +1441,7 @@
   </div>
 </div>
 
+<!-- ── MODAL VER SOLICITUD ── -->
 <div class="modal-overlay" id="modal-solicitud">
   <div class="modal">
     <div class="modal-titulo">
@@ -1421,6 +1453,7 @@
   </div>
 </div>
 
+<!-- ── MODAL NUEVO PRÉSTAMO EXTERNO ── -->
 <div class="modal-overlay" id="modal-nuevo-ext">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1450,6 +1483,7 @@
   </div>
 </div>
 
+<!-- ── MODAL RETORNO EXTERNO ── -->
 <div class="modal-overlay" id="modal-retorno-ext">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1465,6 +1499,7 @@
   </div>
 </div>
 
+<!-- ── MODAL CONDUCE ── -->
 <div class="modal-overlay" id="modal-conduce">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
@@ -1479,6 +1514,7 @@
   </div>
 </div>
 
+<!-- ── MODAL ENTREGA ── -->
 <div class="modal-overlay" id="modal-entrega">
   <div class="modal" style="max-width:560px">
     <div class="modal-titulo">
@@ -1506,6 +1542,7 @@
   </div>
 </div>
 
+<!-- ── MODAL RETORNO ── -->
 <div class="modal-overlay" id="modal-retorno">
   <div class="modal" style="max-width:560px">
     <div class="modal-titulo">
@@ -1525,9 +1562,7 @@
   </div>
 </div>
 
-<div id="toast"></div>
-
-<!-- ── MODAL: AGREGAR / EDITAR MATERIAL GASTABLE ── -->
+<!-- ── MODAL MATERIAL GASTABLE ── -->
 <div class="modal-overlay" id="modal-material-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
@@ -1552,6 +1587,7 @@
   </div>
 </div>
 
+<!-- ── MODAL HERRAMIENTA CFG ── -->
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
@@ -1584,6 +1620,8 @@
     </div>
   </div>
 </div>
+
+<div id="toast"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -1682,8 +1720,14 @@ document.getElementById("login-pass").addEventListener("keydown", e => {
 document.getElementById("btn-cerrar-sesion").addEventListener("click", () => signOut(auth));
 window._signOut = () => signOut(auth);
 
-// ── AUTH STATE ──
+// ── AUTH STATE CON PANTALLA DE CARGA ──
+let authReady = false;
+
 onAuthStateChanged(auth, async user => {
+  // Ocultar pantalla de carga
+  const loading = document.getElementById("loading-screen");
+  if (loading) loading.style.display = "none";
+
   if (user) {
     document.getElementById("pantalla-login").style.display = "none";
     document.getElementById("app").style.display = "block";
@@ -1707,9 +1751,9 @@ onAuthStateChanged(auth, async user => {
 });
 
 // ── ROLES Y PERMISOS ──
-const ADMIN_RAIZ = ["utesamonitores@outlook.com"]; // cuentas que SIEMPRE son administrador, aunque no tengan registro en "usuarios"
+const ADMIN_RAIZ = ["utesamonitores@outlook.com"];
 let rolActual = "administrador";
-let seccionesPermitidas = null; // null = todas (administrador)
+let seccionesPermitidas = null;
 
 async function aplicarRolUsuario(user) {
   try {
@@ -1723,7 +1767,6 @@ async function aplicarRolUsuario(user) {
         document.getElementById("topbar-admin-nombre").textContent = "Administrador";
         document.getElementById("topbar-admin-rol").textContent = "Administrador";
       } else {
-        // Sin registro y no es cuenta raíz => su acceso fue eliminado/revocado
         mostrarToast("Sin acceso: no se encontró tu registro (uid: " + user.uid + ")", "rojo");
         console.warn("UID sin registro en Firestore:", user.uid, user.email);
         await signOut(auth);
@@ -1751,13 +1794,12 @@ async function aplicarRolUsuario(user) {
         }
 
         try {
-          // Reautenticar con la contraseña temporal antes de cambiar
           const passTemp = document.getElementById("pass-temporal-input")?.value || _lastLoginPass;
           const credencial = EmailAuthProvider.credential(user.email, passTemp);
           await reauthenticateWithCredential(user, credencial);
           await updatePassword(user, nueva);
           await updateDoc(doc(db, "usuarios", user.uid), { debeCambiarContrasena: false });
-          _lastLoginPass = nueva; // actualizar en memoria con la nueva contraseña
+          _lastLoginPass = nueva;
           document.getElementById("modal-cambiar-pass").classList.remove("abierto");
           mostrarToast("✅ Contraseña guardada correctamente");
         } catch(err) {
@@ -1780,7 +1822,6 @@ async function aplicarRolUsuario(user) {
     console.error("Error al aplicar rol:", e.code, e.message);
     mostrarToast("Error al cargar tu perfil: " + (e.code || e.message), "rojo");
     if (ADMIN_RAIZ.includes((user.email || "").toLowerCase())) {
-      // Nunca bloquear a la cuenta raíz por un error transitorio de lectura
       rolActual = "administrador";
       seccionesPermitidas = null;
       mostrarSoloSecciones(null);
@@ -1794,7 +1835,6 @@ async function aplicarRolUsuario(user) {
 }
 
 function mostrarSoloSecciones(secciones) {
-  // null = administrador, ve todo
   document.querySelectorAll(".nav-item[data-vista]").forEach(item => {
     const vista = item.dataset.vista;
     const permitido = !secciones || secciones.includes(vista);
@@ -1802,13 +1842,9 @@ function mostrarSoloSecciones(secciones) {
   });
   const navInc = document.getElementById("nav-incidencias");
   if (navInc) navInc.style.display = (!secciones || secciones.includes("incidencias")) ? "" : "none";
-  const grupoConfig = document.getElementById("nav-usuarios")?.closest(".nav-grupo");
-  // Solo administrador ve "Usuarios"
   const navUsr = document.getElementById("nav-usuarios");
   if (navUsr) navUsr.style.display = secciones ? "none" : "";
 
-  // Determinar a qué vista navegar al iniciar sesión:
-  // Solicitudes si hay acceso a ella, o la primera sección permitida (administrador = todas).
   const primera = !secciones
     ? "solicitudes"
     : secciones.includes("solicitudes") ? "solicitudes" : (secciones[0] || "dashboard");
@@ -1818,13 +1854,12 @@ function mostrarSoloSecciones(secciones) {
   document.getElementById(`vista-${primera}`)?.classList.add("activa");
 }
 
-// ── VER INCIDENCIAS DESDE DASHBOARD / MENÚ ──
+// ── VER INCIDENCIAS ──
 window.verIncidencias = function() {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
   document.querySelectorAll(`.nav-item[data-vista="solicitudes"]`).forEach(n => n.classList.add("activo"));
   document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
   document.getElementById("vista-solicitudes")?.classList.add("activa");
-  // Aplicar filtro automático
   setTimeout(() => {
     const filtroEstado = document.getElementById("filtro-estado");
     if (filtroEstado) {
@@ -1832,7 +1867,6 @@ window.verIncidencias = function() {
       filtroEstado.dispatchEvent(new Event("change"));
     }
   }, 100);
-  // Mostrar panel de incidencias de préstamos a profesores
   document.getElementById("titulo-incidencias-est")?.style.setProperty("display", "block");
   const panel = document.getElementById("panel-incidencias-prof");
   if (panel) {
@@ -1865,7 +1899,6 @@ window.verIncidencias = function() {
   }
 };
 
-// Ocultar el panel de incidencias de profesores al navegar normalmente
 function ocultarPanelIncidenciasProf() {
   const panel = document.getElementById("panel-incidencias-prof");
   if (panel) panel.style.display = "none";
@@ -2053,7 +2086,6 @@ async function cargarDashboard() {
     const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
     const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    // KPIs — solo hoy
     const deHoy      = todas.filter(s => esMismodia(s.creadoEn));
     const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
     const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
@@ -2070,7 +2102,6 @@ async function cargarDashboard() {
     set("dash-prof-activos", profActivos);
     set("res-total", deHoy.length);
 
-    // Gráfico 1 — herramientas más solicitadas (histórico)
     const conteoHer = {};
     todas.forEach(s => (s.herramientas || []).forEach(h => {
       conteoHer[h.nombre] = (conteoHer[h.nombre] || 0) + (h.cantidad || 1);
@@ -2079,7 +2110,6 @@ async function cargarDashboard() {
       Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
       "var(--verde)");
 
-    // Gráfico 2 — estados de hoy (donut)
     renderGraficoDonut("grafico-estados", [
       { etiqueta: "Pendientes", valor: pendHoy, color: "var(--amarillo)" },
       { etiqueta: "Entregadas", valor: entregHoy, color: "var(--verde)" },
@@ -2087,7 +2117,6 @@ async function cargarDashboard() {
       { etiqueta: "Canceladas", valor: deHoy.filter(s => s.estado === "cancelada").length, color: "var(--rojo)" }
     ]);
 
-    // Gráfico 3 — por hora (histórico, 8h–22h)
     const conteoHora = Array(24).fill(0);
     todas.forEach(s => {
       const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
@@ -2095,7 +2124,6 @@ async function cargarDashboard() {
     });
     renderGraficoHoras(Array.from({length:15}, (_,i) => ({etiqueta:`${8+i}h`, valor:conteoHora[8+i]||0})));
 
-    // Gráfico 4 — actividad de los últimos 7 días
     const dias7 = [];
     const hoyRef = new Date(); hoyRef.setHours(0,0,0,0);
     for (let i = 6; i >= 0; i--) {
@@ -2138,7 +2166,6 @@ function actualizarContadores() {
 }
 
 function cargarSelectores() {
-  // Profesores: leer directo de Firestore filtrando eliminados
   const sel = document.getElementById("filtro-profesor");
   sel.innerHTML = '<option value="">Todos los profesores</option>';
   getDocs(collection(db, "profesores")).then(snap => {
@@ -2152,7 +2179,6 @@ function cargarSelectores() {
         sel.appendChild(opt);
       });
   }).catch(() => {
-    // Fallback: sacar de solicitudes si Firestore falla
     const profesores = [...new Set(todasSolicitudes.map(s => s.profesor).filter(Boolean))];
     profesores.forEach(p => {
       const opt = document.createElement("option");
@@ -2176,7 +2202,7 @@ function solicitudesFiltradas() {
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
-    if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;  // solo las de hoy (excepto incidencias)
+    if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
@@ -2202,7 +2228,6 @@ function renderTabla() {
     return;
   }
 
-  // Agrupar por taller/laboratorio
   const grupos = {};
   pagina.forEach(s => {
     const taller = s.laboratorio || "Sin taller asignado";
@@ -2266,7 +2291,6 @@ function renderTabla() {
     </table>
   `;
 
-  // paginación
   const totalPags = Math.ceil(total / porPagina);
   const desde = inicio + 1;
   const hasta = Math.min(inicio + porPagina, total);
@@ -2284,16 +2308,11 @@ function renderTabla() {
   }
 }
 
-// ── FILTROS UI: resaltado, tags y limpiar ──
+// ── FILTROS UI ──
 function actualizarFiltrosUI() {
   const buscar  = document.getElementById("filtro-buscar").value.trim();
   const estado  = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
-
-  // Resaltar campos activos en verde
-  const estiloBorde = (activo) => activo
-    ? "border:1.5px solid var(--verde)!important;background:rgba(34,197,94,.06)!important"
-    : "";
 
   const elBuscar  = document.getElementById("filtro-buscar");
   const elEstado  = document.getElementById("filtro-estado");
@@ -2306,7 +2325,6 @@ function actualizarFiltrosUI() {
   elProfesor.style.borderColor = profesor ? "var(--verde)" : "";
   elProfesor.style.background  = profesor ? "rgba(34,197,94,.06)" : "";
 
-  // Tags de filtros activos
   const bar  = document.getElementById("filtros-activos-bar");
   const tags = document.getElementById("filtros-tags");
   const hayFiltro = buscar || estado || profesor;
@@ -2485,13 +2503,11 @@ document.getElementById("modal-solicitud").addEventListener("click", e => {
 // ── ACCIONES ──
 let solicitudActivaId = null;
 
-// ─── MODAL ENTREGA ───
 window.entregar = async function(id) {
   solicitudActivaId = id;
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
 
-  // Verificar historial de incidencias
   const alertaEl = document.getElementById("alerta-incidencia");
   try {
     const snapHist = await getDocs(query(
@@ -2511,7 +2527,6 @@ window.entregar = async function(id) {
   document.getElementById("info-entrega").innerHTML =
     `<strong>${s.nombre} ${s.apellido}</strong> · ${s.matricula} · ${s.laboratorio || ""}`;
 
-  // Renderizar lista de herramientas con checkboxes
   const lista = document.getElementById("lista-entrega");
   const herOrig = (s.herramientas || []).filter(h => !h.adicional);
   const herAdic = (s.herramientas || []).filter(h => h.adicional);
@@ -2591,7 +2606,6 @@ window.confirmarEntrega = async function() {
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
 
-  // Herramientas marcadas
   const checks = document.querySelectorAll("#lista-entrega input[type='checkbox']");
   const herramientasEntregadas = [];
   checks.forEach((chk, i) => {
@@ -2600,7 +2614,6 @@ window.confirmarEntrega = async function() {
     }
   });
 
-  // Adicionales
   document.querySelectorAll("#lista-adicionales .fila-adicional").forEach(fila => {
     const nombre = fila.querySelector(".nombre-adicional").value.trim();
     const cantidad = parseInt(fila.querySelector(".cant-adicional").value) || 1;
@@ -2623,7 +2636,6 @@ window.confirmarEntrega = async function() {
   } catch(e) { console.error("Error al entregar:", e); mostrarToast("Error al entregar: " + e.message, "rojo"); }
 };
 
-// ─── MODAL RETORNO ───
 window.retornar = function(id) {
   solicitudActivaId = id;
   const s = todasSolicitudes.find(x => x.id === id);
@@ -2648,7 +2660,6 @@ window.retornar = function(id) {
     </div>
   `).join("") || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
 
-  // Al desmarcar checkbox, el select cambia a "no_retornada"
   herramientas.forEach((_, i) => {
     const chk = document.getElementById(`chk-r-${i}`);
     const sel = document.getElementById(`estado-r-${i}`);
@@ -2707,7 +2718,6 @@ window.confirmarRetorno = async function() {
       herramientasRetorno: resultado
     });
 
-    // Registrar incidencias si las hay
     for (const inc of incidencias) {
       await addDoc(collection(db, "incidencias"), {
         matricula: s.matricula,
@@ -2735,7 +2745,7 @@ window.confirmarRetorno = async function() {
   } catch(e) { mostrarToast("Error al registrar retorno", "rojo"); }
 };
 
-// ── HERRAMIENTAS LISTA (para buscador de adicionales) ──
+// ── HERRAMIENTAS LISTA ──
 const HERRAMIENTAS_LISTA = [
   "Aceitera","Alicate","Alicate de presión","Broca","Brocha","Cepillo de alambre",
   "Cinta adhesiva","Cinta métrica","Cuchilla","Destornillador plano","Destornillador estrella",
@@ -2753,10 +2763,8 @@ window.anular = async function(id) {
     mostrarToast("Solicitud anulada");
   } catch(e) { mostrarToast("Error al anular", "rojo"); }
 };
-// ══════════════════════════════════════════════
-// ── PRÉSTAMOS A PROFESORES ──
-// ══════════════════════════════════════════════
 
+// ── PRÉSTAMOS A PROFESORES ──
 let todosPrestamosProf = [];
 let ppActivoId = null;
 let todosPrestamosExt = [];
@@ -2843,13 +2851,11 @@ function ppRenderTabla() {
     </table>`;
 }
 
-// Filtros en tiempo real
 ["pp-buscar","pp-filtro-estado"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  ppRenderTabla);
   document.getElementById(id)?.addEventListener("change", ppRenderTabla);
 });
 
-// ── MODAL NUEVO PRÉSTAMO ──
 const PROFESORES_PP = [
   "Daniel Camejo","José Peña","Julio Durán","Víctor Félix"
 ];
@@ -2863,7 +2869,6 @@ function ppPoblarSelects() {
   const selProf = document.getElementById("pp-select-profesor");
   const selLab  = document.getElementById("pp-select-laboratorio");
 
-  // Profesores desde Firestore filtrando eliminados
   selProf.innerHTML = '<option value="">Selecciona un profesor</option>';
   getDocs(collection(db, "profesores")).then(snap => {
     const activos = snap.docs.map(d => d.data()).filter(p => !p.eliminado).sort((a,b) => a.nombre.localeCompare(b.nombre));
@@ -2874,7 +2879,6 @@ function ppPoblarSelects() {
     PROFESORES_PP.forEach(p => { const o = document.createElement("option"); o.value = o.textContent = p; selProf.appendChild(o); });
   });
 
-  // Laboratorios desde Firestore
   selLab.innerHTML = '<option value="">Selecciona un laboratorio</option>';
   getDocs(collection(db, "laboratorios")).then(snap => {
     const lista = !snap.empty ? snap.docs.map(d => d.data().nombre) : LABORATORIOS_PP;
@@ -2887,7 +2891,6 @@ function ppPoblarSelects() {
 
 window.abrirModalNuevoPrestamoProf = function() {
   ppPoblarSelects();
-  // Reiniciar lista de herramientas con una fila vacía
   document.getElementById("pp-lista-herramientas").innerHTML = "";
   ppAgregarFila();
   document.getElementById("modal-nuevo-pp").classList.add("abierto");
@@ -2899,7 +2902,6 @@ window.cerrarModalNuevoProf = function() {
 
 window.ppAgregarFila = function() {
   const contenedor = document.getElementById("pp-lista-herramientas");
-  const idx = contenedor.children.length;
   const div = document.createElement("div");
   div.dataset.filaHerramienta = "1";
   div.style.cssText = "display:flex;gap:8px;align-items:center;margin-bottom:8px;position:relative";
@@ -2972,7 +2974,6 @@ window.confirmarNuevoPrestamoProf = async function() {
   }
 };
 
-// ── MODAL RETORNO PROFESOR ──
 window.abrirRetornoProf = function(id) {
   ppActivoId = id;
   const p = todosPrestamosProf.find(x => x.id === id);
@@ -3043,7 +3044,6 @@ window.confirmarRetornoProf = async function() {
   }
 };
 
-// Cerrar modales al hacer clic fuera
 document.getElementById("modal-nuevo-pp").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-nuevo-pp")) cerrarModalNuevoProf();
 });
@@ -3051,10 +3051,7 @@ document.getElementById("modal-retorno-pp").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-retorno-pp")) cerrarModalRetornoProf();
 });
 
-// ══════════════════════════════════════════════
 // ── HERRAMIENTAS PRESTADAS (OTROS DEPARTAMENTOS) ──
-// ══════════════════════════════════════════════
-
 async function cargarPrestamosExternos() {
   try {
     onSnapshot(query(collection(db, "prestamos_externos"), orderBy("creadoEn", "desc")), snap => {
@@ -3129,7 +3126,6 @@ function extRenderTabla() {
     </table>`;
 }
 
-// Filtros en tiempo real
 ["ext-buscar","ext-filtro-estado"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  extRenderTabla);
   document.getElementById(id)?.addEventListener("change", extRenderTabla);
@@ -3221,7 +3217,6 @@ window.confirmarNuevoPrestamoExt = async function() {
   }
 };
 
-// ── MODAL RETORNO EXTERNO ──
 window.abrirRetornoExt = function(id) {
   extActivoId = id;
   const p = todosPrestamosExt.find(x => x.id === id);
@@ -3292,7 +3287,6 @@ window.confirmarRetornoExt = async function() {
   }
 };
 
-// ── CONDUCE DE SALIDA ──
 window.generarConduce = function(id) {
   const p = todosPrestamosExt.find(x => x.id === id);
   if (!p) return;
@@ -3320,7 +3314,6 @@ window.cerrarModalConduce = function() {
   document.getElementById("modal-conduce").classList.remove("abierto");
 };
 
-// Cerrar modales al hacer clic fuera
 document.getElementById("modal-nuevo-ext").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-nuevo-ext")) cerrarModalNuevoExt();
 });
@@ -3331,29 +3324,20 @@ document.getElementById("modal-conduce").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-conduce")) cerrarModalConduce();
 });
 
-
-// ══════════════════════════════════════════════
-// ── HERRAMIENTAS — CONFIGURACIÓN ──
-// ══════════════════════════════════════════════
-
+// ── HERRAMIENTAS CFG ──
 let herCfgEditar = null;
 let herCfgNombreLocal = null;
 
 async function cargarHerramientasCfg() {
   try {
     onSnapshot(query(collection(db, "herramientas"), orderBy("nombre", "asc")), snap => {
-      // Herramientas en Firestore
       const enFirestore = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const nombresFirestore = new Set(enFirestore.map(h => h.nombre.toLowerCase()));
-
-      // IDs eliminadas (guardadas con eliminada:true)
       const eliminadas = new Set(enFirestore.filter(h => h.eliminada).map(h => h.nombre.toLowerCase()));
-      // Herramientas del respaldo que NO están en Firestore ni eliminadas
       const delRespaldo = HERRAMIENTAS_LISTA
         .filter(h => !nombresFirestore.has(h.nombre.toLowerCase()) && !eliminadas.has(h.nombre.toLowerCase()))
         .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, codigo: h.codigo, local: true }));
 
-      // Combinar: primero las de Firestore, luego las del respaldo restantes
       const lista = [...enFirestore, ...delRespaldo]
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
@@ -3466,23 +3450,7 @@ window.guardarHerramienta = async function() {
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
-window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
-  if (!confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) return;
-  try {
-    if (esLocal) {
-      // Para las del respaldo, guardarla en Firestore con cantidad 0 y marcada como eliminada
-      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: 0, eliminada: true, creadoEn: serverTimestamp() });
-    } else {
-      await deleteDoc(doc(db, "herramientas", id));
-    }
-    mostrarToast("Herramienta eliminada");
-  } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
-};
-
-document.getElementById("her-buscar")?.addEventListener("input", () => {
-  // re-render with filter — snapshot already has data
-});
-
+document.getElementById("her-buscar")?.addEventListener("input", () => {});
 document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-herramienta-cfg")) cerrarModalHerramienta();
 });
@@ -3495,7 +3463,6 @@ async function cargarProfesoresCfg() {
   try {
     onSnapshot(query(collection(db, "profesores"), orderBy("nombre", "asc")), snap => {
       if (snap.empty) {
-        // Usar lista de respaldo
         profCfgLista = ["Daniel Camejo","José Peña","Julio Durán","Víctor Félix"]
           .map((nombre, i) => ({ id: "local-" + i, nombre, local: true }));
       } else {
@@ -3559,7 +3526,6 @@ window.guardarProfesor = async function() {
       await updateDoc(doc(db, "profesores", profCfgEditar), { nombre });
       mostrarToast("✅ Profesor actualizado");
     } else if (window._profLocalNombre) {
-      // Local: buscar si ya existe antes de crear
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre });
@@ -3656,7 +3622,7 @@ window.abrirModalUsuario = function(id = null) {
   document.getElementById("usr-modal-titulo").textContent = id ? "✏️ Editar usuario" : "➕ Agregar usuario";
   document.getElementById("usr-input-nombre").value = u?.nombre || "";
   document.getElementById("usr-input-email").value = u?.email || "";
-  document.getElementById("usr-input-email").readOnly = !!id; // no se puede cambiar el correo al editar
+  document.getElementById("usr-input-email").readOnly = !!id;
   document.getElementById("usr-input-email").style.opacity = id ? "0.6" : "1";
   document.getElementById("usr-input-rol").value = u?.rol || "administrador";
   usrToggleSecciones();
@@ -3689,13 +3655,10 @@ window.guardarUsuario = async function() {
 
   try {
     if (usrCfgEditarId) {
-      // Editar usuario existente (no se crea cuenta nueva en Auth)
       await updateDoc(doc(db, "usuarios", usrCfgEditarId), { nombre, rol, secciones });
       mostrarToast("✅ Usuario actualizado");
       cerrarModalUsuario();
     } else {
-      // Crear cuenta nueva en Auth con una contraseña temporal aleatoria que NADIE conoce.
-      // El usuario recibe un correo para definir la suya antes de poder entrar.
       const passTemporal = document.getElementById("usr-input-pass-temp")?.value.trim();
       if (!passTemporal || passTemporal.length < 6) {
         mostrarToast("La contraseña temporal debe tener al menos 6 caracteres", "rojo");
@@ -3704,7 +3667,7 @@ window.guardarUsuario = async function() {
       }
       const cred = await createUserWithEmailAndPassword(authSecundaria, email, passTemporal);
       const uid = cred.user.uid;
-      await signOut(authSecundaria); // cerrar la sesión de la app secundaria
+      await signOut(authSecundaria);
       await setDoc(doc(db, "usuarios", uid), {
         uid, nombre, email, rol, secciones,
         debeCambiarContrasena: rol === "encargado",
@@ -3737,12 +3700,9 @@ document.getElementById("modal-usuario-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-usuario-cfg")) cerrarModalUsuario();
 });
 
-// ══════════════════════════════════════════════
 // ── MATERIALES GASTABLES ──
-// ══════════════════════════════════════════════
-
 let matCfgEditar = null;
-let _materialesGastables = []; // cache global para usar en retorno
+let _materialesGastables = [];
 
 async function cargarMaterialesCfg() {
   try {
@@ -3780,15 +3740,13 @@ function renderMaterialesCfg(lista) {
 }
 
 function renderInvMateriales(lista) {
-  const wrap = document.getElementById("mat-cfg-wrap");
-  // Also render in inv-materiales if it exists with different id
-  const wrapInv = document.getElementById("mat-inv-wrap");
-  if (!wrapInv) return;
+  const wrap = document.getElementById("inv-mat-wrap");
+  if (!wrap) return;
   if (!lista.length) {
-    wrapInv.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
     return;
   }
-  wrapInv.innerHTML = '<table><thead><tr><th>#</th><th>Material</th><th>Stock disponible</th></tr></thead><tbody>'
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Material</th><th>Stock disponible</th></tr></thead><tbody>'
     + lista.map((m, i) => '<tr>'
         + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
         + '<td><div style="display:flex;align-items:center;gap:8px"><span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid rgba(210,153,34,0.3)">🧰 GASTABLE</span><span class="est-nombre">' + m.nombre + '</span></div></td>'
@@ -3863,10 +3821,9 @@ window.toggleTema = function() {
   aplicarTema(actual === 'oscuro' ? 'claro' : 'oscuro');
 };
 
-// Aplicar tema guardado al cargar
 aplicarTema(localStorage.getItem('tema-admin') || 'claro');
 
-// ── HISTORIAL DE MOVIMIENTOS ──
+// ── HISTORIAL ──
 let historialDatos = [];
 let histPagina = 1;
 const histPorPagina = 15;
@@ -3944,7 +3901,6 @@ function histActualizarFiltrosUI() {
   }
   if (fecha)  tags.innerHTML += chip(`📅 ${fecha}`);
 
-  // Resaltar campos activos
   ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -4011,7 +3967,6 @@ function histRenderTabla() {
       </tbody>
     </table>`;
 
-  // Paginación
   const totalPags = Math.ceil(total / histPorPagina);
   const desde = inicio + 1;
   const hasta = Math.min(inicio + histPorPagina, total);
@@ -4027,7 +3982,6 @@ function histRenderTabla() {
   }
 }
 
-// Eventos filtros historial
 ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  () => { histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); });
   document.getElementById(id)?.addEventListener("change", () => { histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); });
@@ -4043,15 +3997,10 @@ document.getElementById("hist-btn-limpiar")?.addEventListener("click", () => {
   histRenderTabla();
 });
 
-// Cargar cuando navegas a historial o materiales
 document.querySelectorAll(".nav-item[data-vista='historial']").forEach(el => {
   el.addEventListener("click", () => setTimeout(cargarHistorial, 50));
 });
-document.querySelectorAll(".nav-item[data-vista='materiales-cfg'], .nav-item[data-vista='inv-materiales']").forEach(el => {
-  el.addEventListener("click", () => setTimeout(cargarMaterialesCfg, 50));
-});
 
-// Modal detalle historial
 window.abrirModalHist = function(id, tipo) {
   const r = historialDatos.find(x => x.id === id && x.tipo === tipo);
   if (!r) return;
