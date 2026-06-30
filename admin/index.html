@@ -3423,6 +3423,7 @@ function renderHerramientasCfg(lista) {
           + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
           + '<td><div class="acciones-celda">'
           + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ')">✏️ Editar</button>'
+          + '<button class="btn btn-rojo" onclick="eliminarHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.local||false) + ')">🗑 Eliminar</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
@@ -3561,18 +3562,17 @@ window.guardarHerramienta = async function() {
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
-    } else if (herCfgNombreLocal) {
+    } else {
+      // Buscar si ya existe una herramienta con ese nombre (evita duplicados),
+      // tanto si viene del respaldo local como si se escribió manualmente.
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
-        mostrarToast("✅ Herramienta actualizada");
+        mostrarToast("✅ Ya existía esa herramienta — se actualizó en vez de duplicarla");
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
-        mostrarToast("✅ Herramienta guardada en inventario");
+        mostrarToast("✅ Herramienta agregada");
       }
-    } else {
-      await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
-      mostrarToast("✅ Herramienta agregada");
     }
     cerrarModalHerramienta();
   } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
