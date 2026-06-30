@@ -1564,14 +1564,24 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <label>Código (para la foto, ej: HER-001)</label>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="text" id="her-input-codigo" placeholder="HER-001"
-          style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px"
-          oninput="previsualizarFotoHer()">
-        <div id="her-foto-preview" style="width:48px;height:48px;border-radius:8px;border:1px solid var(--borde);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:20px">🔧</div>
+      <label>Fotografía de la herramienta</label>
+      <div id="her-drop-zone" style="border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s">
+        <input type="file" id="her-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+        <div id="her-drop-contenido">
+          <div id="her-foto-preview-wrap" style="width:84px;height:84px;border-radius:10px;border:1px solid var(--borde);overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:30px">
+            <span id="her-foto-preview-icono">🔧</span>
+            <img id="her-foto-preview-img" style="display:none;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="font-size:12px;color:var(--texto-dim)" id="her-drop-texto">Arrastra una imagen aquí o haz clic para seleccionarla</div>
+        </div>
       </div>
-      <small style="color:var(--texto-dim);font-size:11px">La foto debe estar en img/herramientas/HER-001.jpg</small>
+      <div id="her-progreso-wrap" style="display:none;margin-top:8px">
+        <div style="background:var(--card2);border-radius:20px;height:6px;overflow:hidden">
+          <div id="her-progreso-barra" style="height:100%;width:0%;background:var(--verde);transition:width .15s"></div>
+        </div>
+        <div id="her-progreso-texto" style="font-size:11px;color:var(--texto-dim);margin-top:4px">Subiendo... 0%</div>
+      </div>
+      <div id="her-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700">✅ Foto cargada correctamente</div>
     </div>
     <div class="modal-campo">
       <label>Cantidad disponible</label>
@@ -2748,14 +2758,14 @@ const HERRAMIENTAS_LISTA = [
   "Nivel 90","Pie de rey","Pinzas","Piqueta","Porta broca","Segueta","Tarraja de 1/2x13"
 ].map(nombre => ({ nombre }));
 
-// Mapa nombre→codigo construido al cargar herramientas (para mostrar fotos en cualquier contexto)
-const _herCodigoMap = {};
+// Mapa nombre→fotoUrl construido al cargar herramientas (para mostrar fotos en cualquier contexto)
+const _herFotoMap = {};
 function herFotoHtmlPorNombre(nombre, size = 32) {
-  const codigo = _herCodigoMap[nombre?.toLowerCase()];
+  const url = _herFotoMap[nombre?.toLowerCase()];
   const s = size + 'px';
   const r = Math.round(size * 0.17) + 'px';
-  if (codigo) {
-    return '<img src="../img/herramientas/' + codigo + '.jpg"'
+  if (url) {
+    return '<img src="' + url + '"'
       + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0"'
       + ' onerror="this.style.display=\'none\'">';
   }
@@ -3373,8 +3383,8 @@ async function cargarHerramientasCfg() {
       const lista = [...enFirestore, ...delRespaldo]
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-      // Poblar mapa nombre→codigo para usar en todos los renders
-      lista.forEach(h => { if (h.codigo) _herCodigoMap[h.nombre.toLowerCase()] = h.codigo; });
+      // Poblar mapa nombre→fotoUrl para usar en todos los renders
+      lista.forEach(h => { if (h.fotoUrl) _herFotoMap[h.nombre.toLowerCase()] = h.fotoUrl; });
 
       renderHerramientasCfg(lista);
     });
@@ -3393,42 +3403,61 @@ function renderHerramientasCfg(lista) {
     wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas registradas.</p></div>';
     return;
   }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Código</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
     + filtrada.map((h, i) => {
         const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
-        const codigo = h.codigo || '';
-        const fotoSrc = codigo ? '../img/herramientas/' + codigo + '.jpg' : '';
+        const fotoUrl = h.fotoUrl || '';
         const icono = h.icono || '🔧';
-        const foto = fotoSrc
-          ? '<img src="' + fotoSrc + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
+        const foto = fotoUrl
+          ? '<img src="' + fotoUrl + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
           : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + icono + '</div>';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
           + '<td>' + foto + '</td>'
           + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
-          + '<td style="font-size:11px;color:var(--texto-dim)">' + (codigo || '—') + '</td>'
           + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
           + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ',\'' + codigo + '\')">✏️ Editar</button>'
+          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ',\'' + (fotoUrl||'').replace(/'/g,"\\'") + '\')">✏️ Editar</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
     + '</tbody></table>';
 }
 
-window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, codigo = "") {
+let herFotoArchivo = null; // archivo seleccionado pendiente de subir
+let herFotoUrlActual = "";  // URL ya guardada (al editar)
+
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, fotoUrl = "") {
   herCfgEditar      = esLocal ? null : id;
   herCfgNombreLocal = esLocal ? nombre : null;
+  herFotoArchivo    = null;
+  herFotoUrlActual  = fotoUrl || "";
   document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
   inputNombre.readOnly = esLocal;
   inputNombre.style.opacity = esLocal ? "0.6" : "1";
   document.getElementById("her-input-cantidad").value = cantidad;
-  document.getElementById("her-input-codigo").value = codigo;
-  previsualizarFotoHer();
+  document.getElementById("her-input-foto").value = "";
+  document.getElementById("her-progreso-wrap").style.display = "none";
+  document.getElementById("her-foto-exito").style.display = "none";
+  document.getElementById("her-drop-texto").textContent = "Arrastra una imagen aquí o haz clic para seleccionarla";
+  mostrarPreviewHer(fotoUrl);
   document.getElementById("modal-herramienta-cfg").classList.add("abierto");
 };
+
+function mostrarPreviewHer(url) {
+  const img    = document.getElementById("her-foto-preview-img");
+  const icono  = document.getElementById("her-foto-preview-icono");
+  if (url) {
+    img.src = url;
+    img.style.display = "block";
+    icono.style.display = "none";
+  } else {
+    img.style.display = "none";
+    icono.style.display = "block";
+  }
+}
 
 window.cerrarModalHerramienta = function() {
   document.getElementById("modal-herramienta-cfg").classList.remove("abierto");
@@ -3442,28 +3471,84 @@ window.herFotoError = function(img) {
   img.parentNode.replaceChild(div, img);
 };
 
-window.previsualizarFotoHer = function() {
-  const codigo = document.getElementById("her-input-codigo")?.value.trim();
-  const preview = document.getElementById("her-foto-preview");
-  if (!preview) return;
-  if (codigo) {
-    preview.innerHTML = '<img src="../img/herramientas/' + codigo + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="herFotoError(this)">';
-  } else {
-    preview.textContent = '🔧';
-  }
-};
+function herProcesarArchivo(archivo) {
+  if (!archivo) return;
+  if (!archivo.type.startsWith("image/")) { mostrarToast("Selecciona un archivo de imagen", "rojo"); return; }
+  if (archivo.size > 5 * 1024 * 1024) { mostrarToast("La imagen no debe superar 5 MB", "rojo"); return; }
+  herFotoArchivo = archivo;
+  document.getElementById("her-foto-exito").style.display = "none";
+  document.getElementById("her-drop-texto").textContent = archivo.name;
+  const lector = new FileReader();
+  lector.onload = e => mostrarPreviewHer(e.target.result);
+  lector.readAsDataURL(archivo);
+}
+
+const herDropZone = document.getElementById("her-drop-zone");
+const herInputFoto = document.getElementById("her-input-foto");
+herInputFoto?.addEventListener("change", () => herProcesarArchivo(herInputFoto.files[0]));
+herDropZone?.addEventListener("dragover", e => { e.preventDefault(); herDropZone.style.borderColor = "var(--verde)"; herDropZone.style.background = "var(--verde-glow)"; });
+herDropZone?.addEventListener("dragleave", () => { herDropZone.style.borderColor = "var(--borde)"; herDropZone.style.background = ""; });
+herDropZone?.addEventListener("drop", e => {
+  e.preventDefault();
+  herDropZone.style.borderColor = "var(--borde)"; herDropZone.style.background = "";
+  const archivo = e.dataTransfer.files[0];
+  if (archivo) herProcesarArchivo(archivo);
+});
+
+function herComprimirFoto(archivo) {
+  return new Promise((resolve, reject) => {
+    const wrap = document.getElementById("her-progreso-wrap");
+    const barra = document.getElementById("her-progreso-barra");
+    const texto = document.getElementById("her-progreso-texto");
+    wrap.style.display = "block";
+    barra.style.width = "10%";
+    texto.textContent = "Leyendo imagen...";
+
+    const lector = new FileReader();
+    lector.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        barra.style.width = "55%";
+        texto.textContent = "Comprimiendo imagen...";
+        const MAX = 480; // tamaño máximo en px, suficiente para miniaturas y previews
+        let { width, height } = img;
+        if (width > height && width > MAX) { height = Math.round(height * MAX / width); width = MAX; }
+        else if (height > MAX) { width = Math.round(width * MAX / height); height = MAX; }
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+        barra.style.width = "100%";
+        texto.textContent = "✅ Carga completa";
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error("No se pudo procesar la imagen"));
+      img.src = e.target.result;
+    };
+    lector.onerror = () => reject(new Error("No se pudo leer el archivo"));
+    lector.readAsDataURL(archivo);
+  });
+}
 
 window.guardarHerramienta = async function() {
   const nombre   = document.getElementById("her-input-nombre").value.trim();
   const cantidad = parseInt(document.getElementById("her-input-cantidad").value) || 0;
-  const codigo   = document.getElementById("her-input-codigo").value.trim().toUpperCase();
   if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
   const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   const nombreFinal = herCfgNombreLocal || nombre;
   const datos = { nombre: nombreFinal, cantidadDisponible: cantidad };
-  if (codigo) datos.codigo = codigo;
+
   try {
+    if (herFotoArchivo) {
+      btn.textContent = "Procesando foto...";
+      datos.fotoUrl = await herComprimirFoto(herFotoArchivo);
+      document.getElementById("her-foto-exito").style.display = "block";
+    } else if (herFotoUrlActual) {
+      datos.fotoUrl = herFotoUrlActual;
+    }
+
+    btn.textContent = "Guardando...";
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
@@ -3481,7 +3566,7 @@ window.guardarHerramienta = async function() {
       mostrarToast("✅ Herramienta agregada");
     }
     cerrarModalHerramienta();
-  } catch(e) { mostrarToast("Error al guardar", "rojo"); }
+  } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
