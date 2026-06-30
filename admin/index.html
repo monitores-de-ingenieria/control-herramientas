@@ -3364,6 +3364,7 @@ document.getElementById("modal-conduce").addEventListener("click", e => {
 
 let herCfgEditar = null;
 let herCfgNombreLocal = null;
+let _herListaActual = [];
 
 async function cargarHerramientasCfg() {
   try {
@@ -3398,6 +3399,7 @@ async function cargarHerramientasCfg() {
 }
 
 function renderHerramientasCfg(lista) {
+  _herListaActual = lista;
   const wrap = document.getElementById("her-cfg-wrap");
   if (!wrap) return;
   const buscar = (document.getElementById("her-buscar")?.value || "").toLowerCase();
@@ -3420,7 +3422,7 @@ function renderHerramientasCfg(lista) {
           + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
           + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
           + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ',\'' + (fotoUrl||'').replace(/'/g,"\\'") + '\')">✏️ Editar</button>'
+          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ')">✏️ Editar</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
@@ -3430,11 +3432,12 @@ function renderHerramientasCfg(lista) {
 let herFotoArchivo = null; // archivo seleccionado pendiente de subir
 let herFotoUrlActual = "";  // URL ya guardada (al editar)
 
-window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, fotoUrl = "") {
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false) {
   herCfgEditar      = esLocal ? null : id;
   herCfgNombreLocal = esLocal ? nombre : null;
   herFotoArchivo    = null;
-  herFotoUrlActual  = fotoUrl || "";
+  const datosActuales = id ? _herListaActual.find(h => h.id === id) : null;
+  herFotoUrlActual  = datosActuales?.fotoUrl || (datosActuales?.codigo ? '../img/herramientas/' + datosActuales.codigo + '.jpg' : '') || "";
   document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
@@ -3445,7 +3448,7 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   document.getElementById("her-progreso-wrap").style.display = "none";
   document.getElementById("her-foto-exito").style.display = "none";
   document.getElementById("her-drop-texto").textContent = "Arrastra una imagen aquí o haz clic para seleccionarla";
-  mostrarPreviewHer(fotoUrl);
+  mostrarPreviewHer(herFotoUrlActual);
   document.getElementById("modal-herramienta-cfg").classList.add("abierto");
 };
 
