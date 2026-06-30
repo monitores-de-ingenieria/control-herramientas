@@ -110,10 +110,12 @@ export async function cargarHerramientas() {
     );
 
     // Combinar — las de Firestore usan su cantidad actualizada
-    // y construimos la imagen con el código disponible
+    // y construimos la imagen priorizando la foto subida desde el panel
+    // admin (fotoUrl), y solo si no hay foto personalizada caemos a la
+    // ruta estática por código (img/herramientas/CODIGO.jpg).
     const firestoreConImagen = enFirestore.map(h => ({
       ...h,
-      imagen: h.codigo ? `img/herramientas/${h.codigo}.jpg` : (h.imagen || ''),
+      imagen: h.fotoUrl || (h.codigo ? `img/herramientas/${h.codigo}.jpg` : (h.imagen || '')),
       icono:  h.icono  || '🔧'
     }));
 
