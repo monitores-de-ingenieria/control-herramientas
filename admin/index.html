@@ -1215,10 +1215,10 @@
           <div class="tabla-header">
             <h3>Lista de materiales gastables</h3>
             <div class="filtros">
-              <input type="text" id="mat-buscar" placeholder="Buscar material...">
+              <input type="text" id="mat-buscar-cfg" placeholder="Buscar material...">
             </div>
           </div>
-          <div id="mat-cfg-wrap">
+          <div id="mat-cfg-wrap2">
             <div class="cargando"><div class="spinner"></div>Cargando materiales...</div>
           </div>
         </div>
@@ -2363,7 +2363,7 @@ window.abrirModal = function(id) {
   if (!s) return;
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herramientas = (s.herramientas || []).map(h =>
-    `<div class="modal-herramienta-item"><span>${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
+    `<div class="modal-herramienta-item"><span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span></span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
 
   document.getElementById("modal-contenido").innerHTML = `
@@ -2518,6 +2518,7 @@ window.entregar = async function(id) {
   const renderFilas = (arr, offset) => arr.map((h, i) => `
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-e-${offset+i}" data-idx="${offset+i}" checked>
+      ${herFotoHtmlPorNombre(h.nombre)}
       <span class="h-nombre">${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
     </div>`).join("");
@@ -2637,6 +2638,7 @@ window.retornar = function(id) {
   lista.innerHTML = herramientas.map((h, i) => `
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-r-${i}" data-idx="${i}" checked>
+      ${herFotoHtmlPorNombre(h.nombre)}
       <span class="h-nombre">${h.nombre}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${esMaterialGastable(h.nombre) ? ' <span class="badge-gastable">🧰 gastable</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
       <select class="select-estado" id="estado-r-${i}">
@@ -2745,6 +2747,20 @@ const HERRAMIENTAS_LISTA = [
   "Marcador numérico","Martillo","Mazo de goma","Nacho de 1/2","Nivel magnético",
   "Nivel 90","Pie de rey","Pinzas","Piqueta","Porta broca","Segueta","Tarraja de 1/2x13"
 ].map(nombre => ({ nombre }));
+
+// Mapa nombre→codigo construido al cargar herramientas (para mostrar fotos en cualquier contexto)
+const _herCodigoMap = {};
+function herFotoHtmlPorNombre(nombre, size = 32) {
+  const codigo = _herCodigoMap[nombre?.toLowerCase()];
+  const s = size + 'px';
+  const r = Math.round(size * 0.17) + 'px';
+  if (codigo) {
+    return '<img src="../img/herramientas/' + codigo + '.jpg"'
+      + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0"'
+      + ' onerror="this.style.display=\'none\'">';
+  }
+  return '';
+}
 
 window.anular = async function(id) {
   if (!confirm("¿Seguro que deseas anular esta solicitud?")) return;
@@ -2980,8 +2996,8 @@ window.abrirRetornoProf = function(id) {
   document.getElementById("pp-retorno-nombre").textContent = p.profesor;
   const lista = document.getElementById("pp-retorno-lista");
   lista.innerHTML = (p.herramientas || []).map((h, i) => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)">
-      <span style="font-size:13px;font-weight:600">${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde);gap:10px">
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
       <select id="pp-estado-r-${i}"
         style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
         <option value="retornada">✅ Retornada</option>
@@ -3229,8 +3245,8 @@ window.abrirRetornoExt = function(id) {
   document.getElementById("ext-retorno-nombre").textContent = p.departamento;
   const lista = document.getElementById("ext-retorno-lista");
   lista.innerHTML = (p.herramientas || []).map((h, i) => `
-    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde)">
-      <span style="font-size:13px;font-weight:600">${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde);gap:10px">
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
       <select id="ext-estado-r-${i}"
         style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
         <option value="retornada">✅ Retornada</option>
@@ -3356,6 +3372,9 @@ async function cargarHerramientasCfg() {
       // Combinar: primero las de Firestore, luego las del respaldo restantes
       const lista = [...enFirestore, ...delRespaldo]
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
+
+      // Poblar mapa nombre→codigo para usar en todos los renders
+      lista.forEach(h => { if (h.codigo) _herCodigoMap[h.nombre.toLowerCase()] = h.codigo; });
 
       renderHerramientasCfg(lista);
     });
@@ -3744,66 +3763,69 @@ document.getElementById("modal-usuario-cfg")?.addEventListener("click", e => {
 let matCfgEditar = null;
 let _materialesGastables = []; // cache global para usar en retorno
 
-let _matCfgSnapshotActivo = false;
-
 async function cargarMaterialesCfg() {
-  // Si ya hay datos en cache, renderizar de inmediato (evita quedarse en "Cargando...")
-  if (_materialesGastables.length > 0) {
-    renderMaterialesCfg(_materialesGastables);
-    renderInvMateriales(_materialesGastables);
-  }
-  // Solo suscribir al snapshot una vez
-  if (_matCfgSnapshotActivo) return;
-  _matCfgSnapshotActivo = true;
-  onSnapshot(
-    query(collection(db, "materiales_gastables"), orderBy("nombre", "asc")),
-    snap => {
+  try {
+    onSnapshot(query(collection(db, "materiales_gastables"), orderBy("nombre", "asc")), snap => {
       _materialesGastables = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       renderMaterialesCfg(_materialesGastables);
       renderInvMateriales(_materialesGastables);
-    },
-    e => {
-      _matCfgSnapshotActivo = false;
-      const w = document.getElementById("mat-cfg-wrap");
-      if (w) w.innerHTML = '<div class="cargando">Error al cargar materiales. Verifica la conexión.</div>';
-    }
-  );
+    });
+  } catch(e) {
+    const w = document.getElementById("mat-cfg-wrap");
+    if (w) w.innerHTML = '<div class="cargando">Error al cargar materiales.</div>';
+  }
+}
+
+function matFotoHtml(m) {
+  const src   = m.codigo ? '../img/herramientas/' + m.codigo + '.jpg' : '';
+  const icono = m.icono || '🧰';
+  return src
+    ? '<img src="' + src + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="this.replaceWith(matIconoDiv(\'' + icono + '\'))">'
+    : matIconoDiv(icono);
+}
+function matIconoDiv(icono) {
+  const d = document.createElement('div');
+  d.style.cssText = 'width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px';
+  d.textContent = icono;
+  return d.outerHTML;
 }
 
 function renderMaterialesCfg(lista) {
-  const wrap = document.getElementById("mat-cfg-wrap");
-  if (!wrap) return;
-  const buscar = (document.getElementById("mat-buscar")?.value || "").toLowerCase();
-  const filtrada = buscar ? lista.filter(m => m.nombre.toLowerCase().includes(buscar)) : lista;
-  if (!filtrada.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
-    return;
-  }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>'
-    + filtrada.map((m, i) => '<tr>'
-        + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
-        + '<td><div style="display:flex;align-items:center;gap:8px"><span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid rgba(210,153,34,0.3)">🧰 GASTABLE</span><span class="est-nombre">' + m.nombre + '</span></div></td>'
-        + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (m.stock ?? 0) + '</span></td>'
-        + '<td><div class="acciones-celda">'
-        + '<button class="btn btn-outline" onclick="abrirModalMaterial(\'' + m.id + '\',\'' + m.nombre.replace(/'/g,"\\'") + '\',' + (m.stock||0) + ')">✏️ Editar</button>'
-        + '<button class="btn btn-rojo" onclick="eliminarMaterial(\'' + m.id + '\',\'' + m.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>'
-        + '</div></td>'
-        + '</tr>').join("")
-    + '</tbody></table>';
+  [["mat-cfg-wrap","mat-buscar"],["mat-cfg-wrap2","mat-buscar-cfg"]].forEach(([wrapId, buscarId]) => {
+    const wrap = document.getElementById(wrapId);
+    if (!wrap) return;
+    const buscar = (document.getElementById(buscarId)?.value || "").toLowerCase();
+    const filtrada = buscar ? lista.filter(m => m.nombre.toLowerCase().includes(buscar)) : lista;
+    if (!filtrada.length) {
+      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
+      return;
+    }
+    wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>'
+      + filtrada.map((m, i) => '<tr>'
+          + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
+          + '<td>' + matFotoHtml(m) + '</td>'
+          + '<td><div style="display:flex;align-items:center;gap:8px"><span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid rgba(210,153,34,0.3)">🧰 GASTABLE</span><span class="est-nombre">' + m.nombre + '</span></div></td>'
+          + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (m.stock ?? 0) + '</span></td>'
+          + '<td><div class="acciones-celda">'
+          + '<button class="btn btn-outline" onclick="abrirModalMaterial(\'' + m.id + '\',\'' + m.nombre.replace(/'/g,"\\'") + '\',' + (m.stock||0) + ')">✏️ Editar</button>'
+          + '<button class="btn btn-rojo" onclick="eliminarMaterial(\'' + m.id + '\',\'' + m.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>'
+          + '</div></td>'
+          + '</tr>').join("")
+      + '</tbody></table>';
+  });
 }
 
 function renderInvMateriales(lista) {
-  const wrap = document.getElementById("mat-cfg-wrap");
-  // Also render in inv-materiales if it exists with different id
   const wrapInv = document.getElementById("mat-inv-wrap");
   if (!wrapInv) return;
   if (!lista.length) {
     wrapInv.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
     return;
   }
-  wrapInv.innerHTML = '<table><thead><tr><th>#</th><th>Material</th><th>Stock disponible</th></tr></thead><tbody>'
+  wrapInv.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Material</th><th>Stock disponible</th></tr></thead><tbody>'
     + lista.map((m, i) => '<tr>'
         + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
+        + '<td>' + matFotoHtml(m) + '</td>'
         + '<td><div style="display:flex;align-items:center;gap:8px"><span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid rgba(210,153,34,0.3)">🧰 GASTABLE</span><span class="est-nombre">' + m.nombre + '</span></div></td>'
         + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (m.stock ?? 0) + '</span></td>'
         + '</tr>').join("")
@@ -3855,6 +3877,7 @@ window.esMaterialGastable = function(nombreHerramienta) {
 };
 
 document.getElementById("mat-buscar")?.addEventListener("input", () => renderMaterialesCfg(_materialesGastables));
+document.getElementById("mat-buscar-cfg")?.addEventListener("input", () => renderMaterialesCfg(_materialesGastables));
 document.getElementById("modal-material-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-material-cfg")) cerrarModalMaterial();
 });
@@ -4074,7 +4097,7 @@ window.abrirModalHist = function(id, tipo) {
 
   const herramientasHtml = (r.herramientas||[]).map(h => `
     <div class="modal-herramienta-item">
-      <span>${h.nombre}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span>
+      <span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${h.nombre}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span></span>
       <span style="color:var(--verde);font-weight:700">x${h.cantidad}</span>
     </div>`).join("") || "<p style='color:var(--texto-dim);font-size:13px'>Sin herramientas</p>";
 
