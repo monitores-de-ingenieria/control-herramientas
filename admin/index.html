@@ -826,7 +826,7 @@
 </head>
 <body>
 
-<div id="pantalla-login" style="display:none">
+<div id="pantalla-login">
   <div class="login-box">
     <div class="login-logo">🔧</div>
     <h1>Control de Herramientas</h1>
@@ -2256,7 +2256,6 @@ function renderTabla() {
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
                 ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
-                ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
             </td>
@@ -2846,9 +2845,7 @@ function ppRenderTabla() {
           const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
           const badgeEstado = p.estado === "activo"
             ? '<span class="badge badge-entregada">Activo</span>'
-            : p.tieneIncidencias
-              ? '<span class="badge badge-cancelada">Con incidencias</span>'
-              : '<span class="badge badge-retornada">Retornado</span>';
+            : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}`;
           const acciones = p.estado === "activo"
             ? `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
             : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>`;
