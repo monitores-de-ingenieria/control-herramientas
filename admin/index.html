@@ -65,14 +65,17 @@
   }
 
   /* ═══════════════════════════════════════════
-     LOGIN
+     LOGIN (oculto por defecto)
   ═══════════════════════════════════════════ */
   #pantalla-login {
+    display: none;
     min-height: 100vh;
-    display: flex;
     align-items: center;
     justify-content: center;
     background: var(--bg);
+  }
+  #pantalla-login.visible {
+    display: flex;
   }
 
   .login-box {
@@ -98,9 +101,16 @@
   .login-error { color:var(--rojo); font-size:13px; margin-top:12px; display:none; }
 
   /* ═══════════════════════════════════════════
-     APP SHELL
+     APP (oculto por defecto)
   ═══════════════════════════════════════════ */
-  #app { display:none; height:100vh; overflow:hidden; }
+  #app {
+    display: none;
+    height: 100vh;
+    overflow: hidden;
+  }
+  #app.visible {
+    display: block;
+  }
 
   .shell {
     display: grid;
@@ -826,7 +836,7 @@
 </head>
 <body>
 
-<div id="pantalla-login" style="display:none">
+<div id="pantalla-login" class="visible">
   <div class="login-box">
     <div class="login-logo">🔧</div>
     <h1>Control de Herramientas</h1>
@@ -1564,14 +1574,24 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <label>Código (para la foto, ej: HER-001)</label>
-      <div style="display:flex;gap:8px;align-items:center">
-        <input type="text" id="her-input-codigo" placeholder="HER-001"
-          style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px"
-          oninput="previsualizarFotoHer()">
-        <div id="her-foto-preview" style="width:48px;height:48px;border-radius:8px;border:1px solid var(--borde);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:20px">🔧</div>
+      <label>Fotografía de la herramienta</label>
+      <div id="her-drop-zone" style="border:2px dashed var(--borde);border-radius:10px;padding:16px;text-align:center;cursor:pointer;position:relative;transition:border-color .15s,background .15s">
+        <input type="file" id="her-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
+        <div id="her-drop-contenido">
+          <div id="her-foto-preview-wrap" style="width:84px;height:84px;border-radius:10px;border:1px solid var(--borde);overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:30px">
+            <span id="her-foto-preview-icono">🔧</span>
+            <img id="her-foto-preview-img" style="display:none;width:100%;height:100%;object-fit:cover">
+          </div>
+          <div style="font-size:12px;color:var(--texto-dim)" id="her-drop-texto">Arrastra una imagen aquí o haz clic para seleccionarla</div>
+        </div>
       </div>
-      <small style="color:var(--texto-dim);font-size:11px">La foto debe estar en img/herramientas/HER-001.jpg</small>
+      <div id="her-progreso-wrap" style="display:none;margin-top:8px">
+        <div style="background:var(--card2);border-radius:20px;height:6px;overflow:hidden">
+          <div id="her-progreso-barra" style="height:100%;width:0%;background:var(--verde);transition:width .15s"></div>
+        </div>
+        <div id="her-progreso-texto" style="font-size:11px;color:var(--texto-dim);margin-top:4px">Subiendo... 0%</div>
+      </div>
+      <div id="her-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700">✅ Foto cargada correctamente</div>
     </div>
     <div class="modal-campo">
       <label>Cantidad disponible</label>
@@ -1660,7 +1680,7 @@ function mostrarToast(msg, tipo = "verde") {
 }
 
 // ── LOGIN ──
-let _lastLoginPass = ""; // guardada en memoria para reautenticar si es necesario
+let _lastLoginPass = "";
 
 document.getElementById("btn-login").addEventListener("click", async () => {
   const email = document.getElementById("login-email").value.trim();
@@ -1669,7 +1689,7 @@ document.getElementById("btn-login").addEventListener("click", async () => {
   err.style.display = "none";
   try {
     await signInWithEmailAndPassword(auth, email, pass);
-    _lastLoginPass = pass; // guardamos para posible reautenticación
+    _lastLoginPass = pass;
   } catch (e) {
     err.style.display = "block";
   }
@@ -1684,9 +1704,11 @@ window._signOut = () => signOut(auth);
 
 // ── AUTH STATE ──
 onAuthStateChanged(auth, async user => {
+  const loginEl = document.getElementById("pantalla-login");
+  const appEl = document.getElementById("app");
   if (user) {
-    document.getElementById("pantalla-login").style.display = "none";
-    document.getElementById("app").style.display = "block";
+    loginEl.classList.remove("visible");
+    appEl.classList.add("visible");
     const letra = (user.email || "A")[0].toUpperCase();
     document.getElementById("admin-avatar").textContent = letra;
     cargarDashboard();
@@ -1699,17 +1721,17 @@ onAuthStateChanged(auth, async user => {
     cargarUsuariosCfg();
     await aplicarRolUsuario(user);
   } else {
-    document.getElementById("pantalla-login").style.display = "flex";
-    document.getElementById("app").style.display = "none";
+    loginEl.classList.add("visible");
+    appEl.classList.remove("visible");
     document.getElementById("login-email").value = "";
     document.getElementById("login-pass").value = "";
   }
 });
 
 // ── ROLES Y PERMISOS ──
-const ADMIN_RAIZ = ["utesamonitores@outlook.com"]; // cuentas que SIEMPRE son administrador, aunque no tengan registro en "usuarios"
+const ADMIN_RAIZ = ["utesamonitores@outlook.com"];
 let rolActual = "administrador";
-let seccionesPermitidas = null; // null = todas (administrador)
+let seccionesPermitidas = null;
 
 async function aplicarRolUsuario(user) {
   try {
@@ -1723,7 +1745,6 @@ async function aplicarRolUsuario(user) {
         document.getElementById("topbar-admin-nombre").textContent = "Administrador";
         document.getElementById("topbar-admin-rol").textContent = "Administrador";
       } else {
-        // Sin registro y no es cuenta raíz => su acceso fue eliminado/revocado
         mostrarToast("Sin acceso: no se encontró tu registro (uid: " + user.uid + ")", "rojo");
         console.warn("UID sin registro en Firestore:", user.uid, user.email);
         await signOut(auth);
@@ -1732,7 +1753,6 @@ async function aplicarRolUsuario(user) {
     }
     const datos = snap.data();
 
-    // ── CAMBIO OBLIGATORIO DE CONTRASEÑA ──
     if (datos.debeCambiarContrasena && datos.rol === "encargado") {
       document.getElementById("modal-cambiar-pass").classList.add("abierto");
       document.getElementById("btn-confirmar-nueva-pass").onclick = async () => {
@@ -1751,13 +1771,12 @@ async function aplicarRolUsuario(user) {
         }
 
         try {
-          // Reautenticar con la contraseña temporal antes de cambiar
           const passTemp = document.getElementById("pass-temporal-input")?.value || _lastLoginPass;
           const credencial = EmailAuthProvider.credential(user.email, passTemp);
           await reauthenticateWithCredential(user, credencial);
           await updatePassword(user, nueva);
           await updateDoc(doc(db, "usuarios", user.uid), { debeCambiarContrasena: false });
-          _lastLoginPass = nueva; // actualizar en memoria con la nueva contraseña
+          _lastLoginPass = nueva;
           document.getElementById("modal-cambiar-pass").classList.remove("abierto");
           mostrarToast("✅ Contraseña guardada correctamente");
         } catch(err) {
@@ -1780,7 +1799,6 @@ async function aplicarRolUsuario(user) {
     console.error("Error al aplicar rol:", e.code, e.message);
     mostrarToast("Error al cargar tu perfil: " + (e.code || e.message), "rojo");
     if (ADMIN_RAIZ.includes((user.email || "").toLowerCase())) {
-      // Nunca bloquear a la cuenta raíz por un error transitorio de lectura
       rolActual = "administrador";
       seccionesPermitidas = null;
       mostrarSoloSecciones(null);
@@ -1794,7 +1812,6 @@ async function aplicarRolUsuario(user) {
 }
 
 function mostrarSoloSecciones(secciones) {
-  // null = administrador, ve todo
   document.querySelectorAll(".nav-item[data-vista]").forEach(item => {
     const vista = item.dataset.vista;
     const permitido = !secciones || secciones.includes(vista);
@@ -1802,13 +1819,9 @@ function mostrarSoloSecciones(secciones) {
   });
   const navInc = document.getElementById("nav-incidencias");
   if (navInc) navInc.style.display = (!secciones || secciones.includes("incidencias")) ? "" : "none";
-  const grupoConfig = document.getElementById("nav-usuarios")?.closest(".nav-grupo");
-  // Solo administrador ve "Usuarios"
   const navUsr = document.getElementById("nav-usuarios");
   if (navUsr) navUsr.style.display = secciones ? "none" : "";
 
-  // Determinar a qué vista navegar al iniciar sesión:
-  // Solicitudes si hay acceso a ella, o la primera sección permitida (administrador = todas).
   const primera = !secciones
     ? "solicitudes"
     : secciones.includes("solicitudes") ? "solicitudes" : (secciones[0] || "dashboard");
@@ -1818,13 +1831,12 @@ function mostrarSoloSecciones(secciones) {
   document.getElementById(`vista-${primera}`)?.classList.add("activa");
 }
 
-// ── VER INCIDENCIAS DESDE DASHBOARD / MENÚ ──
+// ── VER INCIDENCIAS (con columna de estado y badge) ──
 window.verIncidencias = function() {
   document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
   document.querySelectorAll(`.nav-item[data-vista="solicitudes"]`).forEach(n => n.classList.add("activo"));
   document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
   document.getElementById("vista-solicitudes")?.classList.add("activa");
-  // Aplicar filtro automático
   setTimeout(() => {
     const filtroEstado = document.getElementById("filtro-estado");
     if (filtroEstado) {
@@ -1832,30 +1844,40 @@ window.verIncidencias = function() {
       filtroEstado.dispatchEvent(new Event("change"));
     }
   }, 100);
-  // Mostrar panel de incidencias de préstamos a profesores
   document.getElementById("titulo-incidencias-est")?.style.setProperty("display", "block");
   const panel = document.getElementById("panel-incidencias-prof");
   if (panel) {
     panel.style.display = "block";
     const wrap = document.getElementById("tabla-incidencias-prof-wrap");
-    const lista = (todosPrestamosProf || []).filter(p => p.tieneIncidencias);
+    const lista = (todosPrestamosProfTodos || []).filter(p => p.tieneIncidencias);
     if (!lista.length) {
       wrap.innerHTML = '<div class="vacio" style="padding:20px;text-align:center;color:var(--texto-dim)">📭 No hay préstamos a profesores con incidencias.</div>';
     } else {
       wrap.innerHTML = `
         <table>
           <thead>
-            <tr><th>Profesor</th><th>Laboratorio</th><th>Herramientas</th><th>Fecha</th><th>Acciones</th></tr>
+            <tr>
+              <th>Profesor</th>
+              <th>Laboratorio</th>
+              <th>Herramientas</th>
+              <th>Fecha</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
           </thead>
           <tbody>
             ${lista.map(p => {
               const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
               const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+              const badgeEstado = p.estado === "activo"
+                ? '<span class="badge badge-entregada">Activo</span>'
+                : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}`;
               return `<tr style="cursor:pointer" onclick="verDetalleIncidenciaProf('${p.id}')">
                 <td>${p.profesor || "—"}</td>
                 <td style="font-size:13px">${p.laboratorio || "—"}</td>
                 <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
                 <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
+                <td>${badgeEstado}</td>
                 <td><button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')">👁 Ver</button></td>
               </tr>`;
             }).join("")}
@@ -1865,7 +1887,6 @@ window.verIncidencias = function() {
   }
 };
 
-// Ocultar el panel de incidencias de profesores al navegar normalmente
 function ocultarPanelIncidenciasProf() {
   const panel = document.getElementById("panel-incidencias-prof");
   if (panel) panel.style.display = "none";
@@ -2053,7 +2074,6 @@ async function cargarDashboard() {
     const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
     const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    // KPIs — solo hoy
     const deHoy      = todas.filter(s => esMismodia(s.creadoEn));
     const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
     const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
@@ -2070,7 +2090,6 @@ async function cargarDashboard() {
     set("dash-prof-activos", profActivos);
     set("res-total", deHoy.length);
 
-    // Gráfico 1 — herramientas más solicitadas (histórico)
     const conteoHer = {};
     todas.forEach(s => (s.herramientas || []).forEach(h => {
       conteoHer[h.nombre] = (conteoHer[h.nombre] || 0) + (h.cantidad || 1);
@@ -2079,7 +2098,6 @@ async function cargarDashboard() {
       Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
       "var(--verde)");
 
-    // Gráfico 2 — estados de hoy (donut)
     renderGraficoDonut("grafico-estados", [
       { etiqueta: "Pendientes", valor: pendHoy, color: "var(--amarillo)" },
       { etiqueta: "Entregadas", valor: entregHoy, color: "var(--verde)" },
@@ -2087,7 +2105,6 @@ async function cargarDashboard() {
       { etiqueta: "Canceladas", valor: deHoy.filter(s => s.estado === "cancelada").length, color: "var(--rojo)" }
     ]);
 
-    // Gráfico 3 — por hora (histórico, 8h–22h)
     const conteoHora = Array(24).fill(0);
     todas.forEach(s => {
       const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
@@ -2095,7 +2112,6 @@ async function cargarDashboard() {
     });
     renderGraficoHoras(Array.from({length:15}, (_,i) => ({etiqueta:`${8+i}h`, valor:conteoHora[8+i]||0})));
 
-    // Gráfico 4 — actividad de los últimos 7 días
     const dias7 = [];
     const hoyRef = new Date(); hoyRef.setHours(0,0,0,0);
     for (let i = 6; i >= 0; i--) {
@@ -2138,7 +2154,6 @@ function actualizarContadores() {
 }
 
 function cargarSelectores() {
-  // Profesores: leer directo de Firestore filtrando eliminados
   const sel = document.getElementById("filtro-profesor");
   sel.innerHTML = '<option value="">Todos los profesores</option>';
   getDocs(collection(db, "profesores")).then(snap => {
@@ -2152,7 +2167,6 @@ function cargarSelectores() {
         sel.appendChild(opt);
       });
   }).catch(() => {
-    // Fallback: sacar de solicitudes si Firestore falla
     const profesores = [...new Set(todasSolicitudes.map(s => s.profesor).filter(Boolean))];
     profesores.forEach(p => {
       const opt = document.createElement("option");
@@ -2176,7 +2190,7 @@ function solicitudesFiltradas() {
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
   return todasSolicitudes.filter(s => {
-    if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;  // solo las de hoy (excepto incidencias)
+    if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
       ? true
@@ -2202,7 +2216,6 @@ function renderTabla() {
     return;
   }
 
-  // Agrupar por taller/laboratorio
   const grupos = {};
   pagina.forEach(s => {
     const taller = s.laboratorio || "Sin taller asignado";
@@ -2240,13 +2253,12 @@ function renderTabla() {
             <td style="font-size:12px;color:var(--texto-dim);max-width:220px">
               ${(s.herramientas||[]).map(h => h.nombre + ' ×' + h.cantidad + (h.adicional ? '<span style="color:var(--azul);font-size:10px;margin-left:3px">(adic)</span>' : '')).join(', ') || '—'}
             </td>
-            <td><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
+            <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
                 ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
-                ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
             </td>
@@ -2266,7 +2278,6 @@ function renderTabla() {
     </table>
   `;
 
-  // paginación
   const totalPags = Math.ceil(total / porPagina);
   const desde = inicio + 1;
   const hasta = Math.min(inicio + porPagina, total);
@@ -2284,16 +2295,10 @@ function renderTabla() {
   }
 }
 
-// ── FILTROS UI: resaltado, tags y limpiar ──
 function actualizarFiltrosUI() {
   const buscar  = document.getElementById("filtro-buscar").value.trim();
   const estado  = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
-
-  // Resaltar campos activos en verde
-  const estiloBorde = (activo) => activo
-    ? "border:1.5px solid var(--verde)!important;background:rgba(34,197,94,.06)!important"
-    : "";
 
   const elBuscar  = document.getElementById("filtro-buscar");
   const elEstado  = document.getElementById("filtro-estado");
@@ -2306,7 +2311,6 @@ function actualizarFiltrosUI() {
   elProfesor.style.borderColor = profesor ? "var(--verde)" : "";
   elProfesor.style.background  = profesor ? "rgba(34,197,94,.06)" : "";
 
-  // Tags de filtros activos
   const bar  = document.getElementById("filtros-activos-bar");
   const tags = document.getElementById("filtros-tags");
   const hayFiltro = buscar || estado || profesor;
@@ -2438,7 +2442,7 @@ function cerrarModal() {
 }
 
 window.verDetalleIncidenciaProf = async function(prestamoId) {
-  const p = todosPrestamosProf.find(x => x.id === prestamoId);
+  const p = (todosPrestamosProfTodos || todosPrestamosProf).find(x => x.id === prestamoId);
   if (!p) return;
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Incidencia";
   document.getElementById("modal-contenido").innerHTML = `<div class="cargando"><div class="spinner"></div>Cargando detalle...</div>`;
@@ -2491,7 +2495,6 @@ window.entregar = async function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
 
-  // Verificar historial de incidencias
   const alertaEl = document.getElementById("alerta-incidencia");
   try {
     const snapHist = await getDocs(query(
@@ -2511,7 +2514,6 @@ window.entregar = async function(id) {
   document.getElementById("info-entrega").innerHTML =
     `<strong>${s.nombre} ${s.apellido}</strong> · ${s.matricula} · ${s.laboratorio || ""}`;
 
-  // Renderizar lista de herramientas con checkboxes
   const lista = document.getElementById("lista-entrega");
   const herOrig = (s.herramientas || []).filter(h => !h.adicional);
   const herAdic = (s.herramientas || []).filter(h => h.adicional);
@@ -2592,7 +2594,6 @@ window.confirmarEntrega = async function() {
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
 
-  // Herramientas marcadas
   const checks = document.querySelectorAll("#lista-entrega input[type='checkbox']");
   const herramientasEntregadas = [];
   checks.forEach((chk, i) => {
@@ -2601,7 +2602,6 @@ window.confirmarEntrega = async function() {
     }
   });
 
-  // Adicionales
   document.querySelectorAll("#lista-adicionales .fila-adicional").forEach(fila => {
     const nombre = fila.querySelector(".nombre-adicional").value.trim();
     const cantidad = parseInt(fila.querySelector(".cant-adicional").value) || 1;
@@ -2650,7 +2650,6 @@ window.retornar = function(id) {
     </div>
   `).join("") || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
 
-  // Al desmarcar checkbox, el select cambia a "no_retornada"
   herramientas.forEach((_, i) => {
     const chk = document.getElementById(`chk-r-${i}`);
     const sel = document.getElementById(`estado-r-${i}`);
@@ -2709,7 +2708,6 @@ window.confirmarRetorno = async function() {
       herramientasRetorno: resultado
     });
 
-    // Registrar incidencias si las hay
     for (const inc of incidencias) {
       await addDoc(collection(db, "incidencias"), {
         matricula: s.matricula,
@@ -2748,14 +2746,13 @@ const HERRAMIENTAS_LISTA = [
   "Nivel 90","Pie de rey","Pinzas","Piqueta","Porta broca","Segueta","Tarraja de 1/2x13"
 ].map(nombre => ({ nombre }));
 
-// Mapa nombre→codigo construido al cargar herramientas (para mostrar fotos en cualquier contexto)
-const _herCodigoMap = {};
+const _herFotoMap = {};
 function herFotoHtmlPorNombre(nombre, size = 32) {
-  const codigo = _herCodigoMap[nombre?.toLowerCase()];
+  const url = _herFotoMap[nombre?.toLowerCase()];
   const s = size + 'px';
   const r = Math.round(size * 0.17) + 'px';
-  if (codigo) {
-    return '<img src="../img/herramientas/' + codigo + '.jpg"'
+  if (url) {
+    return '<img src="' + url + '"'
       + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0"'
       + ' onerror="this.style.display=\'none\'">';
   }
@@ -2769,6 +2766,7 @@ window.anular = async function(id) {
     mostrarToast("Solicitud anulada");
   } catch(e) { mostrarToast("Error al anular", "rojo"); }
 };
+
 // ══════════════════════════════════════════════
 // ── PRÉSTAMOS A PROFESORES ──
 // ══════════════════════════════════════════════
@@ -2778,17 +2776,19 @@ let ppActivoId = null;
 let todosPrestamosExt = [];
 let extActivoId = null;
 
+let todosPrestamosProfTodos = [];
+
 async function cargarPrestamosProf() {
   try {
     onSnapshot(query(collection(db, "prestamos_profesores"), orderBy("creadoEn", "desc")), snap => {
       const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
-      todosPrestamosProf = snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(p => {
-          if (!p.creadoEn) return false;
-          const fecha = p.creadoEn.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn);
-          return fecha >= hoy;
-        });
+      const todos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      todosPrestamosProfTodos = todos;
+      todosPrestamosProf = todos.filter(p => {
+        if (!p.creadoEn) return false;
+        const fecha = p.creadoEn.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn);
+        return fecha >= hoy;
+      });
       ppRenderTabla();
     });
   } catch(e) {
@@ -2834,9 +2834,7 @@ function ppRenderTabla() {
           const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
           const badgeEstado = p.estado === "activo"
             ? '<span class="badge badge-entregada">Activo</span>'
-            : p.tieneIncidencias
-              ? '<span class="badge badge-cancelada">Con incidencias</span>'
-              : '<span class="badge badge-retornada">Retornado</span>';
+            : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}`;
           const acciones = p.estado === "activo"
             ? `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
             : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span>`;
@@ -2851,7 +2849,7 @@ function ppRenderTabla() {
               <td style="font-size:13px">${p.laboratorio || "—"}</td>
               <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
               <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
-              <td>${badgeEstado}</td>
+              <td style="white-space:nowrap">${badgeEstado}</td>
               <td>${acciones}</td>
             </tr>`;
         }).join("")}
@@ -2859,7 +2857,6 @@ function ppRenderTabla() {
     </table>`;
 }
 
-// Filtros en tiempo real
 ["pp-buscar","pp-filtro-estado"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  ppRenderTabla);
   document.getElementById(id)?.addEventListener("change", ppRenderTabla);
@@ -2879,7 +2876,6 @@ function ppPoblarSelects() {
   const selProf = document.getElementById("pp-select-profesor");
   const selLab  = document.getElementById("pp-select-laboratorio");
 
-  // Profesores desde Firestore filtrando eliminados
   selProf.innerHTML = '<option value="">Selecciona un profesor</option>';
   getDocs(collection(db, "profesores")).then(snap => {
     const activos = snap.docs.map(d => d.data()).filter(p => !p.eliminado).sort((a,b) => a.nombre.localeCompare(b.nombre));
@@ -2890,7 +2886,6 @@ function ppPoblarSelects() {
     PROFESORES_PP.forEach(p => { const o = document.createElement("option"); o.value = o.textContent = p; selProf.appendChild(o); });
   });
 
-  // Laboratorios desde Firestore
   selLab.innerHTML = '<option value="">Selecciona un laboratorio</option>';
   getDocs(collection(db, "laboratorios")).then(snap => {
     const lista = !snap.empty ? snap.docs.map(d => d.data().nombre) : LABORATORIOS_PP;
@@ -2903,7 +2898,6 @@ function ppPoblarSelects() {
 
 window.abrirModalNuevoPrestamoProf = function() {
   ppPoblarSelects();
-  // Reiniciar lista de herramientas con una fila vacía
   document.getElementById("pp-lista-herramientas").innerHTML = "";
   ppAgregarFila();
   document.getElementById("modal-nuevo-pp").classList.add("abierto");
@@ -3054,12 +3048,16 @@ window.confirmarRetornoProf = async function() {
     } else {
       mostrarToast("↩ Retorno registrado correctamente");
     }
+
+    const panel = document.getElementById("panel-incidencias-prof");
+    if (panel && panel.style.display === "block") {
+      verIncidencias();
+    }
   } catch(e) {
     mostrarToast("Error al registrar retorno", "rojo");
   }
 };
 
-// Cerrar modales al hacer clic fuera
 document.getElementById("modal-nuevo-pp").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-nuevo-pp")) cerrarModalNuevoProf();
 });
@@ -3145,7 +3143,6 @@ function extRenderTabla() {
     </table>`;
 }
 
-// Filtros en tiempo real
 ["ext-buscar","ext-filtro-estado"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  extRenderTabla);
   document.getElementById(id)?.addEventListener("change", extRenderTabla);
@@ -3336,7 +3333,6 @@ window.cerrarModalConduce = function() {
   document.getElementById("modal-conduce").classList.remove("abierto");
 };
 
-// Cerrar modales al hacer clic fuera
 document.getElementById("modal-nuevo-ext").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-nuevo-ext")) cerrarModalNuevoExt();
 });
@@ -3347,34 +3343,31 @@ document.getElementById("modal-conduce").addEventListener("click", e => {
   if (e.target === document.getElementById("modal-conduce")) cerrarModalConduce();
 });
 
-
 // ══════════════════════════════════════════════
 // ── HERRAMIENTAS — CONFIGURACIÓN ──
 // ══════════════════════════════════════════════
 
 let herCfgEditar = null;
 let herCfgNombreLocal = null;
+let _herListaActual = [];
 
 async function cargarHerramientasCfg() {
   try {
     onSnapshot(query(collection(db, "herramientas"), orderBy("nombre", "asc")), snap => {
-      // Herramientas en Firestore
       const enFirestore = snap.docs.map(d => ({ id: d.id, ...d.data() }));
       const nombresFirestore = new Set(enFirestore.map(h => h.nombre.toLowerCase()));
-
-      // IDs eliminadas (guardadas con eliminada:true)
       const eliminadas = new Set(enFirestore.filter(h => h.eliminada).map(h => h.nombre.toLowerCase()));
-      // Herramientas del respaldo que NO están en Firestore ni eliminadas
       const delRespaldo = HERRAMIENTAS_LISTA
         .filter(h => !nombresFirestore.has(h.nombre.toLowerCase()) && !eliminadas.has(h.nombre.toLowerCase()))
         .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, codigo: h.codigo, local: true }));
 
-      // Combinar: primero las de Firestore, luego las del respaldo restantes
       const lista = [...enFirestore, ...delRespaldo]
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-      // Poblar mapa nombre→codigo para usar en todos los renders
-      lista.forEach(h => { if (h.codigo) _herCodigoMap[h.nombre.toLowerCase()] = h.codigo; });
+      lista.forEach(h => {
+        if (h.fotoUrl) _herFotoMap[h.nombre.toLowerCase()] = h.fotoUrl;
+        else if (h.codigo) _herFotoMap[h.nombre.toLowerCase()] = '../img/herramientas/' + h.codigo + '.jpg';
+      });
 
       renderHerramientasCfg(lista);
     });
@@ -3385,6 +3378,7 @@ async function cargarHerramientasCfg() {
 }
 
 function renderHerramientasCfg(lista) {
+  _herListaActual = lista;
   const wrap = document.getElementById("her-cfg-wrap");
   if (!wrap) return;
   const buscar = (document.getElementById("her-buscar")?.value || "").toLowerCase();
@@ -3393,42 +3387,63 @@ function renderHerramientasCfg(lista) {
     wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas registradas.</p></div>';
     return;
   }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Código</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
     + filtrada.map((h, i) => {
         const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
-        const codigo = h.codigo || '';
-        const fotoSrc = codigo ? '../img/herramientas/' + codigo + '.jpg' : '';
+        const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
         const icono = h.icono || '🔧';
-        const foto = fotoSrc
-          ? '<img src="' + fotoSrc + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
+        const foto = fotoUrl
+          ? '<img src="' + fotoUrl + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
           : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + icono + '</div>';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
           + '<td>' + foto + '</td>'
           + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
-          + '<td style="font-size:11px;color:var(--texto-dim)">' + (codigo || '—') + '</td>'
           + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
           + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ',\'' + codigo + '\')">✏️ Editar</button>'
+          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ')">✏️ Editar</button>'
+          + '<button class="btn btn-rojo" onclick="eliminarHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.local||false) + ')">🗑 Eliminar</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
     + '</tbody></table>';
 }
 
-window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, codigo = "") {
+let herFotoArchivo = null;
+let herFotoUrlActual = "";
+
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false) {
   herCfgEditar      = esLocal ? null : id;
   herCfgNombreLocal = esLocal ? nombre : null;
+  herFotoArchivo    = null;
+  const datosActuales = id ? _herListaActual.find(h => h.id === id) : null;
+  herFotoUrlActual  = datosActuales?.fotoUrl || (datosActuales?.codigo ? '../img/herramientas/' + datosActuales.codigo + '.jpg' : '') || "";
   document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
   inputNombre.readOnly = esLocal;
   inputNombre.style.opacity = esLocal ? "0.6" : "1";
   document.getElementById("her-input-cantidad").value = cantidad;
-  document.getElementById("her-input-codigo").value = codigo;
-  previsualizarFotoHer();
+  document.getElementById("her-input-foto").value = "";
+  document.getElementById("her-progreso-wrap").style.display = "none";
+  document.getElementById("her-foto-exito").style.display = "none";
+  document.getElementById("her-drop-texto").textContent = "Arrastra una imagen aquí o haz clic para seleccionarla";
+  mostrarPreviewHer(herFotoUrlActual);
   document.getElementById("modal-herramienta-cfg").classList.add("abierto");
 };
+
+function mostrarPreviewHer(url) {
+  const img    = document.getElementById("her-foto-preview-img");
+  const icono  = document.getElementById("her-foto-preview-icono");
+  if (url) {
+    img.src = url;
+    img.style.display = "block";
+    icono.style.display = "none";
+  } else {
+    img.style.display = "none";
+    icono.style.display = "block";
+  }
+}
 
 window.cerrarModalHerramienta = function() {
   document.getElementById("modal-herramienta-cfg").classList.remove("abierto");
@@ -3442,46 +3457,104 @@ window.herFotoError = function(img) {
   img.parentNode.replaceChild(div, img);
 };
 
-window.previsualizarFotoHer = function() {
-  const codigo = document.getElementById("her-input-codigo")?.value.trim();
-  const preview = document.getElementById("her-foto-preview");
-  if (!preview) return;
-  if (codigo) {
-    preview.innerHTML = '<img src="../img/herramientas/' + codigo + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="herFotoError(this)">';
-  } else {
-    preview.textContent = '🔧';
-  }
-};
+function herProcesarArchivo(archivo) {
+  if (!archivo) return;
+  if (!archivo.type.startsWith("image/")) { mostrarToast("Selecciona un archivo de imagen", "rojo"); return; }
+  if (archivo.size > 5 * 1024 * 1024) { mostrarToast("La imagen no debe superar 5 MB", "rojo"); return; }
+  herFotoArchivo = archivo;
+  document.getElementById("her-foto-exito").style.display = "none";
+  document.getElementById("her-drop-texto").textContent = archivo.name;
+  const lector = new FileReader();
+  lector.onload = e => mostrarPreviewHer(e.target.result);
+  lector.readAsDataURL(archivo);
+}
+
+const herDropZone = document.getElementById("her-drop-zone");
+const herInputFoto = document.getElementById("her-input-foto");
+herInputFoto?.addEventListener("change", () => herProcesarArchivo(herInputFoto.files[0]));
+herDropZone?.addEventListener("dragover", e => { e.preventDefault(); herDropZone.style.borderColor = "var(--verde)"; herDropZone.style.background = "var(--verde-glow)"; });
+herDropZone?.addEventListener("dragleave", () => { herDropZone.style.borderColor = "var(--borde)"; herDropZone.style.background = ""; });
+herDropZone?.addEventListener("drop", e => {
+  e.preventDefault();
+  herDropZone.style.borderColor = "var(--borde)"; herDropZone.style.background = "";
+  const archivo = e.dataTransfer.files[0];
+  if (archivo) herProcesarArchivo(archivo);
+});
+
+function herComprimirFoto(archivo) {
+  return new Promise((resolve, reject) => {
+    const wrap = document.getElementById("her-progreso-wrap");
+    const barra = document.getElementById("her-progreso-barra");
+    const texto = document.getElementById("her-progreso-texto");
+    wrap.style.display = "block";
+    barra.style.width = "10%";
+    texto.textContent = "Leyendo imagen...";
+
+    const lector = new FileReader();
+    lector.onload = e => {
+      const img = new Image();
+      img.onload = () => {
+        barra.style.width = "55%";
+        texto.textContent = "Comprimiendo imagen...";
+        const MAX = 800;
+        let { width, height } = img;
+        if (width > height && width > MAX) { height = Math.round(height * MAX / width); width = MAX; }
+        else if (height > MAX) { width = Math.round(width * MAX / height); height = MAX; }
+        const canvas = document.createElement("canvas");
+        canvas.width = width; canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        barra.style.width = "100%";
+        texto.textContent = "✅ Carga completa";
+        resolve(dataUrl);
+      };
+      img.onerror = () => reject(new Error("No se pudo procesar la imagen"));
+      img.src = e.target.result;
+    };
+    lector.onerror = () => reject(new Error("No se pudo leer el archivo"));
+    lector.readAsDataURL(archivo);
+  });
+}
 
 window.guardarHerramienta = async function() {
   const nombre   = document.getElementById("her-input-nombre").value.trim();
   const cantidad = parseInt(document.getElementById("her-input-cantidad").value) || 0;
-  const codigo   = document.getElementById("her-input-codigo").value.trim().toUpperCase();
   if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
   const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   const nombreFinal = herCfgNombreLocal || nombre;
   const datos = { nombre: nombreFinal, cantidadDisponible: cantidad };
-  if (codigo) datos.codigo = codigo;
+
   try {
+    if (herFotoArchivo) {
+      btn.textContent = "Procesando foto...";
+      datos.fotoUrl = await herComprimirFoto(herFotoArchivo);
+      document.getElementById("her-foto-exito").style.display = "block";
+    } else if (herFotoUrlActual) {
+      datos.fotoUrl = herFotoUrlActual;
+    }
+
+    btn.textContent = "Guardando...";
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
-    } else if (herCfgNombreLocal) {
+    } else {
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
-        mostrarToast("✅ Herramienta actualizada");
+        mostrarToast("✅ Ya existía esa herramienta — se actualizó en vez de duplicarla");
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
-        mostrarToast("✅ Herramienta guardada en inventario");
+        mostrarToast("✅ Herramienta agregada");
       }
-    } else {
-      await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
-      mostrarToast("✅ Herramienta agregada");
     }
     cerrarModalHerramienta();
-  } catch(e) { mostrarToast("Error al guardar", "rojo"); }
+  } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
@@ -3489,7 +3562,6 @@ window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
   if (!confirm('¿Eliminar "' + nombre + '"? Esta acción no se puede deshacer.')) return;
   try {
     if (esLocal) {
-      // Para las del respaldo, guardarla en Firestore con cantidad 0 y marcada como eliminada
       await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: 0, eliminada: true, creadoEn: serverTimestamp() });
     } else {
       await deleteDoc(doc(db, "herramientas", id));
@@ -3498,9 +3570,7 @@ window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
-document.getElementById("her-buscar")?.addEventListener("input", () => {
-  // re-render with filter — snapshot already has data
-});
+document.getElementById("her-buscar")?.addEventListener("input", () => {});
 
 document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-herramienta-cfg")) cerrarModalHerramienta();
@@ -3514,7 +3584,6 @@ async function cargarProfesoresCfg() {
   try {
     onSnapshot(query(collection(db, "profesores"), orderBy("nombre", "asc")), snap => {
       if (snap.empty) {
-        // Usar lista de respaldo
         profCfgLista = ["Daniel Camejo","José Peña","Julio Durán","Víctor Félix"]
           .map((nombre, i) => ({ id: "local-" + i, nombre, local: true }));
       } else {
@@ -3578,7 +3647,6 @@ window.guardarProfesor = async function() {
       await updateDoc(doc(db, "profesores", profCfgEditar), { nombre });
       mostrarToast("✅ Profesor actualizado");
     } else if (window._profLocalNombre) {
-      // Local: buscar si ya existe antes de crear
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre });
@@ -3675,7 +3743,7 @@ window.abrirModalUsuario = function(id = null) {
   document.getElementById("usr-modal-titulo").textContent = id ? "✏️ Editar usuario" : "➕ Agregar usuario";
   document.getElementById("usr-input-nombre").value = u?.nombre || "";
   document.getElementById("usr-input-email").value = u?.email || "";
-  document.getElementById("usr-input-email").readOnly = !!id; // no se puede cambiar el correo al editar
+  document.getElementById("usr-input-email").readOnly = !!id;
   document.getElementById("usr-input-email").style.opacity = id ? "0.6" : "1";
   document.getElementById("usr-input-rol").value = u?.rol || "administrador";
   usrToggleSecciones();
@@ -3708,13 +3776,10 @@ window.guardarUsuario = async function() {
 
   try {
     if (usrCfgEditarId) {
-      // Editar usuario existente (no se crea cuenta nueva en Auth)
       await updateDoc(doc(db, "usuarios", usrCfgEditarId), { nombre, rol, secciones });
       mostrarToast("✅ Usuario actualizado");
       cerrarModalUsuario();
     } else {
-      // Crear cuenta nueva en Auth con una contraseña temporal aleatoria que NADIE conoce.
-      // El usuario recibe un correo para definir la suya antes de poder entrar.
       const passTemporal = document.getElementById("usr-input-pass-temp")?.value.trim();
       if (!passTemporal || passTemporal.length < 6) {
         mostrarToast("La contraseña temporal debe tener al menos 6 caracteres", "rojo");
@@ -3723,7 +3788,7 @@ window.guardarUsuario = async function() {
       }
       const cred = await createUserWithEmailAndPassword(authSecundaria, email, passTemporal);
       const uid = cred.user.uid;
-      await signOut(authSecundaria); // cerrar la sesión de la app secundaria
+      await signOut(authSecundaria);
       await setDoc(doc(db, "usuarios", uid), {
         uid, nombre, email, rol, secciones,
         debeCambiarContrasena: rol === "encargado",
@@ -3761,7 +3826,7 @@ document.getElementById("modal-usuario-cfg")?.addEventListener("click", e => {
 // ══════════════════════════════════════════════
 
 let matCfgEditar = null;
-let _materialesGastables = []; // cache global para usar en retorno
+let _materialesGastables = [];
 
 async function cargarMaterialesCfg() {
   try {
@@ -3899,7 +3964,6 @@ window.toggleTema = function() {
   aplicarTema(actual === 'oscuro' ? 'claro' : 'oscuro');
 };
 
-// Aplicar tema guardado al cargar
 aplicarTema(localStorage.getItem('tema-admin') || 'claro');
 
 // ── HISTORIAL DE MOVIMIENTOS ──
@@ -3980,7 +4044,6 @@ function histActualizarFiltrosUI() {
   }
   if (fecha)  tags.innerHTML += chip(`📅 ${fecha}`);
 
-  // Resaltar campos activos
   ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
     const el = document.getElementById(id);
     if (!el) return;
@@ -4047,7 +4110,6 @@ function histRenderTabla() {
       </tbody>
     </table>`;
 
-  // Paginación
   const totalPags = Math.ceil(total / histPorPagina);
   const desde = inicio + 1;
   const hasta = Math.min(inicio + histPorPagina, total);
@@ -4063,7 +4125,6 @@ function histRenderTabla() {
   }
 }
 
-// Eventos filtros historial
 ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
   document.getElementById(id)?.addEventListener("input",  () => { histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); });
   document.getElementById(id)?.addEventListener("change", () => { histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); });
@@ -4079,7 +4140,6 @@ document.getElementById("hist-btn-limpiar")?.addEventListener("click", () => {
   histRenderTabla();
 });
 
-// Cargar cuando navegas a historial o materiales
 document.querySelectorAll(".nav-item[data-vista='historial']").forEach(el => {
   el.addEventListener("click", () => setTimeout(cargarHistorial, 50));
 });
@@ -4087,7 +4147,6 @@ document.querySelectorAll(".nav-item[data-vista='materiales-cfg'], .nav-item[dat
   el.addEventListener("click", () => setTimeout(cargarMaterialesCfg, 50));
 });
 
-// Modal detalle historial
 window.abrirModalHist = function(id, tipo) {
   const r = historialDatos.find(x => x.id === id && x.tipo === tipo);
   if (!r) return;
