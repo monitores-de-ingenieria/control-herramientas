@@ -2758,7 +2758,7 @@ const HERRAMIENTAS_LISTA = [
   "Nivel 90","Pie de rey","Pinzas","Piqueta","Porta broca","Segueta","Tarraja de 1/2x13"
 ].map(nombre => ({ nombre }));
 
-// Mapa nombre→fotoUrl construido al cargar herramientas (para mostrar fotos en cualquier contexto)
+// Mapa nombre→fotoUrl (o ruta antigua por código) construido al cargar herramientas
 const _herFotoMap = {};
 function herFotoHtmlPorNombre(nombre, size = 32) {
   const url = _herFotoMap[nombre?.toLowerCase()];
@@ -3383,8 +3383,11 @@ async function cargarHerramientasCfg() {
       const lista = [...enFirestore, ...delRespaldo]
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
 
-      // Poblar mapa nombre→fotoUrl para usar en todos los renders
-      lista.forEach(h => { if (h.fotoUrl) _herFotoMap[h.nombre.toLowerCase()] = h.fotoUrl; });
+      // Poblar mapa nombre→fotoUrl: prioriza fotoUrl nueva, respalda con ruta antigua por código
+      lista.forEach(h => {
+        if (h.fotoUrl) _herFotoMap[h.nombre.toLowerCase()] = h.fotoUrl;
+        else if (h.codigo) _herFotoMap[h.nombre.toLowerCase()] = '../img/herramientas/' + h.codigo + '.jpg';
+      });
 
       renderHerramientasCfg(lista);
     });
@@ -3406,7 +3409,7 @@ function renderHerramientasCfg(lista) {
   wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
     + filtrada.map((h, i) => {
         const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
-        const fotoUrl = h.fotoUrl || '';
+        const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
         const icono = h.icono || '🔧';
         const foto = fotoUrl
           ? '<img src="' + fotoUrl + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
@@ -3510,14 +3513,17 @@ function herComprimirFoto(archivo) {
       img.onload = () => {
         barra.style.width = "55%";
         texto.textContent = "Comprimiendo imagen...";
-        const MAX = 480; // tamaño máximo en px, suficiente para miniaturas y previews
+        const MAX = 800; // tamaño máximo en px — buena nitidez sin pesar demasiado
         let { width, height } = img;
         if (width > height && width > MAX) { height = Math.round(height * MAX / width); width = MAX; }
         else if (height > MAX) { width = Math.round(width * MAX / height); height = MAX; }
         const canvas = document.createElement("canvas");
         canvas.width = width; canvas.height = height;
-        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.75);
+        const ctx = canvas.getContext("2d");
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(img, 0, 0, width, height);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
         barra.style.width = "100%";
         texto.textContent = "✅ Carga completa";
         resolve(dataUrl);
