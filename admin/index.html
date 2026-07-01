@@ -3489,11 +3489,11 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   herCfgIconoLocal  = datosActuales?.icono  || refLista?.icono  || null;
   herFotoUrlEsReal  = !!datosActuales?.fotoUrl;
   herFotoUrlActual  = datosActuales?.fotoUrl || (herCfgCodigoLocal ? '../img/herramientas/' + herCfgCodigoLocal + '.jpg' : '') || "";
-  document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
+  document.getElementById("her-modal-titulo").textContent = id ? "✏️ Editar herramienta" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
   inputNombre.value    = nombre;
-  inputNombre.readOnly = esLocal;
-  inputNombre.style.opacity = esLocal ? "0.6" : "1";
+  inputNombre.readOnly = false;
+  inputNombre.style.opacity = "1";
   document.getElementById("her-input-cantidad").value = cantidad;
   document.getElementById("her-input-foto").value = "";
   document.getElementById("her-progreso-wrap").style.display = "none";
@@ -3597,7 +3597,7 @@ window.guardarHerramienta = async function() {
   if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
   const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
-  const nombreFinal = herCfgNombreLocal || nombre;
+  const nombreFinal = nombre;
   const datos = { nombre: nombreFinal, cantidadDisponible: cantidad };
   // No perder codigo/icono del respaldo al editar solo cantidad/nombre.
   if (herCfgCodigoLocal) datos.codigo = herCfgCodigoLocal;
@@ -3634,6 +3634,12 @@ window.guardarHerramienta = async function() {
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast("✅ Herramienta agregada");
+      }
+      // Si veníamos de una herramienta "de respaldo" (aún no en Firestore) y le
+      // cambiaron el nombre, marcamos el nombre original como eliminado para
+      // que no vuelva a aparecer duplicado desde HERRAMIENTAS_LISTA.
+      if (herCfgNombreLocal && herCfgNombreLocal !== nombreFinal) {
+        await addDoc(collection(db, "herramientas"), { nombre: herCfgNombreLocal, cantidadDisponible: 0, eliminada: true, creadoEn: serverTimestamp() });
       }
     }
     cerrarModalHerramienta();
