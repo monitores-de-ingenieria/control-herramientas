@@ -774,6 +774,20 @@
 
   .modal-overlay.abierto { display: flex; }
 
+  /* Lightbox de foto de herramienta */
+  #lightbox-herramienta { z-index: 200; cursor: zoom-out; }
+  #lightbox-herramienta img {
+    max-width: 90vw; max-height: 90vh;
+    border-radius: 10px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+  }
+  #lightbox-cerrar {
+    position: absolute; top: 20px; right: 24px;
+    background: rgba(255,255,255,0.12); border: none; color: #fff;
+    font-size: 20px; width: 38px; height: 38px;
+    border-radius: 50%; cursor: pointer;
+  }
+
   .modal {
     background: var(--card); border: 1px solid var(--borde);
     border-radius: 14px; padding: 24px;
@@ -1621,6 +1635,12 @@
       <button class="btn btn-verde" id="her-btn-guardar" onclick="guardarHerramienta()">✅ Guardar</button>
     </div>
   </div>
+</div>
+
+<!-- ===== LIGHTBOX: ampliar foto de herramienta al tocarla ===== -->
+<div class="modal-overlay" id="lightbox-herramienta">
+  <button id="lightbox-cerrar" type="button" aria-label="Cerrar">✕</button>
+  <img id="lightbox-img" src="" alt="">
 </div>
 
 <script type="module">
@@ -2811,13 +2831,28 @@ const HERRAMIENTAS_LISTA = [
 ];
 
 const _herFotoMap = {};
+
+// Lightbox: clic en cualquier foto de herramienta (lista, préstamos, historial)
+// la abre en grande. Delegado en document porque estos <img> se generan
+// dinámicamente en varios lugares distintos del panel.
+document.addEventListener('click', e => {
+  const img = e.target.closest('img.foto-zoom');
+  if (!img) return;
+  document.getElementById('lightbox-img').src = img.src;
+  document.getElementById('lightbox-img').alt = img.alt || '';
+  document.getElementById('lightbox-herramienta').classList.add('abierto');
+});
+document.getElementById('lightbox-herramienta')?.addEventListener('click', function() {
+  this.classList.remove('abierto');
+});
+
 function herFotoHtmlPorNombre(nombre, size = 32) {
   const url = _herFotoMap[nombre?.toLowerCase()];
   const s = size + 'px';
   const r = Math.round(size * 0.17) + 'px';
   if (url) {
-    return '<img src="' + url + '"'
-      + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0"'
+    return '<img src="' + url + '" class="foto-zoom"'
+      + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0;cursor:zoom-in"'
       + ' onerror="this.style.display=\'none\'">';
   }
   return '';
@@ -3461,7 +3496,7 @@ function renderHerramientasCfg(lista) {
         const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
         const icono = h.icono || '🔧';
         const foto = fotoUrl
-          ? '<img src="' + fotoUrl + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="herFotoError(this)">'
+          ? '<img src="' + fotoUrl + '" class="foto-zoom" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde);cursor:zoom-in" onerror="herFotoError(this)">'
           : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + icono + '</div>';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
