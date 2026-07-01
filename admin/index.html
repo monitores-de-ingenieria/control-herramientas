@@ -3553,10 +3553,14 @@ function herComprimirFoto(archivo) {
         const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
-        // No rellenamos fondo — el canvas es transparente por defecto
+        if (!conservaTransparencia) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, width, height);
+        }
         ctx.drawImage(img, 0, 0, width, height);
-        // Siempre PNG para preservar transparencia
-        const dataUrl = canvas.toDataURL("image/png");
+        const dataUrl = conservaTransparencia
+          ? canvas.toDataURL("image/png")
+          : canvas.toDataURL("image/jpeg", 0.9);
         barra.style.width = "100%";
         texto.textContent = "✅ Carga completa";
         resolve(dataUrl);
