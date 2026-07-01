@@ -3471,6 +3471,7 @@ function renderHerramientasCfg(lista) {
 
 let herFotoArchivo = null;
 let herFotoUrlActual = "";
+let herFotoUrlEsReal = false; // true = venía de fotoUrl en Firestore; false = ruta de respaldo armada solo para preview
 let herCfgCodigoLocal = null;
 let herCfgIconoLocal = null;
 
@@ -3486,6 +3487,7 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   const refLista = HERRAMIENTAS_LISTA.find(h => h.nombre.toLowerCase() === nombre.toLowerCase());
   herCfgCodigoLocal = datosActuales?.codigo || refLista?.codigo || null;
   herCfgIconoLocal  = datosActuales?.icono  || refLista?.icono  || null;
+  herFotoUrlEsReal  = !!datosActuales?.fotoUrl;
   herFotoUrlActual  = datosActuales?.fotoUrl || (herCfgCodigoLocal ? '../img/herramientas/' + herCfgCodigoLocal + '.jpg' : '') || "";
   document.getElementById("her-modal-titulo").textContent = (id && !esLocal) ? "✏️ Editar herramienta" : esLocal ? "✏️ Editar cantidad" : "➕ Agregar herramienta";
   const inputNombre = document.getElementById("her-input-nombre");
@@ -3606,7 +3608,7 @@ window.guardarHerramienta = async function() {
       btn.textContent = "Procesando foto...";
       datos.fotoUrl = await herComprimirFoto(herFotoArchivo);
       document.getElementById("her-foto-exito").style.display = "block";
-    } else if (herFotoUrlActual) {
+    } else if (herFotoUrlActual && herFotoUrlEsReal) {
       datos.fotoUrl = herFotoUrlActual;
     }
 
