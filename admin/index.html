@@ -3604,6 +3604,16 @@ window.guardarHerramienta = async function() {
   if (herCfgIconoLocal)  datos.icono  = herCfgIconoLocal;
 
   try {
+    if (herCfgEditar) {
+      const snapDup = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
+      const duplicada = snapDup.docs.find(d => d.id !== herCfgEditar);
+      if (duplicada) {
+        mostrarToast('Ya existe otra herramienta con el nombre "' + nombreFinal + '"', "rojo");
+        btn.disabled = false; btn.textContent = "✅ Guardar";
+        return;
+      }
+    }
+
     if (herFotoArchivo) {
       btn.textContent = "Procesando foto...";
       datos.fotoUrl = await herComprimirFoto(herFotoArchivo);
