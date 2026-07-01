@@ -3533,6 +3533,11 @@ function herComprimirFoto(archivo) {
     barra.style.width = "10%";
     texto.textContent = "Leyendo imagen...";
 
+    // PNG/WEBP/GIF pueden traer transparencia real — en esos casos NO se
+    // rellena fondo y se exporta a PNG para conservar el canal alfa.
+    // JPEG no tiene canal alfa, así que ahí sí seguimos comprimiendo a JPEG.
+    const conservaTransparencia = /image\/(png|webp|gif)/i.test(archivo.type);
+
     const lector = new FileReader();
     lector.onload = e => {
       const img = new Image();
@@ -3548,10 +3553,14 @@ function herComprimirFoto(archivo) {
         const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
-        ctx.fillStyle = "#ffffff";
-        ctx.fillRect(0, 0, width, height);
+        if (!conservaTransparencia) {
+          ctx.fillStyle = "#ffffff";
+          ctx.fillRect(0, 0, width, height);
+        }
         ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = canvas.toDataURL("image/jpeg", 0.9);
+        const dataUrl = conservaTransparencia
+          ? canvas.toDataURL("image/png")
+          : canvas.toDataURL("image/jpeg", 0.9);
         barra.style.width = "100%";
         texto.textContent = "✅ Carga completa";
         resolve(dataUrl);
