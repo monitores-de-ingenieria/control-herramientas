@@ -93,6 +93,16 @@ export async function cargarLaboratorios() {
   return obtenerColeccionOTexto("laboratorios", LABORATORIOS_RESPALDO, "nombre");
 }
 
+// El panel admin guarda fotoUrl como ruta relativa A SU PROPIA carpeta
+// (ej. "../img/herramientas/HER-007.jpg"), pero el formulario de estudiante
+// vive en otro nivel del sitio y esa misma ruta ahí no resuelve (404).
+// Si fotoUrl ya es una URL absoluta o root-relative, se deja intacta.
+function normalizarFotoUrl(url) {
+  if (typeof url !== "string" || !url.trim()) return "";
+  if (/^https?:\/\//i.test(url) || url.startsWith("/")) return url;
+  return url.replace(/^(\.\.\/)+/, "");
+}
+
 export async function cargarHerramientas() {
   try {
     const snap = await getDocs(collection(db, "herramientas"));
@@ -125,7 +135,7 @@ export async function cargarHerramientas() {
     // ruta estática por código (img/herramientas/CODIGO.jpg).
     const firestoreConImagen = enFirestore.map(h => ({
       ...h,
-      imagen: h.fotoUrl || (h.codigo ? `img/herramientas/${h.codigo}.jpg` : (h.imagen || '')),
+      imagen: normalizarFotoUrl(h.fotoUrl) || (h.codigo ? `img/herramientas/${h.codigo}.jpg` : (h.imagen || '')),
       icono:  h.icono  || '🔧'
     }));
 
