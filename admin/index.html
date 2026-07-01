@@ -78,6 +78,23 @@
     display: flex;
   }
 
+  /* Pantalla de carga inicial */
+  #pantalla-carga {
+    position: fixed; inset: 0;
+    background: var(--bg);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999;
+    flex-direction: column; gap: 12px;
+    font-size: 13px; color: var(--texto-dim);
+  }
+  #pantalla-carga .spinner {
+    width: 28px; height: 28px;
+    border: 3px solid var(--borde);
+    border-top-color: var(--verde);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+  }
+
   .login-box {
     background: var(--card);
     border: 1px solid var(--borde);
@@ -836,6 +853,7 @@
 </head>
 <body>
 
+<div id="pantalla-carga"><div class="spinner"></div>Cargando...</div>
 <div id="pantalla-login">
   <div class="login-box">
     <div class="login-logo">🔧</div>
@@ -1703,7 +1721,15 @@ document.getElementById("btn-cerrar-sesion").addEventListener("click", () => sig
 window._signOut = () => signOut(auth);
 
 // ── AUTH STATE ──
+// Mostrar login si Firebase no responde en 5 segundos
+const _authTimeout = setTimeout(() => {
+  document.getElementById("pantalla-carga").style.display = "none";
+  document.getElementById("pantalla-login").classList.add("visible");
+}, 5000);
+
 onAuthStateChanged(auth, async user => {
+  clearTimeout(_authTimeout);
+  document.getElementById("pantalla-carga").style.display = "none";
   const loginEl = document.getElementById("pantalla-login");
   const appEl = document.getElementById("app");
   if (user) {
@@ -3532,12 +3558,6 @@ function herComprimirFoto(archivo) {
     wrap.style.display = "block";
     barra.style.width = "10%";
     texto.textContent = "Leyendo imagen...";
-
-    // PNG/WEBP/GIF pueden traer transparencia real — en esos casos NO se
-    // rellena fondo y se exporta a PNG para conservar el canal alfa.
-    // JPEG no tiene canal alfa, así que ahí sí seguimos comprimiendo a JPEG.
-    const conservaTransparencia = /image\/(png|webp|gif)/i.test(archivo.type);
-
     const lector = new FileReader();
     lector.onload = e => {
       const img = new Image();
@@ -3553,14 +3573,10 @@ function herComprimirFoto(archivo) {
         const ctx = canvas.getContext("2d");
         ctx.imageSmoothingEnabled = true;
         ctx.imageSmoothingQuality = "high";
-        if (!conservaTransparencia) {
-          ctx.fillStyle = "#ffffff";
-          ctx.fillRect(0, 0, width, height);
-        }
+        ctx.fillStyle = "#ffffff"; // fondo blanco siempre (elimina transparencia y fondo negro)
+        ctx.fillRect(0, 0, width, height);
         ctx.drawImage(img, 0, 0, width, height);
-        const dataUrl = conservaTransparencia
-          ? canvas.toDataURL("image/png")
-          : canvas.toDataURL("image/jpeg", 0.9);
+        const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
         barra.style.width = "100%";
         texto.textContent = "✅ Carga completa";
         resolve(dataUrl);
