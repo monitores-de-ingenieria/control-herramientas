@@ -334,25 +334,44 @@ body {
 }
 
 .tarjeta-herramienta {
-  border: 1px solid var(--verde-borde);
-  border-radius: 8px;
+  border: 2px solid var(--verde-borde);
+  border-radius: 10px;
   background: var(--verde-claro);
   padding: 8px 6px;
   text-align: center;
+  cursor: pointer;
+  transition: transform .15s, box-shadow .15s, border-color .15s, background .15s;
+  user-select: none;
+}
+
+.tarjeta-herramienta:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46,125,50,0.18);
+  border-color: var(--verde);
+}
+
+.tarjeta-herramienta.seleccionada {
+  border-color: var(--verde);
+  background: #c8e6c9;
+  box-shadow: 0 0 0 2px var(--verde);
 }
 
 .tarjeta-herramienta .icono {
-  font-size: 26px;
-  height: 36px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: #fff;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  overflow: hidden;
 }
 
 .tarjeta-herramienta .icono img {
-  max-height: 36px;
+  max-height: 44px;
   max-width: 100%;
   object-fit: contain;
+  display: block;
 }
 
 .icono-respaldo { font-size: 26px; }
