@@ -345,6 +345,7 @@ body {
   cursor: pointer;
   transition: transform .15s, box-shadow .15s, border-color .15s;
   user-select: none;
+  position: relative; /* NUEVO: permite ubicar el check ✅ dentro de la tarjeta */
 }
 
 .tarjeta-herramienta:hover {
@@ -357,6 +358,16 @@ body {
   border-color: var(--verde);
   background: #fff;
   box-shadow: 0 0 0 2px var(--verde);
+}
+
+/* NUEVO: checklist visual ✅ cuando la tarjeta está seleccionada */
+.tarjeta-herramienta.seleccionada::after {
+  content: '✅';
+  position: absolute;
+  top: 4px;
+  right: 6px;
+  font-size: 13px;
+  line-height: 1;
 }
 
 .tarjeta-herramienta .icono {
