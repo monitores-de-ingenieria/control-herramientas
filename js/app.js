@@ -25,6 +25,7 @@ document.getElementById("btn-ir-formulario").addEventListener("click", () => {
 });
 
 // ---- Formulario ----
+const MAX_POR_ESTUDIANTE = 1; // tope de unidades por herramienta, por solicitud
 const form              = document.getElementById("form-solicitud");
 const selectProfesor    = document.getElementById("profesor");
 const selectLaboratorio = document.getElementById("laboratorio");
@@ -229,8 +230,9 @@ function agregarComboCompleto(practica) {
   tools.forEach(h => {
     const key = claveHerramienta(h);
     const max = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
+    const limite = Math.min(max, MAX_POR_ESTUDIANTE);
     if (max === 0) { sinDisponibilidad.push(h.nombre); return; }
-    if ((cantidadesSeleccionadas[key] || 0) >= 1) return; // ya estaba marcada
+    if ((cantidadesSeleccionadas[key] || 0) >= limite) return; // ya está al tope
 
     cantidadesSeleccionadas[key] = 1;
     const span = document.getElementById(`cant-${key}`);
@@ -238,7 +240,7 @@ function agregarComboCompleto(practica) {
     const card = gridHerramientas.querySelector(`button[data-codigo="${key}"]`)?.closest(".tarjeta-herramienta");
     if (card) card.classList.add("seleccionada");
     const btnSumar = gridHerramientas.querySelector(`button[data-codigo="${key}"][data-accion="sumar"]`);
-    if (btnSumar) btnSumar.disabled = 1 >= max;
+    if (btnSumar) btnSumar.disabled = 1 >= limite;
   });
 
   if (sinDisponibilidad.length) {
@@ -260,12 +262,16 @@ gridHerramientas.addEventListener("click", (e) => {
   const accion = btn.dataset.accion;
   const info = herramientasDisponibles.find(h => claveHerramienta(h) === codigo);
   const maxDisponible = info && Number.isFinite(info.cantidadDisponible) ? info.cantidadDisponible : 5;
+  const limite = Math.min(maxDisponible, MAX_POR_ESTUDIANTE);
 
   let cantidad = cantidadesSeleccionadas[codigo] || 0;
 
   if (accion === "sumar") {
-    if (cantidad >= maxDisponible) {
-      mostrarError(`Solo hay ${maxDisponible} disponible(s) de "${info ? info.nombre : codigo}".`);
+    if (cantidad >= limite) {
+      const msg = maxDisponible < MAX_POR_ESTUDIANTE
+        ? `Solo hay ${maxDisponible} disponible(s) de "${info ? info.nombre : codigo}".`
+        : `Máximo ${MAX_POR_ESTUDIANTE} unidad(es) de "${info ? info.nombre : codigo}" por estudiante.`;
+      mostrarError(msg);
       return;
     }
     cantidad += 1;
@@ -280,7 +286,7 @@ gridHerramientas.addEventListener("click", (e) => {
   if (card) card.classList.toggle("seleccionada", cantidad > 0);
 
   const btnSumar = gridHerramientas.querySelector(`button[data-codigo="${codigo}"][data-accion="sumar"]`);
-  if (btnSumar) btnSumar.disabled = cantidad >= maxDisponible;
+  if (btnSumar) btnSumar.disabled = cantidad >= limite;
 });
 
 async function inicializar() {
