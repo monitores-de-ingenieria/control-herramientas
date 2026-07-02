@@ -863,6 +863,43 @@
   .fila-adicional .cant-adicional { width: 60px; }
   .btn-quitar-fila { background: none; border: none; color: var(--rojo); font-size: 16px; cursor: pointer; padding: 0 4px; }
   .badge-gastable { font-size:10px;color:var(--amarillo);font-weight:700;background:rgba(210,153,34,0.15);padding:1px 6px;border-radius:10px;border:1px solid rgba(210,153,34,0.3); }
+
+  /* ═════════════════════════════════════════
+     HERRAMIENTAS — pegboard del taller
+  ══════════════════════════════════════════ */
+  .her-stats-strip { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-bottom: 14px; }
+  .her-stat-pill { background: var(--card); border: 1px solid var(--borde); border-left: 3px solid var(--verde); border-radius: 8px; padding: 10px 14px; display: flex; align-items: center; gap: 10px; overflow: hidden; }
+  .her-stat-pill.alerta { border-left-color: var(--amarillo); }
+  .her-stat-pill .her-stat-icono { font-size: 20px; flex-shrink: 0; }
+  .her-stat-pill .her-stat-num { font-size: 18px; font-weight: 800; line-height: 1.15; color: var(--texto); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
+  .her-stat-pill .her-stat-label { font-size: 9.5px; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .05em; margin-top: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+  .her-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; flex-wrap: wrap; }
+  .her-categoria-chips { display: flex; gap: 6px; overflow-x: auto; flex: 1; padding-bottom: 3px; }
+  .her-chip { flex-shrink: 0; display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; cursor: pointer; border: 1.5px solid var(--borde); background: var(--card); color: var(--texto-dim); white-space: nowrap; transition: transform .12s; }
+  .her-chip:hover { transform: translateY(-1px); }
+  #her-buscar { padding: 8px 12px; background: var(--card); border: 1px solid var(--borde); border-radius: 8px; color: var(--texto); font-size: 12px; min-width: 200px; }
+  #her-buscar:focus { outline: none; border-color: var(--verde); }
+
+  .her-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 12px; }
+  .her-card { background: var(--card); border: 1px solid var(--borde); border-radius: 12px; overflow: hidden; position: relative; transition: transform .15s, box-shadow .15s; }
+  .her-card:hover { transform: translateY(-3px); box-shadow: 0 10px 22px rgba(0,0,0,0.22); }
+  .her-card.stock-bajo { border: 1.5px dashed var(--amarillo); }
+  .her-foto-wrap { position: relative; height: 108px; background: var(--card2); display: flex; align-items: center; justify-content: center; }
+  .her-foto-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .her-foto-fallback { font-size: 34px; }
+  .her-cat-tag { position: absolute; top: 6px; left: 6px; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
+  .her-ribbon { position: absolute; top: 6px; right: 6px; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(210,153,34,0.92); color: #000; white-space: nowrap; }
+  .her-ribbon.popular { top: auto; bottom: 6px; right: 6px; background: rgba(63,185,80,0.92); color: #000; }
+  .her-cuerpo { padding: 10px 10px 12px; }
+  .her-nombre { font-size: 12.5px; font-weight: 700; line-height: 1.25; margin-bottom: 6px; min-height: 31px; color: var(--texto); }
+  .her-fila-stock { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 9px; }
+  .her-stock-badge { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 20px; background: var(--verde-glow); color: var(--verde); white-space: nowrap; }
+  .her-card.stock-bajo .her-stock-badge { background: rgba(210,153,34,0.15); color: var(--amarillo); }
+  .her-usos { font-size: 9.5px; color: var(--texto-dim); white-space: nowrap; }
+  .her-acciones { display: flex; gap: 6px; }
+  .her-acciones button { flex: 1; padding: 5px; font-size: 11px; }
+  .her-grid .cargando, .her-grid .vacio { grid-column: 1 / -1; }
 </style>
 </head>
 <body>
@@ -925,16 +962,13 @@
       <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span></div>
 
       <div class="nav-grupo">Inventario</div>
-      <div class="nav-item" data-vista="inv-herramientas"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
-      <div class="nav-item" data-vista="inv-materiales"><span class="nav-icono">🧰</span><span class="nav-texto">Materiales Gastables</span></div>
+      <div class="nav-item" data-vista="herramientas-cfg"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
 
       <div class="nav-grupo">Reportes</div>
       <div class="nav-item" data-vista="historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial</span></div>
 
       <div class="nav-grupo">Configuración</div>
-      <div class="nav-item" data-vista="materiales-cfg"><span class="nav-icono">🧰</span><span class="nav-texto">Materiales Gastables</span></div>
       <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
-      <div class="nav-item" data-vista="herramientas-cfg"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
@@ -1133,50 +1167,24 @@
         </div>
       </div>
 
-      <div class="vista" id="vista-inv-herramientas">
-        <div class="pagina-titulo"><h2>Inventario de Herramientas</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
-      </div>
-
       <div class="vista" id="vista-herramientas-cfg">
         <div class="pagina-titulo">
           <div>
-            <h2>Herramientas</h2>
-            <p>Gestión del inventario de herramientas disponibles</p>
+            <h2>🧰 Herramientas</h2>
+            <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
           <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
         </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Inventario</h3>
-            <div class="filtros">
-              <input type="text" id="her-buscar" placeholder="Buscar herramienta...">
-            </div>
-          </div>
-          <div id="her-cfg-wrap">
-            <div class="cargando"><div class="spinner"></div>Cargando herramientas...</div>
-          </div>
-        </div>
-      </div>
 
-      <div class="vista" id="vista-inv-materiales">
-        <div class="pagina-titulo">
-          <div>
-            <h2>Materiales Gastables</h2>
-            <p>Ítems que se consumen en la práctica · aparecen en retorno con etiqueta especial</p>
-          </div>
-          <button class="btn btn-verde" onclick="abrirModalMaterial()" style="padding:9px 18px;font-size:13px">➕ Agregar material</button>
+        <div class="her-stats-strip" id="her-stats-strip"></div>
+
+        <div class="her-toolbar">
+          <div class="her-categoria-chips" id="her-chips"></div>
+          <input type="text" id="her-buscar" placeholder="🔍 Buscar herramienta...">
         </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Lista de materiales gastables</h3>
-            <div class="filtros">
-              <input type="text" id="mat-buscar" placeholder="Buscar material...">
-            </div>
-          </div>
-          <div id="mat-cfg-wrap">
-            <div class="cargando"><div class="spinner"></div>Cargando materiales...</div>
-          </div>
+
+        <div id="her-cfg-wrap" class="her-grid">
+          <div class="cargando"><div class="spinner"></div>Cargando herramientas...</div>
         </div>
       </div>
 
@@ -1241,28 +1249,6 @@
             <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')">✕</button>
           </div>
           <div id="modal-hist-contenido"></div>
-        </div>
-      </div>
-
-      <!-- ── MATERIALES CFG ── -->
-      <div class="vista" id="vista-materiales-cfg">
-        <div class="pagina-titulo">
-          <div>
-            <h2>Materiales Gastables</h2>
-            <p>Define qué ítems son gastables · aparecen con etiqueta especial en retornos</p>
-          </div>
-          <button class="btn btn-verde" onclick="abrirModalMaterial()" style="padding:9px 18px;font-size:13px">➕ Agregar material</button>
-        </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Lista de materiales gastables</h3>
-            <div class="filtros">
-              <input type="text" id="mat-buscar-cfg" placeholder="Buscar material...">
-            </div>
-          </div>
-          <div id="mat-cfg-wrap2">
-            <div class="cargando"><div class="spinner"></div>Cargando materiales...</div>
-          </div>
         </div>
       </div>
 
@@ -1391,12 +1377,10 @@
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="prestamos-prof"> Préstamos Profesores</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="prestadas"> Herramientas Prestadas</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="incidencias"> Incidencias</label>
-        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="inv-herramientas"> Inventario Herramientas</label>
-        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="inv-materiales"> Materiales Gastables</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="laboratorios"> Talleres</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="historial"> Historial</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="profesores-cfg"> Profesores (cfg)</label>
-        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas (cfg)</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas</label>
       </div>
     </div>
     <div class="modal-acciones">
@@ -1569,31 +1553,6 @@
 
 <div id="toast"></div>
 
-<!-- ── MODAL: AGREGAR / EDITAR MATERIAL GASTABLE ── -->
-<div class="modal-overlay" id="modal-material-cfg">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-titulo">
-      <span id="mat-modal-titulo">➕ Agregar material gastable</span>
-      <button class="modal-cerrar" onclick="cerrarModalMaterial()">✕</button>
-    </div>
-    <div class="modal-campo">
-      <label>Nombre del material</label>
-      <input type="text" id="mat-input-nombre" placeholder="Ej: Electrodo, Cinta adhesiva..."
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-    </div>
-    <div class="modal-campo">
-      <label>Stock disponible</label>
-      <input type="number" id="mat-input-stock" min="0" value="0"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-      <small style="color:var(--texto-dim);font-size:11px">Cantidad que tienes en el taller actualmente</small>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalMaterial()">Cancelar</button>
-      <button class="btn btn-verde" id="mat-btn-guardar" onclick="guardarMaterial()">✅ Guardar</button>
-    </div>
-  </div>
-</div>
-
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
@@ -1604,6 +1563,24 @@
       <label>Nombre</label>
       <input type="text" id="her-input-nombre" placeholder="Ej: Martillo"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Categoría</label>
+      <select id="her-input-categoria"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <option value="">Sin categoría</option>
+        <option value="Medición">📏 Medición</option>
+        <option value="Corte">✂️ Corte</option>
+        <option value="Golpe">🔨 Golpe</option>
+        <option value="Sujeción">🔧 Sujeción</option>
+        <option value="Perforación">🪛 Perforación</option>
+        <option value="Acabado">🧽 Acabado</option>
+        <option value="Soldadura">⚡ Soldadura</option>
+        <option value="Seguridad">🦺 Seguridad (EPP)</option>
+        <option value="Insumos">🧴 Insumos</option>
+        <option value="Material Gastable">🧰 Material Gastable</option>
+      </select>
+      <small style="color:var(--texto-dim);font-size:11px">Marca "Material Gastable" para ítems que se consumen en la práctica (aparecerán con etiqueta especial en retornos)</small>
     </div>
     <div class="modal-campo">
       <label>Fotografía de la herramienta</label>
@@ -1763,7 +1740,6 @@ onAuthStateChanged(auth, async user => {
     cargarPrestamosExternos();
     cargarHerramientasCfg();
     cargarProfesoresCfg();
-    cargarMaterialesCfg();
     cargarUsuariosCfg();
     await aplicarRolUsuario(user);
   } else {
@@ -1860,7 +1836,12 @@ async function aplicarRolUsuario(user) {
 function mostrarSoloSecciones(secciones) {
   document.querySelectorAll(".nav-item[data-vista]").forEach(item => {
     const vista = item.dataset.vista;
-    const permitido = !secciones || secciones.includes(vista);
+    // Compatibilidad: algunos encargados pueden tener guardado el permiso
+    // antiguo "inv-herramientas" (antes de fusionar las dos vistas de
+    // Herramientas en una sola bajo "herramientas-cfg"). Lo tratamos como
+    // equivalente para no quitarles acceso sin querer.
+    const equivalentes = vista === "herramientas-cfg" ? [vista, "inv-herramientas"] : [vista];
+    const permitido = !secciones || equivalentes.some(v => secciones.includes(v));
     item.style.display = permitido ? "" : "none";
   });
   const navInc = document.getElementById("nav-incidencias");
@@ -2789,46 +2770,65 @@ window.confirmarRetorno = async function() {
 // responde, lo que retrasaba ocultar #pantalla-carga (mismo síntoma que el
 // flicker del login que ya se había resuelto antes).
 const HERRAMIENTAS_LISTA = [
-  { codigo: "HER-001", nombre: "Aceitera",               icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-002", nombre: "Alicate",                icono: "🛠️", cantidadDisponible: 5  },
-  { codigo: "HER-003", nombre: "Alicate de presión",     icono: "🛠️", cantidadDisponible: 5  },
-  { codigo: "HER-004", nombre: "Broca",                  icono: "🔩",  cantidadDisponible: 10 },
-  { codigo: "HER-005", nombre: "Brocha",                 icono: "🖌️", cantidadDisponible: 10 },
-  { codigo: "HER-006", nombre: "Cepillo de alambre",     icono: "🪥",  cantidadDisponible: 5  },
-  { codigo: "HER-007", nombre: "Cinta adhesiva",         icono: "🎞️", cantidadDisponible: 10 },
-  { codigo: "HER-008", nombre: "Cinta métrica",          icono: "📏",  cantidadDisponible: 5  },
-  { codigo: "HER-009", nombre: "Cuchilla",                icono: "🔪",  cantidadDisponible: 5  },
-  { codigo: "HER-010", nombre: "Destornillador plano",   icono: "🪛",  cantidadDisponible: 8  },
-  { codigo: "HER-011", nombre: "Destornillador estrella",icono: "🪛",  cantidadDisponible: 8  },
-  { codigo: "HER-012", nombre: "Electrodo",               icono: "⚡",  cantidadDisponible: 20 },
-  { codigo: "HER-013", nombre: "Escuadra falsa",          icono: "📐",  cantidadDisponible: 5  },
-  { codigo: "HER-014", nombre: "Gira tuerca",             icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-015", nombre: "Granetero",               icono: "🔨",  cantidadDisponible: 5  },
-  { codigo: "HER-016", nombre: "Guantes",                 icono: "🧤",  cantidadDisponible: 10 },
-  { codigo: "HER-017", nombre: "Lente",                   icono: "🥽",  cantidadDisponible: 10 },
-  { codigo: "HER-018", nombre: "Lima cuadrada",           icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-019", nombre: "Lima triangular",         icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-020", nombre: "Lima media caña",         icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-021", nombre: "Lima redonda",            icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-022", nombre: "Llave ajustable",         icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-023", nombre: "Llave allen",             icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-024", nombre: "Llave de mandril",        icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-025", nombre: "Llave de tomo",           icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-026", nombre: "Llave de tuercas",        icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-027", nombre: "Máscara de soldar",       icono: "🥽",  cantidadDisponible: 5  },
-  { codigo: "HER-028", nombre: "Marcador numérico",       icono: "🔢",  cantidadDisponible: 5  },
-  { codigo: "HER-029", nombre: "Martillo",                icono: "🔨",  cantidadDisponible: 8  },
-  { codigo: "HER-030", nombre: "Mazo de goma",            icono: "🔨",  cantidadDisponible: 5  },
-  { codigo: "HER-031", nombre: "Macho de 1/2",            icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-032", nombre: "Nivel magnético",         icono: "📐",  cantidadDisponible: 5  },
-  { codigo: "HER-033", nombre: "Nivel 90",                icono: "📐",  cantidadDisponible: 5  },
-  { codigo: "HER-034", nombre: "Pie de rey",              icono: "📏",  cantidadDisponible: 5  },
-  { codigo: "HER-035", nombre: "Pinzas",                  icono: "🛠️", cantidadDisponible: 5  },
-  { codigo: "HER-036", nombre: "Piqueta",                 icono: "⛏️", cantidadDisponible: 5  },
-  { codigo: "HER-037", nombre: "Porta broca",             icono: "🔧",  cantidadDisponible: 5  },
-  { codigo: "HER-038", nombre: "Segueta",                 icono: "🪚",  cantidadDisponible: 5  },
-  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",       icono: "🔧",  cantidadDisponible: 5  }
+  { codigo: "HER-001", nombre: "Aceitera",               icono: "🔧",  cantidadDisponible: 5,  categoria: "Insumos" },
+  { codigo: "HER-002", nombre: "Alicate",                icono: "🛠️", cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-003", nombre: "Alicate de presión",     icono: "🛠️", cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-004", nombre: "Broca",                  icono: "🔩",  cantidadDisponible: 10, categoria: "Perforación" },
+  { codigo: "HER-005", nombre: "Brocha",                 icono: "🖌️", cantidadDisponible: 10, categoria: "Insumos" },
+  { codigo: "HER-006", nombre: "Cepillo de alambre",     icono: "🪥",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-007", nombre: "Cinta adhesiva",         icono: "🎞️", cantidadDisponible: 10, categoria: "Insumos" },
+  { codigo: "HER-008", nombre: "Cinta métrica",          icono: "📏",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-009", nombre: "Cuchilla",                icono: "🔪",  cantidadDisponible: 5,  categoria: "Corte" },
+  { codigo: "HER-010", nombre: "Destornillador plano",   icono: "🪛",  cantidadDisponible: 8,  categoria: "Sujeción" },
+  { codigo: "HER-011", nombre: "Destornillador estrella",icono: "🪛",  cantidadDisponible: 8,  categoria: "Sujeción" },
+  { codigo: "HER-012", nombre: "Electrodo",               icono: "⚡",  cantidadDisponible: 20, categoria: "Material Gastable" },
+  { codigo: "HER-013", nombre: "Escuadra falsa",          icono: "📐",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-014", nombre: "Gira tuerca",             icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-015", nombre: "Granetero",               icono: "🔨",  cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-016", nombre: "Guantes",                 icono: "🧤",  cantidadDisponible: 10, categoria: "Seguridad" },
+  { codigo: "HER-017", nombre: "Lente",                   icono: "🥽",  cantidadDisponible: 10, categoria: "Seguridad" },
+  { codigo: "HER-018", nombre: "Lima cuadrada",           icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-019", nombre: "Lima triangular",         icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-020", nombre: "Lima media caña",         icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-021", nombre: "Lima redonda",            icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-022", nombre: "Llave ajustable",         icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-023", nombre: "Llave allen",             icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-024", nombre: "Llave de mandril",        icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-025", nombre: "Llave de tomo",           icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-026", nombre: "Llave de tuercas",        icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-027", nombre: "Máscara de soldar",       icono: "🥽",  cantidadDisponible: 5,  categoria: "Soldadura" },
+  { codigo: "HER-028", nombre: "Marcador numérico",       icono: "🔢",  cantidadDisponible: 5,  categoria: "Insumos" },
+  { codigo: "HER-029", nombre: "Martillo",                icono: "🔨",  cantidadDisponible: 8,  categoria: "Golpe" },
+  { codigo: "HER-030", nombre: "Mazo de goma",            icono: "🔨",  cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-031", nombre: "Macho de 1/2",            icono: "🔧",  cantidadDisponible: 5,  categoria: "Perforación" },
+  { codigo: "HER-032", nombre: "Nivel magnético",         icono: "📐",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-033", nombre: "Nivel 90",                icono: "📐",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-034", nombre: "Pie de rey",              icono: "📏",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-035", nombre: "Pinzas",                  icono: "🛠️", cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-036", nombre: "Piqueta",                 icono: "⛏️", cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-037", nombre: "Porta broca",             icono: "🔧",  cantidadDisponible: 5,  categoria: "Perforación" },
+  { codigo: "HER-038", nombre: "Segueta",                 icono: "🪚",  cantidadDisponible: 5,  categoria: "Corte" },
+  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",       icono: "🔧",  cantidadDisponible: 5,  categoria: "Perforación" }
 ];
+
+// Categorías del inventario: icono + color de acento para chips/etiquetas.
+// Los colores son fijos (no ligados a --verde/--azul del tema) porque son
+// datos, no elementos de tema — se ven bien tanto en claro como en oscuro.
+const CATEGORIAS_HERRAMIENTA = {
+  "Medición":         { icono: "📏", color: "#388bfd" },
+  "Corte":            { icono: "✂️", color: "#f85149" },
+  "Golpe":            { icono: "🔨", color: "#d29922" },
+  "Sujeción":         { icono: "🔧", color: "#3fb950" },
+  "Perforación":      { icono: "🪛", color: "#a371f7" },
+  "Acabado":          { icono: "🧽", color: "#db61a2" },
+  "Soldadura":        { icono: "⚡", color: "#ff9800" },
+  "Seguridad":        { icono: "🦺", color: "#39c5cf" },
+  "Insumos":          { icono: "🧴", color: "#8b949e" },
+  "Material Gastable":{ icono: "🧰", color: "#eab308" }
+};
+// A partir de esta cantidad disponible (inclusive) se marca "stock bajo".
+const UMBRAL_STOCK_BAJO = 2;
+let herCategoriaActiva = "";
 
 const _herFotoMap = {};
 
@@ -3462,7 +3462,7 @@ async function cargarHerramientasCfg() {
       const enFirestore = todosValidos.filter(h => !h.eliminada);
       const delRespaldo = HERRAMIENTAS_LISTA
         .filter(h => !nombresFirestore.has(h.nombre.toLowerCase()) && !eliminadas.has(h.nombre.toLowerCase()))
-        .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, codigo: h.codigo, local: true }));
+        .map((h, i) => ({ id: "local-" + i, nombre: h.nombre, cantidadDisponible: h.cantidadDisponible || 5, icono: h.icono, codigo: h.codigo, categoria: h.categoria, local: true }));
 
       const lista = [...enFirestore, ...delRespaldo]
         .sort((a, b) => a.nombre.localeCompare(b.nombre));
@@ -3480,36 +3480,138 @@ async function cargarHerramientasCfg() {
   }
 }
 
+// Cuenta cuántas veces se ha pedido cada herramienta, sumando las cantidades
+// en todas las solicitudes de estudiantes (todasSolicitudes ya viene cargada
+// en tiempo real por cargarSolicitudes(), así que no hace falta otra consulta).
+function contarSolicitudesPorHerramienta() {
+  const conteo = {};
+  (todasSolicitudes || []).forEach(s => (s.herramientas || []).forEach(h => {
+    conteo[h.nombre] = (conteo[h.nombre] || 0) + (h.cantidad || 1);
+  }));
+  return conteo;
+}
+
 function renderHerramientasCfg(lista) {
   _herListaActual = lista;
   const wrap = document.getElementById("her-cfg-wrap");
   if (!wrap) return;
+
+  const conteoUsos = contarSolicitudesPorHerramienta();
+
+  // ── Chips de categoría ──
+  const chipsWrap = document.getElementById("her-chips");
+  if (chipsWrap) {
+    const categoriasPresentes = {};
+    lista.forEach(h => {
+      const cat = h.categoria || "Sin categoría";
+      categoriasPresentes[cat] = (categoriasPresentes[cat] || 0) + 1;
+    });
+    const estiloTodas = herCategoriaActiva === ""
+      ? "background:var(--verde);border-color:var(--verde);color:#000"
+      : "";
+    let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
+    chipsHtml += Object.keys(categoriasPresentes).sort((a, b) => a.localeCompare(b)).map(cat => {
+      const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "🔩", color: "#8b949e" };
+      const n = categoriasPresentes[cat];
+      const activo = herCategoriaActiva === cat;
+      const estilo = activo
+        ? `background:${meta.color};border-color:${meta.color};color:#000`
+        : `border-color:${meta.color}66;color:${meta.color}`;
+      return `<div class="her-chip" style="${estilo}" data-cat="${cat}">${meta.icono} ${cat} <span style="opacity:.7">(${n})</span></div>`;
+    }).join("");
+    chipsWrap.innerHTML = chipsHtml;
+    chipsWrap.querySelectorAll(".her-chip").forEach(chip => {
+      chip.addEventListener("click", () => {
+        herCategoriaActiva = chip.dataset.cat;
+        renderHerramientasCfg(_herListaActual);
+      });
+    });
+  }
+
+  // ── Filtro por texto + categoría activa ──
   const buscar = (document.getElementById("her-buscar")?.value || "").toLowerCase();
-  const filtrada = buscar ? lista.filter(h => h.nombre.toLowerCase().includes(buscar)) : lista;
+  let filtrada = buscar ? lista.filter(h => h.nombre.toLowerCase().includes(buscar)) : lista.slice();
+  if (herCategoriaActiva) filtrada = filtrada.filter(h => (h.categoria || "Sin categoría") === herCategoriaActiva);
+
+  // ── Franja de estadísticas ──
+  const statsWrap = document.getElementById("her-stats-strip");
+  if (statsWrap) {
+    const stockBajoCount = lista.filter(h => (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) <= UMBRAL_STOCK_BAJO).length;
+    const numCategorias = new Set(lista.map(h => h.categoria || "Sin categoría")).size;
+    let masSolicitada = null, masSolicitadaN = 0;
+    lista.forEach(h => {
+      const n = conteoUsos[h.nombre] || 0;
+      if (n > masSolicitadaN) { masSolicitadaN = n; masSolicitada = h.nombre; }
+    });
+    statsWrap.innerHTML = `
+      <div class="her-stat-pill">
+        <span class="her-stat-icono">🧰</span>
+        <div><div class="her-stat-num">${lista.length}</div><div class="her-stat-label">Total herramientas</div></div>
+      </div>
+      <div class="her-stat-pill${stockBajoCount > 0 ? ' alerta' : ''}">
+        <span class="her-stat-icono">⚠️</span>
+        <div><div class="her-stat-num">${stockBajoCount}</div><div class="her-stat-label">Stock bajo (≤ ${UMBRAL_STOCK_BAJO})</div></div>
+      </div>
+      <div class="her-stat-pill">
+        <span class="her-stat-icono">🏷️</span>
+        <div><div class="her-stat-num">${numCategorias}</div><div class="her-stat-label">Categorías</div></div>
+      </div>
+      <div class="her-stat-pill">
+        <span class="her-stat-icono">🔥</span>
+        <div><div class="her-stat-num" style="font-size:13px">${masSolicitada || "—"}</div><div class="her-stat-label">${masSolicitada ? masSolicitadaN + ' solicitudes · más pedida' : 'Sin solicitudes aún'}</div></div>
+      </div>`;
+  }
+
   if (!filtrada.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas registradas.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas que coincidan.</p></div>';
     return;
   }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Cantidad</th><th>Acciones</th></tr></thead><tbody>'
-    + filtrada.map((h, i) => {
-        const local = h.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:4px">(respaldo)</span>' : '';
-        const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-        const icono = h.icono || '🔧';
-        const foto = fotoUrl
-          ? '<img src="' + fotoUrl + '" class="foto-zoom" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde);cursor:zoom-in" onerror="herFotoError(this)">'
-          : '<div style="width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px">' + icono + '</div>';
-        return '<tr>'
-          + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
-          + '<td>' + foto + '</td>'
-          + '<td><div class="est-nombre">' + h.nombre + local + '</div></td>'
-          + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (h.cantidadDisponible ?? "—") + '</span></td>'
-          + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.cantidadDisponible||0) + ',' + (h.local||false) + ')">✏️ Editar</button>'
-          + '<button class="btn btn-rojo" onclick="eliminarHerramienta(\'' + h.id + '\',\'' + h.nombre.replace(/'/g,"\\'") + '\',' + (h.local||false) + ')">🗑 Eliminar</button>'
-          + '</div></td>'
-          + '</tr>';
-      }).join("")
-    + '</tbody></table>';
+
+  // Top 3 más pedidas del inventario completo (no solo la vista filtrada),
+  // para la cinta 🔥 en la tarjeta.
+  const topUsadas = new Set(
+    Object.entries(conteoUsos).sort((a, b) => b[1] - a[1]).slice(0, 3)
+      .filter(([, n]) => n > 0).map(([nombre]) => nombre)
+  );
+
+  wrap.innerHTML = filtrada.map(h => {
+    const cantidad = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0;
+    const bajo = cantidad <= UMBRAL_STOCK_BAJO;
+    const cat = h.categoria || "Sin categoría";
+    const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "🔩", color: "#8b949e" };
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const usos = conteoUsos[h.nombre] || 0;
+    const esPopular = topUsadas.has(h.nombre);
+    const local = h.local ? ' <span style="font-size:9px;color:var(--texto-dim)">(resp.)</span>' : '';
+    const nombreEsc = h.nombre.replace(/'/g, "\\'");
+    const catEsc = cat.replace(/'/g, "\\'");
+
+    const fotoHtml = fotoUrl
+      ? `<img src="${fotoUrl}" class="foto-zoom" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+         <span class="her-foto-fallback" style="display:none">${icono}</span>`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+
+    return `
+      <div class="her-card${bajo ? ' stock-bajo' : ''}">
+        <div class="her-foto-wrap">
+          ${fotoHtml}
+          <span class="her-cat-tag" style="background:${meta.color}dd;color:#fff">${meta.icono} ${cat}</span>
+          ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : '')}
+        </div>
+        <div class="her-cuerpo">
+          <div class="her-nombre">${h.nombre}${local}</div>
+          <div class="her-fila-stock">
+            <span class="her-stock-badge">${cantidad} disp.</span>
+            <span class="her-usos">${usos > 0 ? usos + ' pedidas' : 'sin pedidos'}</span>
+          </div>
+          <div class="her-acciones">
+            <button class="btn btn-outline" onclick="abrirModalHerramienta('${h.id}','${nombreEsc}',${cantidad},${h.local || false},'${catEsc}')">✏️ Editar</button>
+            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})">🗑</button>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
 }
 
 let herFotoArchivo = null;
@@ -3518,7 +3620,7 @@ let herFotoUrlEsReal = false; // true = venía de fotoUrl en Firestore; false = 
 let herCfgCodigoLocal = null;
 let herCfgIconoLocal = null;
 
-window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false) {
+window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, esLocal = false, categoria = "") {
   herCfgEditar      = esLocal ? null : id;
   herCfgNombreLocal = esLocal ? nombre : null;
   herFotoArchivo    = null;
@@ -3537,6 +3639,8 @@ window.abrirModalHerramienta = function(id = null, nombre = "", cantidad = 1, es
   inputNombre.value    = nombre;
   inputNombre.readOnly = false;
   inputNombre.style.opacity = "1";
+  const categoriaFinal = datosActuales?.categoria || refLista?.categoria || categoria || "";
+  document.getElementById("her-input-categoria").value = categoriaFinal;
   document.getElementById("her-input-cantidad").value = cantidad;
   document.getElementById("her-input-foto").value = "";
   document.getElementById("her-progreso-wrap").style.display = "none";
@@ -3635,13 +3739,14 @@ function herComprimirFoto(archivo) {
 }
 
 window.guardarHerramienta = async function() {
-  const nombre   = document.getElementById("her-input-nombre").value.trim();
-  const cantidad = parseInt(document.getElementById("her-input-cantidad").value) || 0;
+  const nombre    = document.getElementById("her-input-nombre").value.trim();
+  const categoria = document.getElementById("her-input-categoria").value;
+  const cantidad  = parseInt(document.getElementById("her-input-cantidad").value) || 0;
   if (!nombre) { mostrarToast("Escribe el nombre de la herramienta", "rojo"); return; }
   const btn = document.getElementById("her-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   const nombreFinal = nombre;
-  const datos = { nombre: nombreFinal, cantidadDisponible: cantidad };
+  const datos = { nombre: nombreFinal, cantidadDisponible: cantidad, categoria };
   // No perder codigo/icono del respaldo al editar solo cantidad/nombre.
   if (herCfgCodigoLocal) datos.codigo = herCfgCodigoLocal;
   if (herCfgIconoLocal)  datos.icono  = herCfgIconoLocal;
@@ -3707,6 +3812,16 @@ document.getElementById("her-buscar")?.addEventListener("input", () => renderHer
 document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-herramienta-cfg")) cerrarModalHerramienta();
 });
+
+// ── MATERIALES GASTABLES ──
+// Ya no es una colección aparte: un material gastable es simplemente una
+// herramienta con categoria === "Material Gastable". Esta función se usa
+// en toda la app (badges de solicitudes, retornos, historial) para saber
+// si una herramienta debe mostrarse con la etiqueta "🧰 gastable".
+window.esMaterialGastable = function(nombreHerramienta) {
+  const h = _herListaActual.find(h => h.nombre.toLowerCase() === (nombreHerramienta || "").toLowerCase());
+  return h?.categoria === "Material Gastable";
+};
 
 // ── PROFESORES CFG ──
 let profCfgEditar = null;
@@ -3839,7 +3954,7 @@ function renderUsuariosCfg() {
   const etiquetasSecciones = {
     dashboard:"Dashboard", solicitudes:"Solicitudes", "prestamos-prof":"Préstamos Profesores",
     prestadas:"Herr. Prestadas", incidencias:"Incidencias", "inv-herramientas":"Inv. Herramientas",
-    "inv-materiales":"Materiales", laboratorios:"Talleres", historial:"Historial",
+    laboratorios:"Talleres", historial:"Historial",
     "profesores-cfg":"Profesores", "herramientas-cfg":"Herramientas"
   };
   wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Secciones</th><th>Acciones</th></tr></thead><tbody>'
@@ -3951,132 +4066,6 @@ window.eliminarUsuario = async function(id, nombre) {
 
 document.getElementById("modal-usuario-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-usuario-cfg")) cerrarModalUsuario();
-});
-
-// ══════════════════════════════════════════════
-// ── MATERIALES GASTABLES ──
-// ══════════════════════════════════════════════
-
-let matCfgEditar = null;
-let _materialesGastables = [];
-
-async function cargarMaterialesCfg() {
-  try {
-    onSnapshot(query(collection(db, "materiales_gastables"), orderBy("nombre", "asc")), snap => {
-      _materialesGastables = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      renderMaterialesCfg(_materialesGastables);
-      renderInvMateriales(_materialesGastables);
-    });
-  } catch(e) {
-    const w = document.getElementById("mat-cfg-wrap");
-    if (w) w.innerHTML = '<div class="cargando">Error al cargar materiales.</div>';
-  }
-}
-
-function matFotoHtml(m) {
-  const src   = m.codigo ? '../img/herramientas/' + m.codigo + '.jpg' : '';
-  const icono = m.icono || '🧰';
-  return src
-    ? '<img src="' + src + '" style="width:36px;height:36px;border-radius:6px;object-fit:cover;border:1px solid var(--borde)" onerror="this.replaceWith(matIconoDiv(\'' + icono + '\'))">'
-    : matIconoDiv(icono);
-}
-function matIconoDiv(icono) {
-  const d = document.createElement('div');
-  d.style.cssText = 'width:36px;height:36px;border-radius:6px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:18px';
-  d.textContent = icono;
-  return d.outerHTML;
-}
-
-function renderMaterialesCfg(lista) {
-  [["mat-cfg-wrap","mat-buscar"],["mat-cfg-wrap2","mat-buscar-cfg"]].forEach(([wrapId, buscarId]) => {
-    const wrap = document.getElementById(wrapId);
-    if (!wrap) return;
-    const buscar = (document.getElementById(buscarId)?.value || "").toLowerCase();
-    const filtrada = buscar ? lista.filter(m => m.nombre.toLowerCase().includes(buscar)) : lista;
-    if (!filtrada.length) {
-      wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
-      return;
-    }
-    wrap.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Nombre</th><th>Stock</th><th>Acciones</th></tr></thead><tbody>'
-      + filtrada.map((m, i) => '<tr>'
-          + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
-          + '<td>' + matFotoHtml(m) + '</td>'
-          + '<td><div style="display:flex;align-items:center;gap:8px"><span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid rgba(210,153,34,0.3)">🧰 GASTABLE</span><span class="est-nombre">' + m.nombre + '</span></div></td>'
-          + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (m.stock ?? 0) + '</span></td>'
-          + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalMaterial(\'' + m.id + '\',\'' + m.nombre.replace(/'/g,"\\'") + '\',' + (m.stock||0) + ')">✏️ Editar</button>'
-          + '<button class="btn btn-rojo" onclick="eliminarMaterial(\'' + m.id + '\',\'' + m.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>'
-          + '</div></td>'
-          + '</tr>').join("")
-      + '</tbody></table>';
-  });
-}
-
-function renderInvMateriales(lista) {
-  const wrapInv = document.getElementById("mat-inv-wrap");
-  if (!wrapInv) return;
-  if (!lista.length) {
-    wrapInv.innerHTML = '<div class="vacio"><div class="vacio-icono">🧰</div><p>No hay materiales gastables registrados.</p></div>';
-    return;
-  }
-  wrapInv.innerHTML = '<table><thead><tr><th>#</th><th>Foto</th><th>Material</th><th>Stock disponible</th></tr></thead><tbody>'
-    + lista.map((m, i) => '<tr>'
-        + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
-        + '<td>' + matFotoHtml(m) + '</td>'
-        + '<td><div style="display:flex;align-items:center;gap:8px"><span style="background:rgba(210,153,34,0.15);color:var(--amarillo);font-size:10px;font-weight:800;padding:2px 8px;border-radius:20px;border:1px solid rgba(210,153,34,0.3)">🧰 GASTABLE</span><span class="est-nombre">' + m.nombre + '</span></div></td>'
-        + '<td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;color:var(--verde)">' + (m.stock ?? 0) + '</span></td>'
-        + '</tr>').join("")
-    + '</tbody></table>';
-}
-
-window.abrirModalMaterial = function(id = null, nombre = "", stock = 0) {
-  matCfgEditar = id;
-  document.getElementById("mat-modal-titulo").textContent = id ? "✏️ Editar material" : "➕ Agregar material gastable";
-  document.getElementById("mat-input-nombre").value = nombre;
-  document.getElementById("mat-input-stock").value = stock;
-  document.getElementById("modal-material-cfg").classList.add("abierto");
-};
-
-window.cerrarModalMaterial = function() {
-  document.getElementById("modal-material-cfg").classList.remove("abierto");
-  matCfgEditar = null;
-};
-
-window.guardarMaterial = async function() {
-  const nombre = document.getElementById("mat-input-nombre").value.trim();
-  const stock  = parseInt(document.getElementById("mat-input-stock").value) || 0;
-  if (!nombre) { mostrarToast("Escribe el nombre del material", "rojo"); return; }
-  const btn = document.getElementById("mat-btn-guardar");
-  btn.disabled = true; btn.textContent = "Guardando...";
-  try {
-    if (matCfgEditar) {
-      await updateDoc(doc(db, "materiales_gastables", matCfgEditar), { nombre, stock });
-      mostrarToast("✅ Material actualizado");
-    } else {
-      await addDoc(collection(db, "materiales_gastables"), { nombre, stock, creadoEn: serverTimestamp() });
-      mostrarToast("✅ Material agregado");
-    }
-    cerrarModalMaterial();
-  } catch(e) { mostrarToast("Error al guardar", "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
-};
-
-window.eliminarMaterial = async function(id, nombre) {
-  if (!confirm('¿Eliminar "' + nombre + '" de los materiales gastables?')) return;
-  try {
-    await deleteDoc(doc(db, "materiales_gastables", id));
-    mostrarToast("Material eliminado");
-  } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
-};
-
-window.esMaterialGastable = function(nombreHerramienta) {
-  return _materialesGastables.some(m => m.nombre.toLowerCase() === nombreHerramienta.toLowerCase());
-};
-
-document.getElementById("mat-buscar")?.addEventListener("input", () => renderMaterialesCfg(_materialesGastables));
-document.getElementById("mat-buscar-cfg")?.addEventListener("input", () => renderMaterialesCfg(_materialesGastables));
-document.getElementById("modal-material-cfg")?.addEventListener("click", e => {
-  if (e.target === document.getElementById("modal-material-cfg")) cerrarModalMaterial();
 });
 
 // ── TEMA ──
@@ -4274,9 +4263,6 @@ document.getElementById("hist-btn-limpiar")?.addEventListener("click", () => {
 
 document.querySelectorAll(".nav-item[data-vista='historial']").forEach(el => {
   el.addEventListener("click", () => setTimeout(cargarHistorial, 50));
-});
-document.querySelectorAll(".nav-item[data-vista='materiales-cfg'], .nav-item[data-vista='inv-materiales']").forEach(el => {
-  el.addEventListener("click", () => setTimeout(cargarMaterialesCfg, 50));
 });
 
 window.abrirModalHist = function(id, tipo) {
