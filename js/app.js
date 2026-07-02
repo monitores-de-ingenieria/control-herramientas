@@ -191,6 +191,7 @@ function renderizarHerramientas(herramientas) {
   [...grupos.keys()].sort((a, b) => a.localeCompare(b)).forEach(practica => {
     const header = document.createElement("div");
     header.className = "grupo-practica-header";
+    header.style.gridColumn = "1 / -1";
     header.innerHTML = `
       <span class="grupo-practica-titulo">🏷️ ${practica}</span>
       <button type="button" class="btn-combo" data-practica="${practica}">+ Agregar combo completo</button>
@@ -199,6 +200,7 @@ function renderizarHerramientas(herramientas) {
 
     const cont = document.createElement("div");
     cont.className = "grid-herramientas";
+    cont.style.gridColumn = "1 / -1";
     grupos.get(practica).forEach(h => cont.appendChild(crearTarjetaHerramienta(h)));
     gridHerramientas.appendChild(cont);
   });
@@ -207,11 +209,13 @@ function renderizarHerramientas(herramientas) {
     if (grupos.size) {
       const header = document.createElement("div");
       header.className = "grupo-practica-header";
+      header.style.gridColumn = "1 / -1";
       header.innerHTML = `<span class="grupo-practica-titulo">🔧 Otras herramientas</span>`;
       gridHerramientas.appendChild(header);
     }
     const cont = document.createElement("div");
     cont.className = "grid-herramientas";
+    cont.style.gridColumn = "1 / -1";
     sinGrupo.forEach(h => cont.appendChild(crearTarjetaHerramienta(h)));
     gridHerramientas.appendChild(cont);
   }
