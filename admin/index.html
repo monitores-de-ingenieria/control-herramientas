@@ -2662,22 +2662,28 @@ window.retornar = function(id) {
 
   const herramientas = s.herramientasEntregadas || s.herramientas || [];
   const lista = document.getElementById("lista-retorno");
-  lista.innerHTML = herramientas.map((h, i) => `
+  lista.innerHTML = herramientas.map((h, i) => {
+    const gastable = esMaterialGastable(h.nombre);
+    return `
     <div class="fila-herramienta">
-      <input type="checkbox" id="chk-r-${i}" data-idx="${i}" checked>
+      <input type="checkbox" id="chk-r-${i}" data-idx="${i}" checked${gastable ? ' disabled' : ''}>
       ${herFotoHtmlPorNombre(h.nombre)}
-      <span class="h-nombre">${h.nombre}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${esMaterialGastable(h.nombre) ? ' <span class="badge-gastable">🧰 gastable</span>' : ""}</span>
+      <span class="h-nombre">${h.nombre}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${gastable ? ' <span class="badge-gastable">🧰 gastable</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
-      <select class="select-estado" id="estado-r-${i}">
+      ${gastable
+        ? `<span class="select-estado" style="opacity:.65;cursor:not-allowed">🧰 Consumido</span><select id="estado-r-${i}" style="display:none"><option value="retornada" selected>retornada</option></select>`
+        : `<select class="select-estado" id="estado-r-${i}">
         <option value="retornada">✅ Retornada</option>
         <option value="dañada">🔴 Dañada</option>
         <option value="no_retornada">⚠️ No retornada</option>
         <option value="perdida">❌ Perdida</option>
-      </select>
+      </select>`}
     </div>
-  `).join("") || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
+  `;
+  }).join("") || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
 
-  herramientas.forEach((_, i) => {
+  herramientas.forEach((h, i) => {
+    if (esMaterialGastable(h.nombre)) return;
     const chk = document.getElementById(`chk-r-${i}`);
     const sel = document.getElementById(`estado-r-${i}`);
     if (chk && sel) {
@@ -2693,10 +2699,11 @@ window.retornar = function(id) {
 };
 
 window.toggleMarcarTodasRetorno = function() {
-  const checks = document.querySelectorAll("#lista-retorno input[type='checkbox']");
-  const todasMarcadas = [...checks].every(c => c.checked);
-  checks.forEach((chk, i) => {
+  const checks = [...document.querySelectorAll("#lista-retorno input[type='checkbox']")].filter(c => !c.disabled);
+  const todasMarcadas = checks.every(c => c.checked);
+  checks.forEach((chk) => {
     chk.checked = !todasMarcadas;
+    const i = chk.dataset.idx;
     const sel = document.getElementById(`estado-r-${i}`);
     if (sel && !chk.checked) sel.value = "no_retornada";
     else if (sel && sel.value === "no_retornada") sel.value = "retornada";
