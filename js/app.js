@@ -149,33 +149,106 @@ function claveHerramienta(h) {
   return h.codigo || h.id;
 }
 
+function crearTarjetaHerramienta(h) {
+  const key = claveHerramienta(h);
+  cantidadesSeleccionadas[key] = 0;
+  const maxDisponible = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
+
+  const card = document.createElement("div");
+  card.className = "tarjeta-herramienta";
+  card.innerHTML = `
+    <div class="icono">
+      <img src="${h.imagen}" alt="${h.nombre}"
+           onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'icono-respaldo',textContent:'${h.icono || "🔧"}'}))">
+    </div>
+    <div class="nombre">${h.nombre}</div>
+    <div class="disponible">Disp. ${maxDisponible}</div>
+    <div class="contador">
+      <button type="button" data-codigo="${key}" data-accion="restar">−</button>
+      <span class="cantidad" id="cant-${key}">0</span>
+      <button type="button" data-codigo="${key}" data-accion="sumar" ${maxDisponible === 0 ? "disabled" : ""}>+</button>
+    </div>
+  `;
+  return card;
+}
+
 function renderizarHerramientas(herramientas) {
   gridHerramientas.innerHTML = "";
-  herramientas.forEach(h => {
-    const key = claveHerramienta(h);
-    cantidadesSeleccionadas[key] = 0;
-    const maxDisponible = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
 
-    const card = document.createElement("div");
-    card.className = "tarjeta-herramienta";
-    card.innerHTML = `
-      <div class="icono">
-        <img src="${h.imagen}" alt="${h.nombre}"
-             onerror="this.replaceWith(Object.assign(document.createElement('div'),{className:'icono-respaldo',textContent:'${h.icono || "🔧"}'}))">
-      </div>
-      <div class="nombre">${h.nombre}</div>
-      <div class="disponible">Disp. ${maxDisponible}</div>
-      <div class="contador">
-        <button type="button" data-codigo="${key}" data-accion="restar">−</button>
-        <span class="cantidad" id="cant-${key}">0</span>
-        <button type="button" data-codigo="${key}" data-accion="sumar" ${maxDisponible === 0 ? "disabled" : ""}>+</button>
-      </div>
-    `;
-    gridHerramientas.appendChild(card);
+  // Agrupar por "practica" (campo opcional asignado desde el panel admin).
+  // Las que no tienen práctica asignada van sueltas, sin encabezado.
+  const grupos = new Map();
+  const sinGrupo = [];
+  herramientas.forEach(h => {
+    if (h.practica) {
+      if (!grupos.has(h.practica)) grupos.set(h.practica, []);
+      grupos.get(h.practica).push(h);
+    } else {
+      sinGrupo.push(h);
+    }
   });
+
+  [...grupos.keys()].sort((a, b) => a.localeCompare(b)).forEach(practica => {
+    const header = document.createElement("div");
+    header.className = "grupo-practica-header";
+    header.innerHTML = `
+      <span class="grupo-practica-titulo">🏷️ ${practica}</span>
+      <button type="button" class="btn-combo" data-practica="${practica}">+ Agregar combo completo</button>
+    `;
+    gridHerramientas.appendChild(header);
+
+    const cont = document.createElement("div");
+    cont.className = "grid-herramientas";
+    grupos.get(practica).forEach(h => cont.appendChild(crearTarjetaHerramienta(h)));
+    gridHerramientas.appendChild(cont);
+  });
+
+  if (sinGrupo.length) {
+    if (grupos.size) {
+      const header = document.createElement("div");
+      header.className = "grupo-practica-header";
+      header.innerHTML = `<span class="grupo-practica-titulo">🔧 Otras herramientas</span>`;
+      gridHerramientas.appendChild(header);
+    }
+    const cont = document.createElement("div");
+    cont.className = "grid-herramientas";
+    sinGrupo.forEach(h => cont.appendChild(crearTarjetaHerramienta(h)));
+    gridHerramientas.appendChild(cont);
+  }
+}
+
+// Marca 1 unidad de cada herramienta del grupo indicado (si hay disponibilidad).
+function agregarComboCompleto(practica) {
+  const tools = herramientasDisponibles.filter(h => h.practica === practica);
+  const sinDisponibilidad = [];
+
+  tools.forEach(h => {
+    const key = claveHerramienta(h);
+    const max = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 5;
+    if (max === 0) { sinDisponibilidad.push(h.nombre); return; }
+    if ((cantidadesSeleccionadas[key] || 0) >= 1) return; // ya estaba marcada
+
+    cantidadesSeleccionadas[key] = 1;
+    const span = document.getElementById(`cant-${key}`);
+    if (span) span.textContent = "1";
+    const card = gridHerramientas.querySelector(`button[data-codigo="${key}"]`)?.closest(".tarjeta-herramienta");
+    if (card) card.classList.add("seleccionada");
+    const btnSumar = gridHerramientas.querySelector(`button[data-codigo="${key}"][data-accion="sumar"]`);
+    if (btnSumar) btnSumar.disabled = 1 >= max;
+  });
+
+  if (sinDisponibilidad.length) {
+    mostrarError(`Sin disponibilidad ahora mismo: ${sinDisponibilidad.join(", ")}.`);
+  }
 }
 
 gridHerramientas.addEventListener("click", (e) => {
+  const comboBtn = e.target.closest("button.btn-combo");
+  if (comboBtn) {
+    agregarComboCompleto(comboBtn.dataset.practica);
+    return;
+  }
+
   const btn = e.target.closest("button[data-codigo]");
   if (!btn) return;
 
