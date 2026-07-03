@@ -605,10 +605,10 @@ btnEnviar.addEventListener("click", async (e) => {
     if (solicitudActiva) {
       btnEnviar.disabled = false;
       btnEnviar.textContent = "Enviar Solicitud";
-      if (confirm("Ya tienes una solicitud activa hoy. ¿Quieres agregar herramientas a esa solicitud?\n\nPresiona 'Aceptar' para agregar, o 'Cancelar' para crear una nueva solicitud.")) {
+      if (confirm("Ya tienes una solicitud activa hoy. ¿Quieres agregar herramientas a esa solicitud?\n\nPresiona 'Aceptar' para agregar. Presiona 'Cancelar' para no hacer nada.")) {
         abrirModalDuplicado(solicitudActiva, herramientasDisponibles);
-        return;
       }
+      return; // Nunca se crea una solicitud nueva cuando ya hay una activa hoy.
     }
   } catch (err) {
     console.error("Error al verificar matrícula:", err);
