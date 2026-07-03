@@ -1561,9 +1561,6 @@
       <button class="modal-cerrar" onclick="cerrarModalRetorno()">✕</button>
     </div>
     <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
-    <div style="margin-bottom:12px">
-      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)">➕ Agregar herramienta adicional</button>
-    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
       <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()">Marcar todas ✅</button>
@@ -1571,6 +1568,7 @@
     <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
+      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)">➕ Adicional</button>
       <button class="btn btn-azul" onclick="confirmarRetorno()">↩ Confirmar Retorno</button>
     </div>
   </div>
