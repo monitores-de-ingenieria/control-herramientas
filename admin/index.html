@@ -1005,9 +1005,9 @@
       <div class="nav-item" data-vista="dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Dashboard</span></div>
 
       <div class="nav-item activo" data-vista="solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
-      <div class="nav-item" data-vista="prestamos-prof"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span></div>
-      <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span></div>
-      <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span></div>
+      <div class="nav-item" data-vista="prestamos-prof"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
+      <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
+      <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
 
       <div class="nav-grupo">Inventario</div>
       <div class="nav-item" data-vista="herramientas-cfg"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
@@ -1465,11 +1465,30 @@
       <label>Herramientas entregadas</label>
       <div id="pp-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
       </div>
-      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta</button>
+      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta (escribir)</button>
+      <button type="button" onclick="abrirPickerFotosPP()" class="btn btn-verde" style="margin-top:8px;width:100%">📷 Elegir herramientas con fotos</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
       <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()">✅ Registrar entrega</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-pp-fotos">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-titulo">
+      <span id="pp-picker-titulo">📷 Elegir herramientas</span>
+      <button class="modal-cerrar" onclick="cerrarPickerFotosPP()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <input type="text" id="pp-picker-buscar" placeholder="Buscar herramienta..." oninput="renderPickerFotosPP()"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div id="pp-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarPickerFotosPP()">Cancelar</button>
+      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()">✅ Agregar seleccionadas</button>
     </div>
   </div>
 </div>
@@ -1482,6 +1501,11 @@
     </div>
     <p style="font-size:13px;color:var(--texto-dim);margin-bottom:14px">Marca el estado de cada herramienta al momento de la devolución.</p>
     <div id="pp-retorno-lista"></div>
+    <div class="modal-campo" style="margin-top:12px">
+      <label>Nota / observación <span id="pp-retorno-nota-hint" style="color:var(--texto-dim);font-weight:400"></span></label>
+      <textarea id="pp-retorno-nota" rows="3" placeholder="Ej: no recuerdo si se devolvió en su momento, marco por revisión de inventario..."
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:13px;resize:vertical"></textarea>
+    </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
       <button class="btn btn-verde" onclick="confirmarRetornoProf()">✅ Confirmar retorno</button>
@@ -2174,6 +2198,14 @@ function renderGraficoHoras(datos) {
   </div>`;
 }
 
+// Muestra un badge en el menú lateral solo si hay algo que marcar (oculto en 0).
+function actualizarBadgeLateral(id, count) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.textContent = count;
+  el.style.display = count > 0 ? "" : "none";
+}
+
 async function cargarDashboard() {
   try {
     const [snapSol, snapProf] = await Promise.all([
@@ -2187,7 +2219,8 @@ async function cargarDashboard() {
     const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
     const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
     const retHoy     = deHoy.filter(s => s.estado === "retornada").length;
-    const incidencias = todas.filter(s => s.tieneIncidencias).length;
+    const incidencias = todas.filter(s => s.tieneIncidencias && !s.incidenciaVista).length;
+    const incidenciasProf = prestProf.filter(p => p.tieneIncidencias && !p.incidenciaVista).length;
     const profActivos = prestProf.filter(p => p.estado === "activo").length;
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
@@ -2198,6 +2231,7 @@ async function cargarDashboard() {
     set("dash-incidencias",  incidencias);
     set("dash-prof-activos", profActivos);
     set("res-total", deHoy.length);
+    actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
 
     const conteoHer = {};
     todas.forEach(s => (s.herramientas || []).forEach(h => {
@@ -2360,7 +2394,7 @@ function renderTabla() {
             <td style="font-size:12px">${s.profesor || "—"}</td>
             <td style="font-size:12px">${s.laboratorio || "—"}</td>
             <td style="font-size:12px;color:var(--texto-dim);max-width:220px">
-              ${(s.herramientas||[]).map(h => h.nombre + ' ×' + h.cantidad + (h.adicional ? '<span style="color:var(--azul);font-size:10px;margin-left:3px">(adic)</span>' : '')).join(', ') || '—'}
+              ${(s.herramientas||[]).map(h => h.nombre + ' ×' + h.cantidad + (h.adicional ? ' <span style="background:var(--azul);color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px;white-space:nowrap">+ADIC</span>' : '')).join(', ') || '—'}
             </td>
             <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
@@ -2477,6 +2511,11 @@ document.querySelectorAll(".tab-btn").forEach(btn => {
 window.abrirModal = function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
+  // Al abrir el detalle, si tenía una incidencia sin ver, se marca como vista
+  // (deja de contar en el badge del menú lateral, como una notificación leída).
+  if (s.tieneIncidencias && !s.incidenciaVista) {
+    updateDoc(doc(db, "solicitudes", id), { incidenciaVista: true }).catch(e => console.error(e));
+  }
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herramientas = (s.herramientas || []).map(h =>
     `<div class="modal-herramienta-item"><span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span></span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
@@ -2682,7 +2721,7 @@ window.agregarFilaAdicional = function() {
 
   input.addEventListener("input", () => {
     const q = input.value.toLowerCase();
-    const matches = HERRAMIENTAS_LISTA.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
+    const matches = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
     if (!q || matches.length === 0) { dropdown.style.display = "none"; return; }
     dropdown.innerHTML = matches.map(h =>
       `<div class="dropdown-item" data-nombre="${h.nombre}" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--borde)">${h.nombre}</div>`
@@ -2974,6 +3013,8 @@ let todosPrestamosExt = [];
 let extActivoId = null;
 
 let todosPrestamosProfTodos = [];
+let todosPrestamosProfVisible = [];
+let _ppRetornoNotaObligatoria = false;
 
 let _ppFiltroEstado = "";
 
@@ -2988,6 +3029,11 @@ async function cargarPrestamosProf() {
         const fecha = p.creadoEn.toDate ? p.creadoEn.toDate() : new Date(p.creadoEn);
         return fecha >= hoy;
       });
+      // La tabla muestra los de hoy + cualquier "activo" de días anteriores que
+      // nunca se retornó, para que no quede escondido solo por no ser de hoy.
+      const idsHoy = new Set(todosPrestamosProf.map(p => p.id));
+      const activosAntiguos = todosPrestamosProfTodos.filter(p => p.estado === "activo" && !idsHoy.has(p.id));
+      todosPrestamosProfVisible = [...todosPrestamosProf, ...activosAntiguos];
       ppActualizarStats();
       ppRenderTabla();
     });
@@ -3000,6 +3046,8 @@ async function cargarPrestamosProf() {
 function ppActualizarStats() {
   const activos = todosPrestamosProf.filter(p => p.estado === "activo");
   const conInc  = todosPrestamosProf.filter(p => p.tieneIncidencias);
+  const activosTotal = todosPrestamosProfTodos.filter(p => p.estado === "activo").length;
+  actualizarBadgeLateral("badge-prestamos-prof", activosTotal);
   const wrap = document.getElementById("pp-stats-strip");
   if (!wrap) return;
   wrap.innerHTML = `
@@ -3022,30 +3070,43 @@ window.ppFiltrarChip = function(estado, el) {
 
 function ppFiltrados() {
   const buscar = (document.getElementById("pp-buscar")?.value || "").toLowerCase();
-  return todosPrestamosProf.filter(p => {
+  return todosPrestamosProfVisible.filter(p => {
     const matchBuscar = !buscar || (p.profesor || "").toLowerCase().includes(buscar);
     const matchEstado = !_ppFiltroEstado || p.estado === _ppFiltroEstado;
     return matchBuscar && matchEstado;
   });
 }
 
+window.marcarIncidenciaVistaPP = async function(id) {
+  try {
+    await updateDoc(doc(db, "prestamos_profesores", id), { incidenciaVista: true });
+  } catch (e) { console.error(e); }
+};
+
 function ppRenderTabla() {
   const lista = ppFiltrados();
   const wrap  = document.getElementById("pp-tabla-wrap");
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay préstamos registrados hoy.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay préstamos registrados hoy ni activos pendientes de retorno.</p></div>';
     return;
   }
   wrap.innerHTML = lista.map(p => {
-    const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleTimeString("es-DO", {hour:"2-digit",minute:"2-digit"}) : "—";
+    const fechaObj = p.creadoEn?.toDate ? p.creadoEn.toDate() : (p.creadoEn ? new Date(p.creadoEn) : null);
+    const esDeHoy = fechaObj && esMismodia(p.creadoEn);
+    const fecha = fechaObj
+      ? (esDeHoy ? fechaObj.toLocaleTimeString("es-DO", {hour:"2-digit",minute:"2-digit"})
+                 : fechaObj.toLocaleDateString("es-DO", {day:"2-digit",month:"short"}) + ' · ' + fechaObj.toLocaleTimeString("es-DO", {hour:"2-digit",minute:"2-digit"}))
+      : "—";
     const color = colorEstudiante(p.profesor || "");
     const ini   = (p.profesor || "P")[0].toUpperCase();
-    const herramientasHtml = (p.herramientas || []).map(h => `<b>${h.nombre}</b> ×${h.cantidad}`).join(", ") || "—";
+    const herramientasHtml = (p.herramientas || []).map(h => `<b>${h.nombre}</b> ×${h.cantidad}${h.adicional ? ' <span style="background:var(--azul);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px">+ADIC</span>' : ''}`).join(", ") || "—";
     const estadoTag = p.estado === "activo"
       ? `<span class="pp-estado-tag" style="background:var(--verde-glow);color:var(--verde)">🟢 Activo</span>`
       : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)">⚪ Retornado</span>`;
     const acciones = p.estado === "activo"
-      ? `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
+      ? (esDeHoy
+          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')">➕ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
+          : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">🔍 Revisar y retornar</button>`)
       : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completado</span>`;
     return `
       <div class="pp-card${p.tieneIncidencias ? ' con-incidencia' : ''}">
@@ -3056,9 +3117,10 @@ function ppRenderTabla() {
             <div class="pp-lab">${p.laboratorio || "—"}</div>
           </div>
           ${estadoTag}
+          ${(p.estado === "activo" && !esDeHoy) ? '<span class="pp-estado-tag" style="background:rgba(210,153,34,.15);color:var(--amarillo)" title="Sin retornar desde un día anterior">⏳ Sin retornar</span>' : ''}
         </div>
         <div class="pp-herr-list">${herramientasHtml}</div>
-        <div class="pp-fecha-row">🕒 ${fecha}${p.tieneIncidencias ? ' · <span style="color:var(--rojo)">⚠️ con incidencia</span>' : ''}</div>
+        <div class="pp-fecha-row">🕒 ${fecha}${p.tieneIncidencias ? ` · <span style="color:var(--rojo)">⚠️ con incidencia</span>${!p.incidenciaVista ? ` <button onclick="marcarIncidenciaVistaPP('${p.id}')" style="background:none;border:none;color:var(--azul);font-size:10px;cursor:pointer;text-decoration:underline">marcar vista</button>` : ''}` : ''}</div>
         <div class="pp-acciones">${acciones}</div>
       </div>`;
   }).join("");
@@ -3135,7 +3197,7 @@ window.ppAgregarFila = function() {
 window.ppFiltrarDropdown = function(input) {
   const q    = input.value.toLowerCase();
   const drop = input.parentNode.querySelector(".pp-drop");
-  const hits = HERRAMIENTAS_LISTA.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
+  const hits = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
   if (!hits.length || !q) { drop.style.display = "none"; return; }
   drop.innerHTML = hits.map(h =>
     `<div onmousedown="event.preventDefault();ppSeleccionarHerramienta(this,'${h.nombre}')"
@@ -3151,6 +3213,111 @@ window.ppSeleccionarHerramienta = function(item, nombre) {
   input.value = nombre;
   drop.style.display = "none";
   input.blur();
+};
+
+// ── Selector visual con fotos para "Nuevo préstamo a profesor" ──
+let _ppPickerCant = {};
+let _ppPickerModo = "nuevo"; // "nuevo" | "adicional"
+let _ppPickerPrestamoId = null;
+
+window.abrirPickerFotosPP = function() {
+  _ppPickerModo = "nuevo";
+  _ppPickerPrestamoId = null;
+  _ppPickerCant = {};
+  document.getElementById("pp-picker-titulo").textContent = "📷 Elegir herramientas";
+  document.getElementById("pp-picker-buscar").value = "";
+  renderPickerFotosPP();
+  document.getElementById("modal-pp-fotos").classList.add("abierto");
+};
+
+window.abrirAdicionalPP = function(prestamoId) {
+  _ppPickerModo = "adicional";
+  _ppPickerPrestamoId = prestamoId;
+  _ppPickerCant = {};
+  document.getElementById("pp-picker-titulo").textContent = "➕ Agregar herramientas adicionales";
+  document.getElementById("pp-picker-buscar").value = "";
+  renderPickerFotosPP();
+  document.getElementById("modal-pp-fotos").classList.add("abierto");
+};
+
+window.cerrarPickerFotosPP = function() {
+  document.getElementById("modal-pp-fotos").classList.remove("abierto");
+};
+
+function renderPickerFotosPP() {
+  const wrap = document.getElementById("pp-picker-grid");
+  const q = (document.getElementById("pp-picker-buscar").value || "").toLowerCase();
+  const lista = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🔧</div><p>Sin resultados.</p></div>';
+    return;
+  }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    const cant = _ppPickerCant[h.nombre] || 0;
+    const nombreEsc = h.nombre.replace(/'/g, "\\'");
+    return `
+      <div class="her-card${cant > 0 ? ' stock-bajo' : ''}">
+        <div class="her-foto-wrap">${foto}</div>
+        <div class="her-cuerpo">
+          <div class="her-nombre">${h.nombre}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+            <button type="button" onclick="ppPickerAjustar('${nombreEsc}',-1)" class="btn btn-outline" style="padding:4px 10px;flex:1">−</button>
+            <span style="min-width:18px;text-align:center;font-weight:700">${cant}</span>
+            <button type="button" onclick="ppPickerAjustar('${nombreEsc}',1)" class="btn btn-outline" style="padding:4px 10px;flex:1">+</button>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+window.ppPickerAjustar = function(nombre, delta) {
+  const actual = _ppPickerCant[nombre] || 0;
+  const nuevo = Math.max(0, actual + delta);
+  if (nuevo === 0) delete _ppPickerCant[nombre];
+  else _ppPickerCant[nombre] = nuevo;
+  renderPickerFotosPP();
+};
+
+window.confirmarPickerFotosPP = async function() {
+  const seleccion = Object.entries(_ppPickerCant);
+  if (!seleccion.length) { mostrarToast("Elige al menos una herramienta", "rojo"); return; }
+
+  if (_ppPickerModo === "adicional") {
+    try {
+      const ref = doc(db, "prestamos_profesores", _ppPickerPrestamoId);
+      const snap = await getDoc(ref);
+      const existentes = snap.data()?.herramientas || [];
+      const mapa = {};
+      existentes.forEach(h => { mapa[h.nombre] = { ...h }; });
+      seleccion.forEach(([nombre, cantidad]) => {
+        if (mapa[nombre]) { mapa[nombre].cantidad = (mapa[nombre].cantidad || 0) + cantidad; mapa[nombre].adicional = true; }
+        else { mapa[nombre] = { nombre, cantidad, adicional: true }; }
+      });
+      await updateDoc(ref, { herramientas: Object.values(mapa) });
+      mostrarToast("✅ Herramientas adicionales agregadas al préstamo");
+    } catch (e) {
+      console.error(e);
+      mostrarToast("Error al agregar herramientas", "rojo");
+    }
+    cerrarPickerFotosPP();
+    return;
+  }
+
+  const contenedor = document.getElementById("pp-lista-herramientas");
+  seleccion.forEach(([nombre, cantidad]) => {
+    ppAgregarFila();
+    const filas = contenedor.querySelectorAll("div[data-fila-herramienta]");
+    const ultima = filas[filas.length - 1];
+    ultima.querySelector('input[type="text"]').value = nombre;
+    ultima.querySelector('input[type="number"]').value = cantidad;
+  });
+
+  cerrarPickerFotosPP();
 };
 
 window.confirmarNuevoPrestamoProf = async function() {
@@ -3194,6 +3361,15 @@ window.abrirRetornoProf = function(id) {
   const p = (todosPrestamosProfTodos || todosPrestamosProf).find(x => x.id === id);
   if (!p) return;
   document.getElementById("pp-retorno-nombre").textContent = p.profesor;
+
+  const fechaObj = p.creadoEn?.toDate ? p.creadoEn.toDate() : (p.creadoEn ? new Date(p.creadoEn) : null);
+  const esAtrasado = fechaObj && !esMismodia(p.creadoEn);
+  _ppRetornoNotaObligatoria = !!esAtrasado;
+  document.getElementById("pp-retorno-nota").value = "";
+  document.getElementById("pp-retorno-nota-hint").textContent = esAtrasado
+    ? "— obligatoria: es un préstamo de días atrás, explica qué pasó"
+    : "(opcional)";
+
   const lista = document.getElementById("pp-retorno-lista");
   lista.innerHTML = (p.herramientas || []).map((h, i) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde);gap:10px">
@@ -3218,6 +3394,12 @@ window.confirmarRetornoProf = async function() {
   const p = (todosPrestamosProfTodos || todosPrestamosProf).find(x => x.id === ppActivoId);
   if (!p) return;
 
+  const nota = document.getElementById("pp-retorno-nota").value.trim();
+  if (_ppRetornoNotaObligatoria && !nota) {
+    mostrarToast("Este préstamo es de días atrás — escribe una nota explicando qué pasó", "rojo");
+    return;
+  }
+
   const herramientas = p.herramientas || [];
   const resultado    = [];
   const incidencias  = [];
@@ -3233,7 +3415,8 @@ window.confirmarRetornoProf = async function() {
       estado: "retornado",
       tieneIncidencias: incidencias.length > 0,
       retornadoEn: serverTimestamp(),
-      herramientasRetorno: resultado
+      herramientasRetorno: resultado,
+      notaRetorno: nota || null
     });
 
     for (const inc of incidencias) {
@@ -3279,6 +3462,7 @@ async function cargarPrestamosExternos() {
   try {
     onSnapshot(query(collection(db, "prestamos_externos"), orderBy("creadoEn", "desc")), snap => {
       todosPrestamosExt = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      actualizarBadgeLateral("badge-prestadas", todosPrestamosExt.filter(p => p.estado === "prestado").length);
       extRenderTabla();
     });
   } catch(e) {
@@ -3387,7 +3571,7 @@ window.extAgregarFila = function() {
 window.extFiltrarDropdown = function(input) {
   const q    = input.value.toLowerCase();
   const drop = input.parentNode.querySelector(".ext-drop");
-  const hits = HERRAMIENTAS_LISTA.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
+  const hits = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
   if (!hits.length || !q) { drop.style.display = "none"; return; }
   drop.innerHTML = hits.map(h =>
     `<div onmousedown="event.preventDefault();extSeleccionarHerramienta(this,'${h.nombre}')"
