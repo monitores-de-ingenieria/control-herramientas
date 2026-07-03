@@ -24,6 +24,10 @@ document.getElementById("btn-ir-formulario").addEventListener("click", () => {
   mostrarPantalla(pantallaFormulario);
 });
 
+document.getElementById("btn-atras-formulario")?.addEventListener("click", () => {
+  mostrarPantalla(pantallaTaller);
+});
+
 // ---- Formulario ----
 const MAX_POR_ESTUDIANTE = 1; // tope de unidades por herramienta, por solicitud
 const form              = document.getElementById("form-solicitud");
