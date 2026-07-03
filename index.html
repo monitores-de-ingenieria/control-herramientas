@@ -76,38 +76,55 @@
     <div class="contenedor">
 
       <header class="form-encabezado">
-        <h1>Formulario de Solicitud de Herramientas</h1>
-        <div class="linea-verde"></div>
+        <button type="button" id="btn-atras-formulario" class="btn-atras" title="Volver">←</button>
+        <div class="form-encabezado-titulos">
+          <h1>Formulario de Solicitud</h1>
+          <p class="form-subtitulo">Taller de máquinas y herramientas</p>
+        </div>
+        <span class="form-encabezado-icono">🔧</span>
       </header>
 
-      <form id="form-solicitud" class="tarjeta">
+      <form id="form-solicitud">
 
-        <div class="campo">
-          <label for="tipo-solicitud">Usted está:</label>
-          <div class="select-wrap">
-            <select id="tipo-solicitud">
-              <option value="solicitando">Solicitando herramientas</option>
-              <option value="adicional">Agregar herramientas adicionales</option>
-            </select>
+        <div class="tarjeta">
+          <div class="campo" style="margin-bottom:0">
+            <label for="tipo-solicitud">Usted está:</label>
+            <div class="select-wrap con-icono">
+              <span class="icono-input">👤</span>
+              <select id="tipo-solicitud">
+                <option value="solicitando">Solicitando herramientas</option>
+                <option value="adicional">Agregar herramientas adicionales</option>
+              </select>
+            </div>
           </div>
         </div>
 
         <!-- CONTENEDOR PARA EL FORMULARIO COMPLETO (se oculta cuando se selecciona "adicional") -->
         <div id="formulario-completo">
+          <div class="tarjeta">
+            <div class="seccion-header">
+              <span class="seccion-header-icono">👤</span>
+              <h2>Información personal</h2>
+            </div>
+            <div class="campos-grid">
+
           <div class="campo">
             <label for="nombre">Nombre(s):</label>
-            <input type="text" id="nombre" required>
+            <div class="input-icono-wrap"><span class="icono-input">👤</span>
+              <input type="text" id="nombre" required></div>
           </div>
 
           <div class="campo">
             <label for="apellido">Apellido(s):</label>
-            <input type="text" id="apellido" required>
+            <div class="input-icono-wrap"><span class="icono-input">👤</span>
+              <input type="text" id="apellido" required></div>
           </div>
 
           <div class="campo">
             <label for="matricula">Matrícula:</label>
             <div class="matricula-wrap">
-              <input type="text" id="matricula" placeholder="0-00-0000" required>
+              <div class="input-icono-wrap"><span class="icono-input">🪪</span>
+                <input type="text" id="matricula" placeholder="0-00-0000" required></div>
               <button type="button" id="btn-camara" class="btn-camara" title="Tomar foto de carnet">📷</button>
             </div>
             <small>Haga clic en el icono de la cámara para tomar una foto.</small>
@@ -120,7 +137,8 @@
 
           <div class="campo">
             <label for="ciclo">Ciclo:</label>
-            <div class="select-wrap">
+            <div class="select-wrap con-icono">
+              <span class="icono-input">📅</span>
               <select id="ciclo" required>
                 <option value="2-2026">2-2026</option>
                 <option value="1-2026">1-2026</option>
@@ -132,33 +150,40 @@
 
           <div class="campo">
             <label for="telefono">Número de teléfono:</label>
-            <input type="tel" id="telefono" placeholder="809-000-0000" required>
+            <div class="input-icono-wrap"><span class="icono-input">📞</span>
+              <input type="tel" id="telefono" placeholder="809-000-0000" required></div>
           </div>
 
           <div class="campo">
             <label for="profesor">Profesor:</label>
-            <div class="select-wrap">
+            <div class="select-wrap con-icono">
+              <span class="icono-input">👨‍🏫</span>
               <select id="profesor" required>
                 <option value="">Elige un profesor</option>
               </select>
             </div>
           </div>
 
-          <div class="campo">
+          <div class="campo campo-full">
             <label for="laboratorio">Laboratorio / Taller:</label>
-            <div class="select-wrap">
+            <div class="select-wrap con-icono">
+              <span class="icono-input">🏢</span>
               <select id="laboratorio" required>
                 <option value="">Elige un laboratorio/taller</option>
               </select>
             </div>
           </div>
 
-          <div class="campo">
-            <label>Herramientas</label>
-            <div id="grid-herramientas" class="grid-herramientas"></div>
+            </div>
           </div>
 
-          <button type="button" id="btn-enviar" class="btn-enviar">Enviar Solicitud</button>
+          <div class="seccion-header seccion-header-plano">
+            <span class="seccion-header-icono">🔧</span>
+            <h2>Herramientas</h2>
+          </div>
+          <div id="grid-herramientas" class="grid-herramientas"></div>
+
+          <button type="button" id="btn-enviar" class="btn-enviar">✈️ Enviar Solicitud</button>
         </div>
 
         <!-- SECCIÓN PARA AGREGAR ADICIONAL (solo matrícula) -->
