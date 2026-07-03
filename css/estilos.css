@@ -177,95 +177,32 @@ body {
 }
 
 .form-encabezado {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  background: var(--verde);
-  color: #fff;
-  padding: 16px;
-  margin: -16px -16px 18px;
-  border-radius: 0 0 18px 18px;
+  text-align: center;
+  padding: 20px 16px 8px;
 }
-
-.btn-atras {
-  width: 38px; height: 38px; flex-shrink: 0;
-  border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,0.55);
-  background: transparent;
-  color: #fff;
-  font-size: 18px;
-  cursor: pointer;
-  display: flex; align-items: center; justify-content: center;
-}
-.btn-atras:active { background: rgba(255,255,255,0.15); }
-
-.form-encabezado-titulos { flex: 1; text-align: center; }
 
 .form-encabezado h1 {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: 800;
-  color: #fff;
-  margin: 0;
+  color: var(--verde);
+  margin: 0 0 12px;
   line-height: 1.3;
 }
 
-.form-subtitulo {
-  font-size: 11px;
-  color: rgba(255,255,255,0.85);
-  margin: 2px 0 0;
+.linea-verde {
+  width: 80px;
+  height: 4px;
+  background: var(--verde);
+  border-radius: 2px;
+  margin: 0 auto 20px;
 }
-
-.form-encabezado-icono { font-size: 19px; flex-shrink: 0; opacity: 0.9; }
-
-.linea-verde { display: none; }
 
 .tarjeta {
   background: #fff;
-  border-radius: 14px;
-  padding: 16px;
-  margin-bottom: 16px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+  border-radius: 10px;
+  padding: 18px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.08);
 }
-
-/* Encabezado de sección con icono + título + línea (Información personal) */
-.seccion-header {
-  display: flex; align-items: center; gap: 10px;
-  margin-bottom: 16px;
-}
-.seccion-header-icono {
-  width: 26px; height: 26px; border-radius: 50%;
-  background: var(--verde); color: #fff;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 13px; flex-shrink: 0;
-}
-.seccion-header h2 {
-  font-size: 14.5px; font-weight: 700; color: var(--verde-oscuro); margin: 0;
-  white-space: nowrap;
-}
-.seccion-header::after { content: ""; flex: 1; height: 1.5px; background: #e2e2e2; }
-.seccion-header.seccion-header-plano { margin: 22px 0 12px; }
-.seccion-header.seccion-header-plano::after { display: none; }
-
-.campos-grid {
-  display: grid;
-  grid-template-columns: 1fr;
-  column-gap: 14px;
-}
-@media (min-width: 480px) {
-  .campos-grid { grid-template-columns: 1fr 1fr; }
-  .campo-full { grid-column: 1 / -1; }
-}
-
-/* Icono dentro de los inputs */
-.input-icono-wrap { position: relative; flex: 1; }
-.icono-input {
-  position: absolute; left: 13px; top: 50%; transform: translateY(-50%);
-  font-size: 15px; opacity: 0.55; pointer-events: none;
-}
-.input-icono-wrap input,
-.select-wrap.con-icono select { padding-left: 38px; }
-.select-wrap.con-icono .icono-input { z-index: 1; }
-
 
 /* Campos */
 .campo {
@@ -400,21 +337,15 @@ body {
 }
 
 .tarjeta-herramienta {
-  display: grid;
-  grid-template-columns: 68px 1fr;
-  grid-template-rows: auto auto auto;
-  column-gap: 12px;
-  align-items: center;
-  border: 1.5px solid #eaeaea;
-  border-radius: 14px;
+  border: 2px solid var(--verde-borde);
+  border-radius: 10px;
   background: #fff;
-  padding: 12px;
-  text-align: left;
+  padding: 8px 6px;
+  text-align: center;
   cursor: pointer;
   transition: transform .15s, box-shadow .15s, border-color .15s;
   user-select: none;
-  position: relative;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  position: relative; /* NUEVO: permite ubicar el check ✅ dentro de la tarjeta */
 }
 
 .tarjeta-herramienta:hover {
@@ -433,79 +364,60 @@ body {
 .tarjeta-herramienta.seleccionada::after {
   content: '✅';
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 4px;
+  right: 6px;
   font-size: 13px;
   line-height: 1;
 }
 
 .tarjeta-herramienta .icono {
-  grid-column: 1;
-  grid-row: 1 / span 3;
-  height: 68px; width: 68px;
-  border-radius: 12px;
-  background: var(--verde-claro);
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0;
+  margin-bottom: 4px;
 }
 
 .tarjeta-herramienta .icono img {
-  max-height: 48px;
-  max-width: 78%;
+  max-height: 44px;
+  max-width: 100%;
   object-fit: contain;
   display: block;
 }
 
 .icono-respaldo { font-size: 26px; }
 
-.tarjeta-herramienta .nombre {
-  grid-column: 2;
-  grid-row: 1;
-  font-size: 13px;
-  font-weight: 700;
-  margin: 0;
-  min-height: 0;
-  line-height: 1.25;
-  color: var(--texto);
+.tarjeta-herramienta .disponible {
+  font-size: 10px;
+  color: var(--gris);
+  margin-bottom: 2px;
 }
 
-.tarjeta-herramienta .disponible {
-  grid-column: 2;
-  grid-row: 2;
-  display: flex; align-items: center; gap: 5px;
-  font-size: 11.5px;
-  color: var(--gris);
-  margin: 3px 0 8px;
-}
-.tarjeta-herramienta .disponible::before {
-  content: ""; width: 6px; height: 6px; border-radius: 50%;
-  background: var(--verde); flex-shrink: 0;
+.tarjeta-herramienta .nombre {
+  font-size: 11px;
+  margin: 4px 0;
+  min-height: 28px;
+  line-height: 1.2;
 }
 
 .contador {
-  grid-column: 2;
-  grid-row: 3;
   display: flex;
   align-items: center;
-  gap: 8px;
+  justify-content: center;
+  gap: 6px;
 }
 
 .contador button {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
   border: none;
   border-radius: 50%;
   background: var(--verde);
   color: #fff;
-  font-size: 15px;
+  font-size: 14px;
   line-height: 1;
   cursor: pointer;
-  flex-shrink: 0;
 }
-
-.contador button:active { transform: scale(0.92); }
 
 .contador button:disabled {
   background: #bbb;
@@ -513,13 +425,8 @@ body {
 }
 
 .contador .cantidad {
-  font-size: 13px;
-  font-weight: 700;
-  min-width: 30px;
-  text-align: center;
-  border: 1.5px solid #e2e2e2;
-  border-radius: 8px;
-  padding: 4px 0;
+  font-size: 12px;
+  min-width: 16px;
 }
 
 /* Botón principal */
