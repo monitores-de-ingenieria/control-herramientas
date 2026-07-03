@@ -1798,6 +1798,17 @@ onAuthStateChanged(auth, async user => {
     appEl.classList.add("visible");
     const letra = (user.email || "A")[0].toUpperCase();
     document.getElementById("admin-avatar").textContent = letra;
+    // Reset defensivo: algunos navegadores restauran el valor de los <select>
+    // al recargar la página (autocompletado de formulario), lo que dejaba
+    // el filtro de "Incidencia" activado al volver a entrar sin haberlo
+    // elegido. Forzamos que siempre arranque limpio.
+    const filtroEstadoEl = document.getElementById("filtro-estado");
+    if (filtroEstadoEl) filtroEstadoEl.value = "";
+    document.getElementById("filtro-buscar")  && (document.getElementById("filtro-buscar").value  = "");
+    document.getElementById("filtro-profesor") && (document.getElementById("filtro-profesor").value = "");
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
+    document.querySelector(".tab-btn[data-tab-estado='']")?.classList.add("activo");
+    ocultarPanelIncidenciasProf();
     cargarDashboard();
     cargarSolicitudes();
     cargarPrestamosProf();
