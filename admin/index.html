@@ -930,6 +930,24 @@
   .prof-fila:hover { border-color:var(--verde); }
   .prof-fila .est-avatar { flex:1; min-width:0; }
   .prof-badge-activos { font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(63,185,80,.15); color:var(--verde); white-space:nowrap; }
+
+  /* ═════════════════════════════════════════
+     USUARIOS (config) — tarjetas de cuenta
+  ══════════════════════════════════════════ */
+  .usr-resumen { display:flex; align-items:center; gap:16px; margin-bottom:14px; font-size:12.5px; color:var(--texto-dim); flex-wrap:wrap; }
+  .usr-resumen b { color:var(--texto); font-size:16px; }
+  .usr-lista { display:flex; flex-direction:column; gap:8px; }
+  .usr-fila { display:flex; align-items:center; gap:14px; background:var(--card); border:1px solid var(--borde); border-left:3px solid var(--texto-dim); border-radius:10px; padding:12px 14px; transition:border-color .15s; }
+  .usr-fila:hover { border-color:var(--verde); }
+  .usr-fila.es-admin { border-left-color:#eab308; }
+  .usr-fila.es-encargado { border-left-color:var(--azul); }
+  .usr-avatar { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:800; font-size:14px; flex-shrink:0; }
+  .usr-info { flex:1; min-width:0; }
+  .usr-nombre-fila { font-size:13px; font-weight:700; color:var(--texto); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .usr-email { font-size:11px; color:var(--texto-dim); margin-top:1px; }
+  .usr-secciones { margin-top:6px; display:flex; flex-wrap:wrap; gap:4px; }
+  .usr-chip-sec { background:var(--card2); padding:2px 8px; border-radius:20px; font-size:10px; color:var(--texto-dim); }
+  .usr-acciones { display:flex; gap:6px; flex-shrink:0; }
 </style>
 </head>
 <body>
@@ -1316,7 +1334,8 @@
               <input type="text" id="usr-buscar" placeholder="Buscar usuario...">
             </div>
           </div>
-          <div id="usr-cfg-wrap">
+          <div class="usr-resumen" id="usr-resumen"></div>
+          <div id="usr-cfg-wrap" class="usr-lista">
             <div class="cargando"><div class="spinner"></div>Cargando usuarios...</div>
           </div>
         </div>
@@ -4042,6 +4061,14 @@ function renderUsuariosCfg() {
   const lista = buscar
     ? usrCfgLista.filter(u => (u.nombre||"").toLowerCase().includes(buscar) || (u.email||"").toLowerCase().includes(buscar))
     : usrCfgLista;
+
+  const resumen = document.getElementById("usr-resumen");
+  if (resumen) {
+    const nAdmin = usrCfgLista.filter(u => u.rol === "administrador").length;
+    const nEnc   = usrCfgLista.length - nAdmin;
+    resumen.innerHTML = `🔐 <b>${usrCfgLista.length}</b> cuenta${usrCfgLista.length===1?"":"s"} &nbsp;·&nbsp; 👑 <b>${nAdmin}</b> administrador${nAdmin===1?"":"es"} &nbsp;·&nbsp; 🔒 <b>${nEnc}</b> encargado${nEnc===1?"":"s"}`;
+  }
+
   if (!lista.length) {
     wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔐</div><p>No hay usuarios registrados todavía.</p></div>';
     return;
@@ -4052,24 +4079,29 @@ function renderUsuariosCfg() {
     laboratorios:"Talleres", historial:"Historial",
     "profesores-cfg":"Profesores", "herramientas-cfg":"Herramientas"
   };
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Correo</th><th>Rol</th><th>Secciones</th><th>Acciones</th></tr></thead><tbody>'
-    + lista.map((u, i) => {
-        const rolBadge = u.rol === "administrador"
-          ? '<span class="badge badge-entregada">👑 Administrador</span>'
-          : '<span class="badge badge-retornada">🔒 Encargado</span>';
-        const secciones = u.rol === "administrador"
-          ? '<span style="color:var(--texto-dim);font-size:11px">Todas</span>'
-          : (u.secciones||[]).map(s => `<span style="background:var(--card2);padding:2px 7px;border-radius:20px;font-size:10px;margin:1px">${etiquetasSecciones[s]||s}</span>`).join(" ") || '<span style="color:var(--texto-dim);font-size:11px">Ninguna</span>';
-        return `<tr>
-          <td style="color:var(--texto-dim)">${i+1}</td>
-          <td><div class="est-nombre">${u.nombre || "—"}</div></td>
-          <td style="font-size:12px">${u.email || "—"}</td>
-          <td>${rolBadge}</td>
-          <td style="max-width:240px">${secciones}</td>
-          <td><button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')">✏️ Editar</button> <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')">🗑 Eliminar</button></td>
-        </tr>`;
-      }).join("")
-    + '</tbody></table>';
+  wrap.innerHTML = lista.map(u => {
+    const esAdmin = u.rol === "administrador";
+    const rolBadge = esAdmin
+      ? '<span class="badge badge-entregada">👑 Administrador</span>'
+      : '<span class="badge badge-retornada">🔒 Encargado</span>';
+    const inicialesU = ((u.nombre||"?").trim().split(/\s+/).map(p=>p[0]).slice(0,2).join("")||"?").toUpperCase();
+    const secciones = esAdmin
+      ? '<span class="usr-chip-sec" style="color:var(--texto-dim)">Acceso total al sistema</span>'
+      : ((u.secciones||[]).map(s => `<span class="usr-chip-sec">${etiquetasSecciones[s]||s}</span>`).join("") || '<span class="usr-chip-sec">Sin secciones asignadas</span>');
+    return `
+      <div class="usr-fila ${esAdmin ? "es-admin" : "es-encargado"}">
+        <div class="usr-avatar" style="background:${esAdmin ? "#eab30822" : "var(--azul)22"};color:${esAdmin ? "#eab308" : "var(--azul)"}">${inicialesU}</div>
+        <div class="usr-info">
+          <div class="usr-nombre-fila">${u.nombre || "—"} ${rolBadge}</div>
+          <div class="usr-email">✉️ ${u.email || "—"}</div>
+          <div class="usr-secciones">${secciones}</div>
+        </div>
+        <div class="usr-acciones">
+          <button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')">✏️ Editar</button>
+          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')">🗑</button>
+        </div>
+      </div>`;
+  }).join("");
 }
 
 document.getElementById("usr-buscar")?.addEventListener("input", renderUsuariosCfg);
