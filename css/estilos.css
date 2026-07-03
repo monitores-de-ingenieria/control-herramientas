@@ -321,11 +321,11 @@ body {
 .grid-herramientas {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
+  gap: 12px;
   margin-top: 4px;
-  background: var(--verde-claro);
+  background: transparent;
   border-radius: 10px;
-  padding: 10px;
+  padding: 2px;
 }
 
 @media (min-width: 480px) {
@@ -337,96 +337,114 @@ body {
 }
 
 .tarjeta-herramienta {
-  border: 2px solid var(--verde-borde);
-  border-radius: 10px;
+  border: none;
+  border-radius: 16px;
   background: #fff;
-  padding: 8px 6px;
+  padding: 14px 10px 12px;
   text-align: center;
   cursor: pointer;
-  transition: transform .15s, box-shadow .15s, border-color .15s;
+  transition: transform .15s, box-shadow .15s, background .15s;
   user-select: none;
-  position: relative; /* NUEVO: permite ubicar el check ✅ dentro de la tarjeta */
+  position: relative;
+  box-shadow: 0 2px 8px rgba(46,125,50,0.10);
 }
 
 .tarjeta-herramienta:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(46,125,50,0.18);
-  border-color: var(--verde);
+  box-shadow: 0 6px 16px rgba(46,125,50,0.20);
 }
 
 .tarjeta-herramienta.seleccionada {
-  border-color: var(--verde);
-  background: #fff;
-  box-shadow: 0 0 0 2px var(--verde);
+  background: var(--verde-claro);
+  box-shadow: 0 0 0 2.5px var(--verde), 0 6px 16px rgba(46,125,50,0.22);
 }
 
 /* NUEVO: checklist visual ✅ cuando la tarjeta está seleccionada */
 .tarjeta-herramienta.seleccionada::after {
   content: '✅';
   position: absolute;
-  top: 4px;
-  right: 6px;
-  font-size: 13px;
+  top: 8px;
+  right: 8px;
+  font-size: 14px;
   line-height: 1;
 }
 
 .tarjeta-herramienta .icono {
-  height: 48px;
+  height: 64px;
+  width: 64px;
+  margin: 0 auto 8px;
+  border-radius: 14px;
+  background: var(--verde-claro);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4px;
 }
 
+.tarjeta-herramienta.seleccionada .icono { background: #fff; }
+
 .tarjeta-herramienta .icono img {
-  max-height: 44px;
-  max-width: 100%;
+  max-height: 46px;
+  max-width: 80%;
   object-fit: contain;
   display: block;
 }
 
-.icono-respaldo { font-size: 26px; }
+.icono-respaldo { font-size: 30px; }
 
 .tarjeta-herramienta .disponible {
+  display: inline-block;
   font-size: 10px;
-  color: var(--gris);
-  margin-bottom: 2px;
+  font-weight: 700;
+  color: var(--verde);
+  background: var(--verde-claro);
+  border-radius: 20px;
+  padding: 2px 9px;
+  margin-bottom: 6px;
 }
 
+.tarjeta-herramienta.seleccionada .disponible { background: #fff; }
+
 .tarjeta-herramienta .nombre {
-  font-size: 11px;
-  margin: 4px 0;
-  min-height: 28px;
-  line-height: 1.2;
+  font-size: 12px;
+  font-weight: 600;
+  margin: 4px 0 10px;
+  min-height: 30px;
+  line-height: 1.25;
+  color: var(--texto);
 }
 
 .contador {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
+  gap: 10px;
 }
 
 .contador button {
-  width: 22px;
-  height: 22px;
+  width: 30px;
+  height: 30px;
   border: none;
   border-radius: 50%;
   background: var(--verde);
   color: #fff;
-  font-size: 14px;
+  font-size: 16px;
   line-height: 1;
   cursor: pointer;
+  box-shadow: 0 2px 6px rgba(46,125,50,0.35);
 }
+
+.contador button:active { transform: scale(0.92); }
 
 .contador button:disabled {
   background: #bbb;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
 .contador .cantidad {
-  font-size: 12px;
-  min-width: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  min-width: 18px;
 }
 
 /* Botón principal */
@@ -445,6 +463,22 @@ body {
 
 .btn-enviar:hover { background: #256428; }
 .btn-enviar:disabled { background: #aaa; cursor: not-allowed; }
+
+/* El botón de enviar queda fijo abajo para no obligar a bajar hasta el
+   final del formulario (puede ser largo por el grid de herramientas). */
+#pantalla-formulario #btn-enviar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 14px rgba(0,0,0,0.18);
+  z-index: 40;
+}
+@media (min-width: 700px)  { #pantalla-formulario #btn-enviar { max-width: 760px; } }
+@media (min-width: 1000px) { #pantalla-formulario #btn-enviar { max-width: 980px; } }
+/* Espacio para que el botón fijo no tape el contenido final */
+#pantalla-formulario #formulario-completo { padding-bottom: 76px; }
 
 /* Mensajes EPP / Final */
 .mensaje {
