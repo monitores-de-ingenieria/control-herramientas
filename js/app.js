@@ -24,6 +24,10 @@ document.getElementById("btn-ir-formulario").addEventListener("click", () => {
   mostrarPantalla(pantallaFormulario);
 });
 
+document.getElementById("btn-atras-formulario")?.addEventListener("click", () => {
+  mostrarPantalla(pantallaTaller);
+});
+
 // ---- Formulario ----
 const MAX_POR_ESTUDIANTE = 1; // tope de unidades por herramienta, por solicitud
 const form              = document.getElementById("form-solicitud");
@@ -195,7 +199,7 @@ function renderizarHerramientas(herramientas) {
     header.style.gridColumn = "1 / -1";
     header.innerHTML = `
       <span class="grupo-practica-titulo">🏷️ ${practica}</span>
-      <button type="button" class="btn-combo" data-practica="${practica}">+ Combo completo</button>
+      <button type="button" class="btn-combo" data-practica="${practica}">+ Agregar combo completo</button>
     `;
     gridHerramientas.appendChild(header);
 
