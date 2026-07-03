@@ -4161,6 +4161,8 @@ function renderProfesoresCfg() {
     const [nombre, ...apRest] = p.nombre.split(" ");
     const apellido = apRest.join(" ");
     const sinRetornar = (todosPrestamosProfTodos || []).filter(x => x.profesor === p.nombre && x.estado === "activo");
+    const sinRetHoy = sinRetornar.filter(x => esMismodia(x.creadoEn));
+    const sinRetViejos = sinRetornar.length - sinRetHoy.length;
     const nombreEsc = p.nombre.replace(/'/g, "\\'");
     return `
       <div class="prof-fila">
@@ -4168,7 +4170,8 @@ function renderProfesoresCfg() {
           <div class="est-circulo" style="background:${colorEstudiante(p.nombre)}22;color:${colorEstudiante(p.nombre)}">${iniciales(nombre, apellido)}</div>
           <div class="est-nombre">${p.nombre}${local}</div>
         </div>
-        ${sinRetornar.length > 0 ? `<span class="prof-badge-activos" style="cursor:pointer" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar[0].id}')">⏳ ${sinRetornar.length} sin retornar</span>` : ""}
+        ${sinRetHoy.length > 0 ? `<span class="prof-badge-activos" style="cursor:pointer" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetHoy[0].id}')">⏳ ${sinRetHoy.length} sin retornar hoy</span>` : ""}
+        ${sinRetViejos > 0 ? `<span class="prof-badge-activos" style="cursor:pointer;background:rgba(239,68,68,.15);color:var(--rojo)" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar.find(x=>!esMismodia(x.creadoEn)).id}')">🔍 ${sinRetViejos} atrasado(s)</span>` : ""}
         <div class="acciones-celda">
           <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})">✏️ Editar</button>
           ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')">🗑</button>`}
