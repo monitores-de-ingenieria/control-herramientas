@@ -1104,9 +1104,9 @@
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul)">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo)">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
           <span style="margin-left:auto;display:flex;align-items:center;gap:8px;padding:6px 14px;background:var(--verde-glow,rgba(63,185,80,.12));border:1px solid var(--verde);border-radius:20px">
+            <span style="font-size:15px">🔧</span>
             <span style="font-size:12px;color:var(--texto-dim);font-weight:600">Prestadas hoy:</span>
             <span id="tab-total-herramientas-hoy" style="font-size:15px;font-weight:800;color:var(--verde)">—</span>
-            <span id="tab-total-herramientas-hoy-det" style="font-size:10px;color:var(--texto-dim)"></span>
           </span>
         </div>
 
@@ -1561,6 +1561,9 @@
       <button class="modal-cerrar" onclick="cerrarModalRetorno()">✕</button>
     </div>
     <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
+    <div style="margin-bottom:12px">
+      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)">➕ Agregar herramienta adicional</button>
+    </div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
       <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()">Marcar todas ✅</button>
@@ -2007,8 +2010,6 @@ function actualizarTabs() {
     else totalHerr += (h.cantidad || 0);
   }));
   set("tab-total-herramientas-hoy", totalHerr + totalGast);
-  const detEl = document.getElementById("tab-total-herramientas-hoy-det");
-  if (detEl) detEl.textContent = `🔧${totalHerr} · 🧰${totalGast}`;
 }
 
 // ── NAVEGACIÓN ──
