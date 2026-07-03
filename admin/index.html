@@ -919,6 +919,17 @@
   .pp-fecha-row { font-size: 10px; color: var(--texto-dim); margin-bottom: 10px; }
   .pp-acciones { display: flex; gap: 6px; }
   .pp-acciones button { flex: 1; padding: 6px; font-size: 11px; }
+
+  /* ═════════════════════════════════════════
+     PROFESORES (config) — lista con avatar, sin grid de tarjetas
+  ══════════════════════════════════════════ */
+  .prof-resumen { display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:12.5px; color:var(--texto-dim); }
+  .prof-resumen b { color:var(--texto); font-size:16px; }
+  .prof-lista { display:flex; flex-direction:column; gap:8px; }
+  .prof-fila { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--borde); border-radius:10px; padding:10px 14px; transition:border-color .15s; }
+  .prof-fila:hover { border-color:var(--verde); }
+  .prof-fila .est-avatar { flex:1; min-width:0; }
+  .prof-badge-activos { font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(63,185,80,.15); color:var(--verde); white-space:nowrap; }
 </style>
 </head>
 <body>
@@ -1103,12 +1114,10 @@
           <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde);white-space:nowrap">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul);white-space:nowrap">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo);white-space:nowrap">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
-          <span style="display:flex;align-items:center;gap:10px;padding:6px 16px 6px 8px;background:linear-gradient(135deg, rgba(63,185,80,.18), rgba(63,185,80,.05));border:1px solid rgba(63,185,80,.4);border-radius:12px;white-space:nowrap;flex-shrink:0">
-            <span style="width:26px;height:26px;border-radius:8px;background:var(--verde);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">⚙️</span>
-            <span style="display:flex;flex-direction:column;line-height:1.2">
-              <span style="font-size:9.5px;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.04em;font-weight:700">Prestadas hoy</span>
-              <span id="tab-total-herramientas-hoy" style="font-size:16px;font-weight:800;color:var(--texto)">—</span>
-            </span>
+          <span style="margin-left:auto;align-self:center;display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(63,185,80,.10);border:1px solid rgba(63,185,80,.35);border-radius:20px;white-space:nowrap;flex-shrink:0;font-size:12px">
+            <span style="font-size:12px">⚙️</span>
+            <span style="color:var(--texto-dim);font-weight:600">Prestadas hoy:</span>
+            <span id="tab-total-herramientas-hoy" style="font-weight:800;color:var(--verde)">—</span>
           </span>
         </div>
 
@@ -1288,7 +1297,8 @@
               <input type="text" id="prof-buscar" placeholder="Buscar profesor...">
             </div>
           </div>
-          <div id="prof-cfg-wrap">
+          <div class="prof-resumen" id="prof-resumen"></div>
+          <div id="prof-cfg-wrap" class="prof-lista">
             <div class="cargando"><div class="spinner"></div>Cargando profesores...</div>
           </div>
         </div>
@@ -2958,15 +2968,15 @@ async function cargarPrestamosProf() {
 }
 
 function ppActualizarStats() {
-  const activos = todosPrestamosProfTodos.filter(p => p.estado === "activo");
-  const conInc  = todosPrestamosProfTodos.filter(p => p.tieneIncidencias);
+  const activos = todosPrestamosProf.filter(p => p.estado === "activo");
+  const conInc  = todosPrestamosProf.filter(p => p.tieneIncidencias);
   const wrap = document.getElementById("pp-stats-strip");
   if (!wrap) return;
   wrap.innerHTML = `
-    <div class="her-stat-pill"><span class="her-stat-icono">🟢</span><div><div class="her-stat-num">${activos.length}</div><div class="her-stat-label">Préstamos activos</div></div></div>
+    <div class="her-stat-pill"><span class="her-stat-icono">🟢</span><div><div class="her-stat-num">${activos.length}</div><div class="her-stat-label">Activos hoy</div></div></div>
     <div class="her-stat-pill"><span class="her-stat-icono">📋</span><div><div class="her-stat-num">${todosPrestamosProf.length}</div><div class="her-stat-label">Registrados hoy</div></div></div>
-    <div class="her-stat-pill"><span class="her-stat-icono">👨‍🏫</span><div><div class="her-stat-num">${new Set(activos.map(p=>p.profesor)).size}</div><div class="her-stat-label">Profesores con herramientas</div></div></div>
-    <div class="her-stat-pill${conInc.length?' alerta':''}"><span class="her-stat-icono">⚠️</span><div><div class="her-stat-num">${conInc.length}</div><div class="her-stat-label">Con incidencias</div></div></div>`;
+    <div class="her-stat-pill"><span class="her-stat-icono">👨‍🏫</span><div><div class="her-stat-num">${new Set(activos.map(p=>p.profesor)).size}</div><div class="her-stat-label">Profesores con herramientas hoy</div></div></div>
+    <div class="her-stat-pill${conInc.length?' alerta':''}"><span class="her-stat-icono">⚠️</span><div><div class="her-stat-num">${conInc.length}</div><div class="her-stat-label">Con incidencias hoy</div></div></div>`;
 }
 
 window.ppFiltrarChip = function(estado, el) {
@@ -3924,23 +3934,33 @@ function renderProfesoresCfg() {
   if (!wrap) return;
   const buscar = (document.getElementById("prof-buscar")?.value || "").toLowerCase();
   const lista  = buscar ? profCfgLista.filter(p => p.nombre.toLowerCase().includes(buscar)) : profCfgLista;
+
+  const resumen = document.getElementById("prof-resumen");
+  if (resumen) resumen.innerHTML = `👤 <b>${profCfgLista.length}</b> profesor${profCfgLista.length === 1 ? "" : "es"} registrado${profCfgLista.length === 1 ? "" : "s"}`;
+
   if (!lista.length) {
     wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">👤</div><p>No hay profesores registrados.</p></div>';
     return;
   }
-  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Nombre</th><th>Acciones</th></tr></thead><tbody>'
-    + lista.map((p, i) => {
-        const local = p.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
-        return '<tr>'
-          + '<td style="color:var(--texto-dim)">' + (i+1) + '</td>'
-          + '<td><div class="est-nombre">' + p.nombre + local + '</div></td>'
-          + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalProfesor(\'' + p.id + '\',\'' + p.nombre.replace(/'/g,"\\'") + '\',' + (p.local||false) + ')">✏️ Editar</button>'
-          + (p.local ? '' : '<button class="btn btn-rojo" onclick="eliminarProfesor(\'' + p.id + '\',\'' + p.nombre.replace(/'/g,"\\'") + '\')">🗑 Eliminar</button>')
-          + '</div></td>'
-          + '</tr>';
-      }).join("")
-    + '</tbody></table>';
+  wrap.innerHTML = lista.map(p => {
+    const local = p.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
+    const [nombre, ...apRest] = p.nombre.split(" ");
+    const apellido = apRest.join(" ");
+    const activos = (todosPrestamosProfTodos || []).filter(x => x.profesor === p.nombre && x.estado === "activo").length;
+    const nombreEsc = p.nombre.replace(/'/g, "\\'");
+    return `
+      <div class="prof-fila">
+        <div class="est-avatar">
+          <div class="est-circulo" style="background:${colorEstudiante(p.nombre)}22;color:${colorEstudiante(p.nombre)}">${iniciales(nombre, apellido)}</div>
+          <div class="est-nombre">${p.nombre}${local}</div>
+        </div>
+        ${activos > 0 ? `<span class="prof-badge-activos">🔧 ${activos} préstamo${activos === 1 ? "" : "s"} activo${activos === 1 ? "" : "s"}</span>` : ""}
+        <div class="acciones-celda">
+          <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})">✏️ Editar</button>
+          ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')">🗑</button>`}
+        </div>
+      </div>`;
+  }).join("");
 }
 
 window.abrirModalProfesor = function(id = null, nombre = "", esLocal = false) {
@@ -4281,8 +4301,20 @@ function histRenderTabla() {
       </thead>
       <tbody>
         ${pagina.map((r, i) => {
-          const nombreMostrar = r.tipo === "externo" ? (r.departamento || "—") : `${r.nombre||""} ${r.apellido||""}`;
-          const refMostrar    = r.tipo === "externo" ? (r.responsable || "—") : (r.matricula || r.numeroSolicitud || "—");
+          let nombreMostrar, refMostrar, inicialesMostrar;
+          if (r.tipo === "externo") {
+            nombreMostrar = r.departamento || "—";
+            refMostrar = r.responsable || "—";
+            inicialesMostrar = (nombreMostrar[0]||"D").toUpperCase();
+          } else if (r.tipo === "profesor") {
+            nombreMostrar = r.profesor || "—";
+            refMostrar = r.laboratorio || "—";
+            inicialesMostrar = (nombreMostrar[0]||"P").toUpperCase();
+          } else {
+            nombreMostrar = `${r.nombre||""} ${r.apellido||""}`.trim() || "—";
+            refMostrar = r.matricula || r.numeroSolicitud || "—";
+            inicialesMostrar = iniciales(r.nombre, r.apellido);
+          }
           return `
           <tr style="cursor:pointer" onclick="abrirModalHist('${r.id}','${r.tipo}')">
             <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
@@ -4291,7 +4323,7 @@ function histRenderTabla() {
             <td>
               <div class="est-avatar">
                 <div class="est-circulo" style="background:${colorEstudiante(nombreMostrar)}22;color:${colorEstudiante(nombreMostrar)}">
-                  ${r.tipo === "externo" ? (nombreMostrar[0]||"D").toUpperCase() : iniciales(r.nombre, r.apellido)}
+                  ${inicialesMostrar}
                 </div>
                 <div class="est-nombre">${nombreMostrar}</div>
               </div>
@@ -4375,6 +4407,10 @@ window.abrirModalHist = function(id, tipo) {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="modal-campo"><label>Departamento</label><div class="valor">${r.departamento||"—"}</div></div>
       <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${r.responsable||"—"}</div></div>
+    </div>` : tipo === "profesor" ? `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${r.profesor||"—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${r.laboratorio||"—"}</div></div>
     </div>` : `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="modal-campo"><label>Nombre</label><div class="valor">${r.nombre||""} ${r.apellido||""}</div></div>
