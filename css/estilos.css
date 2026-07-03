@@ -446,6 +446,22 @@ body {
 .btn-enviar:hover { background: #256428; }
 .btn-enviar:disabled { background: #aaa; cursor: not-allowed; }
 
+/* El botón de enviar queda fijo abajo para no obligar a bajar hasta el
+   final del formulario (puede ser largo por el grid de herramientas). */
+#pantalla-formulario #btn-enviar {
+  position: fixed;
+  left: 0; right: 0; bottom: 0;
+  max-width: 480px;
+  margin: 0 auto;
+  border-radius: 8px 8px 0 0;
+  box-shadow: 0 -4px 14px rgba(0,0,0,0.18);
+  z-index: 40;
+}
+@media (min-width: 700px)  { #pantalla-formulario #btn-enviar { max-width: 760px; } }
+@media (min-width: 1000px) { #pantalla-formulario #btn-enviar { max-width: 980px; } }
+/* Espacio para que el botón fijo no tape el contenido final */
+#pantalla-formulario #formulario-completo { padding-bottom: 76px; }
+
 /* Mensajes EPP / Final */
 .mensaje {
   margin-top: 16px;
