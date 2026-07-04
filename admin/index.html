@@ -359,14 +359,15 @@
 
   .nav-badge {
     margin-left: auto;
-    background: var(--verde);
-    color: #000;
-    font-size: 9px;
+    background: var(--gradiente-verde);
+    color: #fff;
+    font-size: 10px;
     font-weight: 800;
-    padding: 2px 7px;
+    padding: 2px 8px;
     border-radius: 20px;
     flex-shrink: 0;
     position: relative; z-index: 1;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.25);
     transition: opacity .2s, transform .2s;
   }
 
@@ -412,52 +413,54 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 16px;
-    padding-bottom: 14px;
+    margin-bottom: 18px;
+    padding-bottom: 16px;
     border-bottom: 1px solid var(--borde);
     flex-wrap: wrap;
     gap: 10px;
   }
 
-  .dash-bienvenida h2 { font-size: 20px; font-weight: 800; letter-spacing: -.3px; }
-  .dash-bienvenida p { font-size: 12px; color: var(--texto-dim); margin-top: 2px; }
+  .dash-bienvenida h2 { font-size: 21px; font-weight: 800; letter-spacing: -.4px; }
+  .dash-bienvenida p { font-size: 12px; color: var(--texto-dim); margin-top: 3px; }
 
   .dash-fecha {
     display: flex; align-items: center; gap: 14px;
-    font-size: 12px; color: var(--texto-dim);
+    font-size: 12px; font-weight: 600; color: var(--texto-dim);
     background: var(--card); border: 1px solid var(--borde);
-    border-radius: 8px; padding: 7px 12px;
+    border-radius: 30px; padding: 8px 16px;
+    box-shadow: var(--sombra-sm);
   }
 
-  .dash-fecha span { display: flex; align-items: center; gap: 5px; }
+  .dash-fecha span { display: flex; align-items: center; gap: 6px; }
 
   /* KPI COMPACTAS — fila horizontal */
   .kpi-grid {
     display: grid;
     grid-template-columns: repeat(6, 1fr);
-    gap: 8px;
-    margin-bottom: 14px;
+    gap: 10px;
+    margin-bottom: 16px;
   }
 
   .kpi-card {
     background: var(--card);
     border: 1px solid var(--borde);
     border-radius: var(--radio-md);
-    padding: 12px 14px;
+    padding: 14px 16px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
-    transition: transform .15s, box-shadow .15s;
+    box-shadow: var(--sombra-sm);
+    transition: transform .18s cubic-bezier(.4,0,.2,1), box-shadow .18s;
   }
 
   .kpi-card::after {
     content: '';
     position: absolute;
-    bottom: 0; left: 0; right: 0; height: 2px;
-    background: var(--verde);
+    bottom: 0; left: 0; right: 0; height: 3px;
+    background: var(--gradiente-verde);
     transform: scaleX(0);
     transform-origin: left;
     transition: transform .25s ease;
@@ -470,7 +473,7 @@
   .kpi-card:hover::after { transform: scaleX(1); }
 
   .kpi-icono {
-    width: 36px; height: 36px; border-radius: 8px;
+    width: 36px; height: 36px; border-radius: var(--radio-md);
     display: flex; align-items: center; justify-content: center;
     font-size: 17px; flex-shrink: 0;
     background: var(--verde-glow);
@@ -1119,16 +1122,11 @@
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
             <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
             <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>📊 Estados hoy</h3><span style="font-size:10px;color:var(--texto-dim)">solicitudes de hoy</span></div>
-            <div id="grafico-estados" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
@@ -2294,13 +2292,6 @@ async function cargarDashboard() {
       Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
       "var(--verde)");
 
-    renderGraficoDonut("grafico-estados", [
-      { etiqueta: "Pendientes", valor: pendHoy, color: "var(--amarillo)" },
-      { etiqueta: "Entregadas", valor: entregHoy, color: "var(--verde)" },
-      { etiqueta: "Retornadas", valor: retHoy, color: "var(--azul)" },
-      { etiqueta: "Canceladas", valor: deHoy.filter(s => s.estado === "cancelada").length, color: "var(--rojo)" }
-    ]);
-
     const conteoHora = Array(24).fill(0);
     todas.forEach(s => {
       const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
@@ -3133,6 +3124,7 @@ function ppFiltrados() {
 window.marcarIncidenciaVistaPP = async function(id) {
   try {
     await updateDoc(doc(db, "prestamos_profesores", id), { incidenciaVista: true });
+    cargarDashboard(); // refresca el badge lateral de inmediato
   } catch (e) { console.error(e); }
 };
 
