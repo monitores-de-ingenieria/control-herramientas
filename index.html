@@ -4,20 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solicitud de Herramientas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="css/estilos.css">
 <style>
   /* Lightbox para ampliar la foto de una herramienta al tocarla */
   #grid-herramientas img { cursor: zoom-in; }
   #lightbox-herramienta {
     position: fixed; inset: 0;
-    background: rgba(0,0,0,0.85);
+    background: rgba(8,20,13,0.88);
     display: flex; align-items: center; justify-content: center;
     z-index: 1000; padding: 24px; cursor: zoom-out;
+    backdrop-filter: blur(2px);
   }
   #lightbox-herramienta.oculto { display: none; }
   #lightbox-herramienta img {
     max-width: 90vw; max-height: 90vh;
-    border-radius: 10px;
+    border-radius: 14px;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
   #lightbox-cerrar {
@@ -26,22 +30,21 @@
     border: none; color: #fff;
     font-size: 22px; width: 40px; height: 40px;
     border-radius: 50%; cursor: pointer;
+    transition: background .15s;
   }
-
-  /* Agrupar herramientas por práctica */
-  .grupo-practica-header {
-    display: flex; align-items: center; justify-content: space-between;
-    gap: 10px; margin: 18px 0 8px;
-  }
-  .grupo-practica-titulo { font-size: 14px; font-weight: 700; color: var(--verde); }
-  .btn-combo {
-    background: var(--verde); color: #fff; border: none;
-    padding: 7px 14px; border-radius: 20px;
-    font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
-  }
+  #lightbox-cerrar:hover { background: rgba(255,255,255,0.28); }
 </style>
 </head>
 <body>
+
+  <!-- Barra de progreso de 5 pasos (decorativa, no interfiere con app.js) -->
+  <div id="progreso-pasos" aria-hidden="true">
+    <span data-paso="pantalla-bienvenida"></span>
+    <span data-paso="pantalla-taller"></span>
+    <span data-paso="pantalla-formulario"></span>
+    <span data-paso="pantalla-epp"></span>
+    <span data-paso="pantalla-final"></span>
+  </div>
 
   <!-- ===== PANTALLA 1: BIENVENIDA ===== -->
   <div id="pantalla-bienvenida" class="pantalla">
@@ -249,6 +252,39 @@
     document.getElementById('lightbox-herramienta')?.addEventListener('click', function() {
       this.classList.add('oculto');
     });
+  </script>
+
+  <script>
+    // Sincroniza la barra de progreso de 5 pasos con la pantalla visible.
+    // No modifica ni depende de la lógica de app.js: solo observa las
+    // clases "oculto" de los .pantalla existentes.
+    (function () {
+      const orden = ["pantalla-bienvenida","pantalla-taller","pantalla-formulario","pantalla-epp","pantalla-final"];
+      const puntos = document.querySelectorAll('#progreso-pasos span');
+
+      function actualizar() {
+        const activaIdx = orden.findIndex(id => {
+          const el = document.getElementById(id);
+          return el && !el.classList.contains('oculto');
+        });
+        puntos.forEach((p, i) => {
+          p.classList.toggle('hecho', activaIdx > -1 && i < activaIdx);
+          p.classList.toggle('activo', i === activaIdx);
+        });
+        // Sobre fondos oscuros (bienvenida/taller) se ve mejor con contraste claro;
+        // en el formulario y pantallas blancas, con contraste oscuro.
+        const bar = document.getElementById('progreso-pasos');
+        const claras = ["pantalla-formulario","pantalla-epp","pantalla-final"];
+        bar.classList.toggle('tema-claro', orden[activaIdx] && claras.includes(orden[activaIdx]));
+      }
+
+      orden.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        new MutationObserver(actualizar).observe(el, { attributes: true, attributeFilter: ['class'] });
+      });
+      actualizar();
+    })();
   </script>
 
   <!-- Firebase SDK -->
