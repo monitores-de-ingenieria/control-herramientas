@@ -652,3 +652,106 @@ body {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+
+/* ===== REDISEÑO UI PREMIUM - AGREGAR AL FINAL DE estilos.css ===== */
+
+body{
+  background:#f4f6f8;
+}
+
+.pantalla{
+  animation:fadeEntrada .35s ease;
+}
+
+@keyframes fadeEntrada{
+  from{opacity:0;transform:translateY(12px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+#pantalla-bienvenida{
+  background:linear-gradient(135deg,#1a3d1f,#2e7d32);
+}
+
+.bienvenida-card{
+  border-radius:30px !important;
+  box-shadow:0 25px 50px rgba(0,0,0,.18) !important;
+  overflow:hidden;
+}
+
+.img-utesiano{
+  animation:flotar 3s ease-in-out infinite;
+}
+
+@keyframes flotar{
+  0%,100%{transform:translateY(0);}
+  50%{transform:translateY(-8px);}
+}
+
+.btn-bienvenida,
+.btn-solicitar,
+.btn-enviar{
+  border-radius:18px !important;
+  box-shadow:0 8px 20px rgba(46,125,50,.25);
+  transition:.25s;
+}
+
+.btn-bienvenida:active,
+.btn-solicitar:active,
+.btn-enviar:active{
+  transform:scale(.97);
+}
+
+.tarjeta{
+  border-radius:24px !important;
+  box-shadow:0 10px 35px rgba(0,0,0,.06);
+}
+
+.form-encabezado h1{
+  text-align:center;
+}
+
+.grupo-practica-header{
+  background:#fff;
+  padding:12px 14px;
+  border-radius:14px;
+  box-shadow:0 4px 12px rgba(0,0,0,.05);
+}
+
+.grid-herramientas{
+  gap:12px !important;
+}
+
+.herramienta-card,
+.tarjeta-herramienta{
+  border-radius:20px !important;
+  box-shadow:0 8px 25px rgba(0,0,0,.08) !important;
+}
+
+.herramienta-card img,
+.tarjeta-herramienta img{
+  height:110px !important;
+  object-fit:contain;
+}
+
+.btn-mas,
+.btn-menos{
+  width:42px !important;
+  height:42px !important;
+  border-radius:50% !important;
+}
+
+.mensaje-epp{
+  background:linear-gradient(180deg,#fff9d8,#fff4b8) !important;
+  border-radius:24px !important;
+}
+
+.mensaje-final{
+  border-radius:24px !important;
+}
+
+.numero-solicitud{
+  font-size:32px !important;
+  font-weight:800 !important;
+  color:#2e7d32 !important;
+}
