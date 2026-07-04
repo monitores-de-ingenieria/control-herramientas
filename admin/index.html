@@ -355,7 +355,7 @@
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
   }
 
-  .nav-texto { position: relative; z-index: 1; overflow: hidden; transition: opacity .2s, width .2s; }
+  .nav-texto { position: relative; z-index: 1; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: opacity .2s, width .2s; }
 
   .nav-badge {
     margin-left: auto;
@@ -504,29 +504,7 @@
     border: 1px solid var(--borde);
     border-radius: var(--radio-md);
     overflow: hidden;
-    box-shadow: var(--sombra-sm);
-    position: relative;
-    transition: transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s;
   }
-  .dash-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-    background: var(--gradiente-verde);
-  }
-  .dash-panel:hover { transform: translateY(-3px); box-shadow: var(--sombra-md); }
-
-  .dash-fila-premium {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; margin-bottom: 6px;
-    background: var(--card2);
-    border-left: 3px solid var(--borde);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .dash-fila-premium:hover { transform: translateX(3px); box-shadow: var(--sombra-sm); }
-  .dash-fila-premium:last-child { margin-bottom: 0; }
 
   .dash-panel-header {
     padding: 10px 14px;
@@ -1117,76 +1095,48 @@
           </div>
         </div>
 
-        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
-          <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente">
+        <div class="kpi-grid" style="grid-template-columns:repeat(3,1fr)">
+          <div class="kpi-card amarillo" data-vista="solicitudes" data-estado="pendiente">
             <div class="kpi-icono">📋</div>
-            <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes">—</div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
+            <div>
+              <div class="kpi-label">Pendientes hoy</div>
+              <div class="kpi-numero" id="res-pendientes">—</div>
+              <div class="kpi-sub">sin entregar</div>
+            </div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada">
             <div class="kpi-icono">✅</div>
-            <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas">—</div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
+            <div>
+              <div class="kpi-label">Entregadas hoy</div>
+              <div class="kpi-numero" id="res-prestadas">—</div>
+              <div class="kpi-sub">en el taller</div>
+            </div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="retornada">
             <div class="kpi-icono">↩</div>
-            <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy">—</div><div class="kpi-sub" id="res-hoy-trend"></div></div>
-          </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada">
-            <div class="kpi-icono">🧰</div>
-            <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera">—</div></div>
-          </div>
-          <div class="kpi-card" data-vista="prestamos-prof">
-            <div class="kpi-icono">👨‍🏫</div>
-            <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos">—</div></div>
-          </div>
-          <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()">
-            <div class="kpi-icono">⚠️</div>
-            <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias">—</div></div>
+            <div>
+              <div class="kpi-label">Retornadas hoy</div>
+              <div class="kpi-numero" id="res-hoy">—</div>
+              <div class="kpi-sub">devueltas</div>
+            </div>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🍩 Solicitudes de hoy</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un estado</span></div>
-            <div id="grafico-estado-hoy" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🏷️ Categorías más usadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para filtrar</span></div>
-            <div id="grafico-categorias" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🎯 Tasa de incidencias</h3><span style="font-size:10px;color:var(--texto-dim)">clic para ver</span></div>
-            <div id="grafico-gauge-incidencias" style="padding:14px;cursor:pointer" onclick="verIncidencias()"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1.4fr));gap:12px;margin-bottom:12px">
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>📈 Tendencia — últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un día</span></div>
-            <div id="grafico-semana" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para abrir</span></div>
+            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
             <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px">
-
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>⚠️ Stock bajo</h3><span style="font-size:10px;color:var(--texto-dim)">clic para gestionar</span></div>
-            <div id="dash-stock-bajo" style="padding:12px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>🕐 Solicitudes por hora</h3><span style="font-size:10px;color:var(--texto-dim)">histórico 8h–22h</span></div>
+            <div id="grafico-horas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🕓 Actividad reciente</h3><span style="font-size:10px;color:var(--texto-dim)">últimos movimientos</span></div>
-            <div id="dash-actividad" style="padding:12px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>📅 Últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">solicitudes por día</span></div>
+            <div id="grafico-semana" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
         </div>
@@ -2139,7 +2089,7 @@ function navegarVista(vista) {
   ocultarPanelIncidenciasProf();
 }
 
-document.querySelectorAll(".kpi-card[data-vista], #dash-kpis .her-stat-pill[data-vista]").forEach(card => {
+document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
   card.addEventListener("click", () => {
     navegarVista(card.dataset.vista);
     const estado = card.dataset.estado;
@@ -2190,6 +2140,17 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
     ocultarPanelIncidenciasProf();
+    // Si se entra a Solicitudes por el menú normal (no por "Ver incidencias"),
+    // el filtro no debe quedar pegado en "incidencia" de una visita anterior.
+    if (vista === "solicitudes") {
+      const filtroEstado = document.getElementById("filtro-estado");
+      if (filtroEstado && filtroEstado.value === "incidencia") {
+        filtroEstado.value = "";
+        filtroEstado.dispatchEvent(new Event("change"));
+      }
+      document.querySelectorAll(".tab-btn").forEach(t => t.classList.remove("activo"));
+      document.querySelector(".tab-btn[data-tab-estado='']")?.classList.add("activo");
+    }
   });
 });
 
@@ -2220,21 +2181,20 @@ function renderGraficoBarras(contenedorId, datos, color) {
   if (!datos.length) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const max = datos[0].valor;
   el.innerHTML = datos.slice(0, 8).map(d => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer" onclick="dashAbrirHerramienta('${d.etiqueta.replace(/'/g,"\\'")}')">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
       <div style="width:120px;font-size:11px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${d.etiqueta}">${d.etiqueta}</div>
       ${barraH(d.valor, max, color)}
       <div style="width:26px;text-align:right;font-size:11px;font-weight:800;color:${color}">${d.valor}</div>
     </div>`).join("");
 }
 
-function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
+function renderGraficoDonut(contenedorId, datos) {
   const el = document.getElementById(contenedorId);
   if (!el) return;
   const total = datos.reduce((s,d) => s + d.valor, 0);
   if (!total) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const r = 42, cx = 50, cy = 50, circ = 2 * Math.PI * r;
   let offset = 0;
-  const click = e => onClickPrefix ? `onclick="${onClickPrefix}('${e.replace(/'/g,"\\'")}')" style="cursor:pointer"` : "";
   const segmentos = datos.filter(d => d.valor > 0).map(d => {
     const frac = d.valor / total;
     const largo = frac * circ;
@@ -2242,7 +2202,7 @@ function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
     const dashoffset = -offset;
     offset += largo;
     return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.color}" stroke-width="14"
-      stroke-dasharray="${dash}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${cx} ${cy})" ${click(d.etiqueta)}></circle>`;
+      stroke-dasharray="${dash}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${cx} ${cy})"></circle>`;
   }).join("");
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:16px">
@@ -2253,7 +2213,7 @@ function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
       </svg>
       <div style="flex:1;display:flex;flex-direction:column;gap:6px">
         ${datos.map(d => `
-          <div style="display:flex;align-items:center;gap:7px;font-size:11px" ${click(d.etiqueta)}>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px">
             <span style="width:9px;height:9px;border-radius:50%;background:${d.color};flex-shrink:0"></span>
             <span style="flex:1;color:var(--texto)">${d.etiqueta}</span>
             <span style="font-weight:800;color:${d.color}">${d.valor}</span>
@@ -2262,55 +2222,42 @@ function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
     </div>`;
 }
 
-function renderGraficoArea(contenedorId, datos) {
-  const el = document.getElementById(contenedorId);
+function renderGraficoSemana(datos) {
+  const el = document.getElementById("grafico-semana");
   if (!el) return;
   if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const max = Math.max(...datos.map(d => d.valor), 1);
-  const w = 300, h = 90, pad = 6;
-  const stepX = (w - pad*2) / (datos.length - 1);
-  const puntos = datos.map((d,i) => {
-    const x = pad + i*stepX;
-    const y = pad + (1 - d.valor/max) * (h - pad*2);
-    return { x, y, d };
-  });
-  const linea = puntos.map((p,i) => `${i===0?"M":"L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
-  const area  = `${linea} L${puntos[puntos.length-1].x.toFixed(1)},${h-pad} L${puntos[0].x.toFixed(1)},${h-pad} Z`;
-  el.innerHTML = `
-    <svg viewBox="0 0 ${w} ${h+16}" style="width:100%;height:${h+16}px">
-      <defs>
-        <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stop-color="var(--verde)" stop-opacity="0.35"/>
-          <stop offset="100%" stop-color="var(--verde)" stop-opacity="0"/>
-        </linearGradient>
-      </defs>
-      <path d="${area}" fill="url(#gradArea)"></path>
-      <path d="${linea}" fill="none" stroke="var(--verde)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></path>
-      ${puntos.map(p => `<g style="cursor:pointer" onclick="dashIrDia('${p.d.fechaIso||""}')">
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="transparent"></circle>
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.d.esHoy?3.6:2.4}" fill="${p.d.esHoy?"var(--verde)":"var(--card)"}" stroke="var(--verde)" stroke-width="1.6"></circle>
-        ${p.d.valor>0?`<text x="${p.x.toFixed(1)}" y="${(p.y-6).toFixed(1)}" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--texto)">${p.d.valor}</text>`:""}
-        <text x="${p.x.toFixed(1)}" y="${h+11}" text-anchor="middle" font-size="7" font-weight="${p.d.esHoy?800:400}" fill="${p.d.esHoy?"var(--verde)":"var(--texto-dim)"}">${p.d.etiqueta}</text></g>`).join("")}
-    </svg>`;
+  const altMax = 56;
+  el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:6px;height:${altMax+28}px;padding-bottom:22px;position:relative">
+    ${datos.map(d => {
+      const h = Math.round((d.valor / max) * altMax);
+      const col = d.esHoy ? "var(--verde)" : (d.valor > 0 ? "var(--azul)" : "var(--borde)");
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
+        <div style="font-size:10px;color:${col};font-weight:800;height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
+        <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:4px 4px 0 0"></div>
+        <div style="position:absolute;bottom:-18px;font-size:9px;font-weight:${d.esHoy?800:400};color:${d.esHoy?"var(--verde)":"var(--texto-dim)"}">${d.etiqueta}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
 }
 
-function renderGraficoGauge(contenedorId, pct, subtexto) {
-  const el = document.getElementById(contenedorId);
+function renderGraficoHoras(datos) {
+  const el = document.getElementById("grafico-horas");
   if (!el) return;
-  const r = 46, cx = 60, cy = 60;
-  const circ = Math.PI * r; // semicírculo
-  const frac = Math.min(Math.max(pct,0),100) / 100;
-  const color = pct >= 25 ? "var(--rojo)" : (pct >= 10 ? "var(--amarillo)" : "var(--verde)");
-  el.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <svg viewBox="0 0 120 68" style="width:170px">
-        <path d="M14,60 A46,46 0 0 1 106,60" fill="none" stroke="var(--card2)" stroke-width="12" stroke-linecap="round"></path>
-        <path d="M14,60 A46,46 0 0 1 106,60" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round"
-          stroke-dasharray="${(frac*circ).toFixed(1)} ${circ.toFixed(1)}"></path>
-        <text x="60" y="52" text-anchor="middle" font-size="22" font-weight="800" fill="var(--texto)">${pct}%</text>
-      </svg>
-      <div style="font-size:10.5px;color:var(--texto-dim);text-align:center">${subtexto}</div>
-    </div>`;
+  if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const max = Math.max(...datos.map(d => d.valor), 1);
+  const altMax = 56;
+  el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:2px;height:${altMax+28}px;padding-bottom:22px;position:relative">
+    ${datos.map(d => {
+      const h = Math.round((d.valor / max) * altMax);
+      const col = d.valor > 0 ? "var(--verde)" : "var(--borde)";
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
+        <div style="font-size:9px;color:var(--verde);font-weight:800;height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
+        <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:3px 3px 0 0"></div>
+        <div style="position:absolute;bottom:-18px;font-size:8px;color:var(--texto-dim)">${d.etiqueta}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
 }
 
 // Muestra un badge en el menú lateral solo si hay algo que marcar (oculto en 0).
@@ -2321,36 +2268,6 @@ function actualizarBadgeLateral(id, count) {
   el.style.display = count > 0 ? "" : "none";
 }
 
-// ── Acciones al hacer clic en los gráficos del Dashboard ──
-window.dashIrEstado = function(etiqueta) {
-  const mapa = { "Pendientes":"pendiente", "Entregadas":"entregada", "Retornadas":"retornada", "Canceladas":"cancelada" };
-  navegarVista("solicitudes");
-  const estado = mapa[etiqueta];
-  setTimeout(() => document.querySelector(`.tab-btn[data-tab-estado="${estado||""}"]`)?.click(), 50);
-};
-
-window.dashIrCategoria = function(cat) {
-  navegarVista("herramientas-cfg");
-  setTimeout(() => document.querySelector(`.her-chip[data-cat="${cat === "Sin categoría" ? "" : cat}"]`)?.click(), 80);
-};
-
-window.dashAbrirHerramienta = function(nombre) {
-  navegarVista("herramientas-cfg");
-  setTimeout(() => {
-    const h = (_herListaActual || []).find(x => x.nombre === nombre);
-    if (h) abrirModalHerramienta(h.id, h.nombre, h.cantidadDisponible, h.local||false, h.categoria||"");
-  }, 80);
-};
-
-window.dashIrDia = function(fechaIso) {
-  if (!fechaIso) { navegarVista("historial"); return; }
-  navegarVista("historial");
-  setTimeout(() => {
-    const inp = document.getElementById("hist-fecha");
-    if (inp) { inp.value = fechaIso; histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); }
-  }, 80);
-};
-
 async function cargarDashboard() {
   try {
     const [snapSol, snapProf] = await Promise.all([
@@ -2360,61 +2277,23 @@ async function cargarDashboard() {
     const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
     const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
-    const fechaDe = (ts) => ts?.toDate ? ts.toDate() : new Date(ts||0);
-    const esMismoDiaQue = (ts, ref) => {
-      const d = fechaDe(ts);
-      return d.getFullYear()===ref.getFullYear() && d.getMonth()===ref.getMonth() && d.getDate()===ref.getDate();
-    };
-    const ayerRef = new Date(); ayerRef.setDate(ayerRef.getDate()-1); ayerRef.setHours(0,0,0,0);
-
     const deHoy      = todas.filter(s => esMismodia(s.creadoEn));
-    const deAyer      = todas.filter(s => esMismoDiaQue(s.creadoEn, ayerRef));
-    const prestProfHoy = prestProf.filter(p => esMismodia(p.creadoEn));
     const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
     const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
     const retHoy     = deHoy.filter(s => s.estado === "retornada").length;
-    const cancHoy    = deHoy.filter(s => s.estado === "cancelada").length;
-    const pendAyer   = deAyer.filter(s => s.estado === "pendiente").length;
-    const entregAyer = deAyer.filter(s => s.estado === "entregada").length;
-    const retAyer    = deAyer.filter(s => s.estado === "retornada").length;
     const incidencias = todas.filter(s => s.tieneIncidencias && !s.incidenciaVista).length;
     const incidenciasProf = prestProf.filter(p => p.tieneIncidencias && !p.incidenciaVista).length;
-    const profActivosHoy = new Set(prestProfHoy.filter(p => p.estado === "activo").map(p => p.profesor)).size;
-    const herramientasAfuera = deHoy.filter(s => s.estado === "entregada")
-      .reduce((sum, s) => sum + (s.herramientas||[]).reduce((a,h) => a + (h.cantidad||1), 0), 0);
+    const profActivos = prestProf.filter(p => p.estado === "activo").length;
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("res-pendientes", pendHoy);
     set("res-prestadas",  entregHoy);
     set("res-hoy",        retHoy);
-    set("res-afuera",     herramientasAfuera);
-    set("res-prof-activos", profActivosHoy);
     set("badge-pendientes", pendHoy);
     set("dash-incidencias",  incidencias);
-    set("dash-prof-activos", profActivosHoy);
+    set("dash-prof-activos", profActivos);
     set("res-total", deHoy.length);
     actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
-
-    // Flechas de tendencia vs. ayer
-    const trend = (id, hoy, ayer) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (hoy === ayer) { el.innerHTML = `<span style="color:var(--texto-dim)">= igual que ayer</span>`; return; }
-      const sube = hoy > ayer;
-      const dif = Math.abs(hoy - ayer);
-      el.innerHTML = `<span style="color:${sube?"var(--verde)":"var(--rojo)"}">${sube?"▲":"▼"} ${dif} vs. ayer (${ayer})</span>`;
-    };
-    trend("res-pendientes-trend", pendHoy, pendAyer);
-    trend("res-prestadas-trend",  entregHoy, entregAyer);
-    trend("res-hoy-trend",        retHoy, retAyer);
-
-    // Donut — solicitudes de hoy por estado
-    renderGraficoDonut("grafico-estado-hoy", [
-      { etiqueta: "Pendientes", valor: pendHoy, color: "#d29922" },
-      { etiqueta: "Entregadas", valor: entregHoy, color: "#3fb950" },
-      { etiqueta: "Retornadas", valor: retHoy, color: "#388bfd" },
-      { etiqueta: "Canceladas", valor: cancHoy, color: "#f85149" }
-    ], "dashIrEstado");
 
     const conteoHer = {};
     todas.forEach(s => (s.herramientas || []).forEach(h => {
@@ -2424,25 +2303,12 @@ async function cargarDashboard() {
       Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
       "var(--verde)");
 
-    // Donut — categorías más usadas (histórico), usando el catálogo de herramientas
-    const mapaCategoria = {};
-    HERRAMIENTAS_LISTA.forEach(h => mapaCategoria[h.nombre.toLowerCase()] = h.categoria || "Sin categoría");
-    (_herListaActual || []).forEach(h => mapaCategoria[h.nombre.toLowerCase()] = h.categoria || "Sin categoría");
-    const conteoCat = {};
-    Object.entries(conteoHer).forEach(([nombre, valor]) => {
-      const cat = mapaCategoria[nombre.toLowerCase()] || "Sin categoría";
-      conteoCat[cat] = (conteoCat[cat] || 0) + valor;
+    const conteoHora = Array(24).fill(0);
+    todas.forEach(s => {
+      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
+      if (d.getFullYear() > 2000) conteoHora[d.getHours()]++;
     });
-    renderGraficoDonut("grafico-categorias",
-      Object.entries(conteoCat).sort((a,b) => b[1]-a[1]).slice(0,6).map(([cat,valor]) => ({
-        etiqueta: cat, valor, color: (CATEGORIAS_HERRAMIENTA[cat]||{color:"#8b949e"}).color
-      })), "dashIrCategoria");
-
-    // Gauge — % de solicitudes históricas con incidencia
-    const totalHist = todas.length + prestProf.length;
-    const totalIncHist = todas.filter(s=>s.tieneIncidencias).length + prestProf.filter(p=>p.tieneIncidencias).length;
-    const pctInc = totalHist ? Math.round((totalIncHist/totalHist)*100) : 0;
-    renderGraficoGauge("grafico-gauge-incidencias", pctInc, `${totalIncHist} de ${totalHist} solicitudes`);
+    renderGraficoHoras(Array.from({length:15}, (_,i) => ({etiqueta:`${8+i}h`, valor:conteoHora[8+i]||0})));
 
     const dias7 = [];
     const hoyRef = new Date(); hoyRef.setHours(0,0,0,0);
@@ -2452,55 +2318,9 @@ async function cargarDashboard() {
         const fs = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
         return fs.getFullYear() === d.getFullYear() && fs.getMonth() === d.getMonth() && fs.getDate() === d.getDate();
       }).length;
-      dias7.push({ etiqueta: d.toLocaleDateString("es-DO",{weekday:"short"}).slice(0,3), valor: cuenta, esHoy: i === 0, fechaIso: d.toISOString().slice(0,10) });
+      dias7.push({ etiqueta: d.toLocaleDateString("es-DO",{weekday:"short"}).slice(0,3), valor: cuenta, esHoy: i === 0 });
     }
-    renderGraficoArea("grafico-semana", dias7);
-
-    // ── Stock bajo ──
-    const stockEl = document.getElementById("dash-stock-bajo");
-    if (stockEl) {
-      const bajos = (_herListaActual || []).filter(h => (Number.isFinite(h.cantidadDisponible)?h.cantidadDisponible:0) <= UMBRAL_STOCK_BAJO);
-      stockEl.innerHTML = bajos.length ? bajos.slice(0,6).map(h => {
-        const meta = CATEGORIAS_HERRAMIENTA[h.categoria] || { icono:"🔧", color:"#8b949e" };
-        const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-        const miniatura = fotoUrl
-          ? `<img src="${fotoUrl}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-             <span style="display:none;width:34px;height:34px;border-radius:8px;background:${meta.color}22;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${meta.icono}</span>`
-          : `<span style="display:flex;width:34px;height:34px;border-radius:8px;background:${meta.color}22;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${meta.icono}</span>`;
-        return `
-        <div class="dash-fila-premium" style="border-left-color:${meta.color}" onclick="dashAbrirHerramienta('${h.nombre.replace(/'/g,"\\'")}')">
-          ${miniatura}
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12.5px;font-weight:600;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.nombre}</div>
-            <div style="font-size:9.5px;color:var(--texto-dim)">${h.categoria || "Sin categoría"}</div>
-          </div>
-          <span style="font-size:11px;font-weight:800;color:var(--amarillo);background:rgba(210,153,34,.12);padding:2px 8px;border-radius:20px;white-space:nowrap">${h.cantidadDisponible} disp.</span>
-        </div>`;
-      }).join("") : '<div class="vacio" style="padding:10px"><p>Sin alertas de stock. 👍</p></div>';
-    }
-
-    // ── Actividad reciente (últimos movimientos) ──
-    const actEl = document.getElementById("dash-actividad");
-    if (actEl) {
-      const eventos = [];
-      todas.forEach(s => {
-        const nombre = `${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante";
-        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:"✅", color:"#3fb950" });
-        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:"↩", color:"#388bfd" });
-        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:"📋", color:"#d29922" });
-      });
-      prestProf.forEach(p => {
-        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${p.profesor||"Profesor"} retornó herramientas`, icono:"↩", color:"#388bfd" });
-        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${p.profesor||"Profesor"} tomó herramientas`, icono:"👨‍🏫", color:"#a371f7" });
-      });
-      eventos.sort((a,b) => b.ts - a.ts);
-      actEl.innerHTML = eventos.length ? eventos.slice(0,6).map(e => `
-        <div class="dash-fila-premium" style="border-left-color:${e.color};cursor:default">
-          <span style="display:flex;width:30px;height:30px;border-radius:50%;background:${e.color}22;color:${e.color};align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${e.icono}</span>
-          <span style="flex:1;font-size:12px;color:var(--texto)">${e.texto}</span>
-          <span style="color:var(--texto-dim);white-space:nowrap;font-size:10.5px">${e.ts.toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</span>
-        </div>`).join("") : '<div class="vacio" style="padding:10px"><p>Sin actividad aún.</p></div>';
-    }
+    renderGraficoSemana(dias7);
 
   } catch(e) { console.error(e); }
 }
@@ -4928,7 +4748,7 @@ document.getElementById("modal-hist")?.addEventListener("click", e => {
   // Registro del service worker: permite instalar el panel como app de escritorio.
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("admin-sw.js").catch((err) => {
+      navigator.serviceWorker.register("sw.js").catch((err) => {
         console.warn("No se pudo registrar el service worker del admin:", err);
       });
     });
