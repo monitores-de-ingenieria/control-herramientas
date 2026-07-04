@@ -107,6 +107,7 @@
             <div class="seccion-header">
               <span class="seccion-header-icono">👤</span>
               <h2>Información personal</h2>
+              <button type="button" id="btn-olvidar-datos" class="btn-olvidar-datos" title="Borrar mis datos guardados en este dispositivo">🗑 Olvidar mis datos</button>
             </div>
             <div class="campos-grid">
 
@@ -142,12 +143,8 @@
             <div class="select-wrap con-icono">
               <span class="icono-input">📅</span>
               <select id="ciclo" required>
-                <option value="2-2027">2-2027</option>
-                <option value="1-2027">1-2027</option>
-                <option value="2-2026" selected>2-2026</option>
-                <option value="1-2026">1-2026</option>
-                <option value="2-2025">2-2025</option>
-                <option value="1-2025">1-2025</option>
+                <option value="" data-fijo>Elige un ciclo</option>
+                <option value="__nuevo__" data-fijo>+ Agregar ciclo nuevo…</option>
               </select>
             </div>
           </div>

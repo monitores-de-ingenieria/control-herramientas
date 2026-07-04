@@ -1,6 +1,6 @@
 // js/app.js
 import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc } from "./firebase.js";
-import { cargarProfesores, cargarLaboratorios, cargarHerramientas } from "./inventario.js";
+import { cargarProfesores, cargarLaboratorios, cargarHerramientas, cargarCiclos, agregarCicloNuevo } from "./inventario.js";
 
 // ---- Pantallas ----
 const pantallasBienvenida  = document.getElementById("pantalla-bienvenida");
@@ -29,6 +29,7 @@ const MAX_POR_ESTUDIANTE = 1; // tope de unidades por herramienta, por solicitud
 const form              = document.getElementById("form-solicitud");
 const selectProfesor    = document.getElementById("profesor");
 const selectLaboratorio = document.getElementById("laboratorio");
+const selectCiclo       = document.getElementById("ciclo");
 const selectTipo        = document.getElementById("tipo-solicitud");
 const gridHerramientas  = document.getElementById("grid-herramientas");
 const btnEnviar         = document.getElementById("btn-enviar");
@@ -36,6 +37,7 @@ const btnContinuar      = document.getElementById("btn-continuar");
 const btnNuevaSolicitud = document.getElementById("btn-nueva-solicitud");
 const textoNumeroSol    = document.getElementById("texto-numero-solicitud");
 const textoDespedida    = document.getElementById("texto-despedida");
+const btnOlvidarDatos   = document.getElementById("btn-olvidar-datos");
 
 // ---- Elementos de "Agregar herramientas adicionales" ----
 const formularioCompleto = document.getElementById("formulario-completo");
@@ -64,6 +66,71 @@ btnQuitarFoto.addEventListener("click", () => {
   fotoPreview.src = "";
   inputCamara.value = "";
   fotoPreviewWrap.classList.add("oculto");
+});
+
+// ---- Recordar datos personales en este dispositivo (localStorage) ----
+// Así el estudiante no tiene que volver a escribir todo cada vez que solicita.
+const CLAVE_DATOS_GUARDADOS = "controlHerramientas_datosPersonales";
+const CAMPOS_TEXTO_GUARDADOS = ["nombre", "apellido", "matricula", "telefono"];
+
+function obtenerDatosGuardados() {
+  try {
+    return JSON.parse(localStorage.getItem(CLAVE_DATOS_GUARDADOS) || "null");
+  } catch {
+    return null;
+  }
+}
+
+function guardarDatosPersonales() {
+  const datos = {};
+  CAMPOS_TEXTO_GUARDADOS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el) datos[id] = el.value;
+  });
+  datos.profesor    = selectProfesor.value;
+  datos.laboratorio = selectLaboratorio.value;
+  datos.ciclo       = selectCiclo.value;
+  try { localStorage.setItem(CLAVE_DATOS_GUARDADOS, JSON.stringify(datos)); } catch {}
+}
+
+// Precarga los campos de texto (los <select> se precargan aparte,
+// una vez que sus opciones ya fueron cargadas desde Firestore).
+function precargarCamposTexto() {
+  const datos = obtenerDatosGuardados();
+  if (!datos) return;
+  CAMPOS_TEXTO_GUARDADOS.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && datos[id]) el.value = datos[id];
+  });
+}
+
+function precargarSelects() {
+  const datos = obtenerDatosGuardados();
+  if (!datos) return;
+  if (datos.profesor && [...selectProfesor.options].some(o => o.value === datos.profesor)) {
+    selectProfesor.value = datos.profesor;
+  }
+  if (datos.laboratorio && [...selectLaboratorio.options].some(o => o.value === datos.laboratorio)) {
+    selectLaboratorio.value = datos.laboratorio;
+  }
+}
+
+// Guardar en vivo mientras el estudiante escribe/selecciona.
+CAMPOS_TEXTO_GUARDADOS.forEach(id => {
+  document.getElementById(id)?.addEventListener("input", guardarDatosPersonales);
+});
+selectProfesor.addEventListener("change", guardarDatosPersonales);
+selectLaboratorio.addEventListener("change", guardarDatosPersonales);
+selectCiclo.addEventListener("change", guardarDatosPersonales);
+
+btnOlvidarDatos?.addEventListener("click", () => {
+  try { localStorage.removeItem(CLAVE_DATOS_GUARDADOS); } catch {}
+  precargarCamposTexto(); // limpia visualmente (no hay nada que precargar)
+  document.getElementById("nombre").value = "";
+  document.getElementById("apellido").value = "";
+  document.getElementById("matricula").value = "";
+  document.getElementById("telefono").value = "";
+  mostrarError("Se olvidaron tus datos guardados en este dispositivo.");
 });
 
 // ---- Mostrar/ocultar secciones según tipo ----
@@ -290,18 +357,65 @@ gridHerramientas.addEventListener("click", (e) => {
 });
 
 async function inicializar() {
-  const [profesores, laboratorios, herramientas] = await Promise.all([
+  precargarCamposTexto();
+
+  const [profesores, laboratorios, herramientas, ciclos] = await Promise.all([
     cargarProfesores(),
     cargarLaboratorios(),
-    cargarHerramientas()
+    cargarHerramientas(),
+    cargarCiclos()
   ]);
 
   llenarSelect(selectProfesor, profesores, "nombre");
   llenarSelect(selectLaboratorio, laboratorios, "nombre");
+  llenarCiclos(ciclos);
+  precargarSelects();
 
   herramientasDisponibles = herramientas;
   renderizarHerramientas(herramientas);
 }
+
+// Inserta los ciclos (Firestore + respaldo) antes de la opción fija
+// "+ Agregar ciclo nuevo…", y preselecciona el guardado o el más reciente.
+function llenarCiclos(ciclos) {
+  const opcionNueva = selectCiclo.querySelector('option[value="__nuevo__"]');
+  ciclos.forEach(c => {
+    const opt = document.createElement("option");
+    opt.value = c.nombre;
+    opt.textContent = c.nombre;
+    selectCiclo.insertBefore(opt, opcionNueva);
+  });
+
+  const datos = obtenerDatosGuardados();
+  if (datos?.ciclo && [...selectCiclo.options].some(o => o.value === datos.ciclo)) {
+    selectCiclo.value = datos.ciclo;
+  } else if (ciclos[0]) {
+    selectCiclo.value = ciclos[0].nombre;
+  }
+}
+
+// Permite escribir un ciclo que no está en la lista (ej. cuando empiece
+// 2027-2). Queda guardado en Firestore para que aparezca para todos.
+selectCiclo.addEventListener("change", async () => {
+  if (selectCiclo.value !== "__nuevo__") return;
+
+  const escrito = prompt("Escribe el nuevo ciclo (ejemplo: 1-2027):");
+  const limpio = (escrito || "").trim();
+  if (!limpio) { selectCiclo.value = ""; return; }
+
+  const yaExiste = [...selectCiclo.options].find(o => o.value.toLowerCase() === limpio.toLowerCase());
+  if (yaExiste) { selectCiclo.value = yaExiste.value; guardarDatosPersonales(); return; }
+
+  const nuevo = await agregarCicloNuevo(limpio);
+  if (!nuevo) { selectCiclo.value = ""; return; }
+
+  const opt = document.createElement("option");
+  opt.value = nuevo.nombre;
+  opt.textContent = nuevo.nombre;
+  selectCiclo.insertBefore(opt, selectCiclo.querySelector('option[value="__nuevo__"]'));
+  selectCiclo.value = nuevo.nombre;
+  guardarDatosPersonales();
+});
 
 function validarFormulario() {
   if (selectTipo.value === "adicional") {
@@ -640,6 +754,7 @@ btnEnviar.addEventListener("click", async (e) => {
   };
 
   mostrarPantalla(pantallaEpp);
+  guardarDatosPersonales();
   btnEnviar.disabled = false;
   btnEnviar.textContent = "Enviar Solicitud";
 });
@@ -675,6 +790,12 @@ btnNuevaSolicitud.addEventListener("click", () => {
   fotoPreviewWrap.classList.add("oculto");
   selectTipo.value = "solicitando";
   toggleSecciones();
+  precargarCamposTexto();  // form.reset() borró los inputs; los recuperamos
+  precargarSelects();      // ídem para profesor/laboratorio
+  const datos = obtenerDatosGuardados();
+  if (datos?.ciclo && [...selectCiclo.options].some(o => o.value === datos.ciclo)) {
+    selectCiclo.value = datos.ciclo;
+  }
   mostrarPantalla(pantallasBienvenida);
 });
 

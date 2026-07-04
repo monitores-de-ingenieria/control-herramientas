@@ -1,5 +1,5 @@
 // js/inventario.js
-import { db, collection, getDocs } from "./firebase.js";
+import { db, collection, getDocs, addDoc } from "./firebase.js";
 
 const PROFESORES_RESPALDO = [
   "Daniel Camejo",
@@ -17,6 +17,21 @@ const LABORATORIOS_RESPALDO = [
   "Taller máquinas y herramientas I",
   "Taller máquinas y herramientas II"
 ];
+
+// Respaldo inicial de ciclos. A partir de aquí la lista se alimenta sola:
+// cada ciclo nuevo que alguien agregue desde el formulario queda guardado
+// en Firestore (colección "ciclos") y aparece para todos después.
+const CICLOS_RESPALDO = ["2-2027", "1-2027", "2-2026", "1-2026", "2-2025", "1-2025"];
+
+// Ordena "N-AAAA" del ciclo más reciente al más antiguo.
+function ordenarCiclos(lista) {
+  return [...lista].sort((a, b) => {
+    const [na, ya] = String(a.nombre || "").split("-").map(Number);
+    const [nb, yb] = String(b.nombre || "").split("-").map(Number);
+    if ((yb || 0) !== (ya || 0)) return (yb || 0) - (ya || 0);
+    return (nb || 0) - (na || 0);
+  });
+}
 
 // Lista base compartida con el panel admin — ver js/herramientas-respaldo.js.
 // Aquí se le agrega "imagen" con la ruta relativa a ESTE archivo (a nivel
@@ -55,6 +70,25 @@ export async function cargarProfesores() {
 
 export async function cargarLaboratorios() {
   return obtenerColeccionOTexto("laboratorios", LABORATORIOS_RESPALDO, "nombre");
+}
+
+export async function cargarCiclos() {
+  const lista = await obtenerColeccionOTexto("ciclos", CICLOS_RESPALDO, "nombre");
+  return ordenarCiclos(lista);
+}
+
+// Guarda un ciclo escrito a mano por el estudiante para que quede
+// disponible para todos la próxima vez (ej. cuando empiece 2027).
+export async function agregarCicloNuevo(nombreCiclo) {
+  const limpio = (nombreCiclo || "").trim();
+  if (!limpio) return null;
+  try {
+    const ref = await addDoc(collection(db, "ciclos"), { nombre: limpio });
+    return { id: ref.id, nombre: limpio };
+  } catch (err) {
+    console.warn('No se pudo guardar el ciclo nuevo en Firestore, se usará solo en este dispositivo.', err);
+    return { id: `local-${Date.now()}`, nombre: limpio };
+  }
 }
 
 // El panel admin guarda fotoUrl como ruta relativa A SU PROPIA carpeta
