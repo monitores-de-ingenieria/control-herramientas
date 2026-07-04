@@ -355,7 +355,7 @@
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
   }
 
-  .nav-texto { position: relative; z-index: 1; overflow: hidden; transition: opacity .2s, width .2s; }
+  .nav-texto { position: relative; z-index: 1; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: opacity .2s, width .2s; }
 
   .nav-badge {
     margin-left: auto;
@@ -2190,6 +2190,14 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
     ocultarPanelIncidenciasProf();
+    // El filtro "incidencia" (activado por el nav de Incidencias) se quedaba
+    // pegado al navegar a otra vista; se resetea a "Todos" siempre que se
+    // cambie de vista por acá.
+    const filtroEstado = document.getElementById("filtro-estado");
+    if (filtroEstado && filtroEstado.value === "incidencia") {
+      filtroEstado.value = "";
+      filtroEstado.dispatchEvent(new Event("change"));
+    }
   });
 });
 
