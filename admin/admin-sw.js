@@ -1,7 +1,7 @@
 // admin/sw.js — cachea el shell del panel admin para que instale y abra
 // como app de escritorio. Firebase/Firestore siempre va a la red (datos en vivo).
 
-const CACHE_NAME = "admin-herramientas-v1";
+const CACHE_NAME = "admin-herramientas-v2";
 
 const ARCHIVOS_SHELL = [
   "./",
