@@ -355,7 +355,7 @@
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
   }
 
-  .nav-texto { position: relative; z-index: 1; flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: opacity .2s, width .2s; }
+  .nav-texto { position: relative; z-index: 1; overflow: hidden; transition: opacity .2s, width .2s; }
 
   .nav-badge {
     margin-left: auto;
@@ -1027,6 +1027,9 @@
   .usr-chip-sec { background:var(--card2); padding:2px 8px; border-radius:20px; font-size:10px; color:var(--texto-dim); }
   .usr-acciones { display:flex; gap:6px; flex-shrink:0; }
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -1096,6 +1099,7 @@
       <div class="nav-grupo">Configuración</div>
       <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
+      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
 
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
@@ -1325,7 +1329,10 @@
             <h2>🧰 Herramientas</h2>
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
-          <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px">📦 Entrada de stock</button>
+            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
+          </div>
         </div>
 
         <div class="her-stats-strip" id="her-stats-strip"></div>
@@ -1347,8 +1354,14 @@
 
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
-          <h2>📊 Historial de Movimientos</h2>
-          <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
+          <div>
+            <h2>📊 Historial de Movimientos</h2>
+            <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px">📊 Excel</button>
+            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px">📄 PDF</button>
+          </div>
         </div>
 
         <!-- Filtros -->
@@ -1438,6 +1451,35 @@
           <div class="usr-resumen" id="usr-resumen"></div>
           <div id="usr-cfg-wrap" class="usr-lista">
             <div class="cargando"><div class="spinner"></div>Cargando usuarios...</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="vista" id="vista-auditoria-cfg">
+        <div class="pagina-titulo">
+          <div><h2>📜 Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px">📊 Excel</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px">📄 PDF</button>
+          </div>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Registro de cambios</h3>
+            <div class="filtros">
+              <select id="audit-filtro-tipo" style="padding:7px 10px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
+                <option value="">Todos los tipos</option>
+                <option value="herramienta">🔧 Herramientas</option>
+                <option value="profesor">👤 Profesores</option>
+                <option value="usuario">🔐 Usuarios</option>
+                <option value="prestamo">📋 Préstamos</option>
+                <option value="stock">📦 Entradas de stock</option>
+              </select>
+              <input type="text" id="audit-buscar" placeholder="Buscar...">
+            </div>
+          </div>
+          <div id="audit-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando auditoría...</div>
           </div>
         </div>
       </div>
@@ -1535,6 +1577,7 @@
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="historial"> Historial</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="profesores-cfg"> Profesores (cfg)</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="auditoria-cfg"> Auditoría</label>
       </div>
     </div>
     <div class="modal-acciones">
@@ -1734,6 +1777,35 @@
 </div>
 
 <div id="toast"></div>
+
+<div class="modal-overlay" id="modal-entrada-stock">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span>📦 Entrada de stock</span>
+      <button class="modal-cerrar" onclick="cerrarModalEntradaStock()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Herramienta / insumo / material</label>
+      <select id="entrada-select-herramienta"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      </select>
+    </div>
+    <div class="modal-campo">
+      <label>Cantidad que entró (ej. llegó un pedido)</label>
+      <input type="number" id="entrada-cantidad" min="1" value="1"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <label>Nota (opcional)</label>
+      <input type="text" id="entrada-nota" placeholder="Ej: pedido a suplidor XYZ"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalEntradaStock()">Cancelar</button>
+      <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()">✅ Registrar entrada</button>
+    </div>
+  </div>
+</div>
 
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
@@ -1941,6 +2013,7 @@ onAuthStateChanged(auth, async user => {
     cargarHerramientasCfg();
     cargarProfesoresCfg();
     cargarUsuariosCfg();
+    cargarAuditoria();
     await aplicarRolUsuario(user);
   } else {
     loginEl.classList.add("visible");
@@ -1953,6 +2026,122 @@ onAuthStateChanged(auth, async user => {
 // ── ROLES Y PERMISOS ──
 const ADMIN_RAIZ = ["utesamonitores@outlook.com"];
 let rolActual = "administrador";
+let usuarioActualNombre = "Administrador";
+
+// Registra una entrada en el historial de auditoría (colección "auditoria").
+// tipo: herramienta | profesor | usuario | prestamo | stock
+// accion: crear | editar | eliminar | entrada | entregar | retornar
+async function registrarAuditoria(tipo, accion, descripcion) {
+  try {
+    await addDoc(collection(db, "auditoria"), {
+      tipo, accion, descripcion,
+      usuario: usuarioActualNombre || "Desconocido",
+      creadoEn: serverTimestamp()
+    });
+  } catch(e) { console.error("Error registrando auditoría:", e); }
+}
+
+let _auditoriaLista = [];
+const AUDIT_ICONOS = { herramienta:"🔧", profesor:"👤", usuario:"🔐", prestamo:"📋", stock:"📦" };
+const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
+
+async function cargarAuditoria() {
+  onSnapshot(query(collection(db, "auditoria"), orderBy("creadoEn", "desc")), snap => {
+    _auditoriaLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    renderAuditoria();
+  });
+}
+
+function renderAuditoria() {
+  const wrap = document.getElementById("audit-wrap");
+  if (!wrap) return;
+  const tipoF = document.getElementById("audit-filtro-tipo")?.value || "";
+  const buscar = (document.getElementById("audit-buscar")?.value || "").toLowerCase();
+  let lista = _auditoriaLista;
+  if (tipoF) lista = lista.filter(a => a.tipo === tipoF);
+  if (buscar) lista = lista.filter(a => (a.descripcion||"").toLowerCase().includes(buscar) || (a.usuario||"").toLowerCase().includes(buscar));
+
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">📜</div><p>No hay movimientos registrados todavía.</p></div>';
+    return;
+  }
+
+  let html = "";
+  let diaAnterior = null;
+  lista.forEach(a => {
+    const fecha = a.creadoEn?.toDate ? a.creadoEn.toDate() : new Date(a.creadoEn || 0);
+    const diaKey = fecha.toLocaleDateString("es-DO", { weekday:"long", day:"2-digit", month:"long", year:"numeric" });
+    if (diaKey !== diaAnterior) {
+      html += `<div style="display:flex;align-items:center;gap:10px;margin:${diaAnterior===null?"0":"16px"} 0 8px">
+        <span style="font-size:11px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">${diaKey}</span>
+        <span style="flex:1;height:1px;background:var(--borde)"></span>
+      </div>`;
+      diaAnterior = diaKey;
+    }
+    const color = AUDIT_ACCION_COLOR[a.accion] || "var(--texto-dim)";
+    const hora = fecha.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
+    html += `
+      <div class="dash-fila-premium" style="border-left-color:${color};cursor:default">
+        <span style="display:flex;width:30px;height:30px;border-radius:50%;background:${color}22;color:${color};align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${AUDIT_ICONOS[a.tipo]||"📌"}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:12.5px;color:var(--texto)">${a.descripcion || "—"}</div>
+          <div style="font-size:10px;color:var(--texto-dim)">👤 ${a.usuario || "Desconocido"}</div>
+        </div>
+        <span style="font-size:10.5px;color:var(--texto-dim);white-space:nowrap">${hora}</span>
+      </div>`;
+  });
+  wrap.innerHTML = html;
+}
+
+document.getElementById("audit-filtro-tipo")?.addEventListener("change", renderAuditoria);
+document.getElementById("audit-buscar")?.addEventListener("input", renderAuditoria);
+
+function _auditoriaFilasExport() {
+  const tipoF = document.getElementById("audit-filtro-tipo")?.value || "";
+  const buscar = (document.getElementById("audit-buscar")?.value || "").toLowerCase();
+  let lista = _auditoriaLista;
+  if (tipoF) lista = lista.filter(a => a.tipo === tipoF);
+  if (buscar) lista = lista.filter(a => (a.descripcion||"").toLowerCase().includes(buscar) || (a.usuario||"").toLowerCase().includes(buscar));
+  return lista.map(a => {
+    const fecha = a.creadoEn?.toDate ? a.creadoEn.toDate() : new Date(a.creadoEn || 0);
+    return {
+      Fecha: fecha.toLocaleDateString("es-DO"),
+      Hora: fecha.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" }),
+      Tipo: a.tipo || "",
+      Acción: a.accion || "",
+      Descripción: a.descripcion || "",
+      Usuario: a.usuario || ""
+    };
+  });
+}
+
+window.exportarAuditoriaExcel = function() {
+  const filas = _auditoriaFilasExport();
+  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
+  const ws = XLSX.utils.json_to_sheet(filas);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Auditoría");
+  XLSX.writeFile(wb, `auditoria_${new Date().toISOString().slice(0,10)}.xlsx`);
+};
+
+window.exportarAuditoriaPDF = function() {
+  const filas = _auditoriaFilasExport();
+  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "landscape" });
+  doc.setFontSize(14);
+  doc.text("Historial de Auditoría — Taller Mecánica Industrial", 14, 14);
+  doc.setFontSize(9);
+  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
+  doc.autoTable({
+    startY: 26,
+    head: [["Fecha","Hora","Tipo","Acción","Descripción","Usuario"]],
+    body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f.Acción, f.Descripción, f.Usuario]),
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [63,185,80] }
+  });
+  doc.save(`auditoria_${new Date().toISOString().slice(0,10)}.pdf`);
+};
 let seccionesPermitidas = null;
 
 async function aplicarRolUsuario(user) {
@@ -2013,6 +2202,7 @@ async function aplicarRolUsuario(user) {
     }
 
     rolActual = datos.rol || "administrador";
+    usuarioActualNombre = datos.nombre || user.email;
     seccionesPermitidas = rolActual === "encargado" ? (datos.secciones || []) : null;
     mostrarSoloSecciones(seccionesPermitidas);
     document.getElementById("topbar-admin-nombre").textContent = datos.nombre || user.email;
@@ -2022,6 +2212,7 @@ async function aplicarRolUsuario(user) {
     mostrarToast("Error al cargar tu perfil: " + (e.code || e.message), "rojo");
     if (ADMIN_RAIZ.includes((user.email || "").toLowerCase())) {
       rolActual = "administrador";
+      usuarioActualNombre = user.email;
       seccionesPermitidas = null;
       mostrarSoloSecciones(null);
       document.getElementById("topbar-admin-nombre").textContent = "Administrador";
@@ -2190,14 +2381,6 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
     ocultarPanelIncidenciasProf();
-    // El filtro "incidencia" (activado por el nav de Incidencias) se quedaba
-    // pegado al navegar a otra vista; se resetea a "Todos" siempre que se
-    // cambie de vista por acá.
-    const filtroEstado = document.getElementById("filtro-estado");
-    if (filtroEstado && filtroEstado.value === "incidencia") {
-      filtroEstado.value = "";
-      filtroEstado.dispatchEvent(new Event("change"));
-    }
   });
 });
 
@@ -3591,6 +3774,7 @@ window.confirmarNuevoPrestamoProf = async function() {
       creadoEn: serverTimestamp()
     });
     mostrarToast("✅ Préstamo registrado correctamente");
+    registrarAuditoria("prestamo", "entregar", `Entregó ${herramientas.length} herramienta(s) al profesor "${profesor}" (${laboratorio})`);
     cerrarModalNuevoProf();
   } catch(e) {
     mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
@@ -3676,6 +3860,7 @@ window.confirmarRetornoProf = async function() {
     }
 
     cerrarModalRetornoProf();
+    registrarAuditoria("prestamo", "retornar", `Registró retorno del préstamo de "${p.profesor}"${incidencias.length ? " con incidencia" : ""}`);
     if (incidencias.length > 0) {
       mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
     } else {
@@ -4126,6 +4311,8 @@ function renderHerramientasCfg(lista) {
     const local = h.local ? ' <span style="font-size:9px;color:var(--texto-dim)">(resp.)</span>' : '';
     const nombreEsc = h.nombre.replace(/'/g, "\\'");
     const catEsc = cat.replace(/'/g, "\\'");
+    const fechaCreado = h.creadoEn?.toDate ? h.creadoEn.toDate() : (h.creadoEn ? new Date(h.creadoEn) : null);
+    const esNueva = fechaCreado && (Date.now() - fechaCreado.getTime()) < 1000*60*60*72; // 72h
 
     const fotoHtml = fotoUrl
       ? `<img src="${fotoUrl}" class="foto-zoom" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -4137,7 +4324,7 @@ function renderHerramientasCfg(lista) {
         <div class="her-foto-wrap">
           ${fotoHtml}
           <span class="her-cat-tag" style="background:${meta.color}dd;color:#fff">${meta.icono} ${cat}</span>
-          ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : '')}
+          ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esNueva ? '<span class="her-ribbon" style="background:rgba(163,113,247,0.92)">🆕 NUEVA</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : ''))}
         </div>
         <div class="her-cuerpo">
           <div class="her-nombre">${h.nombre}${local}</div>
@@ -4317,14 +4504,17 @@ window.guardarHerramienta = async function() {
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
+      registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"`);
     } else {
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
         mostrarToast("✅ Ya existía esa herramienta — se actualizó en vez de duplicarla");
+        registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"`);
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast("✅ Herramienta agregada");
+        registrarAuditoria("herramienta", "crear", `Agregó la herramienta "${nombreFinal}"${categoria ? " ("+categoria+")" : ""}`);
       }
       // Si veníamos de una herramienta "de respaldo" (aún no en Firestore) y le
       // cambiaron el nombre, marcamos el nombre original como eliminado para
@@ -4347,10 +4537,53 @@ window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
       await deleteDoc(doc(db, "herramientas", id));
     }
     mostrarToast("Herramienta eliminada");
+    registrarAuditoria("herramienta", "eliminar", `Eliminó la herramienta "${nombre}"`);
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
+// ── ENTRADA DE STOCK (llegada de pedido: herramientas, insumos, materiales) ──
+window.abrirModalEntradaStock = function() {
+  const sel = document.getElementById("entrada-select-herramienta");
+  const lista = (_herListaActual || []).slice().sort((a,b) => a.nombre.localeCompare(b.nombre));
+  sel.innerHTML = lista.map(h => `<option value="${h.id}">${h.nombre} (actual: ${h.cantidadDisponible ?? 0})</option>`).join("");
+  document.getElementById("entrada-cantidad").value = 1;
+  document.getElementById("entrada-nota").value = "";
+  document.getElementById("modal-entrada-stock").classList.add("abierto");
+};
+
+window.cerrarModalEntradaStock = function() {
+  document.getElementById("modal-entrada-stock").classList.remove("abierto");
+};
+
+window.guardarEntradaStock = async function() {
+  const id = document.getElementById("entrada-select-herramienta").value;
+  const cantidad = parseInt(document.getElementById("entrada-cantidad").value) || 0;
+  const nota = document.getElementById("entrada-nota").value.trim();
+  if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); return; }
+  if (cantidad <= 0) { mostrarToast("La cantidad debe ser mayor a 0", "rojo"); return; }
+  const h = (_herListaActual || []).find(x => x.id === id);
+  if (!h) return;
+  const btn = document.getElementById("entrada-btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    const nuevaCantidad = (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) + cantidad;
+    if (h.local) {
+      await addDoc(collection(db, "herramientas"), { nombre: h.nombre, cantidadDisponible: nuevaCantidad, categoria: h.categoria || "", codigo: h.codigo, icono: h.icono, creadoEn: serverTimestamp() });
+    } else {
+      await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
+    }
+    mostrarToast(`✅ Entrada registrada: +${cantidad} ${h.nombre}`);
+    registrarAuditoria("stock", "entrada", `Entrada de stock: +${cantidad} de "${h.nombre}"${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
+    cerrarModalEntradaStock();
+  } catch(e) { mostrarToast("Error al registrar la entrada", "rojo"); }
+  finally { btn.disabled = false; btn.textContent = "✅ Registrar entrada"; }
+};
+
 document.getElementById("her-buscar")?.addEventListener("input", () => renderHerramientasCfg(_herListaActual));
+
+document.getElementById("modal-entrada-stock")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-entrada-stock")) cerrarModalEntradaStock();
+});
 
 document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-herramienta-cfg")) cerrarModalHerramienta();
@@ -4449,18 +4682,22 @@ window.guardarProfesor = async function() {
     if (profCfgEditar) {
       await updateDoc(doc(db, "profesores", profCfgEditar), { nombre });
       mostrarToast("✅ Profesor actualizado");
+      registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
     } else if (window._profLocalNombre) {
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre });
         mostrarToast("✅ Profesor actualizado");
+        registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
       } else {
         await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
         mostrarToast("✅ Profesor guardado");
+        registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
       mostrarToast("✅ Profesor agregado");
+      registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
     }
     cerrarModalProfesor();
   } catch(e) { mostrarToast("Error al guardar", "rojo"); }
@@ -4472,6 +4709,7 @@ window.eliminarProfesor = async function(id, nombre) {
   try {
     await deleteDoc(doc(db, "profesores", id));
     mostrarToast("Profesor eliminado");
+    registrarAuditoria("profesor", "eliminar", `Eliminó al profesor "${nombre}"`);
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
@@ -4519,7 +4757,7 @@ function renderUsuariosCfg() {
     dashboard:"Dashboard", solicitudes:"Solicitudes", "prestamos-prof":"Préstamos Profesores",
     prestadas:"Herr. Prestadas", incidencias:"Incidencias", "inv-herramientas":"Inv. Herramientas",
     laboratorios:"Talleres", historial:"Historial",
-    "profesores-cfg":"Profesores", "herramientas-cfg":"Herramientas"
+    "profesores-cfg":"Profesores", "herramientas-cfg":"Herramientas", "auditoria-cfg":"Auditoría"
   };
   wrap.innerHTML = lista.map(u => {
     const esAdmin = u.rol === "administrador";
@@ -4594,6 +4832,7 @@ window.guardarUsuario = async function() {
     if (usrCfgEditarId) {
       await updateDoc(doc(db, "usuarios", usrCfgEditarId), { nombre, rol, secciones });
       mostrarToast("✅ Usuario actualizado");
+      registrarAuditoria("usuario", "editar", `Editó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     } else {
       const passTemporal = document.getElementById("usr-input-pass-temp")?.value.trim();
@@ -4611,6 +4850,7 @@ window.guardarUsuario = async function() {
         creadoEn: serverTimestamp()
       });
       mostrarToast("✅ Usuario creado. Le llegará un correo para definir su contraseña.");
+      registrarAuditoria("usuario", "crear", `Creó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     }
   } catch(e) {
@@ -4628,6 +4868,7 @@ window.eliminarUsuario = async function(id, nombre) {
   try {
     await deleteDoc(doc(db, "usuarios", id));
     mostrarToast("Usuario eliminado, su acceso fue revocado");
+    registrarAuditoria("usuario", "eliminar", `Eliminó el acceso del usuario "${nombre}"`);
   } catch(e) {
     mostrarToast("Error al eliminar el usuario", "rojo");
   }
@@ -4709,6 +4950,57 @@ function histFiltrados() {
     return textoOk && tipoOk && estadoOk && fechaOk;
   });
 }
+
+function _histFilasExport() {
+  const tipoLabelExport = { estudiante:"Estudiante", profesor:"Profesor", externo:"Dep. Externo" };
+  return histFiltrados().map(r => {
+    const fecha = r.creadoEn?.toDate ? r.creadoEn.toDate() : new Date(r.creadoEn || 0);
+    const nombre = r.tipo === "externo" ? (r.departamento||"—")
+      : r.tipo === "profesor" ? (r.profesor||"—")
+      : `${r.nombre||""} ${r.apellido||""}`.trim() || "—";
+    const ref = r.tipo === "externo" ? (r.responsable||"—")
+      : r.tipo === "profesor" ? (r.laboratorio||"—")
+      : (r.matricula||r.numeroSolicitud||"—");
+    return {
+      Fecha: fecha.toLocaleDateString("es-DO"),
+      Hora: fecha.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" }),
+      Tipo: tipoLabelExport[r.tipo] || r.tipo || "",
+      "Nombre/Profesor": nombre,
+      "Matrícula/Ref.": ref,
+      "N° herramientas": (r.herramientas||[]).length,
+      Estado: histEstadoInfo(r).txt,
+      Incidencia: r.tieneIncidencias ? "Sí" : "No"
+    };
+  });
+}
+
+window.exportarHistorialExcel = function() {
+  const filas = _histFilasExport();
+  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
+  const ws = XLSX.utils.json_to_sheet(filas);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Historial");
+  XLSX.writeFile(wb, `historial_${new Date().toISOString().slice(0,10)}.xlsx`);
+};
+
+window.exportarHistorialPDF = function() {
+  const filas = _histFilasExport();
+  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "landscape" });
+  doc.setFontSize(14);
+  doc.text("Historial de Movimientos — Taller Mecánica Industrial", 14, 14);
+  doc.setFontSize(9);
+  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
+  doc.autoTable({
+    startY: 26,
+    head: [["Fecha","Hora","Tipo","Nombre/Profesor","Matrícula/Ref.","N° herr.","Estado","Incidencia"]],
+    body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f["Nombre/Profesor"], f["Matrícula/Ref."], f["N° herramientas"], f.Estado, f.Incidencia]),
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [63,185,80] }
+  });
+  doc.save(`historial_${new Date().toISOString().slice(0,10)}.pdf`);
+};
 
 function histActualizarFiltrosUI() {
   const buscar = document.getElementById("hist-buscar")?.value.trim() || "";
