@@ -181,7 +181,7 @@
 
   .shell {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 220px 1fr;
     grid-template-rows: 52px 1fr;
     height: 100vh;
     transition: grid-template-columns .25s ease;
@@ -281,7 +281,7 @@
 
   .shell.sidebar-colapsado .sb-brand-title,
   .shell.sidebar-colapsado .sb-brand-sub { display: none; }
-  .shell.sidebar-colapsado .sb-brand { justify-content: center; padding: 10px 0; gap: 0; }
+  .shell.sidebar-colapsado .sb-brand { justify-content: center; padding: 10px 0; }
 
   /* Grupos y items */
   .nav-grupo {
@@ -355,7 +355,7 @@
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
   }
 
-  .nav-texto { position: relative; z-index: 1; overflow: hidden; text-overflow: ellipsis; transition: opacity .2s, width .2s; }
+  .nav-texto { position: relative; z-index: 1; overflow: hidden; transition: opacity .2s, width .2s; }
 
   .nav-badge {
     margin-left: auto;
@@ -379,8 +379,27 @@
 
   /* Sidebar colapsado */
   .shell.sidebar-colapsado .nav-texto,
-  .shell.sidebar-colapsado .nav-badge { opacity: 0; width: 0; margin-left: 0; }
-  .shell.sidebar-colapsado .nav-item { padding: 9px 0; justify-content: center; gap: 0; }
+  .shell.sidebar-colapsado .nav-badge { display: none; }
+  .shell.sidebar-colapsado .nav-item { padding: 6px 0; justify-content: center; }
+
+  /* Iconos como "chips" de tamaño fijo cuando está colapsado, para que
+     todos los emoji (que traen tamaños/colores nativos distintos) se
+     vean parejos en vez de flotar sueltos con tamaños dispares. */
+  .shell.sidebar-colapsado .nav-icono {
+    width: 36px; height: 36px;
+    display: flex; align-items: center; justify-content: center;
+    border-radius: var(--radio-md, 10px);
+    background: var(--card2);
+    font-size: 15px;
+  }
+  .shell.sidebar-colapsado .nav-item:hover .nav-icono { background: var(--hover); transform: scale(1.06); }
+  .shell.sidebar-colapsado .nav-item.activo .nav-icono {
+    background: var(--gradiente-verde);
+    box-shadow: var(--sombra-verde, 0 6px 16px rgba(63,185,80,0.3));
+  }
+  .shell.sidebar-colapsado .nav-item.activo { background: none; }
+  .shell.sidebar-colapsado .nav-item::before,
+  .shell.sidebar-colapsado .nav-item::after { display: none; }
 
   /* Turno actual (bottom sidebar) */
   .sb-turno {
@@ -483,11 +502,14 @@
   .kpi-card:hover .kpi-icono { transform: scale(1.1); }
   .kpi-card.amarillo .kpi-icono { background: rgba(210,153,34,0.12); }
   .kpi-card.rojo .kpi-icono { background: rgba(248,81,73,0.12); }
+  .kpi-card.azul .kpi-icono { background: rgba(56,139,253,0.12); }
 
   .kpi-label { font-size: 9px; font-weight: 800; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1px; }
   .kpi-numero { font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -1px; color: var(--verde); }
   .kpi-card.amarillo .kpi-numero { color: var(--amarillo); }
   .kpi-card.rojo .kpi-numero { color: var(--rojo); }
+  .kpi-card.azul .kpi-numero { color: var(--azul); }
+  .kpi-card.azul::after { background: var(--azul); }
   .kpi-sub { font-size: 9px; color: var(--texto-dim); margin-top: 1px; }
   .kpi-top { margin-bottom: 1px; }
 
@@ -504,29 +526,7 @@
     border: 1px solid var(--borde);
     border-radius: var(--radio-md);
     overflow: hidden;
-    box-shadow: var(--sombra-sm);
-    position: relative;
-    transition: transform .2s cubic-bezier(.4,0,.2,1), box-shadow .2s;
   }
-  .dash-panel::before {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0; height: 3px;
-    background: var(--gradiente-verde);
-  }
-  .dash-panel:hover { transform: translateY(-3px); box-shadow: var(--sombra-md); }
-
-  .dash-fila-premium {
-    display: flex; align-items: center; gap: 10px;
-    padding: 8px 10px; margin-bottom: 6px;
-    background: var(--card2);
-    border-left: 3px solid var(--borde);
-    border-radius: 8px;
-    cursor: pointer;
-    transition: transform .15s, box-shadow .15s;
-  }
-  .dash-fila-premium:hover { transform: translateX(3px); box-shadow: var(--sombra-sm); }
-  .dash-fila-premium:last-child { margin-bottom: 0; }
 
   .dash-panel-header {
     padding: 10px 14px;
@@ -1027,9 +1027,6 @@
   .usr-chip-sec { background:var(--card2); padding:2px 8px; border-radius:20px; font-size:10px; color:var(--texto-dim); }
   .usr-acciones { display:flex; gap:6px; flex-shrink:0; }
 </style>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
 </head>
 <body>
 
@@ -1099,7 +1096,6 @@
       <div class="nav-grupo">Configuración</div>
       <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
-      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
 
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
@@ -1121,76 +1117,91 @@
           </div>
         </div>
 
-        <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
-          <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
+        <div class="kpi-grid">
+          <div class="kpi-card amarillo" data-vista="solicitudes" data-estado="pendiente">
             <div class="kpi-icono">📋</div>
-            <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes">—</div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
+            <div>
+              <div class="kpi-label">Pendientes hoy</div>
+              <div class="kpi-numero" id="res-pendientes">—</div>
+              <div class="kpi-sub">sin entregar</div>
+            </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada">
             <div class="kpi-icono">✅</div>
-            <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas">—</div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
+            <div>
+              <div class="kpi-label">Entregadas hoy</div>
+              <div class="kpi-numero" id="res-prestadas">—</div>
+              <div class="kpi-sub">en el taller</div>
+            </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada">
             <div class="kpi-icono">↩</div>
-            <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy">—</div><div class="kpi-sub" id="res-hoy-trend"></div></div>
+            <div>
+              <div class="kpi-label">Retornadas hoy</div>
+              <div class="kpi-numero" id="res-hoy">—</div>
+              <div class="kpi-sub">devueltas</div>
+            </div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
-            <div class="kpi-icono">🧰</div>
-            <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera">—</div></div>
-          </div>
-          <div class="kpi-card" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
+          <div class="kpi-card azul" data-vista="prestamos-prof">
             <div class="kpi-icono">👨‍🏫</div>
-            <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos">—</div></div>
+            <div>
+              <div class="kpi-label">Préstamos activos</div>
+              <div class="kpi-numero" id="dash-prof-activos">—</div>
+              <div class="kpi-sub">a profesores</div>
+            </div>
           </div>
-          <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
+          <div class="kpi-card rojo" id="nav-incidencias-kpi">
             <div class="kpi-icono">⚠️</div>
-            <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias">—</div></div>
+            <div>
+              <div class="kpi-label">Incidencias</div>
+              <div class="kpi-numero" id="dash-incidencias">—</div>
+              <div class="kpi-sub">sin revisar</div>
+            </div>
+          </div>
+          <div class="kpi-card amarillo" data-vista="herramientas">
+            <div class="kpi-icono">📦</div>
+            <div>
+              <div class="kpi-label">Stock bajo</div>
+              <div class="kpi-numero" id="dash-stock-bajo">—</div>
+              <div class="kpi-sub">herramientas</div>
+            </div>
           </div>
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1.1fr 1.4fr .9fr;gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🍩 Solicitudes de hoy</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un estado</span></div>
-            <div id="grafico-estado-hoy" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>📊 Solicitudes por estado</h3><span style="font-size:10px;color:var(--texto-dim)">histórico</span></div>
+            <div id="grafico-estados-hist" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🏷️ Categorías más usadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para filtrar</span></div>
-            <div id="grafico-categorias" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🎯 Tasa de incidencias</h3><span style="font-size:10px;color:var(--texto-dim)">clic para ver</span></div>
-            <div id="grafico-gauge-incidencias" style="padding:14px;cursor:pointer" onclick="verIncidencias()" title="Ver incidencias abiertas"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
-          </div>
-
-        </div>
-
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1.4fr));gap:12px;margin-bottom:12px">
-
-          <div class="dash-panel">
-            <div class="dash-panel-header"><h3>📈 Tendencia — últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un día</span></div>
+            <div class="dash-panel-header"><h3>📈 Actividad — últimos 14 días</h3><span style="font-size:10px;color:var(--texto-dim)">solicitudes por día</span></div>
             <div id="grafico-semana" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para abrir</span></div>
-            <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>🧰 Disponibilidad</h3><span style="font-size:10px;color:var(--texto-dim)">inventario</span></div>
+            <div id="grafico-disponibilidad" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
         </div>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px">
+        <div style="display:grid;grid-template-columns:1.3fr 1fr 1fr;gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>⚠️ Stock bajo</h3><span style="font-size:10px;color:var(--texto-dim)">clic para gestionar</span></div>
-            <div id="dash-stock-bajo" style="padding:12px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">top 8 · histórico</span></div>
+            <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🕓 Actividad reciente</h3><span style="font-size:10px;color:var(--texto-dim)">últimos movimientos</span></div>
-            <div id="dash-actividad" style="padding:12px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div class="dash-panel-header"><h3>🕐 Solicitudes por hora</h3><span style="font-size:10px;color:var(--texto-dim)">histórico 8h–22h</span></div>
+            <div id="grafico-horas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+          </div>
+
+          <div class="dash-panel">
+            <div class="dash-panel-header"><h3>🏆 Profesores más activos</h3><span style="font-size:10px;color:var(--texto-dim)">top 5 · histórico</span></div>
+            <div id="lista-top-profesores" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
         </div>
@@ -1329,10 +1340,7 @@
             <h2>🧰 Herramientas</h2>
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva">📦 Entrada de stock</button>
-            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
-          </div>
+          <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
         </div>
 
         <div class="her-stats-strip" id="her-stats-strip"></div>
@@ -1354,14 +1362,8 @@
 
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
-          <div>
-            <h2>📊 Historial de Movimientos</h2>
-            <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
-          </div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF">📄 PDF</button>
-          </div>
+          <h2>📊 Historial de Movimientos</h2>
+          <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
         </div>
 
         <!-- Filtros -->
@@ -1420,7 +1422,7 @@
       <div class="vista" id="vista-profesores-cfg">
         <div class="pagina-titulo">
           <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
-          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor">➕ Agregar profesor</button>
+          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px">➕ Agregar profesor</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1439,7 +1441,7 @@
       <div class="vista" id="vista-usuarios-cfg">
         <div class="pagina-titulo">
           <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
-          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso">➕ Agregar usuario</button>
+          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px">➕ Agregar usuario</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1451,35 +1453,6 @@
           <div class="usr-resumen" id="usr-resumen"></div>
           <div id="usr-cfg-wrap" class="usr-lista">
             <div class="cargando"><div class="spinner"></div>Cargando usuarios...</div>
-          </div>
-        </div>
-      </div>
-
-      <div class="vista" id="vista-auditoria-cfg">
-        <div class="pagina-titulo">
-          <div><h2>📜 Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
-          <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF">📄 PDF</button>
-          </div>
-        </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Registro de cambios</h3>
-            <div class="filtros">
-              <select id="audit-filtro-tipo" style="padding:7px 10px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-                <option value="">Todos los tipos</option>
-                <option value="herramienta">🔧 Herramientas</option>
-                <option value="profesor">👤 Profesores</option>
-                <option value="usuario">🔐 Usuarios</option>
-                <option value="prestamo">📋 Préstamos</option>
-                <option value="stock">📦 Entradas de stock</option>
-              </select>
-              <input type="text" id="audit-buscar" placeholder="Buscar...">
-            </div>
-          </div>
-          <div id="audit-wrap">
-            <div class="cargando"><div class="spinner"></div>Cargando auditoría...</div>
           </div>
         </div>
       </div>
@@ -1577,7 +1550,6 @@
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="historial"> Historial</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="profesores-cfg"> Profesores (cfg)</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas</label>
-        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="auditoria-cfg"> Auditoría</label>
       </div>
     </div>
     <div class="modal-acciones">
@@ -1609,12 +1581,12 @@
       <label>Herramientas entregadas</label>
       <div id="pp-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
       </div>
-      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%" title="Agregar una fila para escribir el nombre de la herramienta">+ Agregar herramienta (escribir)</button>
-      <button type="button" onclick="abrirPickerFotosPP()" class="btn btn-verde" style="margin-top:8px;width:100%" title="Elegir herramientas visualmente desde sus fotos">📷 Elegir herramientas con fotos</button>
+      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta (escribir)</button>
+      <button type="button" onclick="abrirPickerFotosPP()" class="btn btn-verde" style="margin-top:8px;width:100%">📷 Elegir herramientas con fotos</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
-      <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor">✅ Registrar entrega</button>
+      <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()">✅ Registrar entrega</button>
     </div>
   </div>
 </div>
@@ -1632,7 +1604,7 @@
     <div id="pp-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarPickerFotosPP()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()" title="Agregar las herramientas seleccionadas al préstamo">✅ Agregar seleccionadas</button>
+      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()">✅ Agregar seleccionadas</button>
     </div>
   </div>
 </div>
@@ -1652,7 +1624,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor">✅ Confirmar retorno</button>
+      <button class="btn btn-verde" onclick="confirmarRetornoProf()">✅ Confirmar retorno</button>
     </div>
   </div>
 </div>
@@ -1688,11 +1660,11 @@
       <label>Herramientas que salen</label>
       <div id="ext-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
       </div>
-      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%" title="Agregar otra herramienta a la salida">+ Agregar herramienta</button>
+      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
-      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento">✅ Registrar salida</button>
+      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()">✅ Registrar salida</button>
     </div>
   </div>
 </div>
@@ -1707,7 +1679,7 @@
     <div id="ext-retorno-lista"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento">✅ Confirmar retorno</button>
+      <button class="btn btn-verde" onclick="confirmarRetornoExt()">✅ Confirmar retorno</button>
     </div>
   </div>
 </div>
@@ -1736,19 +1708,19 @@
     <div id="info-entrega" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
-      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
+      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()">Marcar todas</button>
     </div>
     <div id="lista-entrega" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:260px;overflow-y:auto"></div>
     <div style="margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-        <button class="btn btn-outline" onclick="agregarFilaAdicional()" title="Agregar una herramienta adicional a esta entrega">+ Agregar</button>
+        <button class="btn btn-outline" onclick="agregarFilaAdicional()">+ Agregar</button>
       </div>
       <div id="lista-adicionales"></div>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
-      <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
+      <button class="btn btn-verde" onclick="confirmarEntrega()">✓ Confirmar Entrega</button>
     </div>
   </div>
 </div>
@@ -1762,81 +1734,21 @@
     <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
-      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas ✅</button>
+      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()">Marcar todas ✅</button>
     </div>
     <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)" title="Entregar una herramienta adicional a esta solicitud">+ Agregar</button>
+      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)">+ Agregar</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
-      <button class="btn btn-azul" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante">↩ Confirmar Retorno</button>
+      <button class="btn btn-azul" onclick="confirmarRetorno()">↩ Confirmar Retorno</button>
     </div>
   </div>
 </div>
 
 <div id="toast"></div>
-
-<div class="modal-overlay" id="modal-entrada-stock">
-  <div class="modal" style="max-width:420px">
-    <div class="modal-titulo">
-      <span>📦 Entrada de stock</span>
-      <button class="modal-cerrar" onclick="cerrarModalEntradaStock()">✕</button>
-    </div>
-
-    <div id="entrada-modo-existente">
-      <div class="modal-campo">
-        <label>Herramienta / insumo / material</label>
-        <select id="entrada-select-herramienta"
-          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-        </select>
-      </div>
-      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva">➕ No está en la lista — agregar como nueva</button>
-    </div>
-
-    <div id="entrada-modo-nueva" style="display:none">
-      <div class="modal-campo">
-        <label>Nombre de la herramienta / insumo / material</label>
-        <input type="text" id="entrada-nombre-nueva" placeholder="Ej: Cinta métrica de 5m"
-          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-      </div>
-      <div class="modal-campo">
-        <label>Categoría</label>
-        <select id="entrada-categoria-nueva"
-          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-          <option value="">Sin categoría</option>
-          <option value="Medición">📏 Medición</option>
-          <option value="Corte">✂️ Corte</option>
-          <option value="Golpe">🔨 Golpe</option>
-          <option value="Sujeción">🔧 Sujeción</option>
-          <option value="Perforación">🪛 Perforación</option>
-          <option value="Acabado">🧽 Acabado</option>
-          <option value="Soldadura">⚡ Soldadura</option>
-          <option value="Seguridad">🦺 Seguridad (EPP)</option>
-          <option value="Insumos">🧴 Insumos</option>
-          <option value="Material Gastable">🧰 Material Gastable</option>
-        </select>
-      </div>
-      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente">← Ya existe, elegir de la lista</button>
-    </div>
-
-    <div class="modal-campo">
-      <label>Cantidad que entró (ej. llegó un pedido)</label>
-      <input type="number" id="entrada-cantidad" min="1" value="1"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-    </div>
-    <div class="modal-campo">
-      <label>Nota (opcional)</label>
-      <input type="text" id="entrada-nota" placeholder="Ej: pedido a suplidor XYZ"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalEntradaStock()">Cancelar</button>
-      <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()">✅ Registrar entrada</button>
-    </div>
-  </div>
-</div>
 
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
@@ -2044,7 +1956,6 @@ onAuthStateChanged(auth, async user => {
     cargarHerramientasCfg();
     cargarProfesoresCfg();
     cargarUsuariosCfg();
-    cargarAuditoria();
     await aplicarRolUsuario(user);
   } else {
     loginEl.classList.add("visible");
@@ -2057,122 +1968,6 @@ onAuthStateChanged(auth, async user => {
 // ── ROLES Y PERMISOS ──
 const ADMIN_RAIZ = ["utesamonitores@outlook.com"];
 let rolActual = "administrador";
-let usuarioActualNombre = "Administrador";
-
-// Registra una entrada en el historial de auditoría (colección "auditoria").
-// tipo: herramienta | profesor | usuario | prestamo | stock
-// accion: crear | editar | eliminar | entrada | entregar | retornar
-async function registrarAuditoria(tipo, accion, descripcion) {
-  try {
-    await addDoc(collection(db, "auditoria"), {
-      tipo, accion, descripcion,
-      usuario: usuarioActualNombre || "Desconocido",
-      creadoEn: serverTimestamp()
-    });
-  } catch(e) { console.error("Error registrando auditoría:", e); }
-}
-
-let _auditoriaLista = [];
-const AUDIT_ICONOS = { herramienta:"🔧", profesor:"👤", usuario:"🔐", prestamo:"📋", stock:"📦" };
-const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
-
-async function cargarAuditoria() {
-  onSnapshot(query(collection(db, "auditoria"), orderBy("creadoEn", "desc")), snap => {
-    _auditoriaLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderAuditoria();
-  });
-}
-
-function renderAuditoria() {
-  const wrap = document.getElementById("audit-wrap");
-  if (!wrap) return;
-  const tipoF = document.getElementById("audit-filtro-tipo")?.value || "";
-  const buscar = (document.getElementById("audit-buscar")?.value || "").toLowerCase();
-  let lista = _auditoriaLista;
-  if (tipoF) lista = lista.filter(a => a.tipo === tipoF);
-  if (buscar) lista = lista.filter(a => (a.descripcion||"").toLowerCase().includes(buscar) || (a.usuario||"").toLowerCase().includes(buscar));
-
-  if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">📜</div><p>No hay movimientos registrados todavía.</p></div>';
-    return;
-  }
-
-  let html = "";
-  let diaAnterior = null;
-  lista.forEach(a => {
-    const fecha = a.creadoEn?.toDate ? a.creadoEn.toDate() : new Date(a.creadoEn || 0);
-    const diaKey = fecha.toLocaleDateString("es-DO", { weekday:"long", day:"2-digit", month:"long", year:"numeric" });
-    if (diaKey !== diaAnterior) {
-      html += `<div style="display:flex;align-items:center;gap:10px;margin:${diaAnterior===null?"0":"16px"} 0 8px">
-        <span style="font-size:11px;font-weight:800;color:var(--texto-dim);text-transform:uppercase;letter-spacing:.04em;white-space:nowrap">${diaKey}</span>
-        <span style="flex:1;height:1px;background:var(--borde)"></span>
-      </div>`;
-      diaAnterior = diaKey;
-    }
-    const color = AUDIT_ACCION_COLOR[a.accion] || "var(--texto-dim)";
-    const hora = fecha.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" });
-    html += `
-      <div class="dash-fila-premium" style="border-left-color:${color};cursor:default">
-        <span style="display:flex;width:30px;height:30px;border-radius:50%;background:${color}22;color:${color};align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${AUDIT_ICONOS[a.tipo]||"📌"}</span>
-        <div style="flex:1;min-width:0">
-          <div style="font-size:12.5px;color:var(--texto)">${a.descripcion || "—"}</div>
-          <div style="font-size:10px;color:var(--texto-dim)">👤 ${a.usuario || "Desconocido"}</div>
-        </div>
-        <span style="font-size:10.5px;color:var(--texto-dim);white-space:nowrap">${hora}</span>
-      </div>`;
-  });
-  wrap.innerHTML = html;
-}
-
-document.getElementById("audit-filtro-tipo")?.addEventListener("change", renderAuditoria);
-document.getElementById("audit-buscar")?.addEventListener("input", renderAuditoria);
-
-function _auditoriaFilasExport() {
-  const tipoF = document.getElementById("audit-filtro-tipo")?.value || "";
-  const buscar = (document.getElementById("audit-buscar")?.value || "").toLowerCase();
-  let lista = _auditoriaLista;
-  if (tipoF) lista = lista.filter(a => a.tipo === tipoF);
-  if (buscar) lista = lista.filter(a => (a.descripcion||"").toLowerCase().includes(buscar) || (a.usuario||"").toLowerCase().includes(buscar));
-  return lista.map(a => {
-    const fecha = a.creadoEn?.toDate ? a.creadoEn.toDate() : new Date(a.creadoEn || 0);
-    return {
-      Fecha: fecha.toLocaleDateString("es-DO"),
-      Hora: fecha.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" }),
-      Tipo: a.tipo || "",
-      Acción: a.accion || "",
-      Descripción: a.descripcion || "",
-      Usuario: a.usuario || ""
-    };
-  });
-}
-
-window.exportarAuditoriaExcel = function() {
-  const filas = _auditoriaFilasExport();
-  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
-  const ws = XLSX.utils.json_to_sheet(filas);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Auditoría");
-  XLSX.writeFile(wb, `auditoria_${new Date().toISOString().slice(0,10)}.xlsx`);
-};
-
-window.exportarAuditoriaPDF = function() {
-  const filas = _auditoriaFilasExport();
-  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "landscape" });
-  doc.setFontSize(14);
-  doc.text("Historial de Auditoría — Taller Mecánica Industrial", 14, 14);
-  doc.setFontSize(9);
-  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
-  doc.autoTable({
-    startY: 26,
-    head: [["Fecha","Hora","Tipo","Acción","Descripción","Usuario"]],
-    body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f.Acción, f.Descripción, f.Usuario]),
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [63,185,80] }
-  });
-  doc.save(`auditoria_${new Date().toISOString().slice(0,10)}.pdf`);
-};
 let seccionesPermitidas = null;
 
 async function aplicarRolUsuario(user) {
@@ -2233,7 +2028,6 @@ async function aplicarRolUsuario(user) {
     }
 
     rolActual = datos.rol || "administrador";
-    usuarioActualNombre = datos.nombre || user.email;
     seccionesPermitidas = rolActual === "encargado" ? (datos.secciones || []) : null;
     mostrarSoloSecciones(seccionesPermitidas);
     document.getElementById("topbar-admin-nombre").textContent = datos.nombre || user.email;
@@ -2243,7 +2037,6 @@ async function aplicarRolUsuario(user) {
     mostrarToast("Error al cargar tu perfil: " + (e.code || e.message), "rojo");
     if (ADMIN_RAIZ.includes((user.email || "").toLowerCase())) {
       rolActual = "administrador";
-      usuarioActualNombre = user.email;
       seccionesPermitidas = null;
       mostrarSoloSecciones(null);
       document.getElementById("topbar-admin-nombre").textContent = "Administrador";
@@ -2350,6 +2143,7 @@ document.getElementById("btn-toggle-sidebar").addEventListener("click", () => {
 });
 
 document.getElementById("nav-incidencias").addEventListener("click", verIncidencias);
+document.getElementById("nav-incidencias-kpi")?.addEventListener("click", verIncidencias);
 
 // ── KPI CARDS navegables ──
 function navegarVista(vista) {
@@ -2361,7 +2155,7 @@ function navegarVista(vista) {
   ocultarPanelIncidenciasProf();
 }
 
-document.querySelectorAll(".kpi-card[data-vista], #dash-kpis .her-stat-pill[data-vista]").forEach(card => {
+document.querySelectorAll(".kpi-card[data-vista]").forEach(card => {
   card.addEventListener("click", () => {
     navegarVista(card.dataset.vista);
     const estado = card.dataset.estado;
@@ -2412,20 +2206,6 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
     ocultarPanelIncidenciasProf();
-    // Al entrar a Solicitudes desde el menú lateral (no desde un KPI/atajo con
-    // filtro específico), siempre arranca limpio — evita que quede "pegado"
-    // el filtro de incidencias u otro estado de una visita anterior.
-    if (vista === "solicitudes" && el.classList.contains("nav-item")) {
-      const filtroEstado = document.getElementById("filtro-estado");
-      if (filtroEstado) filtroEstado.value = "";
-      document.getElementById("filtro-buscar")  && (document.getElementById("filtro-buscar").value  = "");
-      document.getElementById("filtro-profesor") && (document.getElementById("filtro-profesor").value = "");
-      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
-      document.querySelector(".tab-btn[data-tab-estado='']")?.classList.add("activo");
-      actualizarFiltrosUI();
-      paginaActual = 1;
-      renderTabla();
-    }
   });
 });
 
@@ -2456,40 +2236,40 @@ function renderGraficoBarras(contenedorId, datos, color) {
   if (!datos.length) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const max = datos[0].valor;
   el.innerHTML = datos.slice(0, 8).map(d => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer" onclick="dashAbrirHerramienta('${d.etiqueta.replace(/'/g,"\\'")}')">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px">
       <div style="width:120px;font-size:11px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${d.etiqueta}">${d.etiqueta}</div>
       ${barraH(d.valor, max, color)}
       <div style="width:26px;text-align:right;font-size:11px;font-weight:800;color:${color}">${d.valor}</div>
     </div>`).join("");
 }
 
-function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
+function renderGraficoDonut(contenedorId, datos, etiquetaCentro) {
   const el = document.getElementById(contenedorId);
   if (!el) return;
   const total = datos.reduce((s,d) => s + d.valor, 0);
   if (!total) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const r = 42, cx = 50, cy = 50, circ = 2 * Math.PI * r;
   let offset = 0;
-  const click = e => onClickPrefix ? `onclick="${onClickPrefix}('${e.replace(/'/g,"\\'")}')" style="cursor:pointer"` : "";
   const segmentos = datos.filter(d => d.valor > 0).map(d => {
     const frac = d.valor / total;
     const largo = frac * circ;
     const dash = `${largo} ${circ - largo}`;
     const dashoffset = -offset;
     offset += largo;
-    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.color}" stroke-width="14"
-      stroke-dasharray="${dash}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${cx} ${cy})" ${click(d.etiqueta)}></circle>`;
+    return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${d.color}" stroke-width="14" stroke-linecap="round"
+      stroke-dasharray="${dash}" stroke-dashoffset="${dashoffset}" transform="rotate(-90 ${cx} ${cy})" style="transition:stroke-dashoffset .6s ease"></circle>`;
   }).join("");
   el.innerHTML = `
     <div style="display:flex;align-items:center;gap:16px">
-      <svg viewBox="0 0 100 100" style="width:110px;height:110px;flex-shrink:0">
+      <svg viewBox="0 0 100 100" style="width:118px;height:118px;flex-shrink:0">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--borde)" stroke-width="14"></circle>
         ${segmentos}
         <text x="50" y="46" text-anchor="middle" font-size="20" font-weight="800" fill="var(--texto)">${total}</text>
-        <text x="50" y="62" text-anchor="middle" font-size="8" fill="var(--texto-dim)">hoy</text>
+        <text x="50" y="61" text-anchor="middle" font-size="8" fill="var(--texto-dim)">${etiquetaCentro || ""}</text>
       </svg>
-      <div style="flex:1;display:flex;flex-direction:column;gap:6px">
+      <div style="flex:1;display:flex;flex-direction:column;gap:7px">
         ${datos.map(d => `
-          <div style="display:flex;align-items:center;gap:7px;font-size:11px" ${click(d.etiqueta)}>
+          <div style="display:flex;align-items:center;gap:7px;font-size:11px">
             <span style="width:9px;height:9px;border-radius:50%;background:${d.color};flex-shrink:0"></span>
             <span style="flex:1;color:var(--texto)">${d.etiqueta}</span>
             <span style="font-weight:800;color:${d.color}">${d.valor}</span>
@@ -2498,55 +2278,121 @@ function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
     </div>`;
 }
 
+// Arco radial (gauge) con la disponibilidad de inventario.
+function renderGaugeRadial(contenedorId, stockBajo, totalRegistrado, totalDisponible) {
+  const el = document.getElementById(contenedorId);
+  if (!el) return;
+  if (!totalRegistrado) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const pctOk = Math.max(0, Math.min(100, Math.round(((totalRegistrado - stockBajo) / totalRegistrado) * 100)));
+  const r = 42, cx = 50, cy = 50, circ = 2 * Math.PI * r;
+  const largo = (pctOk / 100) * circ;
+  const color = pctOk >= 70 ? "var(--verde)" : pctOk >= 40 ? "var(--amarillo)" : "var(--rojo)";
+  el.innerHTML = `
+    <div style="display:flex;flex-direction:column;align-items:center;gap:8px">
+      <svg viewBox="0 0 100 100" style="width:120px;height:120px">
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--borde)" stroke-width="12"></circle>
+        <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round"
+          stroke-dasharray="${largo} ${circ-largo}" transform="rotate(-90 ${cx} ${cy})" style="transition:stroke-dasharray .6s ease"></circle>
+        <text x="50" y="46" text-anchor="middle" font-size="20" font-weight="800" fill="${color}">${pctOk}%</text>
+        <text x="50" y="61" text-anchor="middle" font-size="8" fill="var(--texto-dim)">sin stock bajo</text>
+      </svg>
+      <div style="display:flex;gap:14px;font-size:10px;color:var(--texto-dim);text-align:center">
+        <div><div style="font-weight:800;font-size:13px;color:var(--texto)">${totalRegistrado}</div>tipos</div>
+        <div><div style="font-weight:800;font-size:13px;color:var(--texto)">${totalDisponible}</div>disponibles</div>
+        <div><div style="font-weight:800;font-size:13px;color:var(--rojo)">${stockBajo}</div>stock bajo</div>
+      </div>
+    </div>`;
+}
+
+// Línea/área con degradado — para tendencias en el tiempo.
 function renderGraficoArea(contenedorId, datos) {
   const el = document.getElementById(contenedorId);
   if (!el) return;
   if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const W = 100, H = 46, pad = 4;
   const max = Math.max(...datos.map(d => d.valor), 1);
-  const w = 300, h = 90, pad = 6;
-  const stepX = (w - pad*2) / (datos.length - 1);
+  const n = datos.length;
   const puntos = datos.map((d,i) => {
-    const x = pad + i*stepX;
-    const y = pad + (1 - d.valor/max) * (h - pad*2);
-    return { x, y, d };
+    const x = pad + (i / (n - 1)) * (W - pad*2);
+    const y = H - pad - (d.valor / max) * (H - pad*2);
+    return { x, y, ...d };
   });
-  const linea = puntos.map((p,i) => `${i===0?"M":"L"}${p.x.toFixed(1)},${p.y.toFixed(1)}`).join(" ");
-  const area  = `${linea} L${puntos[puntos.length-1].x.toFixed(1)},${h-pad} L${puntos[0].x.toFixed(1)},${h-pad} Z`;
+  const linea = puntos.map((p,i) => (i===0 ? `M${p.x},${p.y}` : `L${p.x},${p.y}`)).join(" ");
+  const area  = `${linea} L${puntos[n-1].x},${H} L${puntos[0].x},${H} Z`;
+  const idGrad = "gradArea_" + contenedorId;
   el.innerHTML = `
-    <svg viewBox="0 0 ${w} ${h+16}" style="width:100%;height:${h+16}px">
+    <svg viewBox="0 0 ${W} ${H+12}" style="width:100%;height:${H+40}px">
       <defs>
-        <linearGradient id="gradArea" x1="0" y1="0" x2="0" y2="1">
+        <linearGradient id="${idGrad}" x1="0" y1="0" x2="0" y2="1">
           <stop offset="0%" stop-color="var(--verde)" stop-opacity="0.35"/>
           <stop offset="100%" stop-color="var(--verde)" stop-opacity="0"/>
         </linearGradient>
       </defs>
-      <path d="${area}" fill="url(#gradArea)"></path>
-      <path d="${linea}" fill="none" stroke="var(--verde)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round"></path>
-      ${puntos.map(p => `<g style="cursor:pointer" onclick="dashIrDia('${p.d.fechaIso||""}')">
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="10" fill="transparent"></circle>
-        <circle cx="${p.x.toFixed(1)}" cy="${p.y.toFixed(1)}" r="${p.d.esHoy?3.6:2.4}" fill="${p.d.esHoy?"var(--verde)":"var(--card)"}" stroke="var(--verde)" stroke-width="1.6"></circle>
-        ${p.d.valor>0?`<text x="${p.x.toFixed(1)}" y="${(p.y-6).toFixed(1)}" text-anchor="middle" font-size="7.5" font-weight="800" fill="var(--texto)">${p.d.valor}</text>`:""}
-        <text x="${p.x.toFixed(1)}" y="${h+11}" text-anchor="middle" font-size="7" font-weight="${p.d.esHoy?800:400}" fill="${p.d.esHoy?"var(--verde)":"var(--texto-dim)"}">${p.d.etiqueta}</text></g>`).join("")}
-    </svg>`;
+      <path d="${area}" fill="url(#${idGrad})" stroke="none"></path>
+      <path d="${linea}" fill="none" stroke="var(--verde)" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round"></path>
+      ${puntos.map(p => `<circle cx="${p.x}" cy="${p.y}" r="${p.esHoy?2.2:1.3}" fill="${p.esHoy?'var(--amarillo)':'var(--verde)'}"></circle>`).join("")}
+    </svg>
+    <div style="display:flex;margin-top:2px">
+      ${puntos.map(p => `<div style="flex:1;text-align:center;font-size:8px;font-weight:${p.esHoy?800:400};color:${p.esHoy?'var(--verde)':'var(--texto-dim)'}">${p.etiqueta}</div>`).join("")}
+    </div>`;
 }
 
-function renderGraficoGauge(contenedorId, pct, subtexto) {
+// Lista tipo "leaderboard" — para top profesores, laboratorios, etc.
+function renderTopLista(contenedorId, datos) {
   const el = document.getElementById(contenedorId);
   if (!el) return;
-  const r = 46, cx = 60, cy = 60;
-  const circ = Math.PI * r; // semicírculo
-  const frac = Math.min(Math.max(pct,0),100) / 100;
-  const color = pct >= 25 ? "var(--rojo)" : (pct >= 10 ? "var(--amarillo)" : "var(--verde)");
-  el.innerHTML = `
-    <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
-      <svg viewBox="0 0 120 68" style="width:170px">
-        <path d="M14,60 A46,46 0 0 1 106,60" fill="none" stroke="var(--card2)" stroke-width="12" stroke-linecap="round"></path>
-        <path d="M14,60 A46,46 0 0 1 106,60" fill="none" stroke="${color}" stroke-width="12" stroke-linecap="round"
-          stroke-dasharray="${(frac*circ).toFixed(1)} ${circ.toFixed(1)}"></path>
-        <text x="60" y="52" text-anchor="middle" font-size="22" font-weight="800" fill="var(--texto)">${pct}%</text>
-      </svg>
-      <div style="font-size:10.5px;color:var(--texto-dim);text-align:center">${subtexto}</div>
-    </div>`;
+  if (!datos.length) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const max = datos[0].valor || 1;
+  const medallas = ["🥇","🥈","🥉"];
+  el.innerHTML = datos.map((d,i) => `
+    <div style="display:flex;align-items:center;gap:9px;margin-bottom:10px">
+      <div style="width:20px;text-align:center;font-size:${i<3?13:11}px;font-weight:800;color:var(--texto-dim)">${medallas[i] || (i+1)}</div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:11.5px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px" title="${d.nombre}">${d.nombre}</div>
+        <div style="background:var(--borde);border-radius:4px;height:6px;overflow:hidden">
+          <div style="width:${Math.round((d.valor/max)*100)}%;height:100%;background:var(--gradiente-verde);border-radius:4px"></div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:800;color:var(--verde);flex-shrink:0">${d.valor}</div>
+    </div>`).join("");
+}
+
+function renderGraficoSemana(datos) {
+  const el = document.getElementById("grafico-semana");
+  if (!el) return;
+  if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const max = Math.max(...datos.map(d => d.valor), 1);
+  const altMax = 56;
+  el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:6px;height:${altMax+28}px;padding-bottom:22px;position:relative">
+    ${datos.map(d => {
+      const h = Math.round((d.valor / max) * altMax);
+      const col = d.esHoy ? "var(--verde)" : (d.valor > 0 ? "var(--azul)" : "var(--borde)");
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
+        <div style="font-size:10px;color:${col};font-weight:800;height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
+        <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:4px 4px 0 0"></div>
+        <div style="position:absolute;bottom:-18px;font-size:9px;font-weight:${d.esHoy?800:400};color:${d.esHoy?"var(--verde)":"var(--texto-dim)"}">${d.etiqueta}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
+}
+
+function renderGraficoHoras(datos) {
+  const el = document.getElementById("grafico-horas");
+  if (!el) return;
+  if (datos.every(d => d.valor === 0)) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
+  const max = Math.max(...datos.map(d => d.valor), 1);
+  const altMax = 56;
+  el.innerHTML = `<div style="display:flex;align-items:flex-end;gap:2px;height:${altMax+28}px;padding-bottom:22px;position:relative">
+    ${datos.map(d => {
+      const h = Math.round((d.valor / max) * altMax);
+      const col = d.valor > 0 ? "var(--verde)" : "var(--borde)";
+      return `<div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative">
+        <div style="font-size:9px;color:var(--verde);font-weight:800;height:14px;line-height:14px">${d.valor > 0 ? d.valor : ""}</div>
+        <div style="width:100%;height:${Math.max(h,2)}px;background:${col};border-radius:3px 3px 0 0"></div>
+        <div style="position:absolute;bottom:-18px;font-size:8px;color:var(--texto-dim)">${d.etiqueta}</div>
+      </div>`;
+    }).join("")}
+  </div>`;
 }
 
 // Muestra un badge en el menú lateral solo si hay algo que marcar (oculto en 0).
@@ -2557,101 +2403,52 @@ function actualizarBadgeLateral(id, count) {
   el.style.display = count > 0 ? "" : "none";
 }
 
-// ── Acciones al hacer clic en los gráficos del Dashboard ──
-window.dashIrEstado = function(etiqueta) {
-  const mapa = { "Pendientes":"pendiente", "Entregadas":"entregada", "Retornadas":"retornada", "Canceladas":"cancelada" };
-  navegarVista("solicitudes");
-  const estado = mapa[etiqueta];
-  setTimeout(() => document.querySelector(`.tab-btn[data-tab-estado="${estado||""}"]`)?.click(), 50);
-};
-
-window.dashIrCategoria = function(cat) {
-  navegarVista("herramientas-cfg");
-  setTimeout(() => document.querySelector(`.her-chip[data-cat="${cat === "Sin categoría" ? "" : cat}"]`)?.click(), 80);
-};
-
-window.dashAbrirHerramienta = function(nombre) {
-  navegarVista("herramientas-cfg");
-  setTimeout(() => {
-    const h = (_herListaActual || []).find(x => x.nombre === nombre);
-    if (h) abrirModalHerramienta(h.id, h.nombre, h.cantidadDisponible, h.local||false, h.categoria||"");
-  }, 80);
-};
-
-window.dashIrDia = function(fechaIso) {
-  if (!fechaIso) { navegarVista("historial"); return; }
-  navegarVista("historial");
-  setTimeout(() => {
-    const inp = document.getElementById("hist-fecha");
-    if (inp) { inp.value = fechaIso; histActualizarFiltrosUI(); histPagina = 1; histRenderTabla(); }
-  }, 80);
-};
-
 async function cargarDashboard() {
   try {
-    const [snapSol, snapProf] = await Promise.all([
+    const [snapSol, snapProf, snapHer] = await Promise.all([
       getDocs(collection(db, "solicitudes")),
-      getDocs(collection(db, "prestamos_profesores"))
+      getDocs(collection(db, "prestamos_profesores")),
+      getDocs(collection(db, "herramientas"))
     ]);
-    const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
-    const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
-
-    const fechaDe = (ts) => ts?.toDate ? ts.toDate() : new Date(ts||0);
-    const esMismoDiaQue = (ts, ref) => {
-      const d = fechaDe(ts);
-      return d.getFullYear()===ref.getFullYear() && d.getMonth()===ref.getMonth() && d.getDate()===ref.getDate();
-    };
-    const ayerRef = new Date(); ayerRef.setDate(ayerRef.getDate()-1); ayerRef.setHours(0,0,0,0);
+    const todas       = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
+    const prestProf   = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
+    const herrInv     = snapHer.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const deHoy      = todas.filter(s => esMismodia(s.creadoEn));
-    const deAyer      = todas.filter(s => esMismoDiaQue(s.creadoEn, ayerRef));
-    const prestProfHoy = prestProf.filter(p => esMismodia(p.creadoEn));
     const pendHoy    = deHoy.filter(s => s.estado === "pendiente").length;
     const entregHoy  = deHoy.filter(s => s.estado === "entregada").length;
     const retHoy     = deHoy.filter(s => s.estado === "retornada").length;
-    const cancHoy    = deHoy.filter(s => s.estado === "cancelada").length;
-    const pendAyer   = deAyer.filter(s => s.estado === "pendiente").length;
-    const entregAyer = deAyer.filter(s => s.estado === "entregada").length;
-    const retAyer    = deAyer.filter(s => s.estado === "retornada").length;
     const incidencias = todas.filter(s => s.tieneIncidencias && !s.incidenciaVista).length;
     const incidenciasProf = prestProf.filter(p => p.tieneIncidencias && !p.incidenciaVista).length;
-    const profActivosHoy = new Set(prestProfHoy.filter(p => p.estado === "activo").map(p => p.profesor)).size;
-    const herramientasAfuera = deHoy.filter(s => s.estado === "entregada")
-      .reduce((sum, s) => sum + (s.herramientas||[]).reduce((a,h) => a + (h.cantidad||1), 0), 0);
+    const profActivos = prestProf.filter(p => p.estado === "activo").length;
+    const umbralStockBajo = (typeof UMBRAL_STOCK_BAJO !== "undefined") ? UMBRAL_STOCK_BAJO : 2;
+    const stockBajo = herrInv.filter(h => (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) <= umbralStockBajo).length;
 
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("res-pendientes", pendHoy);
     set("res-prestadas",  entregHoy);
     set("res-hoy",        retHoy);
-    set("res-afuera",     herramientasAfuera);
-    set("res-prof-activos", profActivosHoy);
     set("badge-pendientes", pendHoy);
-    set("dash-incidencias",  incidencias);
-    set("dash-prof-activos", profActivosHoy);
+    set("dash-incidencias",  incidencias + incidenciasProf);
+    set("dash-prof-activos", profActivos);
+    set("dash-stock-bajo", stockBajo);
     set("res-total", deHoy.length);
     actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
 
-    // Flechas de tendencia vs. ayer
-    const trend = (id, hoy, ayer) => {
-      const el = document.getElementById(id);
-      if (!el) return;
-      if (hoy === ayer) { el.innerHTML = `<span style="color:var(--texto-dim)">= igual que ayer</span>`; return; }
-      const sube = hoy > ayer;
-      const dif = Math.abs(hoy - ayer);
-      el.innerHTML = `<span style="color:${sube?"var(--verde)":"var(--rojo)"}">${sube?"▲":"▼"} ${dif} vs. ayer (${ayer})</span>`;
-    };
-    trend("res-pendientes-trend", pendHoy, pendAyer);
-    trend("res-prestadas-trend",  entregHoy, entregAyer);
-    trend("res-hoy-trend",        retHoy, retAyer);
+    // ── Distribución histórica por estado (dona moderna) ──
+    renderGraficoDonut("grafico-estados-hist", [
+      { etiqueta: "Pendientes", valor: todas.filter(s => s.estado === "pendiente").length, color: "var(--amarillo)" },
+      { etiqueta: "Entregadas", valor: todas.filter(s => s.estado === "entregada").length, color: "var(--verde)" },
+      { etiqueta: "Retornadas", valor: todas.filter(s => s.estado === "retornada").length, color: "var(--azul)" },
+      { etiqueta: "Canceladas", valor: todas.filter(s => s.estado === "cancelada").length, color: "var(--rojo)" }
+    ], "total");
 
-    // Donut — solicitudes de hoy por estado
-    renderGraficoDonut("grafico-estado-hoy", [
-      { etiqueta: "Pendientes", valor: pendHoy, color: "#d29922" },
-      { etiqueta: "Entregadas", valor: entregHoy, color: "#3fb950" },
-      { etiqueta: "Retornadas", valor: retHoy, color: "#388bfd" },
-      { etiqueta: "Canceladas", valor: cancHoy, color: "#f85149" }
-    ], "dashIrEstado");
+    // ── Disponibilidad de inventario (gauge radial) ──
+    const totalDisponible = herrInv.reduce((s,h) => s + (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0), 0);
+    const totalRegistrado = herrInv.length;
+    renderGaugeRadial("grafico-disponibilidad", stockBajo, totalRegistrado, totalDisponible);
 
+    // ── Herramientas más solicitadas (barras modernas) ──
     const conteoHer = {};
     todas.forEach(s => (s.herramientas || []).forEach(h => {
       conteoHer[h.nombre] = (conteoHer[h.nombre] || 0) + (h.cantidad || 1);
@@ -2660,83 +2457,33 @@ async function cargarDashboard() {
       Object.entries(conteoHer).map(([e,v]) => ({etiqueta:e,valor:v})).sort((a,b) => b.valor-a.valor),
       "var(--verde)");
 
-    // Donut — categorías más usadas (histórico), usando el catálogo de herramientas
-    const mapaCategoria = {};
-    HERRAMIENTAS_LISTA.forEach(h => mapaCategoria[h.nombre.toLowerCase()] = h.categoria || "Sin categoría");
-    (_herListaActual || []).forEach(h => mapaCategoria[h.nombre.toLowerCase()] = h.categoria || "Sin categoría");
-    const conteoCat = {};
-    Object.entries(conteoHer).forEach(([nombre, valor]) => {
-      const cat = mapaCategoria[nombre.toLowerCase()] || "Sin categoría";
-      conteoCat[cat] = (conteoCat[cat] || 0) + valor;
+    // ── Solicitudes por hora ──
+    const conteoHora = Array(24).fill(0);
+    todas.forEach(s => {
+      const d = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
+      if (d.getFullYear() > 2000) conteoHora[d.getHours()]++;
     });
-    renderGraficoDonut("grafico-categorias",
-      Object.entries(conteoCat).sort((a,b) => b[1]-a[1]).slice(0,6).map(([cat,valor]) => ({
-        etiqueta: cat, valor, color: (CATEGORIAS_HERRAMIENTA[cat]||{color:"#8b949e"}).color
-      })), "dashIrCategoria");
+    renderGraficoHoras(Array.from({length:15}, (_,i) => ({etiqueta:`${8+i}h`, valor:conteoHora[8+i]||0})));
 
-    // Gauge — % de solicitudes históricas con incidencia
-    const totalHist = todas.length + prestProf.length;
-    const totalIncHist = todas.filter(s=>s.tieneIncidencias).length + prestProf.filter(p=>p.tieneIncidencias).length;
-    const pctInc = totalHist ? Math.round((totalIncHist/totalHist)*100) : 0;
-    renderGraficoGauge("grafico-gauge-incidencias", pctInc, `${totalIncHist} de ${totalHist} solicitudes`);
-
-    const dias7 = [];
+    // ── Actividad de los últimos 14 días (área con degradado) ──
+    const dias14 = [];
     const hoyRef = new Date(); hoyRef.setHours(0,0,0,0);
-    for (let i = 6; i >= 0; i--) {
+    for (let i = 13; i >= 0; i--) {
       const d = new Date(hoyRef); d.setDate(d.getDate() - i);
       const cuenta = todas.filter(s => {
         const fs = s.creadoEn?.toDate ? s.creadoEn.toDate() : new Date(s.creadoEn||0);
         return fs.getFullYear() === d.getFullYear() && fs.getMonth() === d.getMonth() && fs.getDate() === d.getDate();
       }).length;
-      dias7.push({ etiqueta: d.toLocaleDateString("es-DO",{weekday:"short"}).slice(0,3), valor: cuenta, esHoy: i === 0, fechaIso: d.toISOString().slice(0,10) });
+      dias14.push({ etiqueta: d.toLocaleDateString("es-DO",{weekday:"short"}).slice(0,3), valor: cuenta, esHoy: i === 0 });
     }
-    renderGraficoArea("grafico-semana", dias7);
+    renderGraficoArea("grafico-semana", dias14);
 
-    // ── Stock bajo ──
-    const stockEl = document.getElementById("dash-stock-bajo");
-    if (stockEl) {
-      const bajos = (_herListaActual || []).filter(h => (Number.isFinite(h.cantidadDisponible)?h.cantidadDisponible:0) <= UMBRAL_STOCK_BAJO);
-      stockEl.innerHTML = bajos.length ? bajos.slice(0,6).map(h => {
-        const meta = CATEGORIAS_HERRAMIENTA[h.categoria] || { icono:"🔧", color:"#8b949e" };
-        const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-        const miniatura = fotoUrl
-          ? `<img src="${fotoUrl}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
-             <span style="display:none;width:34px;height:34px;border-radius:8px;background:${meta.color}22;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${meta.icono}</span>`
-          : `<span style="display:flex;width:34px;height:34px;border-radius:8px;background:${meta.color}22;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${meta.icono}</span>`;
-        return `
-        <div class="dash-fila-premium" style="border-left-color:${meta.color}" onclick="dashAbrirHerramienta('${h.nombre.replace(/'/g,"\\'")}')">
-          ${miniatura}
-          <div style="flex:1;min-width:0">
-            <div style="font-size:12.5px;font-weight:600;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.nombre}</div>
-            <div style="font-size:9.5px;color:var(--texto-dim)">${h.categoria || "Sin categoría"}</div>
-          </div>
-          <span style="font-size:11px;font-weight:800;color:var(--amarillo);background:rgba(210,153,34,.12);padding:2px 8px;border-radius:20px;white-space:nowrap">${h.cantidadDisponible} disp.</span>
-        </div>`;
-      }).join("") : '<div class="vacio" style="padding:10px"><p>Sin alertas de stock. 👍</p></div>';
-    }
-
-    // ── Actividad reciente (últimos movimientos) ──
-    const actEl = document.getElementById("dash-actividad");
-    if (actEl) {
-      const eventos = [];
-      todas.forEach(s => {
-        const nombre = `${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante";
-        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:"✅", color:"#3fb950" });
-        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:"↩", color:"#388bfd" });
-        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:"📋", color:"#d29922" });
-      });
-      prestProf.forEach(p => {
-        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${p.profesor||"Profesor"} retornó herramientas`, icono:"↩", color:"#388bfd" });
-        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${p.profesor||"Profesor"} tomó herramientas`, icono:"👨‍🏫", color:"#a371f7" });
-      });
-      eventos.sort((a,b) => b.ts - a.ts);
-      actEl.innerHTML = eventos.length ? eventos.slice(0,6).map(e => `
-        <div class="dash-fila-premium" style="border-left-color:${e.color};cursor:default">
-          <span style="display:flex;width:30px;height:30px;border-radius:50%;background:${e.color}22;color:${e.color};align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${e.icono}</span>
-          <span style="flex:1;font-size:12px;color:var(--texto)">${e.texto}</span>
-          <span style="color:var(--texto-dim);white-space:nowrap;font-size:10.5px">${e.ts.toLocaleTimeString("es-DO",{hour:"2-digit",minute:"2-digit"})}</span>
-        </div>`).join("") : '<div class="vacio" style="padding:10px"><p>Sin actividad aún.</p></div>';
-    }
+    // ── Profesores más activos (leaderboard) ──
+    const conteoProf = {};
+    todas.forEach(s => { if (s.profesor) conteoProf[s.profesor] = (conteoProf[s.profesor] || 0) + 1; });
+    prestProf.forEach(p => { if (p.profesor) conteoProf[p.profesor] = (conteoProf[p.profesor] || 0) + 1; });
+    const topProfesores = Object.entries(conteoProf).map(([nombre,valor]) => ({nombre,valor})).sort((a,b) => b.valor - a.valor).slice(0,5);
+    renderTopLista("lista-top-profesores", topProfesores);
 
   } catch(e) { console.error(e); }
 }
@@ -2871,7 +2618,7 @@ function renderTabla() {
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
@@ -3577,8 +3324,8 @@ function ppRenderTabla() {
       : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)">⚪ Retornado</span>`;
     const acciones = p.estado === "activo"
       ? (esDeHoy
-          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')" title="Agregar una herramienta adicional a este préstamo">➕ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button>`
-          : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Revisar y registrar el retorno de un préstamo anterior">🔍 Revisar y retornar</button>`)
+          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')">➕ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
+          : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">🔍 Revisar y retornar</button>`)
       : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completado</span>`;
     return `
       <div class="pp-card${p.tieneIncidencias ? ' con-incidencia' : ''}">
@@ -3819,7 +3566,6 @@ window.confirmarNuevoPrestamoProf = async function() {
       creadoEn: serverTimestamp()
     });
     mostrarToast("✅ Préstamo registrado correctamente");
-    registrarAuditoria("prestamo", "entregar", `Entregó ${herramientas.length} herramienta(s) al profesor "${profesor}" (${laboratorio})`);
     cerrarModalNuevoProf();
   } catch(e) {
     mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
@@ -3905,7 +3651,6 @@ window.confirmarRetornoProf = async function() {
     }
 
     cerrarModalRetornoProf();
-    registrarAuditoria("prestamo", "retornar", `Registró retorno del préstamo de "${p.profesor}"${incidencias.length ? " con incidencia" : ""}`);
     if (incidencias.length > 0) {
       mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
     } else {
@@ -3986,8 +3731,8 @@ function extRenderTabla() {
               ? '<span class="badge badge-cancelada">Con incidencias</span>'
               : '<span class="badge badge-retornada">Devuelto</span>';
           const acciones = p.estado === "prestado"
-            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible">📄 Conduce</button>`
-            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible">📄 Conduce</button>`;
+            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`;
           return `
             <tr>
               <td>
@@ -4279,7 +4024,7 @@ function renderHerramientasCfg(lista) {
     const estiloTodas = herCategoriaActiva === ""
       ? "background:var(--verde);border-color:var(--verde);color:#000"
       : "";
-    let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="" title="Ver todas las categorías">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
+    let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
     chipsHtml += Object.keys(categoriasPresentes).sort((a, b) => a.localeCompare(b)).map(cat => {
       const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "🔩", color: "#8b949e" };
       const n = categoriasPresentes[cat];
@@ -4287,7 +4032,7 @@ function renderHerramientasCfg(lista) {
       const estilo = activo
         ? `background:${meta.color};border-color:${meta.color};color:#000`
         : `border-color:${meta.color}66;color:${meta.color}`;
-      return `<div class="her-chip" style="${estilo}" data-cat="${cat}" title="Filtrar por categoría: ${cat}">${meta.icono} ${cat} <span style="opacity:.7">(${n})</span></div>`;
+      return `<div class="her-chip" style="${estilo}" data-cat="${cat}">${meta.icono} ${cat} <span style="opacity:.7">(${n})</span></div>`;
     }).join("");
     chipsWrap.innerHTML = chipsHtml;
     chipsWrap.querySelectorAll(".her-chip").forEach(chip => {
@@ -4356,8 +4101,6 @@ function renderHerramientasCfg(lista) {
     const local = h.local ? ' <span style="font-size:9px;color:var(--texto-dim)">(resp.)</span>' : '';
     const nombreEsc = h.nombre.replace(/'/g, "\\'");
     const catEsc = cat.replace(/'/g, "\\'");
-    const fechaCreado = h.creadoEn?.toDate ? h.creadoEn.toDate() : (h.creadoEn ? new Date(h.creadoEn) : null);
-    const esNueva = fechaCreado && (Date.now() - fechaCreado.getTime()) < 1000*60*60*72; // 72h
 
     const fotoHtml = fotoUrl
       ? `<img src="${fotoUrl}" class="foto-zoom" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -4369,7 +4112,7 @@ function renderHerramientasCfg(lista) {
         <div class="her-foto-wrap">
           ${fotoHtml}
           <span class="her-cat-tag" style="background:${meta.color}dd;color:#fff">${meta.icono} ${cat}</span>
-          ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esNueva ? '<span class="her-ribbon" style="background:rgba(163,113,247,0.92)">🆕 NUEVA</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : ''))}
+          ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : '')}
         </div>
         <div class="her-cuerpo">
           <div class="her-nombre">${h.nombre}${local}</div>
@@ -4379,8 +4122,8 @@ function renderHerramientasCfg(lista) {
             <span class="her-usos">${usos > 0 ? usos + ' pedidas' : 'sin pedidos'}</span>
           </div>
           <div class="her-acciones">
-            <button class="btn btn-outline" onclick="abrirModalHerramienta('${h.id}','${nombreEsc}',${cantidad},${h.local || false},'${catEsc}')" title="Editar herramienta">✏️ Editar</button>
-            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})" title="Eliminar herramienta">🗑</button>
+            <button class="btn btn-outline" onclick="abrirModalHerramienta('${h.id}','${nombreEsc}',${cantidad},${h.local || false},'${catEsc}')">✏️ Editar</button>
+            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})">🗑</button>
           </div>
         </div>
       </div>`;
@@ -4549,17 +4292,14 @@ window.guardarHerramienta = async function() {
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
-      registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"`);
     } else {
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
         mostrarToast("✅ Ya existía esa herramienta — se actualizó en vez de duplicarla");
-        registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"`);
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast("✅ Herramienta agregada");
-        registrarAuditoria("herramienta", "crear", `Agregó la herramienta "${nombreFinal}"${categoria ? " ("+categoria+")" : ""}`);
       }
       // Si veníamos de una herramienta "de respaldo" (aún no en Firestore) y le
       // cambiaron el nombre, marcamos el nombre original como eliminado para
@@ -4582,78 +4322,10 @@ window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
       await deleteDoc(doc(db, "herramientas", id));
     }
     mostrarToast("Herramienta eliminada");
-    registrarAuditoria("herramienta", "eliminar", `Eliminó la herramienta "${nombre}"`);
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
-// ── ENTRADA DE STOCK (llegada de pedido: herramientas, insumos, materiales) ──
-window.abrirModalEntradaStock = function() {
-  const sel = document.getElementById("entrada-select-herramienta");
-  const lista = (_herListaActual || []).slice().sort((a,b) => a.nombre.localeCompare(b.nombre));
-  sel.innerHTML = lista.map(h => `<option value="${h.id}">${h.nombre} (actual: ${h.cantidadDisponible ?? 0})</option>`).join("");
-  document.getElementById("entrada-cantidad").value = 1;
-  document.getElementById("entrada-nota").value = "";
-  document.getElementById("entrada-nombre-nueva").value = "";
-  document.getElementById("entrada-categoria-nueva").value = "";
-  toggleEntradaNueva(false);
-  document.getElementById("modal-entrada-stock").classList.add("abierto");
-};
-
-window.toggleEntradaNueva = function(esNueva) {
-  document.getElementById("entrada-modo-existente").style.display = esNueva ? "none" : "block";
-  document.getElementById("entrada-modo-nueva").style.display = esNueva ? "block" : "none";
-  document.getElementById("modal-entrada-stock").dataset.modoNueva = esNueva ? "1" : "0";
-};
-
-window.cerrarModalEntradaStock = function() {
-  document.getElementById("modal-entrada-stock").classList.remove("abierto");
-};
-
-window.guardarEntradaStock = async function() {
-  const esNueva = document.getElementById("modal-entrada-stock").dataset.modoNueva === "1";
-  const cantidad = parseInt(document.getElementById("entrada-cantidad").value) || 0;
-  const nota = document.getElementById("entrada-nota").value.trim();
-  if (cantidad <= 0) { mostrarToast("La cantidad debe ser mayor a 0", "rojo"); return; }
-  const btn = document.getElementById("entrada-btn-guardar");
-  btn.disabled = true; btn.textContent = "Guardando...";
-
-  try {
-    if (esNueva) {
-      const nombre = document.getElementById("entrada-nombre-nueva").value.trim();
-      const categoria = document.getElementById("entrada-categoria-nueva").value;
-      if (!nombre) { mostrarToast("Escribe el nombre", "rojo"); btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return; }
-      const yaExiste = (_herListaActual || []).find(h => h.nombre.toLowerCase() === nombre.toLowerCase());
-      if (yaExiste) {
-        mostrarToast('Ya existe una herramienta con ese nombre — selecciónala de la lista en vez de crear otra', "rojo");
-        btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return;
-      }
-      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: cantidad, categoria, creadoEn: serverTimestamp() });
-      mostrarToast(`✅ "${nombre}" agregada con ${cantidad} en stock`);
-      registrarAuditoria("stock", "entrada", `Entrada de stock (nueva): +${cantidad} de "${nombre}"${nota ? " — " + nota : ""}`);
-    } else {
-      const id = document.getElementById("entrada-select-herramienta").value;
-      if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return; }
-      const h = (_herListaActual || []).find(x => x.id === id);
-      if (!h) return;
-      const nuevaCantidad = (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) + cantidad;
-      if (h.local) {
-        await addDoc(collection(db, "herramientas"), { nombre: h.nombre, cantidadDisponible: nuevaCantidad, categoria: h.categoria || "", codigo: h.codigo, icono: h.icono, creadoEn: serverTimestamp() });
-      } else {
-        await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
-      }
-      mostrarToast(`✅ Entrada registrada: +${cantidad} ${h.nombre}`);
-      registrarAuditoria("stock", "entrada", `Entrada de stock: +${cantidad} de "${h.nombre}"${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
-    }
-    cerrarModalEntradaStock();
-  } catch(e) { mostrarToast("Error al registrar la entrada", "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✅ Registrar entrada"; }
-};
-
 document.getElementById("her-buscar")?.addEventListener("input", () => renderHerramientasCfg(_herListaActual));
-
-document.getElementById("modal-entrada-stock")?.addEventListener("click", e => {
-  if (e.target === document.getElementById("modal-entrada-stock")) cerrarModalEntradaStock();
-});
 
 document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-herramienta-cfg")) cerrarModalHerramienta();
@@ -4720,8 +4392,8 @@ function renderProfesoresCfg() {
         ${sinRetHoy.length > 0 ? `<span class="prof-badge-activos" style="cursor:pointer" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetHoy[0].id}')">⏳ ${sinRetHoy.length} sin retornar hoy</span>` : ""}
         ${sinRetViejos > 0 ? `<span class="prof-badge-activos" style="cursor:pointer;background:rgba(239,68,68,.15);color:var(--rojo)" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar.find(x=>!esMismodia(x.creadoEn)).id}')">🔍 ${sinRetViejos} atrasado(s)</span>` : ""}
         <div class="acciones-celda">
-          <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})" title="Editar profesor">✏️ Editar</button>
-          ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')" title="Eliminar profesor">🗑</button>`}
+          <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})">✏️ Editar</button>
+          ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')">🗑</button>`}
         </div>
       </div>`;
   }).join("");
@@ -4752,22 +4424,18 @@ window.guardarProfesor = async function() {
     if (profCfgEditar) {
       await updateDoc(doc(db, "profesores", profCfgEditar), { nombre });
       mostrarToast("✅ Profesor actualizado");
-      registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
     } else if (window._profLocalNombre) {
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre });
         mostrarToast("✅ Profesor actualizado");
-        registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
       } else {
         await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
         mostrarToast("✅ Profesor guardado");
-        registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
       mostrarToast("✅ Profesor agregado");
-      registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
     }
     cerrarModalProfesor();
   } catch(e) { mostrarToast("Error al guardar", "rojo"); }
@@ -4779,7 +4447,6 @@ window.eliminarProfesor = async function(id, nombre) {
   try {
     await deleteDoc(doc(db, "profesores", id));
     mostrarToast("Profesor eliminado");
-    registrarAuditoria("profesor", "eliminar", `Eliminó al profesor "${nombre}"`);
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
@@ -4827,7 +4494,7 @@ function renderUsuariosCfg() {
     dashboard:"Dashboard", solicitudes:"Solicitudes", "prestamos-prof":"Préstamos Profesores",
     prestadas:"Herr. Prestadas", incidencias:"Incidencias", "inv-herramientas":"Inv. Herramientas",
     laboratorios:"Talleres", historial:"Historial",
-    "profesores-cfg":"Profesores", "herramientas-cfg":"Herramientas", "auditoria-cfg":"Auditoría"
+    "profesores-cfg":"Profesores", "herramientas-cfg":"Herramientas"
   };
   wrap.innerHTML = lista.map(u => {
     const esAdmin = u.rol === "administrador";
@@ -4847,8 +4514,8 @@ function renderUsuariosCfg() {
           <div class="usr-secciones">${secciones}</div>
         </div>
         <div class="usr-acciones">
-          <button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')" title="Editar usuario">✏️ Editar</button>
-          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')" title="Revocar acceso y eliminar usuario">🗑</button>
+          <button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')">✏️ Editar</button>
+          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')">🗑</button>
         </div>
       </div>`;
   }).join("");
@@ -4902,7 +4569,6 @@ window.guardarUsuario = async function() {
     if (usrCfgEditarId) {
       await updateDoc(doc(db, "usuarios", usrCfgEditarId), { nombre, rol, secciones });
       mostrarToast("✅ Usuario actualizado");
-      registrarAuditoria("usuario", "editar", `Editó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     } else {
       const passTemporal = document.getElementById("usr-input-pass-temp")?.value.trim();
@@ -4920,7 +4586,6 @@ window.guardarUsuario = async function() {
         creadoEn: serverTimestamp()
       });
       mostrarToast("✅ Usuario creado. Le llegará un correo para definir su contraseña.");
-      registrarAuditoria("usuario", "crear", `Creó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     }
   } catch(e) {
@@ -4938,7 +4603,6 @@ window.eliminarUsuario = async function(id, nombre) {
   try {
     await deleteDoc(doc(db, "usuarios", id));
     mostrarToast("Usuario eliminado, su acceso fue revocado");
-    registrarAuditoria("usuario", "eliminar", `Eliminó el acceso del usuario "${nombre}"`);
   } catch(e) {
     mostrarToast("Error al eliminar el usuario", "rojo");
   }
@@ -5020,57 +4684,6 @@ function histFiltrados() {
     return textoOk && tipoOk && estadoOk && fechaOk;
   });
 }
-
-function _histFilasExport() {
-  const tipoLabelExport = { estudiante:"Estudiante", profesor:"Profesor", externo:"Dep. Externo" };
-  return histFiltrados().map(r => {
-    const fecha = r.creadoEn?.toDate ? r.creadoEn.toDate() : new Date(r.creadoEn || 0);
-    const nombre = r.tipo === "externo" ? (r.departamento||"—")
-      : r.tipo === "profesor" ? (r.profesor||"—")
-      : `${r.nombre||""} ${r.apellido||""}`.trim() || "—";
-    const ref = r.tipo === "externo" ? (r.responsable||"—")
-      : r.tipo === "profesor" ? (r.laboratorio||"—")
-      : (r.matricula||r.numeroSolicitud||"—");
-    return {
-      Fecha: fecha.toLocaleDateString("es-DO"),
-      Hora: fecha.toLocaleTimeString("es-DO", { hour:"2-digit", minute:"2-digit" }),
-      Tipo: tipoLabelExport[r.tipo] || r.tipo || "",
-      "Nombre/Profesor": nombre,
-      "Matrícula/Ref.": ref,
-      "N° herramientas": (r.herramientas||[]).length,
-      Estado: histEstadoInfo(r).txt,
-      Incidencia: r.tieneIncidencias ? "Sí" : "No"
-    };
-  });
-}
-
-window.exportarHistorialExcel = function() {
-  const filas = _histFilasExport();
-  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
-  const ws = XLSX.utils.json_to_sheet(filas);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Historial");
-  XLSX.writeFile(wb, `historial_${new Date().toISOString().slice(0,10)}.xlsx`);
-};
-
-window.exportarHistorialPDF = function() {
-  const filas = _histFilasExport();
-  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "landscape" });
-  doc.setFontSize(14);
-  doc.text("Historial de Movimientos — Taller Mecánica Industrial", 14, 14);
-  doc.setFontSize(9);
-  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
-  doc.autoTable({
-    startY: 26,
-    head: [["Fecha","Hora","Tipo","Nombre/Profesor","Matrícula/Ref.","N° herr.","Estado","Incidencia"]],
-    body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f["Nombre/Profesor"], f["Matrícula/Ref."], f["N° herramientas"], f.Estado, f.Incidencia]),
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [63,185,80] }
-  });
-  doc.save(`historial_${new Date().toISOString().slice(0,10)}.pdf`);
-};
 
 function histActualizarFiltrosUI() {
   const buscar = document.getElementById("hist-buscar")?.value.trim() || "";
