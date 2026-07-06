@@ -1784,12 +1784,43 @@
       <span>📦 Entrada de stock</span>
       <button class="modal-cerrar" onclick="cerrarModalEntradaStock()">✕</button>
     </div>
-    <div class="modal-campo">
-      <label>Herramienta / insumo / material</label>
-      <select id="entrada-select-herramienta"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-      </select>
+
+    <div id="entrada-modo-existente">
+      <div class="modal-campo">
+        <label>Herramienta / insumo / material</label>
+        <select id="entrada-select-herramienta"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        </select>
+      </div>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px">➕ No está en la lista — agregar como nueva</button>
     </div>
+
+    <div id="entrada-modo-nueva" style="display:none">
+      <div class="modal-campo">
+        <label>Nombre de la herramienta / insumo / material</label>
+        <input type="text" id="entrada-nombre-nueva" placeholder="Ej: Cinta métrica de 5m"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      </div>
+      <div class="modal-campo">
+        <label>Categoría</label>
+        <select id="entrada-categoria-nueva"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+          <option value="">Sin categoría</option>
+          <option value="Medición">📏 Medición</option>
+          <option value="Corte">✂️ Corte</option>
+          <option value="Golpe">🔨 Golpe</option>
+          <option value="Sujeción">🔧 Sujeción</option>
+          <option value="Perforación">🪛 Perforación</option>
+          <option value="Acabado">🧽 Acabado</option>
+          <option value="Soldadura">⚡ Soldadura</option>
+          <option value="Seguridad">🦺 Seguridad (EPP)</option>
+          <option value="Insumos">🧴 Insumos</option>
+          <option value="Material Gastable">🧰 Material Gastable</option>
+        </select>
+      </div>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px">← Ya existe, elegir de la lista</button>
+    </div>
+
     <div class="modal-campo">
       <label>Cantidad que entró (ej. llegó un pedido)</label>
       <input type="number" id="entrada-cantidad" min="1" value="1"
@@ -2381,6 +2412,20 @@ document.querySelectorAll("[data-vista]").forEach(el => {
     document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
     document.getElementById(`vista-${vista}`)?.classList.add("activa");
     ocultarPanelIncidenciasProf();
+    // Al entrar a Solicitudes desde el menú lateral (no desde un KPI/atajo con
+    // filtro específico), siempre arranca limpio — evita que quede "pegado"
+    // el filtro de incidencias u otro estado de una visita anterior.
+    if (vista === "solicitudes" && el.classList.contains("nav-item")) {
+      const filtroEstado = document.getElementById("filtro-estado");
+      if (filtroEstado) filtroEstado.value = "";
+      document.getElementById("filtro-buscar")  && (document.getElementById("filtro-buscar").value  = "");
+      document.getElementById("filtro-profesor") && (document.getElementById("filtro-profesor").value = "");
+      document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("activo"));
+      document.querySelector(".tab-btn[data-tab-estado='']")?.classList.add("activo");
+      actualizarFiltrosUI();
+      paginaActual = 1;
+      renderTabla();
+    }
   });
 });
 
@@ -4548,7 +4593,16 @@ window.abrirModalEntradaStock = function() {
   sel.innerHTML = lista.map(h => `<option value="${h.id}">${h.nombre} (actual: ${h.cantidadDisponible ?? 0})</option>`).join("");
   document.getElementById("entrada-cantidad").value = 1;
   document.getElementById("entrada-nota").value = "";
+  document.getElementById("entrada-nombre-nueva").value = "";
+  document.getElementById("entrada-categoria-nueva").value = "";
+  toggleEntradaNueva(false);
   document.getElementById("modal-entrada-stock").classList.add("abierto");
+};
+
+window.toggleEntradaNueva = function(esNueva) {
+  document.getElementById("entrada-modo-existente").style.display = esNueva ? "none" : "block";
+  document.getElementById("entrada-modo-nueva").style.display = esNueva ? "block" : "none";
+  document.getElementById("modal-entrada-stock").dataset.modoNueva = esNueva ? "1" : "0";
 };
 
 window.cerrarModalEntradaStock = function() {
@@ -4556,24 +4610,40 @@ window.cerrarModalEntradaStock = function() {
 };
 
 window.guardarEntradaStock = async function() {
-  const id = document.getElementById("entrada-select-herramienta").value;
+  const esNueva = document.getElementById("modal-entrada-stock").dataset.modoNueva === "1";
   const cantidad = parseInt(document.getElementById("entrada-cantidad").value) || 0;
   const nota = document.getElementById("entrada-nota").value.trim();
-  if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); return; }
   if (cantidad <= 0) { mostrarToast("La cantidad debe ser mayor a 0", "rojo"); return; }
-  const h = (_herListaActual || []).find(x => x.id === id);
-  if (!h) return;
   const btn = document.getElementById("entrada-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
+
   try {
-    const nuevaCantidad = (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) + cantidad;
-    if (h.local) {
-      await addDoc(collection(db, "herramientas"), { nombre: h.nombre, cantidadDisponible: nuevaCantidad, categoria: h.categoria || "", codigo: h.codigo, icono: h.icono, creadoEn: serverTimestamp() });
+    if (esNueva) {
+      const nombre = document.getElementById("entrada-nombre-nueva").value.trim();
+      const categoria = document.getElementById("entrada-categoria-nueva").value;
+      if (!nombre) { mostrarToast("Escribe el nombre", "rojo"); btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return; }
+      const yaExiste = (_herListaActual || []).find(h => h.nombre.toLowerCase() === nombre.toLowerCase());
+      if (yaExiste) {
+        mostrarToast('Ya existe una herramienta con ese nombre — selecciónala de la lista en vez de crear otra', "rojo");
+        btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return;
+      }
+      await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: cantidad, categoria, creadoEn: serverTimestamp() });
+      mostrarToast(`✅ "${nombre}" agregada con ${cantidad} en stock`);
+      registrarAuditoria("stock", "entrada", `Entrada de stock (nueva): +${cantidad} de "${nombre}"${nota ? " — " + nota : ""}`);
     } else {
-      await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
+      const id = document.getElementById("entrada-select-herramienta").value;
+      if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return; }
+      const h = (_herListaActual || []).find(x => x.id === id);
+      if (!h) return;
+      const nuevaCantidad = (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) + cantidad;
+      if (h.local) {
+        await addDoc(collection(db, "herramientas"), { nombre: h.nombre, cantidadDisponible: nuevaCantidad, categoria: h.categoria || "", codigo: h.codigo, icono: h.icono, creadoEn: serverTimestamp() });
+      } else {
+        await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
+      }
+      mostrarToast(`✅ Entrada registrada: +${cantidad} ${h.nombre}`);
+      registrarAuditoria("stock", "entrada", `Entrada de stock: +${cantidad} de "${h.nombre}"${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
     }
-    mostrarToast(`✅ Entrada registrada: +${cantidad} ${h.nombre}`);
-    registrarAuditoria("stock", "entrada", `Entrada de stock: +${cantidad} de "${h.nombre}"${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
     cerrarModalEntradaStock();
   } catch(e) { mostrarToast("Error al registrar la entrada", "rojo"); }
   finally { btn.disabled = false; btn.textContent = "✅ Registrar entrada"; }
