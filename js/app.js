@@ -163,7 +163,7 @@ btnBuscarAdicional.addEventListener("click", async () => {
   try {
     const solicitud = await buscarSolicitudActivaHoy(matricula);
     if (!solicitud) {
-      mostrarError("No tienes una solicitud activa hoy. Selecciona 'Solicitando herramientas' para crear una nueva.");
+      mostrarError("No tienes una solicitud hecha hoy. Cambia a 'Solicitando herramientas' arriba para crear una.");
       btnBuscarAdicional.disabled = false;
       btnBuscarAdicional.textContent = "Buscar solicitud activa";
       return;

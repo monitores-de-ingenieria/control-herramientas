@@ -41,7 +41,7 @@
 
 * { box-sizing: border-box; }
 
-html { -webkit-tap-highlight-color: transparent; }
+html { -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
 
 body {
   margin: 0;
@@ -49,6 +49,7 @@ body {
   background: var(--fondo);
   color: var(--texto);
   min-height: 100vh;
+  overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
@@ -385,6 +386,8 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
 .seccion-header {
   display: flex; align-items: center; gap: 10px;
   margin-bottom: 18px;
+  flex-wrap: nowrap;
+  min-width: 0;
 }
 .seccion-header-icono {
   order: 0;
@@ -398,9 +401,13 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
   order: 1;
   font-size: 14.5px; font-weight: 700; color: var(--verde-oscuro); margin: 0;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex-shrink: 1;
   letter-spacing: -.1px;
 }
-.seccion-header::after { order: 2; content: ""; flex: 1; height: 1.5px; background: var(--borde-sutil); }
+.seccion-header::after { order: 2; content: ""; flex: 1 1 8px; min-width: 8px; height: 1.5px; background: var(--borde-sutil); }
 .seccion-header.seccion-header-plano { margin: 26px 0 14px; }
 .seccion-header.seccion-header-plano::after { display: none; }
 
@@ -415,9 +422,13 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
   padding: 4px 8px;
   border-radius: 20px;
   white-space: nowrap;
+  flex-shrink: 0;
   transition: background .15s, color .15s;
 }
 .btn-olvidar-datos:hover { background: #fdeceb; color: var(--rojo); }
+@media (max-width: 380px) {
+  .btn-olvidar-datos .txt-olvidar { display: none; }
+}
 
 .campos-grid {
   display: grid;
@@ -505,8 +516,9 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
   display: flex;
   gap: 8px;
   align-items: stretch;
+  min-width: 0;
 }
-.matricula-wrap input { flex: 1; }
+.matricula-wrap input { flex: 1; min-width: 0; }
 
 .btn-camara {
   width: 48px;
@@ -819,12 +831,16 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
   transform: translateX(-50%);
   background: var(--rojo);
   color: #fff;
-  padding: 12px 20px;
+  padding: 12px 18px;
   border-radius: 10px;
   font-size: 13px;
   font-weight: 500;
   z-index: 999;
-  white-space: nowrap;
+  white-space: normal;
+  text-align: center;
+  line-height: 1.4;
+  max-width: min(92vw, 380px);
+  box-sizing: border-box;
   box-shadow: 0 10px 24px rgba(224,69,60,0.35);
   animation: entraToast .25s var(--easing);
 }
