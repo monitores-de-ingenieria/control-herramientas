@@ -1122,27 +1122,27 @@
         </div>
 
         <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
-          <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
             <div class="kpi-icono">📋</div>
             <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes">—</div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
             <div class="kpi-icono">✅</div>
             <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas">—</div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
             <div class="kpi-icono">↩</div>
             <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy">—</div><div class="kpi-sub" id="res-hoy-trend"></div></div>
           </div>
-          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada">
+          <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
             <div class="kpi-icono">🧰</div>
             <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera">—</div></div>
           </div>
-          <div class="kpi-card" data-vista="prestamos-prof">
+          <div class="kpi-card" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
             <div class="kpi-icono">👨‍🏫</div>
             <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos">—</div></div>
           </div>
-          <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()">
+          <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
             <div class="kpi-icono">⚠️</div>
             <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias">—</div></div>
           </div>
@@ -1162,7 +1162,7 @@
 
           <div class="dash-panel">
             <div class="dash-panel-header"><h3>🎯 Tasa de incidencias</h3><span style="font-size:10px;color:var(--texto-dim)">clic para ver</span></div>
-            <div id="grafico-gauge-incidencias" style="padding:14px;cursor:pointer" onclick="verIncidencias()"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
+            <div id="grafico-gauge-incidencias" style="padding:14px;cursor:pointer" onclick="verIncidencias()" title="Ver incidencias abiertas"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
         </div>
@@ -1330,8 +1330,8 @@
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px">📦 Entrada de stock</button>
-            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px">➕ Agregar herramienta</button>
+            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva">📦 Entrada de stock</button>
+            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
           </div>
         </div>
 
@@ -1359,8 +1359,8 @@
             <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel">📊 Excel</button>
+            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF">📄 PDF</button>
           </div>
         </div>
 
@@ -1420,7 +1420,7 @@
       <div class="vista" id="vista-profesores-cfg">
         <div class="pagina-titulo">
           <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
-          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px">➕ Agregar profesor</button>
+          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor">➕ Agregar profesor</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1439,7 +1439,7 @@
       <div class="vista" id="vista-usuarios-cfg">
         <div class="pagina-titulo">
           <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
-          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px">➕ Agregar usuario</button>
+          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso">➕ Agregar usuario</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1459,8 +1459,8 @@
         <div class="pagina-titulo">
           <div><h2>📜 Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel">📊 Excel</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF">📄 PDF</button>
           </div>
         </div>
         <div class="seccion-tabla">
@@ -1609,12 +1609,12 @@
       <label>Herramientas entregadas</label>
       <div id="pp-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
       </div>
-      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta (escribir)</button>
-      <button type="button" onclick="abrirPickerFotosPP()" class="btn btn-verde" style="margin-top:8px;width:100%">📷 Elegir herramientas con fotos</button>
+      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%" title="Agregar una fila para escribir el nombre de la herramienta">+ Agregar herramienta (escribir)</button>
+      <button type="button" onclick="abrirPickerFotosPP()" class="btn btn-verde" style="margin-top:8px;width:100%" title="Elegir herramientas visualmente desde sus fotos">📷 Elegir herramientas con fotos</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
-      <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()">✅ Registrar entrega</button>
+      <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor">✅ Registrar entrega</button>
     </div>
   </div>
 </div>
@@ -1632,7 +1632,7 @@
     <div id="pp-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarPickerFotosPP()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()">✅ Agregar seleccionadas</button>
+      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()" title="Agregar las herramientas seleccionadas al préstamo">✅ Agregar seleccionadas</button>
     </div>
   </div>
 </div>
@@ -1652,7 +1652,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarRetornoProf()">✅ Confirmar retorno</button>
+      <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor">✅ Confirmar retorno</button>
     </div>
   </div>
 </div>
@@ -1688,11 +1688,11 @@
       <label>Herramientas que salen</label>
       <div id="ext-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
       </div>
-      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%">+ Agregar herramienta</button>
+      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%" title="Agregar otra herramienta a la salida">+ Agregar herramienta</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
-      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()">✅ Registrar salida</button>
+      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento">✅ Registrar salida</button>
     </div>
   </div>
 </div>
@@ -1707,7 +1707,7 @@
     <div id="ext-retorno-lista"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarRetornoExt()">✅ Confirmar retorno</button>
+      <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento">✅ Confirmar retorno</button>
     </div>
   </div>
 </div>
@@ -1736,19 +1736,19 @@
     <div id="info-entrega" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
-      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()">Marcar todas</button>
+      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
     </div>
     <div id="lista-entrega" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:260px;overflow-y:auto"></div>
     <div style="margin-bottom:14px">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
         <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-        <button class="btn btn-outline" onclick="agregarFilaAdicional()">+ Agregar</button>
+        <button class="btn btn-outline" onclick="agregarFilaAdicional()" title="Agregar una herramienta adicional a esta entrega">+ Agregar</button>
       </div>
       <div id="lista-adicionales"></div>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
-      <button class="btn btn-verde" onclick="confirmarEntrega()">✓ Confirmar Entrega</button>
+      <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
     </div>
   </div>
 </div>
@@ -1762,16 +1762,16 @@
     <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
-      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()">Marcar todas ✅</button>
+      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas ✅</button>
     </div>
     <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)">+ Agregar</button>
+      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)" title="Entregar una herramienta adicional a esta solicitud">+ Agregar</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
-      <button class="btn btn-azul" onclick="confirmarRetorno()">↩ Confirmar Retorno</button>
+      <button class="btn btn-azul" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante">↩ Confirmar Retorno</button>
     </div>
   </div>
 </div>
@@ -1792,7 +1792,7 @@
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         </select>
       </div>
-      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px">➕ No está en la lista — agregar como nueva</button>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva">➕ No está en la lista — agregar como nueva</button>
     </div>
 
     <div id="entrada-modo-nueva" style="display:none">
@@ -1818,7 +1818,7 @@
           <option value="Material Gastable">🧰 Material Gastable</option>
         </select>
       </div>
-      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px">← Ya existe, elegir de la lista</button>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente">← Ya existe, elegir de la lista</button>
     </div>
 
     <div class="modal-campo">
@@ -2871,7 +2871,7 @@ function renderTabla() {
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
@@ -3577,8 +3577,8 @@ function ppRenderTabla() {
       : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)">⚪ Retornado</span>`;
     const acciones = p.estado === "activo"
       ? (esDeHoy
-          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')">➕ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">↩ Retornar</button>`
-          : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')">🔍 Revisar y retornar</button>`)
+          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')" title="Agregar una herramienta adicional a este préstamo">➕ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button>`
+          : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Revisar y registrar el retorno de un préstamo anterior">🔍 Revisar y retornar</button>`)
       : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completado</span>`;
     return `
       <div class="pp-card${p.tieneIncidencias ? ' con-incidencia' : ''}">
@@ -3986,8 +3986,8 @@ function extRenderTabla() {
               ? '<span class="badge badge-cancelada">Con incidencias</span>'
               : '<span class="badge badge-retornada">Devuelto</span>';
           const acciones = p.estado === "prestado"
-            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`
-            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')">📄 Conduce</button>`;
+            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible">📄 Conduce</button>`
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible">📄 Conduce</button>`;
           return `
             <tr>
               <td>
@@ -4279,7 +4279,7 @@ function renderHerramientasCfg(lista) {
     const estiloTodas = herCategoriaActiva === ""
       ? "background:var(--verde);border-color:var(--verde);color:#000"
       : "";
-    let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
+    let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="" title="Ver todas las categorías">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
     chipsHtml += Object.keys(categoriasPresentes).sort((a, b) => a.localeCompare(b)).map(cat => {
       const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "🔩", color: "#8b949e" };
       const n = categoriasPresentes[cat];
@@ -4287,7 +4287,7 @@ function renderHerramientasCfg(lista) {
       const estilo = activo
         ? `background:${meta.color};border-color:${meta.color};color:#000`
         : `border-color:${meta.color}66;color:${meta.color}`;
-      return `<div class="her-chip" style="${estilo}" data-cat="${cat}">${meta.icono} ${cat} <span style="opacity:.7">(${n})</span></div>`;
+      return `<div class="her-chip" style="${estilo}" data-cat="${cat}" title="Filtrar por categoría: ${cat}">${meta.icono} ${cat} <span style="opacity:.7">(${n})</span></div>`;
     }).join("");
     chipsWrap.innerHTML = chipsHtml;
     chipsWrap.querySelectorAll(".her-chip").forEach(chip => {
@@ -4379,8 +4379,8 @@ function renderHerramientasCfg(lista) {
             <span class="her-usos">${usos > 0 ? usos + ' pedidas' : 'sin pedidos'}</span>
           </div>
           <div class="her-acciones">
-            <button class="btn btn-outline" onclick="abrirModalHerramienta('${h.id}','${nombreEsc}',${cantidad},${h.local || false},'${catEsc}')">✏️ Editar</button>
-            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})">🗑</button>
+            <button class="btn btn-outline" onclick="abrirModalHerramienta('${h.id}','${nombreEsc}',${cantidad},${h.local || false},'${catEsc}')" title="Editar herramienta">✏️ Editar</button>
+            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})" title="Eliminar herramienta">🗑</button>
           </div>
         </div>
       </div>`;
@@ -4720,8 +4720,8 @@ function renderProfesoresCfg() {
         ${sinRetHoy.length > 0 ? `<span class="prof-badge-activos" style="cursor:pointer" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetHoy[0].id}')">⏳ ${sinRetHoy.length} sin retornar hoy</span>` : ""}
         ${sinRetViejos > 0 ? `<span class="prof-badge-activos" style="cursor:pointer;background:rgba(239,68,68,.15);color:var(--rojo)" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar.find(x=>!esMismodia(x.creadoEn)).id}')">🔍 ${sinRetViejos} atrasado(s)</span>` : ""}
         <div class="acciones-celda">
-          <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})">✏️ Editar</button>
-          ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')">🗑</button>`}
+          <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})" title="Editar profesor">✏️ Editar</button>
+          ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')" title="Eliminar profesor">🗑</button>`}
         </div>
       </div>`;
   }).join("");
@@ -4847,8 +4847,8 @@ function renderUsuariosCfg() {
           <div class="usr-secciones">${secciones}</div>
         </div>
         <div class="usr-acciones">
-          <button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')">✏️ Editar</button>
-          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')">🗑</button>
+          <button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')" title="Editar usuario">✏️ Editar</button>
+          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')" title="Revocar acceso y eliminar usuario">🗑</button>
         </div>
       </div>`;
   }).join("");
