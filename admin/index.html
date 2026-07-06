@@ -181,7 +181,7 @@
 
   .shell {
     display: grid;
-    grid-template-columns: 220px 1fr;
+    grid-template-columns: 240px 1fr;
     grid-template-rows: 52px 1fr;
     height: 100vh;
     transition: grid-template-columns .25s ease;
@@ -281,7 +281,7 @@
 
   .shell.sidebar-colapsado .sb-brand-title,
   .shell.sidebar-colapsado .sb-brand-sub { display: none; }
-  .shell.sidebar-colapsado .sb-brand { justify-content: center; padding: 10px 0; }
+  .shell.sidebar-colapsado .sb-brand { justify-content: center; padding: 10px 0; gap: 0; }
 
   /* Grupos y items */
   .nav-grupo {
@@ -355,7 +355,7 @@
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
   }
 
-  .nav-texto { position: relative; z-index: 1; overflow: hidden; transition: opacity .2s, width .2s; }
+  .nav-texto { position: relative; z-index: 1; overflow: hidden; text-overflow: ellipsis; transition: opacity .2s, width .2s; }
 
   .nav-badge {
     margin-left: auto;
@@ -380,7 +380,7 @@
   /* Sidebar colapsado */
   .shell.sidebar-colapsado .nav-texto,
   .shell.sidebar-colapsado .nav-badge { opacity: 0; width: 0; }
-  .shell.sidebar-colapsado .nav-item { padding: 9px 0; justify-content: center; }
+  .shell.sidebar-colapsado .nav-item { padding: 9px 0; justify-content: center; gap: 0; }
 
   /* Turno actual (bottom sidebar) */
   .sb-turno {
