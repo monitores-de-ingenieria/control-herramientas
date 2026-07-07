@@ -2908,8 +2908,8 @@ function renderTabla() {
             <td style="font-size:12px">${s.matricula || "—"}</td>
             <td style="font-size:12px">${s.profesor || "—"}</td>
             <td style="font-size:12px">${s.laboratorio || "—"}</td>
-            <td style="font-size:12px;color:var(--texto-dim);max-width:220px">
-              ${(s.herramientas||[]).map(h => h.nombre + ' ×' + h.cantidad + (h.adicional ? ' <span style="background:var(--azul);color:#fff;font-size:10px;font-weight:800;padding:1px 6px;border-radius:20px;white-space:nowrap">+ADIC</span>' : '')).join(', ') || '—'}
+            <td style="font-size:12px;color:var(--texto-dim)">
+              ${(s.herramientas||[]).length} herramienta(s)
             </td>
             <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
