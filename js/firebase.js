@@ -1,6 +1,6 @@
 // js/firebase.js
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js";
 import {
   getFirestore,
   collection,
@@ -34,7 +34,7 @@ const app = initializeApp(firebaseConfig);
 // ⚠️ Reemplaza "PEGA_AQUI_TU_SITE_KEY_RECAPTCHA_V3" por la site key que
 // generes en Firebase Console → App Check (ver instrucciones abajo).
 const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LfqPUgtAAAAAGotRzMTvetHw4a1pKbj-D5lftbZ"),
+  provider: new ReCaptchaEnterpriseProvider("6LfqPUgtAAAAAGotRzMTvetHw4a1pKbj-D5lftbZ"),
   isTokenAutoRefreshEnabled: true
 });
 
