@@ -1990,6 +1990,16 @@ function iniciales(nombre, apellido) {
   return ((nombre||"")[0]||"") + ((apellido||"")[0]||"");
 }
 
+// Escapa texto libre (nombre, apellido, teléfono, ciclo, etc.) antes de
+// insertarlo en innerHTML. Estos campos los llena cualquier persona sin
+// necesidad de iniciar sesión (formulario público de solicitud), así que
+// nunca deben tratarse como HTML confiable — previene XSS almacenado.
+function escapeHtml(str) {
+  return String(str ?? "").replace(/[&<>"']/g, c => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
+  }[c]));
+}
+
 function formatFecha(ts) {
   if (!ts) return "—";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
@@ -2134,8 +2144,8 @@ function renderAuditoria() {
       <div class="dash-fila-premium" style="border-left-color:${color};cursor:default">
         <span style="display:flex;width:30px;height:30px;border-radius:50%;background:${color}22;color:${color};align-items:center;justify-content:center;font-size:14px;flex-shrink:0">${AUDIT_ICONOS[a.tipo]||"📌"}</span>
         <div style="flex:1;min-width:0">
-          <div style="font-size:12.5px;color:var(--texto)">${a.descripcion || "—"}</div>
-          <div style="font-size:10px;color:var(--texto-dim)">👤 ${a.usuario || "Desconocido"}</div>
+          <div style="font-size:12.5px;color:var(--texto)">${escapeHtml(a.descripcion) || "—"}</div>
+          <div style="font-size:10px;color:var(--texto-dim)">👤 ${escapeHtml(a.usuario) || "Desconocido"}</div>
         </div>
         <span style="font-size:10.5px;color:var(--texto-dim);white-space:nowrap">${hora}</span>
       </div>`;
@@ -2341,8 +2351,8 @@ window.verIncidencias = function() {
                 ? '<span class="badge badge-entregada">Activo</span>'
                 : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}`;
               return `<tr style="cursor:pointer" onclick="verDetalleIncidenciaProf('${p.id}')">
-                <td>${p.profesor || "—"}</td>
-                <td style="font-size:13px">${p.laboratorio || "—"}</td>
+                <td>${escapeHtml(p.profesor) || "—"}</td>
+                <td style="font-size:13px">${escapeHtml(p.laboratorio) || "—"}</td>
                 <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
                 <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
                 <td>${badgeEstado}</td>
@@ -2739,14 +2749,14 @@ async function cargarDashboard() {
     if (actEl) {
       const eventos = [];
       todas.forEach(s => {
-        const nombre = `${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante";
+        const nombre = escapeHtml(`${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante");
         if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:"✅", color:"#3fb950" });
         if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:"↩", color:"#388bfd" });
         if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:"📋", color:"#d29922" });
       });
       prestProf.forEach(p => {
-        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${p.profesor||"Profesor"} retornó herramientas`, icono:"↩", color:"#388bfd" });
-        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${p.profesor||"Profesor"} tomó herramientas`, icono:"👨‍🏫", color:"#a371f7" });
+        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:"↩", color:"#388bfd" });
+        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:"👨‍🏫", color:"#a371f7" });
       });
       eventos.sort((a,b) => b.ts - a.ts);
       actEl.innerHTML = eventos.length ? eventos.slice(0,6).map(e => `
@@ -2877,7 +2887,7 @@ function renderTabla() {
                 <div class="est-circulo" style="background:${colorEstudiante(s.nombre||"")}22;color:${colorEstudiante(s.nombre||"")}">
                   ${iniciales(s.nombre, s.apellido)}
                 </div>
-                <div><div class="est-nombre">${s.nombre} ${s.apellido}</div></div>
+                <div><div class="est-nombre">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
               </div>
             </td>
             <td style="font-size:12px">${s.matricula || "—"}</td>
@@ -3014,10 +3024,10 @@ window.abrirModal = function(id) {
   document.getElementById("modal-contenido").innerHTML = `
     <div class="modal-campo"><label>Número de solicitud</label><div class="valor">${s.numeroSolicitud || s.id.slice(0,8)}</div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="modal-campo"><label>Nombre</label><div class="valor">${s.nombre} ${s.apellido}</div></div>
+      <div class="modal-campo"><label>Nombre</label><div class="valor">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
       <div class="modal-campo"><label>Matrícula</label><div class="valor">${s.matricula || "—"}</div></div>
-      <div class="modal-campo"><label>Ciclo</label><div class="valor">${s.ciclo || "—"}</div></div>
-      <div class="modal-campo"><label>Teléfono</label><div class="valor">${s.telefono || "—"}</div></div>
+      <div class="modal-campo"><label>Ciclo</label><div class="valor">${escapeHtml(s.ciclo) || "—"}</div></div>
+      <div class="modal-campo"><label>Teléfono</label><div class="valor">${escapeHtml(s.telefono) || "—"}</div></div>
       <div class="modal-campo"><label>Profesor</label><div class="valor">${s.profesor || "—"}</div></div>
       <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${s.laboratorio || "—"}</div></div>
     </div>
@@ -3115,8 +3125,8 @@ window.verDetalleIncidenciaProf = async function(prestamoId) {
   const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
   document.getElementById("modal-contenido").innerHTML = `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${p.profesor || "—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${p.laboratorio || "—"}</div></div>
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(p.profesor) || "—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(p.laboratorio) || "—"}</div></div>
     </div>
     <div class="modal-campo"><label>Fecha del préstamo</label><div class="valor">${fecha}</div></div>
     <div class="modal-campo">
@@ -3157,7 +3167,7 @@ window.entregar = async function(id) {
   } catch(e) { alertaEl.style.display = "none"; }
 
   document.getElementById("info-entrega").innerHTML =
-    `<strong>${s.nombre} ${s.apellido}</strong> · ${s.matricula} · ${s.laboratorio || ""}`;
+    `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
 
   const lista = document.getElementById("lista-entrega");
   const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
@@ -3278,7 +3288,7 @@ window.retornar = function(id) {
   if (!s) return;
 
   document.getElementById("info-retorno").innerHTML =
-    `<strong>${s.nombre} ${s.apellido}</strong> · ${s.matricula} · ${s.laboratorio || ""}`;
+    `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
 
   const herramientas = s.herramientasEntregadas || s.herramientas || [];
   const lista = document.getElementById("lista-retorno");
@@ -3604,8 +3614,8 @@ function ppRenderTabla() {
         <div class="pp-card-top">
           <div class="pp-avatar" style="background:${color}22;color:${color}">${ini}</div>
           <div>
-            <div class="pp-nombre">${p.profesor || "—"}</div>
-            <div class="pp-lab">${p.laboratorio || "—"}</div>
+            <div class="pp-nombre">${escapeHtml(p.profesor) || "—"}</div>
+            <div class="pp-lab">${escapeHtml(p.laboratorio) || "—"}</div>
           </div>
           ${estadoTag}
           ${(p.estado === "activo" && !esDeHoy) ? '<span class="pp-estado-tag" style="background:rgba(210,153,34,.15);color:var(--amarillo)" title="Sin retornar desde un día anterior">⏳ Sin retornar</span>' : ''}
@@ -4199,8 +4209,8 @@ window.generarConduce = function(id) {
   document.getElementById("conduce-contenido").innerHTML = `
     <div class="modal-campo"><label>Número de conduce</label><div class="valor">${p.id.slice(0,8).toUpperCase()}</div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="modal-campo"><label>Departamento</label><div class="valor">${p.departamento || "—"}</div></div>
-      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${p.responsable || "—"}</div></div>
+      <div class="modal-campo"><label>Departamento</label><div class="valor">${escapeHtml(p.departamento) || "—"}</div></div>
+      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${escapeHtml(p.responsable) || "—"}</div></div>
     </div>
     <div class="modal-campo"><label>Fecha de salida</label><div class="valor">${fecha}</div></div>
     <div class="modal-campo">
@@ -5184,12 +5194,12 @@ function histRenderTabla() {
             <td>
               <div class="est-avatar">
                 <div class="est-circulo" style="background:${colorEstudiante(nombreMostrar)}22;color:${colorEstudiante(nombreMostrar)}">
-                  ${inicialesMostrar}
+                  ${escapeHtml(inicialesMostrar)}
                 </div>
-                <div class="est-nombre">${nombreMostrar}</div>
+                <div class="est-nombre">${escapeHtml(nombreMostrar)}</div>
               </div>
             </td>
-            <td style="font-size:12px">${refMostrar}</td>
+            <td style="font-size:12px">${escapeHtml(refMostrar)}</td>
             <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${(r.herramientas||[]).length}</span></td>
             <td>
               <span class="badge badge-${histEstadoInfo(r).cls}">${histEstadoInfo(r).txt}</span>
@@ -5266,20 +5276,20 @@ window.abrirModalHist = function(id, tipo) {
 
   const datosPersona = tipo === "externo" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="modal-campo"><label>Departamento</label><div class="valor">${r.departamento||"—"}</div></div>
-      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${r.responsable||"—"}</div></div>
+      <div class="modal-campo"><label>Departamento</label><div class="valor">${escapeHtml(r.departamento)||"—"}</div></div>
+      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${escapeHtml(r.responsable)||"—"}</div></div>
     </div>` : tipo === "profesor" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${r.profesor||"—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${r.laboratorio||"—"}</div></div>
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(r.profesor)||"—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(r.laboratorio)||"—"}</div></div>
     </div>` : `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
-      <div class="modal-campo"><label>Nombre</label><div class="valor">${r.nombre||""} ${r.apellido||""}</div></div>
-      <div class="modal-campo"><label>Matrícula</label><div class="valor">${r.matricula||"—"}</div></div>
-      ${r.ciclo    ? `<div class="modal-campo"><label>Ciclo</label><div class="valor">${r.ciclo}</div></div>` : ""}
-      ${r.telefono ? `<div class="modal-campo"><label>Teléfono</label><div class="valor">${r.telefono}</div></div>` : ""}
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${r.profesor||r.nombreProfesor||"—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${r.laboratorio||r.taller||"—"}</div></div>
+      <div class="modal-campo"><label>Nombre</label><div class="valor">${escapeHtml(r.nombre)||""} ${escapeHtml(r.apellido)||""}</div></div>
+      <div class="modal-campo"><label>Matrícula</label><div class="valor">${escapeHtml(r.matricula)||"—"}</div></div>
+      ${r.ciclo    ? `<div class="modal-campo"><label>Ciclo</label><div class="valor">${escapeHtml(r.ciclo)}</div></div>` : ""}
+      ${r.telefono ? `<div class="modal-campo"><label>Teléfono</label><div class="valor">${escapeHtml(r.telefono)}</div></div>` : ""}
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(r.profesor)||escapeHtml(r.nombreProfesor)||"—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(r.laboratorio)||escapeHtml(r.taller)||"—"}</div></div>
     </div>`;
 
   document.getElementById("modal-hist-contenido").innerHTML = `
