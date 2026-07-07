@@ -181,7 +181,7 @@
 
   .shell {
     display: grid;
-    grid-template-columns: 240px 1fr;
+    grid-template-columns: 216px 1fr;
     grid-template-rows: 52px 1fr;
     height: 100vh;
     transition: grid-template-columns .25s ease;
@@ -355,7 +355,15 @@
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
   }
 
-  .nav-texto { position: relative; z-index: 1; overflow: hidden; text-overflow: ellipsis; transition: opacity .2s, width .2s; }
+  .nav-texto {
+    position: relative; z-index: 1;
+    flex: 1;
+    min-width: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    transition: opacity .2s, width .2s;
+  }
 
   .nav-badge {
     margin-left: auto;

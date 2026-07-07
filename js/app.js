@@ -8,8 +8,8 @@ import { cargarProfesores, cargarLaboratorios, cargarHerramientas, cargarCiclos,
 // esto evita que ese código se ejecute cuando el admin lo vea.
 function sanitizar(texto) {
   if (typeof texto !== "string") return texto;
-  const mapa = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;", "/": "&#x2F;" };
-  return texto.replace(/[&<>"'/]/g, (c) => mapa[c]);
+  const mapa = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;" };
+  return texto.replace(/[&<>"']/g, (c) => mapa[c]);
 }
 
 // ---- Pantallas ----
