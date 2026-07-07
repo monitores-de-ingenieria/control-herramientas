@@ -1974,9 +1974,6 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 
-// App Check está activo a nivel de todo el proyecto de Firestore, así que
-// el panel admin también necesita enviar su token — si no, se le bloquean
-// todas las lecturas/escrituras en cuanto actives el enforcement.
 const appCheck = initializeAppCheck(app, {
   provider: new ReCaptchaEnterpriseProvider("6LfqPUgtAAAAAGotRzMTvetHw4a1pKbj-D5lftbZ"),
   isTokenAutoRefreshEnabled: true

@@ -2,6 +2,16 @@
 import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc } from "./firebase.js";
 import { cargarProfesores, cargarLaboratorios, cargarHerramientas, cargarCiclos, agregarCicloNuevo } from "./inventario.js";
 
+// ---- Sanitización de texto (anti-XSS) ----
+// El panel admin muestra estos datos con innerHTML en varias tablas/tarjetas.
+// Si alguien escribe algo como "<img src=x onerror=...>" en el formulario,
+// esto evita que ese código se ejecute cuando el admin lo vea.
+function sanitizar(texto) {
+  if (typeof texto !== "string") return texto;
+  const mapa = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#x27;", "/": "&#x2F;" };
+  return texto.replace(/[&<>"'/]/g, (c) => mapa[c]);
+}
+
 // ---- Pantallas ----
 const pantallasBienvenida  = document.getElementById("pantalla-bienvenida");
 const pantallaTaller       = document.getElementById("pantalla-taller");
@@ -163,7 +173,7 @@ btnBuscarAdicional.addEventListener("click", async () => {
   try {
     const solicitud = await buscarSolicitudActivaHoy(matricula);
     if (!solicitud) {
-      mostrarError("No tienes una solicitud hecha hoy. Cambia a 'Solicitando herramientas' arriba para crear una.");
+      mostrarError("No tienes una solicitud activa hoy. Selecciona 'Solicitando herramientas' para crear una nueva.");
       btnBuscarAdicional.disabled = false;
       btnBuscarAdicional.textContent = "Buscar solicitud activa";
       return;
@@ -400,8 +410,17 @@ selectCiclo.addEventListener("change", async () => {
   if (selectCiclo.value !== "__nuevo__") return;
 
   const escrito = prompt("Escribe el nuevo ciclo (ejemplo: 1-2027):");
-  const limpio = (escrito || "").trim();
+  const limpio = sanitizar((escrito || "").trim());
+
   if (!limpio) { selectCiclo.value = ""; return; }
+
+  // Solo se acepta el formato "N-AAAA" (ej. 1-2027) — evita que se cuele
+  // cualquier otro texto en una colección que ven todos los estudiantes.
+  if (!/^\d{1,2}-\d{4}$/.test(limpio)) {
+    mostrarError("Formato de ciclo inválido. Usa el formato N-AAAA, ej. 1-2027.");
+    selectCiclo.value = "";
+    return;
+  }
 
   const yaExiste = [...selectCiclo.options].find(o => o.value.toLowerCase() === limpio.toLowerCase());
   if (yaExiste) { selectCiclo.value = yaExiste.value; guardarDatosPersonales(); return; }
@@ -741,11 +760,11 @@ btnEnviar.addEventListener("click", async (e) => {
     });
 
   datosSolicitudPendiente = {
-    nombre:       document.getElementById("nombre").value.trim(),
-    apellido:     document.getElementById("apellido").value.trim(),
-    matricula:    document.getElementById("matricula").value.trim(),
+    nombre:       sanitizar(document.getElementById("nombre").value.trim()),
+    apellido:     sanitizar(document.getElementById("apellido").value.trim()),
+    matricula:    sanitizar(document.getElementById("matricula").value.trim()),
     ciclo:        document.getElementById("ciclo").value,
-    telefono:     document.getElementById("telefono").value.trim(),
+    telefono:     sanitizar(document.getElementById("telefono").value.trim()),
     profesor:     document.getElementById("profesor").value,
     laboratorio:  document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
