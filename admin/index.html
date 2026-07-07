@@ -1933,7 +1933,7 @@
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { initializeAppCheck, ReCaptchaV3Provider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js";
+import { initializeAppCheck, ReCaptchaEnterpriseProvider } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app-check.js";
 import {
   getAuth,
   signInWithEmailAndPassword,
@@ -1978,7 +1978,7 @@ const app = initializeApp(firebaseConfig);
 // el panel admin también necesita enviar su token — si no, se le bloquean
 // todas las lecturas/escrituras en cuanto actives el enforcement.
 const appCheck = initializeAppCheck(app, {
-  provider: new ReCaptchaV3Provider("6LfqPUgtAAAAAGotRzMTvetHw4a1pKbj-D5lftbZ"),
+  provider: new ReCaptchaEnterpriseProvider("6LfqPUgtAAAAAGotRzMTvetHw4a1pKbj-D5lftbZ"),
   isTokenAutoRefreshEnabled: true
 });
 
