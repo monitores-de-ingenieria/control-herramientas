@@ -181,7 +181,7 @@
 
   .shell {
     display: grid;
-    grid-template-columns: 216px 1fr;
+    grid-template-columns: 190px 1fr;
     grid-template-rows: 52px 1fr;
     height: 100vh;
     transition: grid-template-columns .25s ease;
@@ -2908,8 +2908,11 @@ function renderTabla() {
             <td style="font-size:12px">${s.matricula || "—"}</td>
             <td style="font-size:12px">${s.profesor || "—"}</td>
             <td style="font-size:12px">${s.laboratorio || "—"}</td>
-            <td style="font-size:12px;color:var(--texto-dim)">
-              ${(s.herramientas||[]).length} herramienta(s)
+            <td style="white-space:nowrap">
+              <span style="display:inline-flex;align-items:center;gap:5px">
+                <span style="width:20px;height:20px;border-radius:50%;background:var(--gradiente-verde);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${(s.herramientas||[]).length}</span>
+                <span style="font-size:11px;color:var(--texto-dim)">herramientas</span>
+              </span>
             </td>
             <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
             <td>
