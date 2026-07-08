@@ -11,7 +11,6 @@ const ARCHIVOS_SHELL = [
   "./js/app.js",
   "./js/firebase.js",
   "./js/inventario.js",
-  "./js/prestamos.js",
   "./js/herramientas-respaldo.js",
   "./img/utesiano.jpg",
   "./img/icons/icon-192.png",
