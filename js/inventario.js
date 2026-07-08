@@ -42,30 +42,43 @@ const HERRAMIENTAS_RESPALDO = HERRAMIENTAS_RESPALDO_BASE.map(h => ({ ...h, image
 async function obtenerColeccionOTexto(nombreColeccion, listaRespaldo, campo = "nombre") {
   try {
     const snap = await getDocs(collection(db, nombreColeccion));
-    if (!snap.empty) {
-      return snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    }
+    const todosValidos = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const valoresFirestore = new Set(todosValidos.map(d => String(d[campo] || "").toLowerCase()));
+    const eliminados = new Set(todosValidos.filter(d => d.eliminado).map(d => String(d[campo] || "").toLowerCase()));
+    const enFirestore = todosValidos.filter(d => !d.eliminado);
+    // El respaldo solo aporta lo que todavía NO está en Firestore (por
+    // nombre) y que no fue eliminado explícitamente — así, si solo se
+    // registró UNO de los del respaldo, los demás no desaparecen.
+    const delRespaldo = listaRespaldo
+      .filter(valor => {
+        const nombre = String(typeof valor === "string" ? valor : valor[campo] || "").toLowerCase();
+        return !valoresFirestore.has(nombre) && !eliminados.has(nombre);
+      })
+      .map((valor, i) => (typeof valor === "string" ? { id: `local-${i}`, [campo]: valor } : valor));
+    return [...enFirestore, ...delRespaldo];
   } catch (err) {
     console.warn(`No se pudo leer "${nombreColeccion}", usando respaldo.`, err);
+    return listaRespaldo.map((valor, i) =>
+      typeof valor === "string" ? { id: `local-${i}`, [campo]: valor } : valor
+    );
   }
-  return listaRespaldo.map((valor, i) =>
-    typeof valor === "string" ? { id: `local-${i}`, [campo]: valor } : valor
-  );
 }
 
 export async function cargarProfesores() {
   try {
     const snap = await getDocs(collection(db, "profesores"));
-    if (!snap.empty) {
-      return snap.docs
-        .map(d => ({ id: d.id, ...d.data() }))
-        .filter(p => !p.eliminado)
-        .sort((a, b) => a.nombre.localeCompare(b.nombre));
-    }
+    const todosValidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const nombresFirestore = new Set(todosValidos.map(p => p.nombre.toLowerCase()));
+    const eliminados = new Set(todosValidos.filter(p => p.eliminado).map(p => p.nombre.toLowerCase()));
+    const enFirestore = todosValidos.filter(p => !p.eliminado);
+    const delRespaldo = PROFESORES_RESPALDO
+      .filter(nombre => !nombresFirestore.has(nombre.toLowerCase()) && !eliminados.has(nombre.toLowerCase()))
+      .map((nombre, i) => ({ id: `local-${i}`, nombre }));
+    return [...enFirestore, ...delRespaldo].sort((a, b) => a.nombre.localeCompare(b.nombre));
   } catch (err) {
     console.warn('No se pudo leer "profesores", usando respaldo.', err);
+    return PROFESORES_RESPALDO.map((valor, i) => ({ id: `local-${i}`, nombre: valor }));
   }
-  return PROFESORES_RESPALDO.map((valor, i) => ({ id: `local-${i}`, nombre: valor }));
 }
 
 export async function cargarLaboratorios() {
