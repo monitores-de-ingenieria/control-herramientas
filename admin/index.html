@@ -5716,7 +5716,7 @@ document.getElementById("modal-hist")?.addEventListener("click", e => {
   // Registro del service worker: permite instalar el panel como app de escritorio.
   if ("serviceWorker" in navigator) {
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("sw.js").catch((err) => {
+      navigator.serviceWorker.register("admin-sw.js").catch((err) => {
         console.warn("No se pudo registrar el service worker del admin:", err);
       });
     });

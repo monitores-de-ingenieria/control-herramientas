@@ -1,7 +1,7 @@
-// admin/sw.js — cachea el shell del panel admin para que instale y abra
+// admin/admin-sw.js — cachea el shell del panel admin para que instale y abra
 // como app de escritorio. Firebase/Firestore siempre va a la red (datos en vivo).
 
-const CACHE_NAME = "admin-herramientas-v2";
+const CACHE_NAME = "admin-herramientas-v3"; // <-- sube este número cada vez que publiques cambios
 
 const ARCHIVOS_SHELL = [
   "./",
@@ -15,7 +15,6 @@ self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => cache.addAll(ARCHIVOS_SHELL))
   );
-  self.skipWaiting();
 });
 
 self.addEventListener("activate", (event) => {
@@ -25,6 +24,10 @@ self.addEventListener("activate", (event) => {
     )
   );
   self.clients.claim();
+});
+
+self.addEventListener("message", (event) => {
+  if (event.data === "SKIP_WAITING") self.skipWaiting();
 });
 
 self.addEventListener("fetch", (event) => {
@@ -40,6 +43,19 @@ self.addEventListener("fetch", (event) => {
   }
 
   if (event.request.method !== "GET") return;
+
+  if (event.request.mode === "navigate") {
+    event.respondWith(
+      fetch(event.request)
+        .then((respuesta) => {
+          const copia = respuesta.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copia));
+          return respuesta;
+        })
+        .catch(() => caches.match(event.request))
+    );
+    return;
+  }
 
   event.respondWith(
     caches.match(event.request).then((cacheado) => {
