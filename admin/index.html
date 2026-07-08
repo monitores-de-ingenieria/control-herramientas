@@ -1035,11 +1035,43 @@
   .prof-fila:hover { border-color:var(--verde); }
   .prof-fila-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .prof-fila .est-avatar { flex:1; min-width:0; }
-  .prof-materias-lista { margin-top:10px; padding-top:10px; border-top:1px dashed var(--borde); display:flex; flex-direction:column; gap:5px; }
-  .prof-materia-item { display:flex; align-items:baseline; gap:6px; font-size:11.5px; }
-  .prof-materia-item .pmi-punto { width:5px; height:5px; border-radius:50%; background:var(--amarillo); flex-shrink:0; }
-  .prof-materia-item .pmi-nombre { font-weight:600; color:var(--texto); }
+  .prof-materias-lista { margin-top:10px; padding-top:10px; border-top:1px dashed var(--borde); display:flex; flex-direction:column; gap:8px; }
+  .prof-materia-item { display:flex; align-items:flex-start; gap:6px; font-size:11.5px; }
+  .prof-materia-item .pmi-punto { width:5px; height:5px; border-radius:50%; background:var(--amarillo); flex-shrink:0; margin-top:5px; }
+  .prof-materia-item .pmi-nombre { font-weight:700; color:var(--texto); display:block; }
   .prof-materia-item .pmi-detalle { color:var(--texto-dim); }
+  .prof-materia-item .pmi-horario { color:var(--texto-dim); margin-top:1px; }
+
+  /* ── Materias del profesor: varios horarios por materia ── */
+  .prof-materia-fila { background:var(--card2); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:10px; border:1px solid var(--borde); }
+  .pm-select-existente { width:100%; padding:8px 10px; background:var(--card2); border:1.5px dashed var(--borde); border-radius:7px; color:var(--texto-dim); font-size:12px; margin-bottom:8px; cursor:pointer; }
+  .pm-select-existente:focus { outline:none; border-color:var(--verde); }
+  .pm-header { display:flex; gap:8px; align-items:center; }
+  .pm-header .pm-nombre { flex:1; min-width:0; padding:9px 10px; background:var(--bg); border:1.5px solid var(--borde); border-radius:7px; color:var(--texto); font-size:13px; font-weight:700; }
+  .pm-header .pm-nombre:focus { outline:none; border-color:var(--verde); }
+  .pm-header .pm-codigo { width:120px; flex-shrink:0; padding:9px 10px; background:var(--bg); border:1.5px solid var(--borde); border-radius:7px; color:var(--verde); font-size:12.5px; font-weight:800; text-transform:uppercase; letter-spacing:.03em; }
+  .pm-header .pm-codigo:focus { outline:none; border-color:var(--verde); }
+  .pmi-codigo { font-size:10px; font-weight:800; color:var(--verde); background:var(--verde-glow); padding:1px 7px; border-radius:6px; margin-right:6px; letter-spacing:.02em; }
+  .pm-horarios-wrap { display:flex; flex-direction:column; gap:8px; }
+  .pm-horario-fila { background:var(--bg); border:1px dashed var(--borde); border-radius:8px; padding:9px; display:flex; flex-direction:column; gap:7px; }
+  .pm-dias-chips { display:flex; gap:4px; flex-wrap:wrap; }
+  .pm-hora-row { display:flex; gap:6px; align-items:center; font-size:11px; color:var(--texto-dim); flex-wrap:wrap; }
+  .pm-hora-row select { padding:5px; background:var(--card2); border:1px solid var(--borde); border-radius:6px; color:var(--texto); }
+  .btn-quitar-horario { background:rgba(239,68,68,.12); border:none; color:var(--rojo); border-radius:6px; padding:3px 9px; cursor:pointer; font-size:12px; margin-left:auto; font-weight:700; }
+  .btn-quitar-horario:hover { background:var(--rojo); color:#fff; }
+  .pm-btn-horario { align-self:flex-start; background:none; border:1.5px dashed var(--verde); color:var(--verde); border-radius:7px; padding:6px 12px; font-size:11.5px; font-weight:700; cursor:pointer; transition:background .15s; }
+  .pm-btn-horario:hover { background:var(--verde-glow); }
+
+  /* Botón "Agregar materia" — antes era chiquito y se perdía arriba a la
+     derecha; ahora es una franja completa, destacada, debajo de la lista. */
+  .btn-agregar-materia {
+    width:100%; margin-top:4px; padding:13px; border:none;
+    border-radius:10px; background:var(--verde); color:#000;
+    font-weight:800; font-size:13.5px; cursor:pointer;
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    transition:background .15s, transform .15s;
+  }
+  .btn-agregar-materia:hover { background:var(--verde-dim); color:#fff; transform:translateY(-1px); }
   .prof-badge-activos { font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(210,153,34,.15); color:var(--amarillo); white-space:nowrap; }
 
   /* ═════════════════════════════════════════
@@ -1529,11 +1561,9 @@
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
     <div class="modal-campo">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <label style="margin:0">Materias que imparte</label>
-        <button type="button" class="btn btn-outline" onclick="profAgregarFilaMateria()" style="padding:4px 10px;font-size:11.5px">+ Agregar materia</button>
-      </div>
+      <label style="margin:0">Materias que imparte</label>
       <div id="prof-materias-wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;max-height:340px;overflow-y:auto"></div>
+      <button type="button" class="btn-agregar-materia" onclick="profAgregarFilaMateria()">➕ Agregar materia</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
@@ -4809,12 +4839,22 @@ function renderProfesoresCfg() {
     const sinRetViejos = sinRetornar.length - sinRetHoy.length;
     const nombreEsc = p.nombre.replace(/'/g, "\\'");
     const listaMaterias = (p.materias || []).length
-      ? `<div class="prof-materias-lista">${p.materias.map(m => `
+      ? `<div class="prof-materias-lista">${p.materias.map(m => {
+          const horarios = (m.horarios && m.horarios.length)
+            ? m.horarios
+            : ((m.dias && m.dias.length) || m.horaInicio ? [{ dias: m.dias || [], horaInicio: m.horaInicio || "", horaFin: m.horaFin || "" }] : []);
+          const detalle = horarios.length
+            ? horarios.map(h => `<div class="pmi-horario">${(h.dias&&h.dias.length)?h.dias.join("/"):"sin días"}${h.horaInicio?" · "+h.horaInicio+"–"+(h.horaFin||""):""}</div>`).join("")
+            : '<div class="pmi-horario">sin horario definido</div>';
+          return `
           <div class="prof-materia-item">
             <span class="pmi-punto"></span>
-            <span class="pmi-nombre">${m.nombre}</span>
-            <span class="pmi-detalle">${(m.dias&&m.dias.length)?m.dias.join("/"):"sin días"}${m.horaInicio?" · "+m.horaInicio+"–"+(m.horaFin||""):""}</span>
-          </div>`).join("")}</div>`
+            <div>
+              <span class="pmi-nombre">${m.codigo ? `<span class="pmi-codigo">${m.codigo}</span>` : ""}${m.nombre}</span>
+              ${detalle}
+            </div>
+          </div>`;
+        }).join("")}</div>`
       : "";
     return `
       <div class="prof-fila">
@@ -4872,35 +4912,85 @@ window.profAgregarFilaMateria = function(m = {}) {
   const wrap = document.getElementById("prof-materias-wrap");
   const fila = document.createElement("div");
   fila.className = "prof-materia-fila";
-  fila.style.cssText = "background:var(--card2);padding:10px;border-radius:8px;display:flex;flex-direction:column;gap:8px";
-  const diasSel = m.dias || [];
   fila.innerHTML = `
-    <div style="display:flex;gap:6px;align-items:center">
-      <input type="text" class="pm-nombre" placeholder="Materia (ej. Torno básico)" value="${(m.nombre||"").replace(/"/g,'&quot;')}"
-        style="flex:1;min-width:0;padding:6px 8px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto);font-size:12px">
+    <select class="pm-select-existente" onchange="profElegirMateriaExistente(this)">
+      <option value="">📋 Elegir de una materia ya registrada...</option>
+      ${materiasDisponiblesGlobal().map(op => `<option value="${op.codigo.replace(/"/g,'&quot;')}||${op.nombre.replace(/"/g,'&quot;')}">${op.codigo ? op.codigo + " — " : ""}${op.nombre}</option>`).join("")}
+    </select>
+    <div class="pm-header">
+      <input type="text" class="pm-codigo" placeholder="Código (ej. IMC105004)" value="${(m.codigo||"").replace(/"/g,'&quot;')}">
+      <input type="text" class="pm-nombre" placeholder="Materia (ej. Taller de Soldadura)" value="${(m.nombre||"").replace(/"/g,'&quot;')}">
       <button type="button" class="btn-quitar-fila" onclick="this.closest('.prof-materia-fila').remove()" title="Quitar esta materia">✕</button>
     </div>
-    <div class="pm-dias-chips" style="display:flex;gap:4px;flex-wrap:wrap">
+    <div class="pm-horarios-wrap"></div>
+    <button type="button" class="pm-btn-horario" onclick="profAgregarHorario(this)">🕐 Agregar horario a esta materia</button>`;
+  wrap.appendChild(fila);
+
+  // Compatibilidad: materias guardadas antes de que existiera "horarios"
+  // (formato viejo: {nombre, dias, horaInicio, horaFin} plano, un solo
+  // horario). Si no trae "horarios", lo convertimos a una lista de 1.
+  const horarios = (m.horarios && m.horarios.length)
+    ? m.horarios
+    : ((m.dias && m.dias.length) || m.horaInicio ? [{ dias: m.dias || [], horaInicio: m.horaInicio || "", horaFin: m.horaFin || "" }] : [{}]);
+  const btnHorario = fila.querySelector(".pm-btn-horario");
+  horarios.forEach(h => profAgregarHorario(btnHorario, h));
+};
+
+window.profAgregarHorario = function(btnRef, h = {}) {
+  const fila = btnRef.closest(".prof-materia-fila");
+  const wrapHorarios = fila.querySelector(".pm-horarios-wrap");
+  const diasSel = h.dias || [];
+  const horarioRow = document.createElement("div");
+  horarioRow.className = "pm-horario-fila";
+  horarioRow.innerHTML = `
+    <div class="pm-dias-chips">
       ${PROF_DIAS.map(d => `<span class="her-chip pm-dia${diasSel.includes(d)?" activo":""}" data-dia="${d}" style="${diasSel.includes(d)?"background:var(--verde);border-color:var(--verde);color:#000":""}">${d}</span>`).join("")}
     </div>
-    <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--texto-dim)">
+    <div class="pm-hora-row">
       <span>De</span>
-      <select class="pm-h1" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaInicio,"h")}</select>:
-      <select class="pm-m1" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaInicio,"m")}</select>
-      <select class="pm-ap1" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaInicio,"ap")}</select>
+      <select class="pm-h1">${_profSelectHora(h.horaInicio,"h")}</select>:
+      <select class="pm-m1">${_profSelectHora(h.horaInicio,"m")}</select>
+      <select class="pm-ap1">${_profSelectHora(h.horaInicio,"ap")}</select>
       <span>a</span>
-      <select class="pm-h2" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaFin,"h")}</select>:
-      <select class="pm-m2" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaFin,"m")}</select>
-      <select class="pm-ap2" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaFin,"ap")}</select>
+      <select class="pm-h2">${_profSelectHora(h.horaFin,"h")}</select>:
+      <select class="pm-m2">${_profSelectHora(h.horaFin,"m")}</select>
+      <select class="pm-ap2">${_profSelectHora(h.horaFin,"ap")}</select>
+      <button type="button" class="btn-quitar-horario" onclick="this.closest('.pm-horario-fila').remove()" title="Quitar este horario">✕</button>
     </div>`;
-  fila.querySelectorAll(".pm-dia").forEach(chip => {
+  horarioRow.querySelectorAll(".pm-dia").forEach(chip => {
     chip.addEventListener("click", () => {
       chip.classList.toggle("activo");
       const on = chip.classList.contains("activo");
       chip.style.cssText = on ? "background:var(--verde);border-color:var(--verde);color:#000" : "";
     });
   });
-  wrap.appendChild(fila);
+  wrapHorarios.appendChild(horarioRow);
+};
+
+// Junta todas las materias (código+nombre) que YA existen en cualquier
+// profesor guardado, sin repetir, para poder elegirlas en vez de escribirlas
+// de cero cada vez. Se recalcula cada vez que se abre el picker porque
+// profCfgLista se actualiza en tiempo real (onSnapshot).
+function materiasDisponiblesGlobal() {
+  const vistas = new Set();
+  const resultado = [];
+  (profCfgLista || []).forEach(p => (p.materias || []).forEach(m => {
+    if (!m.nombre) return;
+    const clave = (m.codigo || "") + "||" + m.nombre;
+    if (vistas.has(clave)) return;
+    vistas.add(clave);
+    resultado.push({ codigo: m.codigo || "", nombre: m.nombre });
+  }));
+  return resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
+}
+
+window.profElegirMateriaExistente = function(select) {
+  if (!select.value) return;
+  const [codigo, ...resto] = select.value.split("||");
+  const fila = select.closest(".prof-materia-fila");
+  fila.querySelector(".pm-codigo").value = codigo;
+  fila.querySelector(".pm-nombre").value = resto.join("||");
+  select.selectedIndex = 0;
 };
 
 window.cerrarModalProfesor = function() {
@@ -4912,14 +5002,20 @@ window.guardarProfesor = async function() {
   const nombre = document.getElementById("prof-input-nombre").value.trim();
   if (!nombre) { mostrarToast("Escribe el nombre del profesor", "rojo"); return; }
   const materias = [...document.querySelectorAll("#prof-materias-wrap .prof-materia-fila")].map(fila => {
-    const dias = [...fila.querySelectorAll(".pm-dia.activo")].map(c => c.dataset.dia);
-    const h1 = fila.querySelector(".pm-h1").value, m1 = fila.querySelector(".pm-m1").value, ap1 = fila.querySelector(".pm-ap1").value;
-    const h2 = fila.querySelector(".pm-h2").value, m2 = fila.querySelector(".pm-m2").value, ap2 = fila.querySelector(".pm-ap2").value;
+    const horarios = [...fila.querySelectorAll(".pm-horario-fila")].map(h => {
+      const dias = [...h.querySelectorAll(".pm-dia.activo")].map(c => c.dataset.dia);
+      const h1 = h.querySelector(".pm-h1").value, m1 = h.querySelector(".pm-m1").value, ap1 = h.querySelector(".pm-ap1").value;
+      const h2 = h.querySelector(".pm-h2").value, m2 = h.querySelector(".pm-m2").value, ap2 = h.querySelector(".pm-ap2").value;
+      return {
+        dias,
+        horaInicio: h1 ? `${h1}:${m1} ${ap1}` : "",
+        horaFin: h2 ? `${h2}:${m2} ${ap2}` : ""
+      };
+    }).filter(h => h.dias.length || h.horaInicio);
     return {
+      codigo: fila.querySelector(".pm-codigo").value.trim().toUpperCase(),
       nombre: fila.querySelector(".pm-nombre").value.trim(),
-      dias,
-      horaInicio: h1 ? `${h1}:${m1} ${ap1}` : "",
-      horaFin: h2 ? `${h2}:${m2} ${ap2}` : ""
+      horarios
     };
   }).filter(m => m.nombre);
   const btn = document.getElementById("prof-btn-guardar");
