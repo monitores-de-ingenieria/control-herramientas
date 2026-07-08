@@ -181,7 +181,7 @@
 
   .shell {
     display: grid;
-    grid-template-columns: 206px 1fr;
+    grid-template-columns: 216px 1fr;
     grid-template-rows: 52px 1fr;
     height: 100vh;
     transition: grid-template-columns .25s ease;
@@ -1030,10 +1030,16 @@
   ══════════════════════════════════════════ */
   .prof-resumen { display:flex; align-items:center; gap:8px; margin-bottom:14px; font-size:12.5px; color:var(--texto-dim); }
   .prof-resumen b { color:var(--texto); font-size:16px; }
-  .prof-lista { display:flex; flex-direction:column; gap:8px; }
-  .prof-fila { display:flex; align-items:center; gap:12px; background:var(--card); border:1px solid var(--borde); border-radius:10px; padding:10px 14px; transition:border-color .15s; }
+  .prof-lista { display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:10px; align-items:start; }
+  .prof-fila { background:var(--card); border:1px solid var(--borde); border-radius:10px; padding:12px 14px; transition:border-color .15s; }
   .prof-fila:hover { border-color:var(--verde); }
+  .prof-fila-top { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .prof-fila .est-avatar { flex:1; min-width:0; }
+  .prof-materias-lista { margin-top:10px; padding-top:10px; border-top:1px dashed var(--borde); display:flex; flex-direction:column; gap:5px; }
+  .prof-materia-item { display:flex; align-items:baseline; gap:6px; font-size:11.5px; }
+  .prof-materia-item .pmi-punto { width:5px; height:5px; border-radius:50%; background:var(--amarillo); flex-shrink:0; }
+  .prof-materia-item .pmi-nombre { font-weight:600; color:var(--texto); }
+  .prof-materia-item .pmi-detalle { color:var(--texto-dim); }
   .prof-badge-activos { font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(210,153,34,.15); color:var(--amarillo); white-space:nowrap; }
 
   /* ═════════════════════════════════════════
@@ -1512,7 +1518,7 @@
       </div>
 
     </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
-  <div class="modal" style="max-width:400px">
+  <div class="modal" style="max-width:480px">
     <div class="modal-titulo">
       <span id="prof-modal-titulo">➕ Agregar profesor</span>
       <button class="modal-cerrar" onclick="cerrarModalProfesor()">✕</button>
@@ -1521,6 +1527,13 @@
       <label>Nombre completo</label>
       <input type="text" id="prof-input-nombre" placeholder="Ej. Daniel Camejo"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-campo">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <label style="margin:0">Materias que imparte</label>
+        <button type="button" class="btn btn-outline" onclick="profAgregarFilaMateria()" style="padding:4px 10px;font-size:11.5px">+ Agregar materia</button>
+      </div>
+      <div id="prof-materias-wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;max-height:340px;overflow-y:auto"></div>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
@@ -4596,17 +4609,17 @@ window.guardarHerramienta = async function() {
   function describirCambios(antes) {
     if (!antes) return "";
     const cambios = [];
-    if (antes.nombre !== nombreFinal) cambios.push(`cambió el nombre de "${antes.nombre}" a "${nombreFinal}"`);
-    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`cambió la categoría de "${antes.categoria || "Sin categoría"}" a "${categoria || "Sin categoría"}"`);
+    if (antes.nombre !== nombreFinal) cambios.push(`nombre: "${antes.nombre}" → "${nombreFinal}"`);
+    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`categoría: "${antes.categoria || "Sin categoría"}" → "${categoria || "Sin categoría"}"`);
     const cantidadAntes = Number.isFinite(antes.cantidadDisponible) ? antes.cantidadDisponible : 0;
     if (cantidadAntes !== cantidad) {
       const diferencia = cantidad - cantidadAntes;
       const signo = diferencia > 0 ? "+" : "";
-      cambios.push(`cambió la cantidad disponible de ${cantidadAntes} a ${cantidad} (${signo}${diferencia})`);
+      cambios.push(`cantidad: ${cantidadAntes} → ${cantidad} (${signo}${diferencia})`);
     }
-    if ((antes.practica || "") !== (practica || "")) cambios.push(`cambió la práctica/combo de "${antes.practica || "ninguna"}" a "${practica || "ninguna"}"`);
-    if (herFotoArchivo) cambios.push("cambió la foto");
-    return cambios.length ? `. Cambios: ${cambios.join("; ")}.` : " (guardó sin cambios detectados)";
+    if ((antes.practica || "") !== (practica || "")) cambios.push(`práctica/combo: "${antes.practica || "ninguna"}" → "${practica || "ninguna"}"`);
+    if (herFotoArchivo) cambios.push("foto actualizada");
+    return cambios.length ? ` — ${cambios.join(" · ")}` : " (sin cambios detectados)";
   }
 
   try {
@@ -4795,18 +4808,31 @@ function renderProfesoresCfg() {
     const sinRetHoy = sinRetornar.filter(x => esMismodia(x.creadoEn));
     const sinRetViejos = sinRetornar.length - sinRetHoy.length;
     const nombreEsc = p.nombre.replace(/'/g, "\\'");
+    const listaMaterias = (p.materias || []).length
+      ? `<div class="prof-materias-lista">${p.materias.map(m => `
+          <div class="prof-materia-item">
+            <span class="pmi-punto"></span>
+            <span class="pmi-nombre">${m.nombre}</span>
+            <span class="pmi-detalle">${(m.dias&&m.dias.length)?m.dias.join("/"):"sin días"}${m.horaInicio?" · "+m.horaInicio+"–"+(m.horaFin||""):""}</span>
+          </div>`).join("")}</div>`
+      : "";
     return `
       <div class="prof-fila">
-        <div class="est-avatar">
-          <div class="est-circulo" style="background:${colorEstudiante(p.nombre)}22;color:${colorEstudiante(p.nombre)}">${iniciales(nombre, apellido)}</div>
-          <div class="est-nombre">${p.nombre}${local}</div>
+        <div class="prof-fila-top">
+          <div class="est-avatar">
+            <div class="est-circulo" style="background:${colorEstudiante(p.nombre)}22;color:${colorEstudiante(p.nombre)}">${iniciales(nombre, apellido)}</div>
+            <div style="min-width:0;flex:1">
+              <div class="est-nombre">${p.nombre}${local}</div>
+            </div>
+          </div>
+          ${sinRetHoy.length > 0 ? `<span class="prof-badge-activos" style="cursor:pointer" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetHoy[0].id}')">⏳ ${sinRetHoy.length} sin retornar hoy</span>` : ""}
+          ${sinRetViejos > 0 ? `<span class="prof-badge-activos" style="cursor:pointer;background:rgba(239,68,68,.15);color:var(--rojo)" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar.find(x=>!esMismodia(x.creadoEn)).id}')">🔍 ${sinRetViejos} atrasado(s)</span>` : ""}
+          <div class="acciones-celda">
+            <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})" title="Editar profesor">✏️ Editar</button>
+            ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')" title="Eliminar profesor">🗑</button>`}
+          </div>
         </div>
-        ${sinRetHoy.length > 0 ? `<span class="prof-badge-activos" style="cursor:pointer" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetHoy[0].id}')">⏳ ${sinRetHoy.length} sin retornar hoy</span>` : ""}
-        ${sinRetViejos > 0 ? `<span class="prof-badge-activos" style="cursor:pointer;background:rgba(239,68,68,.15);color:var(--rojo)" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar.find(x=>!esMismodia(x.creadoEn)).id}')">🔍 ${sinRetViejos} atrasado(s)</span>` : ""}
-        <div class="acciones-celda">
-          <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})" title="Editar profesor">✏️ Editar</button>
-          ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')" title="Eliminar profesor">🗑</button>`}
-        </div>
+        ${listaMaterias}
       </div>`;
   }).join("");
 }
@@ -4819,7 +4845,62 @@ window.abrirModalProfesor = function(id = null, nombre = "", esLocal = false) {
   input.value    = nombre;
   input.readOnly = false;
   input.style.opacity = "1";
+  const wrap = document.getElementById("prof-materias-wrap");
+  wrap.innerHTML = "";
+  const datos = id ? profCfgLista.find(p => p.id === id) : null;
+  (datos?.materias || []).forEach(m => profAgregarFilaMateria(m));
   document.getElementById("modal-profesor-cfg").classList.add("abierto");
+};
+
+const PROF_DIAS = ["Lun","Mar","Mié","Jue","Vie","Sáb"];
+function _profSelectHora(valorGuardado, tipo) {
+  if (tipo === "h") {
+    const actual = valorGuardado ? parseInt(valorGuardado.split(":")[0]) : "";
+    let opts = '<option value="">--</option>';
+    for (let h = 1; h <= 12; h++) opts += `<option value="${h}"${h===actual?" selected":""}>${h}</option>`;
+    return opts;
+  }
+  if (tipo === "m") {
+    const actual = valorGuardado ? valorGuardado.split(":")[1]?.split(" ")[0] : "";
+    return ["00","15","30","45"].map(m => `<option value="${m}"${m===actual?" selected":""}>${m}</option>`).join("");
+  }
+  const actual = valorGuardado ? valorGuardado.split(" ")[1] : "";
+  return ["AM","PM"].map(ap => `<option value="${ap}"${ap===actual?" selected":""}>${ap}</option>`).join("");
+}
+
+window.profAgregarFilaMateria = function(m = {}) {
+  const wrap = document.getElementById("prof-materias-wrap");
+  const fila = document.createElement("div");
+  fila.className = "prof-materia-fila";
+  fila.style.cssText = "background:var(--card2);padding:10px;border-radius:8px;display:flex;flex-direction:column;gap:8px";
+  const diasSel = m.dias || [];
+  fila.innerHTML = `
+    <div style="display:flex;gap:6px;align-items:center">
+      <input type="text" class="pm-nombre" placeholder="Materia (ej. Torno básico)" value="${(m.nombre||"").replace(/"/g,'&quot;')}"
+        style="flex:1;min-width:0;padding:6px 8px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto);font-size:12px">
+      <button type="button" class="btn-quitar-fila" onclick="this.closest('.prof-materia-fila').remove()" title="Quitar esta materia">✕</button>
+    </div>
+    <div class="pm-dias-chips" style="display:flex;gap:4px;flex-wrap:wrap">
+      ${PROF_DIAS.map(d => `<span class="her-chip pm-dia${diasSel.includes(d)?" activo":""}" data-dia="${d}" style="${diasSel.includes(d)?"background:var(--verde);border-color:var(--verde);color:#000":""}">${d}</span>`).join("")}
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;font-size:11px;color:var(--texto-dim)">
+      <span>De</span>
+      <select class="pm-h1" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaInicio,"h")}</select>:
+      <select class="pm-m1" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaInicio,"m")}</select>
+      <select class="pm-ap1" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaInicio,"ap")}</select>
+      <span>a</span>
+      <select class="pm-h2" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaFin,"h")}</select>:
+      <select class="pm-m2" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaFin,"m")}</select>
+      <select class="pm-ap2" style="padding:5px;background:var(--bg);border:1px solid var(--borde);border-radius:6px;color:var(--texto)">${_profSelectHora(m.horaFin,"ap")}</select>
+    </div>`;
+  fila.querySelectorAll(".pm-dia").forEach(chip => {
+    chip.addEventListener("click", () => {
+      chip.classList.toggle("activo");
+      const on = chip.classList.contains("activo");
+      chip.style.cssText = on ? "background:var(--verde);border-color:var(--verde);color:#000" : "";
+    });
+  });
+  wrap.appendChild(fila);
 };
 
 window.cerrarModalProfesor = function() {
@@ -4830,26 +4911,37 @@ window.cerrarModalProfesor = function() {
 window.guardarProfesor = async function() {
   const nombre = document.getElementById("prof-input-nombre").value.trim();
   if (!nombre) { mostrarToast("Escribe el nombre del profesor", "rojo"); return; }
+  const materias = [...document.querySelectorAll("#prof-materias-wrap .prof-materia-fila")].map(fila => {
+    const dias = [...fila.querySelectorAll(".pm-dia.activo")].map(c => c.dataset.dia);
+    const h1 = fila.querySelector(".pm-h1").value, m1 = fila.querySelector(".pm-m1").value, ap1 = fila.querySelector(".pm-ap1").value;
+    const h2 = fila.querySelector(".pm-h2").value, m2 = fila.querySelector(".pm-m2").value, ap2 = fila.querySelector(".pm-ap2").value;
+    return {
+      nombre: fila.querySelector(".pm-nombre").value.trim(),
+      dias,
+      horaInicio: h1 ? `${h1}:${m1} ${ap1}` : "",
+      horaFin: h2 ? `${h2}:${m2} ${ap2}` : ""
+    };
+  }).filter(m => m.nombre);
   const btn = document.getElementById("prof-btn-guardar");
   btn.disabled = true; btn.textContent = "Guardando...";
   try {
     if (profCfgEditar) {
-      await updateDoc(doc(db, "profesores", profCfgEditar), { nombre });
+      await updateDoc(doc(db, "profesores", profCfgEditar), { nombre, materias });
       mostrarToast("✅ Profesor actualizado");
       registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
     } else if (window._profLocalNombre) {
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
-        await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre });
+        await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre, materias });
         mostrarToast("✅ Profesor actualizado");
         registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
       } else {
-        await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
+        await addDoc(collection(db, "profesores"), { nombre, materias, creadoEn: serverTimestamp() });
         mostrarToast("✅ Profesor guardado");
         registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
       }
     } else {
-      await addDoc(collection(db, "profesores"), { nombre, creadoEn: serverTimestamp() });
+      await addDoc(collection(db, "profesores"), { nombre, materias, creadoEn: serverTimestamp() });
       mostrarToast("✅ Profesor agregado");
       registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
     }
