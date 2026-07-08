@@ -1,0 +1,138 @@
+rules_version = '2';
+
+// ═══════════════════════════════════════════════════════════════
+// REGLAS DE FIRESTORE — Control de Herramientas
+//
+// Cómo está armada la autenticación en este proyecto:
+// - Los ESTUDIANTES nunca inician sesión (formulario público, sin login).
+// - El ADMIN/ENCARGADO sí inicia sesión con Firebase Auth (email+clave).
+// - El rol de cada persona autenticada vive en el documento
+//   usuarios/{uid} → campo "rol": "administrador" | "encargado".
+// - ADMIN_RAIZ es el correo de arranque antes de que exista ningún
+//   documento en /usuarios (ajusta si cambia en el código del admin).
+// ═══════════════════════════════════════════════════════════════
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──
+    function estaAutenticado() {
+      return request.auth != null;
+    }
+
+    function esAdminRaiz() {
+      return estaAutenticado() &&
+        request.auth.token.email.lower() == "utesamonitores@outlook.com";
+    }
+
+    function miDocUsuario() {
+      return get(/databases/$(database)/documents/usuarios/$(request.auth.uid));
+    }
+
+    function esAdministrador() {
+      return estaAutenticado() && (
+        esAdminRaiz() ||
+        (miDocUsuario().data.rol == "administrador")
+      );
+    }
+
+    // Encargado o administrador: cualquier miembro del staff con sesión.
+    function esStaff() {
+      return estaAutenticado() && (esAdminRaiz() || exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)));
+    }
+
+    // ── solicitudes ── (formulario público de estudiantes)
+    match /solicitudes/{id} {
+      // Cualquiera puede crear una solicitud (no hay login de estudiantes),
+      // pero se valida la forma mínima del documento para evitar basura/abuso.
+      allow create: if
+        request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 80 &&
+        request.resource.data.apellido is string &&
+        request.resource.data.apellido.size() > 0 && request.resource.data.apellido.size() < 80 &&
+        request.resource.data.matricula is string &&
+        request.resource.data.matricula.size() > 0 && request.resource.data.matricula.size() < 30 &&
+        request.resource.data.telefono is string &&
+        request.resource.data.telefono.size() > 0 && request.resource.data.telefono.size() < 20 &&
+        request.resource.data.estado == "pendiente" &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20;
+
+      // Lectura pública: la necesita el propio formulario para detectar
+      // solicitudes duplicadas (misma matrícula el mismo día) antes de enviar.
+      allow read: if true;
+
+      // Solo el staff (admin/encargado logueado) puede cambiar estado,
+      // marcar incidencias, registrar retorno, etc.
+      allow update: if esStaff();
+
+      // Borrar solicitudes: solo administrador.
+      allow delete: if esAdministrador();
+    }
+
+    // ── herramientas / profesores / laboratorios / ciclos ──
+    // Lectura pública (el formulario del estudiante llena sus <select> con esto).
+    // Escritura solo para el staff logueado.
+    match /herramientas/{id} {
+      allow read: if true;
+      allow write: if esStaff();
+    }
+    match /profesores/{id} {
+      allow read: if true;
+      allow write: if esStaff();
+    }
+    match /laboratorios/{id} {
+      allow read: if true;
+      allow write: if esStaff();
+    }
+    match /ciclos/{id} {
+      allow read: if true;
+      // Cualquiera puede agregar un ciclo nuevo (ej. cuando empiece 2027)
+      // desde el formulario público, pero solo con formato "N-AAAA" y
+      // solo puede CREAR, no editar/borrar los existentes.
+      allow create: if request.resource.data.nombre is string &&
+        request.resource.data.nombre.matches("^[0-9]{1,2}-[0-9]{4}$");
+      allow update, delete: if esStaff();
+    }
+
+    // ── contadores ── (solo guarda un número por año, para numerar solicitudes
+    // sin tener que descargar toda la colección de solicitudes)
+    match /contadores/{anio} {
+      allow read: if true;
+      allow write: if request.resource.data.ultimo is int && request.resource.data.ultimo > 0;
+    }
+
+    // ── préstamos a profesores / externos ── (gestión interna, solo staff)
+    match /prestamos_profesores/{id} {
+      allow read, write: if esStaff();
+    }
+    match /prestamos_externos/{id} {
+      allow read, write: if esStaff();
+    }
+
+    // ── historial / auditoría ── (solo lectura y escritura del staff)
+    match /historial/{id} {
+      allow read, write: if esStaff();
+    }
+    match /auditoria/{id} {
+      allow read, write: if esStaff();
+    }
+
+    // ── usuarios (cuentas del panel admin) ──
+    match /usuarios/{uid} {
+      // Cada quien puede leer su propio documento (para saber su rol al
+      // iniciar sesión), y el administrador puede leer/gestionar todos.
+      allow read: if estaAutenticado() && (request.auth.uid == uid || esAdministrador());
+
+      // Solo el administrador crea/edita/borra cuentas de staff...
+      allow create, delete: if esAdministrador();
+      allow update: if esAdministrador() ||
+        // ...excepto que un encargado puede marcar su propia bandera de
+        // "debe cambiar contraseña" a false después de cambiarla.
+        (estaAutenticado() && request.auth.uid == uid &&
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["debeCambiarContrasena"]));
+    }
+
+    // Cualquier otra colección no listada arriba: bloqueada por defecto.
+  }
+}
