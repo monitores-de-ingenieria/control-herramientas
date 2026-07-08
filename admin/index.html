@@ -181,7 +181,7 @@
 
   .shell {
     display: grid;
-    grid-template-columns: 190px 1fr;
+    grid-template-columns: 206px 1fr;
     grid-template-rows: 52px 1fr;
     height: 100vh;
     transition: grid-template-columns .25s ease;
@@ -1110,25 +1110,25 @@
         </div>
       </div>
 
-      <div class="nav-item" data-vista="dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Dashboard</span></div>
+      <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Dashboard</span></div>
 
-      <div class="nav-item activo" data-vista="solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
-      <div class="nav-item" data-vista="prestamos-prof"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
-      <div class="nav-item" data-vista="prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
-      <div class="nav-item" id="nav-incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
+      <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
+      <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
+      <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
+      <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
 
       <div class="nav-grupo">Inventario</div>
-      <div class="nav-item" data-vista="herramientas-cfg"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
+      <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono">🔧</span><span class="nav-texto">Herramientas</span></div>
 
       <div class="nav-grupo">Reportes</div>
-      <div class="nav-item" data-vista="historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial</span></div>
+      <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial</span></div>
 
       <div class="nav-grupo">Configuración</div>
-      <div class="nav-item" data-vista="profesores-cfg"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
-      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
-      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
+      <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
+      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
 
-      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
+      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
 
     </div>
@@ -2121,10 +2121,27 @@ const AUDIT_ICONOS = { herramienta:"🔧", profesor:"👤", usuario:"🔐", pres
 const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
 
 async function cargarAuditoria() {
-  onSnapshot(query(collection(db, "auditoria"), orderBy("creadoEn", "desc")), snap => {
-    _auditoriaLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    renderAuditoria();
-  });
+  const wrap = document.getElementById("audit-wrap");
+  try {
+    onSnapshot(
+      query(collection(db, "auditoria"), orderBy("creadoEn", "desc")),
+      snap => {
+        _auditoriaLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        renderAuditoria();
+      },
+      err => {
+        // Antes esto se quedaba pegado en "Cargando auditoría..." para
+        // siempre si Firestore rechazaba la lectura (permisos de la colección
+        // "auditoria", índice faltante, etc.) porque onSnapshot no tenía
+        // callback de error. Ahora sí se avisa qué pasó.
+        console.error("Error cargando auditoría:", err);
+        if (wrap) wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">⚠️</div><p>No se pudo cargar la auditoría (' + (err.code || err.message || "error desconocido") + '). Revisa las reglas de Firestore para la colección "auditoria".</p></div>';
+      }
+    );
+  } catch(e) {
+    console.error("Error cargando auditoría:", e);
+    if (wrap) wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">⚠️</div><p>No se pudo cargar la auditoría. Verifica tu conexión.</p></div>';
+  }
 }
 
 function renderAuditoria() {
@@ -4573,6 +4590,25 @@ window.guardarHerramienta = async function() {
   if (herCfgCodigoLocal) datos.codigo = herCfgCodigoLocal;
   if (herCfgIconoLocal)  datos.icono  = herCfgIconoLocal;
 
+  // Para que la auditoría diga QUÉ cambió (no solo "editó la herramienta"),
+  // comparamos contra los valores que tenía antes de este guardado.
+  const antesDeEditar = herCfgEditar ? _herListaActual.find(h => h.id === herCfgEditar) : null;
+  function describirCambios(antes) {
+    if (!antes) return "";
+    const cambios = [];
+    if (antes.nombre !== nombreFinal) cambios.push(`cambió el nombre de "${antes.nombre}" a "${nombreFinal}"`);
+    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`cambió la categoría de "${antes.categoria || "Sin categoría"}" a "${categoria || "Sin categoría"}"`);
+    const cantidadAntes = Number.isFinite(antes.cantidadDisponible) ? antes.cantidadDisponible : 0;
+    if (cantidadAntes !== cantidad) {
+      const diferencia = cantidad - cantidadAntes;
+      const signo = diferencia > 0 ? "+" : "";
+      cambios.push(`cambió la cantidad disponible de ${cantidadAntes} a ${cantidad} (${signo}${diferencia})`);
+    }
+    if ((antes.practica || "") !== (practica || "")) cambios.push(`cambió la práctica/combo de "${antes.practica || "ninguna"}" a "${practica || "ninguna"}"`);
+    if (herFotoArchivo) cambios.push("cambió la foto");
+    return cambios.length ? `. Cambios: ${cambios.join("; ")}.` : " (guardó sin cambios detectados)";
+  }
+
   try {
     if (herCfgEditar) {
       const snapDup = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
@@ -4596,13 +4632,14 @@ window.guardarHerramienta = async function() {
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
       mostrarToast("✅ Herramienta actualizada");
-      registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"`);
+      registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesDeEditar)}`);
     } else {
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
+        const antesExistente = { id: snap.docs[0].id, ...snap.docs[0].data() };
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
         mostrarToast("✅ Ya existía esa herramienta — se actualizó en vez de duplicarla");
-        registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"`);
+        registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesExistente)}`);
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
         mostrarToast("✅ Herramienta agregada");
