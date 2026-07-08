@@ -1,5 +1,5 @@
 // js/app.js
-import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc } from "./firebase.js";
+import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc, runTransaction } from "./firebase.js";
 import { cargarProfesores, cargarLaboratorios, cargarHerramientas, cargarCiclos, agregarCicloNuevo } from "./inventario.js";
 
 // ---- Sanitización de texto (anti-XSS) ----
@@ -708,11 +708,18 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
 
 async function generarNumeroSolicitud() {
   const anio = new Date().getFullYear();
+  const refContador = doc(db, "contadores", String(anio));
   try {
-    const snap = await getDocs(query(collection(db, "solicitudes"), orderBy("creadoEn", "desc")));
-    const consecutivo = snap.size + 1;
-    return `${anio}-${String(consecutivo).padStart(5, "0")}`;
-  } catch {
+    const siguiente = await runTransaction(db, async (transaction) => {
+      const snap = await transaction.get(refContador);
+      const actual = snap.exists() ? (snap.data().ultimo || 0) : 0;
+      const nuevo = actual + 1;
+      transaction.set(refContador, { ultimo: nuevo }, { merge: true });
+      return nuevo;
+    });
+    return `${anio}-${String(siguiente).padStart(5, "0")}`;
+  } catch (err) {
+    console.error("Error generando número de solicitud:", err);
     return `${anio}-${String(Date.now()).slice(-5)}`;
   }
 }

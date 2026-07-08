@@ -12,7 +12,8 @@ import {
   where,
   updateDoc,
   doc,
-  Timestamp
+  Timestamp,
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -49,5 +50,6 @@ export {
   updateDoc,
   doc,
   Timestamp,
+  runTransaction,
   firebaseConfigurado
 };
