@@ -1044,8 +1044,6 @@
 
   /* ── Materias del profesor: varios horarios por materia ── */
   .prof-materia-fila { background:var(--card2); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:10px; border:1px solid var(--borde); }
-  .pm-select-existente { width:100%; padding:8px 10px; background:var(--card2); border:1.5px dashed var(--borde); border-radius:7px; color:var(--texto-dim); font-size:12px; margin-bottom:8px; cursor:pointer; }
-  .pm-select-existente:focus { outline:none; border-color:var(--verde); }
   .pm-header { display:flex; gap:8px; align-items:center; }
   .pm-header .pm-nombre { flex:1; min-width:0; padding:9px 10px; background:var(--bg); border:1.5px solid var(--borde); border-radius:7px; color:var(--texto); font-size:13px; font-weight:700; }
   .pm-header .pm-nombre:focus { outline:none; border-color:var(--verde); }
@@ -1163,6 +1161,7 @@
 
       <div class="nav-grupo">Configuración</div>
       <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono">🏢</span><span class="nav-texto">Laboratorios / Talleres</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
       <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
 
@@ -1413,8 +1412,22 @@
       </div>
 
       <div class="vista" id="vista-laboratorios">
-        <div class="pagina-titulo"><h2>Laboratorios / Talleres</h2><p>Próximamente</p></div>
-        <div class="vacio"><div class="vacio-icono">🚧</div><p>Esta sección se construirá en la siguiente fase.</p></div>
+        <div class="pagina-titulo">
+          <div><h2>Laboratorios / Talleres</h2><p>Lista de laboratorios y talleres disponibles para elegir en el formulario del estudiante</p></div>
+          <button class="btn btn-verde" onclick="abrirModalLaboratorio()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo laboratorio o taller">➕ Agregar laboratorio/taller</button>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Lista de laboratorios / talleres</h3>
+            <div class="filtros">
+              <input type="text" id="lab-buscar" placeholder="Buscar...">
+            </div>
+          </div>
+          <div class="prof-resumen" id="lab-resumen"></div>
+          <div id="lab-cfg-wrap" class="prof-lista">
+            <div class="cargando"><div class="spinner"></div>Cargando laboratorios...</div>
+          </div>
+        </div>
       </div>
 
       <div class="vista" id="vista-historial">
@@ -1568,6 +1581,24 @@
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
       <button class="btn btn-verde" id="prof-btn-guardar" onclick="guardarProfesor()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-laboratorio-cfg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span id="lab-modal-titulo">➕ Agregar laboratorio/taller</span>
+      <button class="modal-cerrar" onclick="cerrarModalLaboratorio()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Nombre</label>
+      <input type="text" id="lab-input-nombre" placeholder="Ej. Taller de soldadura"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalLaboratorio()">Cancelar</button>
+      <button class="btn btn-verde" id="lab-btn-guardar" onclick="guardarLaboratorio()">✅ Guardar</button>
     </div>
   </div>
 </div>
@@ -2130,6 +2161,7 @@ onAuthStateChanged(auth, async user => {
     cargarPrestamosExternos();
     cargarHerramientasCfg();
     cargarProfesoresCfg();
+    cargarLaboratoriosCfg();
     cargarUsuariosCfg();
     cargarAuditoria();
     await aplicarRolUsuario(user);
@@ -4800,15 +4832,19 @@ window.esMaterialGastable = function(nombreHerramienta) {
 let profCfgEditar = null;
 let profCfgLista  = [];
 
+const PROFESORES_RESPALDO_ADMIN = ["Daniel Camejo","José Peña","Julio Durán","Víctor Félix"];
+
 async function cargarProfesoresCfg() {
   try {
     onSnapshot(query(collection(db, "profesores"), orderBy("nombre", "asc")), snap => {
-      if (snap.empty) {
-        profCfgLista = ["Daniel Camejo","José Peña","Julio Durán","Víctor Félix"]
-          .map((nombre, i) => ({ id: "local-" + i, nombre, local: true }));
-      } else {
-        profCfgLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      }
+      const todosValidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const nombresFirestore = new Set(todosValidos.map(p => p.nombre.toLowerCase()));
+      const eliminados = new Set(todosValidos.filter(p => p.eliminado).map(p => p.nombre.toLowerCase()));
+      const enFirestore = todosValidos.filter(p => !p.eliminado);
+      const delRespaldo = PROFESORES_RESPALDO_ADMIN
+        .filter(nombre => !nombresFirestore.has(nombre.toLowerCase()) && !eliminados.has(nombre.toLowerCase()))
+        .map((nombre, i) => ({ id: "local-" + i, nombre, local: true }));
+      profCfgLista = [...enFirestore, ...delRespaldo].sort((a, b) => a.nombre.localeCompare(b.nombre));
       renderProfesoresCfg();
     });
   } catch(e) {
@@ -4912,14 +4948,19 @@ window.profAgregarFilaMateria = function(m = {}) {
   const wrap = document.getElementById("prof-materias-wrap");
   const fila = document.createElement("div");
   fila.className = "prof-materia-fila";
+  const nombreActual = m.nombre || "";
+  // Las opciones salen de Laboratorios / Talleres (labCfgLista) — si el
+  // nombre guardado no está en esa lista (ej. se escribió antes de que
+  // existiera esa sección), se agrega igual como opción para no perderlo.
+  const opciones = (labCfgLista || []).map(l => l.nombre);
+  if (nombreActual && !opciones.includes(nombreActual)) opciones.unshift(nombreActual);
   fila.innerHTML = `
-    <select class="pm-select-existente" onchange="profElegirMateriaExistente(this)">
-      <option value="">📋 Elegir de una materia ya registrada...</option>
-      ${materiasDisponiblesGlobal().map(op => `<option value="${op.codigo.replace(/"/g,'&quot;')}||${op.nombre.replace(/"/g,'&quot;')}">${op.codigo ? op.codigo + " — " : ""}${op.nombre}</option>`).join("")}
-    </select>
     <div class="pm-header">
       <input type="text" class="pm-codigo" placeholder="Código (ej. IMC105004)" value="${(m.codigo||"").replace(/"/g,'&quot;')}">
-      <input type="text" class="pm-nombre" placeholder="Materia (ej. Taller de Soldadura)" value="${(m.nombre||"").replace(/"/g,'&quot;')}">
+      <select class="pm-nombre">
+        <option value="">Elige un laboratorio/taller...</option>
+        ${opciones.map(o => `<option value="${o.replace(/"/g,'&quot;')}"${o===nombreActual?" selected":""}>${o}</option>`).join("")}
+      </select>
       <button type="button" class="btn-quitar-fila" onclick="this.closest('.prof-materia-fila').remove()" title="Quitar esta materia">✕</button>
     </div>
     <div class="pm-horarios-wrap"></div>
@@ -4965,32 +5006,6 @@ window.profAgregarHorario = function(btnRef, h = {}) {
     });
   });
   wrapHorarios.appendChild(horarioRow);
-};
-
-// Junta todas las materias (código+nombre) que YA existen en cualquier
-// profesor guardado, sin repetir, para poder elegirlas en vez de escribirlas
-// de cero cada vez. Se recalcula cada vez que se abre el picker porque
-// profCfgLista se actualiza en tiempo real (onSnapshot).
-function materiasDisponiblesGlobal() {
-  const vistas = new Set();
-  const resultado = [];
-  (profCfgLista || []).forEach(p => (p.materias || []).forEach(m => {
-    if (!m.nombre) return;
-    const clave = (m.codigo || "") + "||" + m.nombre;
-    if (vistas.has(clave)) return;
-    vistas.add(clave);
-    resultado.push({ codigo: m.codigo || "", nombre: m.nombre });
-  }));
-  return resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
-}
-
-window.profElegirMateriaExistente = function(select) {
-  if (!select.value) return;
-  const [codigo, ...resto] = select.value.split("||");
-  const fila = select.closest(".prof-materia-fila");
-  fila.querySelector(".pm-codigo").value = codigo;
-  fila.querySelector(".pm-nombre").value = resto.join("||");
-  select.selectedIndex = 0;
 };
 
 window.cerrarModalProfesor = function() {
@@ -5049,13 +5064,144 @@ window.guardarProfesor = async function() {
 window.eliminarProfesor = async function(id, nombre) {
   if (!confirm('¿Eliminar al profesor "' + nombre + '"?')) return;
   try {
-    await deleteDoc(doc(db, "profesores", id));
+    // "eliminado:true" en vez de borrar el documento — si no, un profesor
+    // cuyo nombre coincide con el respaldo (PROFESORES_RESPALDO_ADMIN)
+    // reaparecería solo en la próxima carga, porque ya no está en Firestore.
+    await updateDoc(doc(db, "profesores", id), { eliminado: true });
     mostrarToast("Profesor eliminado");
     registrarAuditoria("profesor", "eliminar", `Eliminó al profesor "${nombre}"`);
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
 document.getElementById("prof-buscar")?.addEventListener("input", renderProfesoresCfg);
+
+// ── LABORATORIOS / TALLERES ──
+// Mismo patrón que Profesores. El formulario del estudiante ya lee esta
+// colección en tiempo real (js/inventario.js → cargarLaboratorios()), así
+// que lo que se agregue/edite/elimine aquí aparece allá sin tocar nada más.
+const LABORATORIOS_RESPALDO_ADMIN = [
+  "Taller mecánica básica",
+  "Lab. ciencia de los materiales",
+  "Máquinas especiales",
+  "Taller de procesos industriales",
+  "Taller de soldadura",
+  "Taller máquinas y herramientas I",
+  "Taller máquinas y herramientas II"
+];
+let labCfgEditar = null;
+let labCfgLista  = [];
+
+async function cargarLaboratoriosCfg() {
+  try {
+    onSnapshot(query(collection(db, "laboratorios"), orderBy("nombre", "asc")), snap => {
+      const todosValidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const nombresFirestore = new Set(todosValidos.map(l => l.nombre.toLowerCase()));
+      const eliminados = new Set(todosValidos.filter(l => l.eliminado).map(l => l.nombre.toLowerCase()));
+      const enFirestore = todosValidos.filter(l => !l.eliminado);
+      const delRespaldo = LABORATORIOS_RESPALDO_ADMIN
+        .filter(nombre => !nombresFirestore.has(nombre.toLowerCase()) && !eliminados.has(nombre.toLowerCase()))
+        .map((nombre, i) => ({ id: "local-" + i, nombre, local: true }));
+      labCfgLista = [...enFirestore, ...delRespaldo].sort((a, b) => a.nombre.localeCompare(b.nombre));
+      renderLaboratoriosCfg();
+    });
+  } catch(e) {
+    const w = document.getElementById("lab-cfg-wrap");
+    if (w) w.innerHTML = '<div class="cargando">Error al cargar laboratorios.</div>';
+  }
+}
+
+function renderLaboratoriosCfg() {
+  const wrap   = document.getElementById("lab-cfg-wrap");
+  if (!wrap) return;
+  const buscar = (document.getElementById("lab-buscar")?.value || "").toLowerCase();
+  const lista  = buscar ? labCfgLista.filter(l => l.nombre.toLowerCase().includes(buscar)) : labCfgLista;
+
+  const resumen = document.getElementById("lab-resumen");
+  if (resumen) resumen.innerHTML = `🏢 <b>${labCfgLista.length}</b> laboratorio${labCfgLista.length === 1 ? "" : "s"}/taller${labCfgLista.length === 1 ? "" : "es"} registrado${labCfgLista.length === 1 ? "" : "s"}`;
+
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🏢</div><p>No hay laboratorios registrados.</p></div>';
+    return;
+  }
+  wrap.innerHTML = lista.map(l => {
+    const local = l.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
+    const nombreEsc = l.nombre.replace(/'/g, "\\'");
+    return `
+      <div class="prof-fila">
+        <div class="prof-fila-top">
+          <div class="est-avatar">
+            <div class="est-circulo" style="background:${colorEstudiante(l.nombre)}22;color:${colorEstudiante(l.nombre)}">🏢</div>
+            <div style="min-width:0;flex:1">
+              <div class="est-nombre">${l.nombre}${local}</div>
+            </div>
+          </div>
+          <div class="acciones-celda">
+            <button class="btn btn-outline" onclick="abrirModalLaboratorio('${l.id}','${nombreEsc}',${l.local||false})" title="Editar">✏️ Editar</button>
+            ${l.local ? "" : `<button class="btn btn-rojo" onclick="eliminarLaboratorio('${l.id}','${nombreEsc}')" title="Eliminar">🗑</button>`}
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+window.abrirModalLaboratorio = function(id = null, nombre = "", esLocal = false) {
+  labCfgEditar = esLocal ? null : id;
+  window._labLocalNombre = esLocal ? nombre : null;
+  document.getElementById("lab-modal-titulo").textContent = id ? "✏️ Editar laboratorio/taller" : "➕ Agregar laboratorio/taller";
+  const input = document.getElementById("lab-input-nombre");
+  input.value = nombre;
+  document.getElementById("modal-laboratorio-cfg").classList.add("abierto");
+};
+
+window.cerrarModalLaboratorio = function() {
+  document.getElementById("modal-laboratorio-cfg").classList.remove("abierto");
+  labCfgEditar = null;
+};
+
+window.guardarLaboratorio = async function() {
+  const nombre = document.getElementById("lab-input-nombre").value.trim();
+  if (!nombre) { mostrarToast("Escribe el nombre del laboratorio/taller", "rojo"); return; }
+  const btn = document.getElementById("lab-btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    if (labCfgEditar) {
+      await updateDoc(doc(db, "laboratorios", labCfgEditar), { nombre });
+      mostrarToast("✅ Laboratorio actualizado");
+      registrarAuditoria("laboratorio", "editar", `Editó el laboratorio "${nombre}"`);
+    } else if (window._labLocalNombre) {
+      const snap = await getDocs(query(collection(db, "laboratorios"), where("nombre", "==", nombre)));
+      if (!snap.empty) {
+        await updateDoc(doc(db, "laboratorios", snap.docs[0].id), { nombre });
+        mostrarToast("✅ Laboratorio actualizado");
+        registrarAuditoria("laboratorio", "editar", `Editó el laboratorio "${nombre}"`);
+      } else {
+        await addDoc(collection(db, "laboratorios"), { nombre, creadoEn: serverTimestamp() });
+        mostrarToast("✅ Laboratorio guardado");
+        registrarAuditoria("laboratorio", "crear", `Agregó el laboratorio "${nombre}"`);
+      }
+    } else {
+      await addDoc(collection(db, "laboratorios"), { nombre, creadoEn: serverTimestamp() });
+      mostrarToast("✅ Laboratorio agregado");
+      registrarAuditoria("laboratorio", "crear", `Agregó el laboratorio "${nombre}"`);
+    }
+    cerrarModalLaboratorio();
+  } catch(e) { mostrarToast("Error al guardar", "rojo"); }
+  finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
+};
+
+window.eliminarLaboratorio = async function(id, nombre) {
+  if (!confirm('¿Eliminar "' + nombre + '"?')) return;
+  try {
+    // "eliminado:true" en vez de borrar el documento — mismo motivo que en
+    // Profesores: si no, uno cuyo nombre está en LABORATORIOS_RESPALDO_ADMIN
+    // reaparecería solo en la próxima carga.
+    await updateDoc(doc(db, "laboratorios", id), { eliminado: true });
+    mostrarToast("Laboratorio eliminado");
+    registrarAuditoria("laboratorio", "eliminar", `Eliminó el laboratorio "${nombre}"`);
+  } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
+};
+
+document.getElementById("lab-buscar")?.addEventListener("input", renderLaboratoriosCfg);
 document.getElementById("modal-profesor-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-profesor-cfg")) cerrarModalProfesor();
 });
