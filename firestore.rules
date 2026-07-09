@@ -71,7 +71,8 @@ service cloud.firestore {
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas"]) &&
         resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
-        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
+        request.resource.data.herramientas.size() >= resource.data.herramientas.size()
       );
 
       // Borrar solicitudes: solo administrador.
@@ -112,6 +113,7 @@ service cloud.firestore {
       allow read: if true;
       allow write: if esStaff() || (
         request.resource.data.keys().hasOnly(["solicitudId", "estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
+        request.resource.data.keys().hasAll(["solicitudId", "estado", "herramientas"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() <= 20
