@@ -64,10 +64,14 @@ service cloud.firestore {
 
       // El staff puede cambiar cualquier campo (entregar, retornar, etc).
       // El propio estudiante (sin login) solo puede AGREGAR herramientas
-      // a su solicitud activa del día, sin tocar ningún otro campo.
+      // a su solicitud activa del día, sin tocar ningún otro campo, y con
+      // el mismo tope de tamaño que se exige al crear (antes esto no tenía
+      // límite, así que alguien podía mandar un array gigante).
       allow update: if esStaff() || (
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas"]) &&
-        resource.data.estado in ["pendiente", "entregada"]
+        resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20
       );
 
       // Borrar solicitudes: solo administrador.
@@ -93,6 +97,12 @@ service cloud.firestore {
       allow read: if true;
       allow create, update, delete: if esStaff();
     }
+    // Catálogo de materias del panel (Configuración → Materias).
+    // Sin esto se queda con permission-denied igual que le pasó a auditoria.
+    match /materias/{id} {
+      allow read: if true;
+      allow write: if esStaff();
+    }
 
     // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
     // tiene una solicitud activa hoy, sin exponer nombre/teléfono/matrícula
@@ -103,7 +113,8 @@ service cloud.firestore {
       allow write: if esStaff() || (
         request.resource.data.keys().hasOnly(["solicitudId", "estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
-        request.resource.data.herramientas is list
+        request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() <= 20
       );
     }
 
