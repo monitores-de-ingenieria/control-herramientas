@@ -2089,6 +2089,21 @@ function escapeHtml(str) {
   }[c]));
 }
 
+// Para valores insertados dentro de un onclick="fn('VALOR')": escapeHtml()
+// solo protege el atributo HTML (comillas dobles), pero NO evita que un '
+// dentro de VALOR rompa el string de JS de comillas simples — el navegador
+// decodifica entidades HTML antes de ejecutar el JS del atributo, así que
+// "&#39;" vuelve a ser ' justo antes de correr el código. Hace falta escapar
+// para AMBAS capas: primero el string JS (\\ y '), luego el atributo HTML (").
+function escapeAttr(str) {
+  return String(str ?? "")
+    .replace(/\\/g, "\\\\")
+    .replace(/'/g, "\\'")
+    .replace(/"/g, "&quot;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
 function formatFecha(ts) {
   if (!ts) return "—";
   const d = ts.toDate ? ts.toDate() : new Date(ts);
@@ -2453,7 +2468,7 @@ window.verIncidencias = function() {
           <tbody>
             ${lista.map(p => {
               const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
-              const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+              const herramientasTexto = (p.herramientas || []).map(h => `${escapeHtml(h.nombre)} ×${h.cantidad}`).join(", ") || "—";
               const badgeEstado = p.estado === "activo"
                 ? '<span class="badge badge-entregada">Activo</span>'
                 : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}`;
@@ -2592,7 +2607,7 @@ function renderGraficoBarras(contenedorId, datos, color) {
   if (!datos.length) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const max = datos[0].valor;
   el.innerHTML = datos.slice(0, 8).map(d => `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer" onclick="dashAbrirHerramienta('${d.etiqueta.replace(/'/g,"\\'")}')">
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:9px;cursor:pointer" onclick="dashAbrirHerramienta('${escapeAttr(d.etiqueta)}')">
       <div style="width:120px;font-size:11px;color:var(--texto);white-space:nowrap;overflow:hidden;text-overflow:ellipsis" title="${d.etiqueta}">${d.etiqueta}</div>
       ${barraH(d.valor, max, color)}
       <div style="width:26px;text-align:right;font-size:11px;font-weight:800;color:${color}">${d.valor}</div>
@@ -2606,7 +2621,7 @@ function renderGraficoDonut(contenedorId, datos, onClickPrefix) {
   if (!total) { el.innerHTML = '<div class="vacio" style="padding:20px"><p>Sin datos aún.</p></div>'; return; }
   const r = 42, cx = 50, cy = 50, circ = 2 * Math.PI * r;
   let offset = 0;
-  const click = e => onClickPrefix ? `onclick="${onClickPrefix}('${e.replace(/'/g,"\\'")}')" style="cursor:pointer"` : "";
+  const click = e => onClickPrefix ? `onclick="${onClickPrefix}('${escapeAttr(e)}')" style="cursor:pointer"` : "";
   const segmentos = datos.filter(d => d.valor > 0).map(d => {
     const frac = d.valor / total;
     const largo = frac * circ;
@@ -2840,10 +2855,10 @@ async function cargarDashboard() {
              <span style="display:none;width:34px;height:34px;border-radius:8px;background:${meta.color}22;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${meta.icono}</span>`
           : `<span style="display:flex;width:34px;height:34px;border-radius:8px;background:${meta.color}22;align-items:center;justify-content:center;font-size:16px;flex-shrink:0">${meta.icono}</span>`;
         return `
-        <div class="dash-fila-premium" style="border-left-color:${meta.color}" onclick="dashAbrirHerramienta('${h.nombre.replace(/'/g,"\\'")}')">
+        <div class="dash-fila-premium" style="border-left-color:${meta.color}" onclick="dashAbrirHerramienta('${escapeAttr(h.nombre)}')">
           ${miniatura}
           <div style="flex:1;min-width:0">
-            <div style="font-size:12.5px;font-weight:600;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${h.nombre}</div>
+            <div style="font-size:12.5px;font-weight:600;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(h.nombre)}</div>
             <div style="font-size:9.5px;color:var(--texto-dim)">${h.categoria || "Sin categoría"}</div>
           </div>
           <span style="font-size:11px;font-weight:800;color:var(--amarillo);background:rgba(210,153,34,.12);padding:2px 8px;border-radius:20px;white-space:nowrap">${h.cantidadDisponible} disp.</span>
@@ -3128,7 +3143,7 @@ window.abrirModal = function(id) {
   }
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herramientas = (s.herramientas || []).map(h =>
-    `<div class="modal-herramienta-item"><span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span></span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
+    `<div class="modal-herramienta-item"><span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${escapeHtml(h.nombre)}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span></span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
 
   document.getElementById("modal-contenido").innerHTML = `
@@ -3287,7 +3302,7 @@ window.entregar = async function(id) {
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-e-${offset+i}" data-idx="${offset+i}" checked>
       ${herFotoHtmlPorNombre(h.nombre)}
-      <span class="h-nombre">${h.nombre}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span>
+      <span class="h-nombre">${escapeHtml(h.nombre)}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
     </div>`).join("");
   let listaHtml = renderFilas(herOrig, 0);
@@ -3334,7 +3349,7 @@ window.agregarFilaAdicional = function() {
     const matches = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
     if (!q || matches.length === 0) { dropdown.style.display = "none"; return; }
     dropdown.innerHTML = matches.map(h =>
-      `<div class="dropdown-item" data-nombre="${h.nombre}" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--borde)">${h.nombre}</div>`
+      `<div class="dropdown-item" data-nombre="${escapeHtml(h.nombre)}" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--borde)">${escapeHtml(h.nombre)}</div>`
     ).join("");
     dropdown.style.display = "block";
     dropdown.querySelectorAll(".dropdown-item").forEach(item => {
@@ -3414,7 +3429,7 @@ window.retornar = function(id) {
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-r-${i}" data-idx="${i}" checked${gastable ? ' disabled' : ''}>
       ${herFotoHtmlPorNombre(h.nombre)}
-      <span class="h-nombre">${h.nombre}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${gastable ? ' <span class="badge-gastable">🧰 gastable</span>' : ""}</span>
+      <span class="h-nombre">${escapeHtml(h.nombre)}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${gastable ? ' <span class="badge-gastable">🧰 gastable</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
       ${gastable
         ? `<span class="select-estado" style="opacity:.65;cursor:not-allowed">🧰 Consumido</span><select id="estado-r-${i}" style="display:none"><option value="retornada" selected>retornada</option></select>`
@@ -3725,7 +3740,7 @@ function ppRenderTabla() {
       : "—";
     const color = colorEstudiante(p.profesor || "");
     const ini   = (p.profesor || "P")[0].toUpperCase();
-    const herramientasHtml = (p.herramientas || []).map(h => `<b>${h.nombre}</b> ×${h.cantidad}${h.adicional ? ' <span style="background:var(--azul);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px">+ADIC</span>' : ''}`).join(", ") || "—";
+    const herramientasHtml = (p.herramientas || []).map(h => `<b>${escapeHtml(h.nombre)}</b> ×${h.cantidad}${h.adicional ? ' <span style="background:var(--azul);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px">+ADIC</span>' : ''}`).join(", ") || "—";
     const estadoTag = p.estado === "activo"
       ? `<span class="pp-estado-tag" style="background:var(--verde-glow);color:var(--verde)">🟢 Activo</span>`
       : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)">⚪ Retornado</span>`;
@@ -3826,9 +3841,9 @@ window.ppFiltrarDropdown = function(input) {
   const hits = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
   if (!hits.length || !q) { drop.style.display = "none"; return; }
   drop.innerHTML = hits.map(h =>
-    `<div onmousedown="event.preventDefault();ppSeleccionarHerramienta(this,'${h.nombre}')"
+    `<div onmousedown="event.preventDefault();ppSeleccionarHerramienta(this,'${escapeAttr(h.nombre)}')"
       style="padding:8px 12px;cursor:pointer;font-size:13px"
-      onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${h.nombre}</div>`
+      onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${escapeHtml(h.nombre)}</div>`
   ).join("");
   drop.style.display = "block";
 };
@@ -3885,12 +3900,12 @@ function renderPickerFotosPP() {
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
     const cant = _ppPickerCant[h.nombre] || 0;
-    const nombreEsc = h.nombre.replace(/'/g, "\\'");
+    const nombreEsc = escapeAttr(h.nombre);
     return `
       <div class="her-card${cant > 0 ? ' stock-bajo' : ''}">
         <div class="her-foto-wrap">${foto}</div>
         <div class="her-cuerpo">
-          <div class="her-nombre">${h.nombre}</div>
+          <div class="her-nombre">${escapeHtml(h.nombre)}</div>
           <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
             <button type="button" onclick="ppPickerAjustar('${nombreEsc}',-1)" class="btn btn-outline" style="padding:4px 10px;flex:1">−</button>
             <span style="min-width:18px;text-align:center;font-weight:700">${cant}</span>
@@ -4000,7 +4015,7 @@ window.abrirRetornoProf = function(id) {
   const lista = document.getElementById("pp-retorno-lista");
   lista.innerHTML = (p.herramientas || []).map((h, i) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde);gap:10px">
-      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${escapeHtml(h.nombre)} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
       <select id="pp-estado-r-${i}"
         style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
         <option value="retornada">✅ Retornada</option>
@@ -4133,7 +4148,7 @@ function extRenderTabla() {
           const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
           const color = colorEstudiante(p.departamento || "");
           const ini   = (p.departamento || "D")[0].toUpperCase();
-          const herramientasTexto = (p.herramientas || []).map(h => `${h.nombre} ×${h.cantidad}`).join(", ") || "—";
+          const herramientasTexto = (p.herramientas || []).map(h => `${escapeHtml(h.nombre)} ×${h.cantidad}`).join(", ") || "—";
           const badgeEstado = p.estado === "prestado"
             ? '<span class="badge badge-entregada">Prestado</span>'
             : p.tieneIncidencias
@@ -4202,9 +4217,9 @@ window.extFiltrarDropdown = function(input) {
   const hits = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
   if (!hits.length || !q) { drop.style.display = "none"; return; }
   drop.innerHTML = hits.map(h =>
-    `<div onmousedown="event.preventDefault();extSeleccionarHerramienta(this,'${h.nombre}')"
+    `<div onmousedown="event.preventDefault();extSeleccionarHerramienta(this,'${escapeAttr(h.nombre)}')"
       style="padding:8px 12px;cursor:pointer;font-size:13px"
-      onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${h.nombre}</div>`
+      onmouseover="this.style.background='var(--hover)'" onmouseout="this.style.background=''">${escapeHtml(h.nombre)}</div>`
   ).join("");
   drop.style.display = "block";
 };
@@ -4261,7 +4276,7 @@ window.abrirRetornoExt = function(id) {
   const lista = document.getElementById("ext-retorno-lista");
   lista.innerHTML = (p.herramientas || []).map((h, i) => `
     <div style="display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid var(--borde);gap:10px">
-      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${h.nombre} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
+      <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${escapeHtml(h.nombre)} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
       <select id="ext-estado-r-${i}"
         style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
         <option value="retornada">✅ Retornada</option>
@@ -4329,7 +4344,7 @@ window.generarConduce = function(id) {
   if (!p) return;
   const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
   const herramientasHtml = (p.herramientas || []).map(h =>
-    `<div class="modal-herramienta-item"><span>${h.nombre}</span><span style="font-weight:700">×${h.cantidad}</span></div>`
+    `<div class="modal-herramienta-item"><span>${escapeHtml(h.nombre)}</span><span style="font-weight:700">×${h.cantidad}</span></div>`
   ).join("") || "—";
   document.getElementById("conduce-contenido").innerHTML = `
     <div class="modal-campo"><label>Número de conduce</label><div class="valor">${p.id.slice(0,8).toUpperCase()}</div></div>
@@ -4508,8 +4523,8 @@ function renderHerramientasCfg(lista) {
     const usos = conteoUsos[h.nombre] || 0;
     const esPopular = topUsadas.has(h.nombre);
     const local = h.local ? ' <span style="font-size:9px;color:var(--texto-dim)">(resp.)</span>' : '';
-    const nombreEsc = h.nombre.replace(/'/g, "\\'");
-    const catEsc = cat.replace(/'/g, "\\'");
+    const nombreEsc = escapeAttr(h.nombre);
+    const catEsc = escapeAttr(cat);
     const fechaCreado = h.creadoEn?.toDate ? h.creadoEn.toDate() : (h.creadoEn ? new Date(h.creadoEn) : null);
     const esNueva = fechaCreado && (Date.now() - fechaCreado.getTime()) < 1000*60*60*72; // 72h
 
@@ -4526,7 +4541,7 @@ function renderHerramientasCfg(lista) {
           ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esNueva ? '<span class="her-ribbon" style="background:rgba(163,113,247,0.92)">🆕 NUEVA</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : ''))}
         </div>
         <div class="her-cuerpo">
-          <div class="her-nombre">${h.nombre}${local}</div>
+          <div class="her-nombre">${escapeHtml(h.nombre)}${local}</div>
           ${h.practica ? `<div style="font-size:10px;color:var(--verde);font-weight:700;margin-bottom:6px">🏷️ ${h.practica}</div>` : ''}
           <div class="her-fila-stock">
             <span class="her-stock-badge">${cantidad} disp.</span>
@@ -4764,7 +4779,7 @@ window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
 window.abrirModalEntradaStock = function() {
   const sel = document.getElementById("entrada-select-herramienta");
   const lista = (_herListaActual || []).slice().sort((a,b) => a.nombre.localeCompare(b.nombre));
-  sel.innerHTML = lista.map(h => `<option value="${h.id}">${h.nombre} (actual: ${h.cantidadDisponible ?? 0})</option>`).join("");
+  sel.innerHTML = lista.map(h => `<option value="${h.id}">${escapeHtml(h.nombre)} (actual: ${h.cantidadDisponible ?? 0})</option>`).join("");
   document.getElementById("entrada-cantidad").value = 1;
   document.getElementById("entrada-nota").value = "";
   document.getElementById("entrada-nombre-nueva").value = "";
@@ -4888,7 +4903,7 @@ function renderProfesoresCfg() {
     const sinRetornar = (todosPrestamosProfTodos || []).filter(x => x.profesor === p.nombre && x.estado === "activo");
     const sinRetHoy = sinRetornar.filter(x => esMismodia(x.creadoEn));
     const sinRetViejos = sinRetornar.length - sinRetHoy.length;
-    const nombreEsc = p.nombre.replace(/'/g, "\\'");
+    const nombreEsc = escapeAttr(p.nombre);
     const listaMaterias = (p.materias || []).length
       ? `<div class="prof-materias-lista">${p.materias.map(m => {
           const horarios = (m.horarios && m.horarios.length)
@@ -5140,7 +5155,7 @@ function renderLaboratoriosCfg() {
   }
   wrap.innerHTML = lista.map(l => {
     const local = l.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
-    const nombreEsc = l.nombre.replace(/'/g, "\\'");
+    const nombreEsc = escapeAttr(l.nombre);
     return `
       <div class="prof-fila">
         <div class="prof-fila-top">
@@ -5656,7 +5671,7 @@ window.abrirModalHist = function(id, tipo) {
 
   const herramientasHtml = (r.herramientas||[]).map(h => `
     <div class="modal-herramienta-item">
-      <span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${h.nombre}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span></span>
+      <span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${escapeHtml(h.nombre)}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span></span>
       <span style="color:var(--verde);font-weight:700">x${h.cantidad}</span>
     </div>`).join("") || "<p style='color:var(--texto-dim);font-size:13px'>Sin herramientas</p>";
 
@@ -5666,7 +5681,7 @@ window.abrirModalHist = function(id, tipo) {
       <div class="modal-herramientas">
         ${r.herramientasRetorno.map(h => `
           <div class="modal-herramienta-item">
-            <span>${h.nombre}</span>
+            <span>${escapeHtml(h.nombre)}</span>
             <span style="color:${estadoColor[h.estadoRetorno]||"var(--texto-dim)"};font-weight:700">
               ${estadoIcono[h.estadoRetorno]||""} ${h.estadoRetorno||"—"}
             </span>
