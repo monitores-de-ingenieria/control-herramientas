@@ -110,7 +110,13 @@ service cloud.firestore {
     // completa de nadie más — cada quien solo puede consultar la suya, y
     // el documento no contiene ningún dato personal, solo estado y herramientas)
     match /activaHoy/{matricula} {
-      allow read: if true;
+      // "get" = pedir UNA ficha puntual sabiendo la matrícula exacta (lo que
+      // hace el formulario). "list" = pedir la colección completa de un
+      // jalón sin especificar ninguna — eso se bloquea, porque si no,
+      // cualquiera podría sacar TODOS los solicitudId activos de hoy sin
+      // necesidad de adivinar ninguna matrícula.
+      allow get: if true;
+      allow list: if esStaff();
       allow write: if esStaff() || (
         request.resource.data.keys().hasOnly(["solicitudId", "estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
         request.resource.data.keys().hasAll(["solicitudId", "estado", "herramientas"]) &&
