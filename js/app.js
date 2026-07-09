@@ -1,5 +1,5 @@
 // js/app.js
-import { db, collection, addDoc, getDocs, query, orderBy, serverTimestamp, where, updateDoc, doc, runTransaction } from "./firebase.js";
+import { db, collection, addDoc, getDocs, getDoc, setDoc, query, orderBy, serverTimestamp, where, updateDoc, doc, runTransaction } from "./firebase.js";
 import { cargarProfesores, cargarLaboratorios, cargarHerramientas, cargarCiclos, agregarCicloNuevo } from "./inventario.js";
 
 // ---- Sanitización de texto (anti-XSS) ----
@@ -496,31 +496,15 @@ function validarFormulario() {
 
 // ---- Verificar matrícula duplicada hoy ----
 async function buscarSolicitudActivaHoy(matricula) {
-  const hoy = new Date();
-  const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate());
-  const fin = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate() + 1);
-
   try {
-    const snap = await getDocs(
-      query(
-        collection(db, "solicitudes"),
-        where("matricula", "==", matricula)
-      )
-    );
+    const snap = await getDoc(doc(db, "activaHoy", matricula));
+    if (!snap.exists()) return null;
 
-    if (snap.empty) return null;
-
-    let found = null;
-    snap.forEach(d => {
-      const data = d.data();
-      const creado = data.creadoEn?.toDate?.() || new Date(data.creadoEn);
-      if (creado >= inicio && creado < fin) {
-        if (data.estado === "pendiente" || data.estado === "entregada") {
-          found = { id: d.id, ...data };
-        }
-      }
-    });
-    return found;
+    const data = snap.data();
+    if (data.estado === "pendiente" || data.estado === "entregada") {
+      return { id: data.solicitudId, herramientas: data.herramientas || [], numeroSolicitud: data.numeroSolicitud, matricula };
+    }
+    return null;
   } catch (err) {
     console.error("Error en buscarSolicitudActivaHoy:", err);
     return null;
@@ -688,9 +672,19 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
         }
       });
 
+      const listaActualizada = Object.values(mapa);
+
       await updateDoc(doc(db, "solicitudes", solicitudExistenteId), {
-        herramientas: Object.values(mapa)
+        herramientas: listaActualizada
       });
+
+      try {
+        await updateDoc(doc(db, "activaHoy", solicitudExistente.matricula), {
+          herramientas: listaActualizada
+        });
+      } catch (errFicha) {
+        console.error("No se pudo actualizar la ficha activaHoy:", errFicha);
+      }
 
       modal.remove();
       textoNumeroSol.textContent = `Solicitud #${solicitudExistente.numeroSolicitud || solicitudExistenteId}`;
@@ -792,7 +786,20 @@ btnContinuar.addEventListener("click", async () => {
   try {
     const numero = await generarNumeroSolicitud();
     datosSolicitudPendiente.numeroSolicitud = numero;
-    await addDoc(collection(db, "solicitudes"), datosSolicitudPendiente);
+    const refNueva = await addDoc(collection(db, "solicitudes"), datosSolicitudPendiente);
+
+    try {
+      await setDoc(doc(db, "activaHoy", datosSolicitudPendiente.matricula), {
+        solicitudId: refNueva.id,
+        estado: "pendiente",
+        herramientas: datosSolicitudPendiente.herramientas,
+        numeroSolicitud: numero,
+        actualizadoEn: serverTimestamp()
+      });
+    } catch (errFicha) {
+      console.error("No se pudo actualizar la ficha activaHoy:", errFicha);
+      // No bloquea el envío: la solicitud principal ya quedó guardada.
+    }
 
     textoNumeroSol.textContent = `Solicitud #${numero}`;
     textoDespedida.textContent = `Gracias, ${datosSolicitudPendiente.nombre}. Tu solicitud de herramientas ha sido registrada exitosamente.`;

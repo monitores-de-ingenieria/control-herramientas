@@ -3381,6 +3381,12 @@ window.confirmarEntrega = async function() {
       entregadoEn: s.entregadoEn || serverTimestamp(),
       herramientasEntregadas
     });
+    try {
+      await updateDoc(doc(db, "activaHoy", s.matricula), {
+        estado: "entregada",
+        herramientas: herramientasEntregadas
+      });
+    } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
     const sx = todasSolicitudes.find(x => x.id === solicitudActivaId);
     if (sx) { sx.estado = "entregada"; sx.herramientasEntregadas = herramientasEntregadas; }
     actualizarContadores();
@@ -3481,6 +3487,9 @@ window.confirmarRetorno = async function() {
       retornadoEn: serverTimestamp(),
       herramientasRetorno: resultado
     });
+    try {
+      await updateDoc(doc(db, "activaHoy", s.matricula), { estado: "retornada" });
+    } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
 
     for (const inc of incidencias) {
       await addDoc(collection(db, "incidencias"), {
@@ -3608,7 +3617,13 @@ function herFotoHtmlPorNombre(nombre, size = 32) {
 window.anular = async function(id) {
   if (!confirm("¿Seguro que deseas anular esta solicitud?")) return;
   try {
+    const s = todasSolicitudes.find(x => x.id === id);
     await updateDoc(doc(db, "solicitudes", id), { estado: "cancelada" });
+    if (s) {
+      try {
+        await updateDoc(doc(db, "activaHoy", s.matricula), { estado: "cancelada" });
+      } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
+    }
     mostrarToast("Solicitud anulada");
   } catch(e) { mostrarToast("Error al anular", "rojo"); }
 };
