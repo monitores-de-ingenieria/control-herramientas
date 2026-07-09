@@ -58,13 +58,17 @@ service cloud.firestore {
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20;
 
-      // Lectura pública: la necesita el propio formulario para detectar
-      // solicitudes duplicadas (misma matrícula el mismo día) antes de enviar.
-      allow read: if true;
+      // Lectura: SOLO el staff logueado puede leer los datos completos
+      // (nombre, teléfono, matrícula) de las solicitudes.
+      allow read: if esStaff();
 
-      // Solo el staff (admin/encargado logueado) puede cambiar estado,
-      // marcar incidencias, registrar retorno, etc.
-      allow update: if esStaff();
+      // El staff puede cambiar cualquier campo (entregar, retornar, etc).
+      // El propio estudiante (sin login) solo puede AGREGAR herramientas
+      // a su solicitud activa del día, sin tocar ningún otro campo.
+      allow update: if esStaff() || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas"]) &&
+        resource.data.estado in ["pendiente", "entregada"]
+      );
 
       // Borrar solicitudes: solo administrador.
       allow delete: if esAdministrador();
@@ -87,19 +91,28 @@ service cloud.firestore {
     }
     match /ciclos/{id} {
       allow read: if true;
-      // Cualquiera puede agregar un ciclo nuevo (ej. cuando empiece 2027)
-      // desde el formulario público, pero solo con formato "N-AAAA" y
-      // solo puede CREAR, no editar/borrar los existentes.
-      allow create: if request.resource.data.nombre is string &&
-        request.resource.data.nombre.matches("^[0-9]{1,2}-[0-9]{4}$");
-      allow update, delete: if esStaff();
+      allow create, update, delete: if esStaff();
+    }
+
+    // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
+    // tiene una solicitud activa hoy, sin exponer nombre/teléfono/matrícula
+    // completa de nadie más — cada quien solo puede consultar la suya, y
+    // el documento no contiene ningún dato personal, solo estado y herramientas)
+    match /activaHoy/{matricula} {
+      allow read: if true;
+      allow write: if esStaff() || (
+        request.resource.data.keys().hasOnly(["solicitudId", "estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
+        request.resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list
+      );
     }
 
     // ── contadores ── (solo guarda un número por año, para numerar solicitudes
     // sin tener que descargar toda la colección de solicitudes)
     match /contadores/{anio} {
       allow read: if true;
-      allow write: if request.resource.data.ultimo is int && request.resource.data.ultimo > 0;
+      allow create: if request.resource.data.ultimo == 1;
+      allow update: if esStaff() || request.resource.data.ultimo == resource.data.ultimo + 1;
     }
 
     // ── préstamos a profesores / externos ── (gestión interna, solo staff)
