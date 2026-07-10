@@ -729,7 +729,8 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
 
       try {
         await updateDoc(doc(db, "activaHoy", solicitudExistente.matricula), {
-          herramientas: listaActualizada
+          herramientas: listaActualizada,
+          token: solicitudExistente.token
         });
       } catch (errFicha) {
         console.error("No se pudo actualizar la ficha activaHoy:", errFicha);
@@ -844,6 +845,7 @@ btnContinuar.addEventListener("click", async () => {
         estado: "pendiente",
         herramientas: datosSolicitudPendiente.herramientas,
         numeroSolicitud: numero,
+        token: datosSolicitudPendiente.token,
         actualizadoEn: serverTimestamp()
       });
     } catch (errFicha) {
