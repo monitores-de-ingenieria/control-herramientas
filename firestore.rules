@@ -86,6 +86,8 @@ service cloud.firestore {
       // Cualquiera puede crear una solicitud (no hay login de estudiantes),
       // pero se valida la forma mínima del documento para evitar basura/abuso.
       allow create: if
+        request.resource.data.token is string &&
+        request.resource.data.token.size() >= 16 && request.resource.data.token.size() < 100 &&
         request.resource.data.nombre is string &&
         request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 80 &&
         request.resource.data.apellido is string &&
@@ -113,8 +115,9 @@ service cloud.firestore {
       // el mismo tope de tamaño que se exige al crear (antes esto no tenía
       // límite, así que alguien podía mandar un array gigante).
       allow update: if esStaff() || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas"]) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "tokenUsado"]) &&
         resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.tokenUsado == resource.data.token &&
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
         request.resource.data.herramientas.size() >= resource.data.herramientas.size() &&
@@ -164,8 +167,8 @@ service cloud.firestore {
       allow get: if true;
       allow list: if esStaff();
       allow write: if esStaff() || (
-        request.resource.data.keys().hasOnly(["solicitudId", "estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
-        request.resource.data.keys().hasAll(["solicitudId", "estado", "herramientas"]) &&
+        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
+        request.resource.data.keys().hasAll(["estado", "herramientas"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() <= 20 &&

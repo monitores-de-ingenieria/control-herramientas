@@ -83,6 +83,36 @@ btnQuitarFoto.addEventListener("click", () => {
 const CLAVE_DATOS_GUARDADOS = "controlHerramientas_datosPersonales";
 const CAMPOS_TEXTO_GUARDADOS = ["nombre", "apellido", "matricula", "telefono"];
 
+// ---- Token de propiedad de la solicitud (anti-secuestro) ----
+// activaHoy/{matricula} es público (para que el formulario sepa si ya hay
+// una solicitud hoy) y ya no expone el ID real de la solicitud. Para poder
+// agregar herramientas después, este dispositivo guarda localmente el ID
+// real + un token secreto generado al crear la solicitud. Sin ese token
+// exacto, Firestore rechaza cualquier intento de modificar la solicitud
+// de otra persona aunque alguien adivine o vea su matrícula.
+const CLAVE_TOKEN_PREFIJO = "controlHerramientas_token_";
+
+function generarToken() {
+  if (window.crypto?.randomUUID) return crypto.randomUUID().replace(/-/g, "");
+  return Array.from({ length: 32 }, () => Math.floor(Math.random() * 16).toString(16)).join("");
+}
+
+function guardarTokenLocal(matricula, id, token) {
+  try {
+    localStorage.setItem(CLAVE_TOKEN_PREFIJO + matricula, JSON.stringify({ id, token, fecha: new Date().toDateString() }));
+  } catch {}
+}
+
+function obtenerTokenLocal(matricula) {
+  try {
+    const datos = JSON.parse(localStorage.getItem(CLAVE_TOKEN_PREFIJO + matricula) || "null");
+    if (!datos || datos.fecha !== new Date().toDateString()) return null; // solo vale para hoy
+    return datos;
+  } catch {
+    return null;
+  }
+}
+
 function obtenerDatosGuardados() {
   try {
     return JSON.parse(localStorage.getItem(CLAVE_DATOS_GUARDADOS) || "null");
@@ -180,6 +210,12 @@ btnBuscarAdicional.addEventListener("click", async () => {
     }
     if (solicitud.estado === "retornada" || solicitud.estado === "cancelada") {
       mostrarError(`Esta solicitud ya está ${solicitud.estado}. No se pueden agregar más herramientas.`);
+      btnBuscarAdicional.disabled = false;
+      btnBuscarAdicional.textContent = "Buscar solicitud activa";
+      return;
+    }
+    if (solicitud.soloLectura || !solicitud.id) {
+      mostrarError("Tienes una solicitud activa hoy, pero no fue creada en este dispositivo/navegador. Por seguridad, solo puedes agregar herramientas desde donde la creaste, o pide ayuda al encargado del taller.");
       btnBuscarAdicional.disabled = false;
       btnBuscarAdicional.textContent = "Buscar solicitud activa";
       return;
@@ -501,10 +537,22 @@ async function buscarSolicitudActivaHoy(matricula) {
     if (!snap.exists()) return null;
 
     const data = snap.data();
-    if (data.estado === "pendiente" || data.estado === "entregada") {
-      return { id: data.solicitudId, herramientas: data.herramientas || [], numeroSolicitud: data.numeroSolicitud, matricula };
-    }
-    return null;
+    if (data.estado !== "pendiente" && data.estado !== "entregada") return null;
+
+    // activaHoy ya NO trae el ID real de la solicitud (para que nadie con
+    // solo la matrícula de otra persona pueda ubicarla y modificarla).
+    // El ID + token solo existen en el localStorage del navegador donde
+    // se creó la solicitud.
+    const local = obtenerTokenLocal(matricula);
+    return {
+      id: local?.id || null,
+      token: local?.token || null,
+      soloLectura: !local, // true si esta solicitud existe pero no es "nuestra" en este dispositivo
+      herramientas: data.herramientas || [],
+      numeroSolicitud: data.numeroSolicitud,
+      estado: data.estado,
+      matricula
+    };
   } catch (err) {
     console.error("Error en buscarSolicitudActivaHoy:", err);
     return null;
@@ -675,7 +723,8 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
       const listaActualizada = Object.values(mapa);
 
       await updateDoc(doc(db, "solicitudes", solicitudExistenteId), {
-        herramientas: listaActualizada
+        herramientas: listaActualizada,
+        tokenUsado: solicitudExistente.token
       });
 
       try {
@@ -770,6 +819,7 @@ btnEnviar.addEventListener("click", async (e) => {
     laboratorio:  document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
     estado:       "pendiente",
+    token:        generarToken(),
     creadoEn:     serverTimestamp()
   };
 
@@ -787,10 +837,10 @@ btnContinuar.addEventListener("click", async () => {
     const numero = await generarNumeroSolicitud();
     datosSolicitudPendiente.numeroSolicitud = numero;
     const refNueva = await addDoc(collection(db, "solicitudes"), datosSolicitudPendiente);
+    guardarTokenLocal(datosSolicitudPendiente.matricula, refNueva.id, datosSolicitudPendiente.token);
 
     try {
       await setDoc(doc(db, "activaHoy", datosSolicitudPendiente.matricula), {
-        solicitudId: refNueva.id,
         estado: "pendiente",
         herramientas: datosSolicitudPendiente.herramientas,
         numeroSolicitud: numero,
