@@ -103,6 +103,13 @@ service cloud.firestore {
         request.resource.data.apellido.size() > 0 && request.resource.data.apellido.size() < 80 &&
         request.resource.data.matricula is string &&
         request.resource.data.matricula.size() > 0 && request.resource.data.matricula.size() < 30 &&
+        request.resource.data.matricula.matches('^[0-9]-[0-9]{2}-[0-9]{4}$') &&
+        // Anti-spam: si esta matrícula YA tiene una solicitud activa hoy
+        // (pendiente/entregada), no se puede crear otra — hay que usar el
+        // flujo de "agregar adicional" en lugar de generar duplicados.
+        // Antes esto solo se evitaba en el cliente; ahora también en la regla.
+        (!exists(/databases/$(database)/documents/activaHoy/$(request.resource.data.matricula)) ||
+         !(get(/databases/$(database)/documents/activaHoy/$(request.resource.data.matricula)).data.estado in ["pendiente", "entregada"])) &&
         request.resource.data.telefono is string &&
         request.resource.data.telefono.size() > 0 && request.resource.data.telefono.size() < 20 &&
         request.resource.data.profesor is string &&
@@ -141,30 +148,55 @@ service cloud.firestore {
       allow delete: if esAdministrador();
     }
 
+    // Valida los catálogos que gestiona el staff (herramientas, profesores,
+    // laboratorios, materias). El staff es de confianza, pero esto evita
+    // que un bug del panel (o una cuenta comprometida) meta datos rotos
+    // que después revientan el formulario público al leerlos.
+    function herramientaCatalogoValida() {
+      return request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 100 &&
+        (!("cantidadDisponible" in request.resource.data) ||
+         (request.resource.data.cantidadDisponible is number && request.resource.data.cantidadDisponible >= 0)) &&
+        (!("categoria" in request.resource.data) ||
+         (request.resource.data.categoria is string && request.resource.data.categoria.size() < 60)) &&
+        (!("practica" in request.resource.data) ||
+         (request.resource.data.practica is string && request.resource.data.practica.size() < 100));
+    }
+
+    function nombreCatalogoValido() {
+      return request.resource.data.nombre is string &&
+        request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 100;
+    }
+
     // ── herramientas / profesores / laboratorios / ciclos ──
     // Lectura pública (el formulario del estudiante llena sus <select> con esto).
-    // Escritura solo para el staff logueado.
+    // Escritura solo para el staff logueado, con validación de forma.
     match /herramientas/{id} {
       allow read: if true;
-      allow write: if esStaff();
+      allow create, update: if esStaff() && herramientaCatalogoValida();
+      allow delete: if esStaff();
     }
     match /profesores/{id} {
       allow read: if true;
-      allow write: if esStaff();
+      allow create, update: if esStaff() && nombreCatalogoValido();
+      allow delete: if esStaff();
     }
     match /laboratorios/{id} {
       allow read: if true;
-      allow write: if esStaff();
+      allow create, update: if esStaff() && nombreCatalogoValido();
+      allow delete: if esStaff();
     }
     match /ciclos/{id} {
       allow read: if true;
-      allow create, update, delete: if esStaff();
+      allow create, update: if esStaff() && nombreCatalogoValido();
+      allow delete: if esStaff();
     }
     // Catálogo de materias del panel (Configuración → Materias).
     // Sin esto se queda con permission-denied igual que le pasó a auditoria.
     match /materias/{id} {
       allow read: if true;
-      allow write: if esStaff();
+      allow create, update: if esStaff() && nombreCatalogoValido();
+      allow delete: if esStaff();
     }
 
     // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
@@ -197,8 +229,13 @@ service cloud.firestore {
     // sin tener que descargar toda la colección de solicitudes)
     match /contadores/{anio} {
       allow read: if true;
-      allow create: if request.resource.data.ultimo == 1;
-      allow update: if esStaff() || request.resource.data.ultimo == resource.data.ultimo + 1;
+      allow create: if request.resource.data.keys().hasOnly(["ultimo"]) && request.resource.data.ultimo == 1;
+      allow update: if esStaff() || (
+        request.resource.data.keys().hasOnly(["ultimo"]) &&
+        request.resource.data.ultimo is int &&
+        request.resource.data.ultimo == resource.data.ultimo + 1 &&
+        request.resource.data.ultimo <= 50000
+      );
     }
 
     // ── préstamos a profesores / externos ── (gestión interna, solo staff)
