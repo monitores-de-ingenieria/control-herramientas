@@ -3012,9 +3012,9 @@ function renderTabla() {
                 <div><div class="est-nombre">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
               </div>
             </td>
-            <td style="font-size:12px">${s.matricula || "—"}</td>
-            <td style="font-size:12px">${s.profesor || "—"}</td>
-            <td style="font-size:12px">${s.laboratorio || "—"}</td>
+            <td style="font-size:12px">${escapeHtml(s.matricula) || "—"}</td>
+            <td style="font-size:12px">${escapeHtml(s.profesor) || "—"}</td>
+            <td style="font-size:12px">${escapeHtml(s.laboratorio) || "—"}</td>
             <td style="white-space:nowrap">
               <span style="display:inline-flex;align-items:center;gap:5px">
                 <span style="width:20px;height:20px;border-radius:50%;background:var(--gradiente-verde);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${(s.herramientas||[]).length}</span>
@@ -3150,11 +3150,11 @@ window.abrirModal = function(id) {
     <div class="modal-campo"><label>Número de solicitud</label><div class="valor">${s.numeroSolicitud || s.id.slice(0,8)}</div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="modal-campo"><label>Nombre</label><div class="valor">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
-      <div class="modal-campo"><label>Matrícula</label><div class="valor">${s.matricula || "—"}</div></div>
+      <div class="modal-campo"><label>Matrícula</label><div class="valor">${escapeHtml(s.matricula) || "—"}</div></div>
       <div class="modal-campo"><label>Ciclo</label><div class="valor">${escapeHtml(s.ciclo) || "—"}</div></div>
       <div class="modal-campo"><label>Teléfono</label><div class="valor">${escapeHtml(s.telefono) || "—"}</div></div>
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${s.profesor || "—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${s.laboratorio || "—"}</div></div>
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(s.profesor) || "—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(s.laboratorio) || "—"}</div></div>
     </div>
     <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
     <div class="modal-campo"><label>Fecha</label><div class="valor">${formatFecha(s.creadoEn)}</div></div>
