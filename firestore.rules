@@ -86,6 +86,15 @@ service cloud.firestore {
       // Cualquiera puede crear una solicitud (no hay login de estudiantes),
       // pero se valida la forma mínima del documento para evitar basura/abuso.
       allow create: if
+        request.resource.data.keys().hasOnly([
+          "nombre", "apellido", "matricula", "ciclo", "telefono",
+          "profesor", "laboratorio", "herramientas", "estado",
+          "creadoEn", "numeroSolicitud", "token"
+        ]) &&
+        request.resource.data.keys().hasAll([
+          "nombre", "apellido", "matricula", "telefono",
+          "profesor", "laboratorio", "estado", "herramientas", "token"
+        ]) &&
         request.resource.data.token is string &&
         request.resource.data.token.size() >= 16 && request.resource.data.token.size() < 100 &&
         request.resource.data.nombre is string &&
@@ -100,6 +109,10 @@ service cloud.firestore {
         request.resource.data.profesor.size() > 0 && request.resource.data.profesor.size() < 100 &&
         request.resource.data.laboratorio is string &&
         request.resource.data.laboratorio.size() > 0 && request.resource.data.laboratorio.size() < 100 &&
+        (!("ciclo" in request.resource.data) ||
+         (request.resource.data.ciclo is string && request.resource.data.ciclo.size() < 20)) &&
+        (!("numeroSolicitud" in request.resource.data) ||
+         (request.resource.data.numeroSolicitud is string && request.resource.data.numeroSolicitud.size() < 20)) &&
         request.resource.data.estado == "pendiente" &&
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
