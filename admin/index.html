@@ -1162,6 +1162,7 @@
       <div class="nav-grupo">Configuración</div>
       <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
       <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono">🏢</span><span class="nav-texto">Laboratorios / Talleres</span></div>
+      <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
       <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
 
@@ -1430,6 +1431,25 @@
         </div>
       </div>
 
+      <div class="vista" id="vista-ciclos-cfg">
+        <div class="pagina-titulo">
+          <div><h2>Ciclos</h2><p>Ciclos académicos disponibles para elegir en el formulario del estudiante (ej. cuando empiece 2027)</p></div>
+          <button class="btn btn-verde" onclick="abrirModalCiclo()" style="padding:9px 18px;font-size:13px" title="Agregar un ciclo nuevo">➕ Agregar ciclo</button>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Lista de ciclos</h3>
+            <div class="filtros">
+              <input type="text" id="ciclo-buscar" placeholder="Buscar...">
+            </div>
+          </div>
+          <div class="prof-resumen" id="ciclo-resumen"></div>
+          <div id="ciclo-cfg-wrap" class="prof-lista">
+            <div class="cargando"><div class="spinner"></div>Cargando ciclos...</div>
+          </div>
+        </div>
+      </div>
+
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
           <div>
@@ -1603,6 +1623,24 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-ciclo-cfg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span id="ciclo-modal-titulo">➕ Agregar ciclo</span>
+      <button class="modal-cerrar" onclick="cerrarModalCiclo()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Ciclo (formato N-AAAA)</label>
+      <input type="text" id="ciclo-input-nombre" placeholder="Ej. 1-2027"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalCiclo()">Cancelar</button>
+      <button class="btn btn-verde" id="ciclo-btn-guardar" onclick="guardarCiclo()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL CAMBIO OBLIGATORIO DE CONTRASEÑA -->
 <div class="modal-overlay" id="modal-cambiar-pass" style="z-index:999">
   <div class="modal" style="max-width:400px;text-align:center">
@@ -1675,6 +1713,7 @@
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="prestadas"> Herramientas Prestadas</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="incidencias"> Incidencias</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="laboratorios"> Talleres</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="ciclos-cfg"> Ciclos</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="historial"> Historial</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="profesores-cfg"> Profesores (cfg)</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas</label>
@@ -2177,6 +2216,7 @@ onAuthStateChanged(auth, async user => {
     cargarHerramientasCfg();
     cargarProfesoresCfg();
     cargarLaboratoriosCfg();
+    cargarCiclosCfg();
     cargarUsuariosCfg();
     cargarAuditoria();
     await aplicarRolUsuario(user);
@@ -3012,9 +3052,9 @@ function renderTabla() {
                 <div><div class="est-nombre">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
               </div>
             </td>
-            <td style="font-size:12px">${escapeHtml(s.matricula) || "—"}</td>
-            <td style="font-size:12px">${escapeHtml(s.profesor) || "—"}</td>
-            <td style="font-size:12px">${escapeHtml(s.laboratorio) || "—"}</td>
+            <td style="font-size:12px">${s.matricula || "—"}</td>
+            <td style="font-size:12px">${s.profesor || "—"}</td>
+            <td style="font-size:12px">${s.laboratorio || "—"}</td>
             <td style="white-space:nowrap">
               <span style="display:inline-flex;align-items:center;gap:5px">
                 <span style="width:20px;height:20px;border-radius:50%;background:var(--gradiente-verde);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${(s.herramientas||[]).length}</span>
@@ -3150,11 +3190,11 @@ window.abrirModal = function(id) {
     <div class="modal-campo"><label>Número de solicitud</label><div class="valor">${s.numeroSolicitud || s.id.slice(0,8)}</div></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
       <div class="modal-campo"><label>Nombre</label><div class="valor">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
-      <div class="modal-campo"><label>Matrícula</label><div class="valor">${escapeHtml(s.matricula) || "—"}</div></div>
+      <div class="modal-campo"><label>Matrícula</label><div class="valor">${s.matricula || "—"}</div></div>
       <div class="modal-campo"><label>Ciclo</label><div class="valor">${escapeHtml(s.ciclo) || "—"}</div></div>
       <div class="modal-campo"><label>Teléfono</label><div class="valor">${escapeHtml(s.telefono) || "—"}</div></div>
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(s.profesor) || "—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(s.laboratorio) || "—"}</div></div>
+      <div class="modal-campo"><label>Profesor</label><div class="valor">${s.profesor || "—"}</div></div>
+      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${s.laboratorio || "—"}</div></div>
     </div>
     <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
     <div class="modal-campo"><label>Fecha</label><div class="valor">${formatFecha(s.creadoEn)}</div></div>
@@ -5234,6 +5274,135 @@ window.eliminarLaboratorio = async function(id, nombre) {
 document.getElementById("lab-buscar")?.addEventListener("input", renderLaboratoriosCfg);
 document.getElementById("modal-profesor-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-profesor-cfg")) cerrarModalProfesor();
+});
+
+// ── CICLOS ──
+const CICLOS_RESPALDO_ADMIN = ["2-2027", "1-2027", "2-2026", "1-2026", "2-2025", "1-2025"];
+let cicloCfgEditar = null;
+let cicloCfgLista  = [];
+
+function ordenarCiclosAdmin(lista) {
+  return [...lista].sort((a, b) => {
+    const [na, ya] = String(a.nombre || "").split("-").map(Number);
+    const [nb, yb] = String(b.nombre || "").split("-").map(Number);
+    if ((yb || 0) !== (ya || 0)) return (yb || 0) - (ya || 0);
+    return (nb || 0) - (na || 0);
+  });
+}
+
+async function cargarCiclosCfg() {
+  try {
+    onSnapshot(query(collection(db, "ciclos")), snap => {
+      const todosValidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const nombresFirestore = new Set(todosValidos.map(c => String(c.nombre || "").toLowerCase()));
+      const eliminados = new Set(todosValidos.filter(c => c.eliminado).map(c => String(c.nombre || "").toLowerCase()));
+      const enFirestore = todosValidos.filter(c => !c.eliminado);
+      const delRespaldo = CICLOS_RESPALDO_ADMIN
+        .filter(nombre => !nombresFirestore.has(nombre.toLowerCase()) && !eliminados.has(nombre.toLowerCase()))
+        .map((nombre, i) => ({ id: "local-" + i, nombre, local: true }));
+      cicloCfgLista = ordenarCiclosAdmin([...enFirestore, ...delRespaldo]);
+      renderCiclosCfg();
+    });
+  } catch(e) {
+    const w = document.getElementById("ciclo-cfg-wrap");
+    if (w) w.innerHTML = '<div class="cargando">Error al cargar ciclos.</div>';
+  }
+}
+
+function renderCiclosCfg() {
+  const wrap   = document.getElementById("ciclo-cfg-wrap");
+  if (!wrap) return;
+  const buscar = (document.getElementById("ciclo-buscar")?.value || "").toLowerCase();
+  const lista  = buscar ? cicloCfgLista.filter(c => c.nombre.toLowerCase().includes(buscar)) : cicloCfgLista;
+
+  const resumen = document.getElementById("ciclo-resumen");
+  if (resumen) resumen.innerHTML = `📅 <b>${cicloCfgLista.length}</b> ciclo${cicloCfgLista.length === 1 ? "" : "s"} registrado${cicloCfgLista.length === 1 ? "" : "s"}`;
+
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📅</div><p>No hay ciclos registrados.</p></div>';
+    return;
+  }
+  wrap.innerHTML = lista.map(c => {
+    const local = c.local ? '<span style="font-size:10px;color:var(--texto-dim);margin-left:6px">(respaldo)</span>' : '';
+    const nombreEsc = escapeAttr(c.nombre);
+    return `
+      <div class="prof-fila">
+        <div class="prof-fila-top">
+          <div class="est-avatar">
+            <div class="est-circulo" style="background:${colorEstudiante(c.nombre)}22;color:${colorEstudiante(c.nombre)}">📅</div>
+            <div style="min-width:0;flex:1">
+              <div class="est-nombre">${c.nombre}${local}</div>
+            </div>
+          </div>
+          <div class="acciones-celda">
+            <button class="btn btn-outline" onclick="abrirModalCiclo('${c.id}','${nombreEsc}',${c.local||false})" title="Editar">✏️ Editar</button>
+            ${c.local ? "" : `<button class="btn btn-rojo" onclick="eliminarCiclo('${c.id}','${nombreEsc}')" title="Eliminar">🗑</button>`}
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+window.abrirModalCiclo = function(id = null, nombre = "", esLocal = false) {
+  cicloCfgEditar = esLocal ? null : id;
+  window._cicloLocalNombre = esLocal ? nombre : null;
+  document.getElementById("ciclo-modal-titulo").textContent = id ? "✏️ Editar ciclo" : "➕ Agregar ciclo";
+  const input = document.getElementById("ciclo-input-nombre");
+  input.value = nombre;
+  document.getElementById("modal-ciclo-cfg").classList.add("abierto");
+};
+
+window.cerrarModalCiclo = function() {
+  document.getElementById("modal-ciclo-cfg").classList.remove("abierto");
+  cicloCfgEditar = null;
+};
+
+window.guardarCiclo = async function() {
+  const nombre = document.getElementById("ciclo-input-nombre").value.trim();
+  if (!/^\d{1,2}-\d{4}$/.test(nombre)) {
+    mostrarToast('Formato inválido. Usa N-AAAA, ej. "1-2027"', "rojo");
+    return;
+  }
+  const btn = document.getElementById("ciclo-btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    if (cicloCfgEditar) {
+      await updateDoc(doc(db, "ciclos", cicloCfgEditar), { nombre });
+      mostrarToast("✅ Ciclo actualizado");
+      registrarAuditoria("ciclo", "editar", `Editó el ciclo "${nombre}"`);
+    } else if (window._cicloLocalNombre) {
+      const snap = await getDocs(query(collection(db, "ciclos"), where("nombre", "==", nombre)));
+      if (!snap.empty) {
+        await updateDoc(doc(db, "ciclos", snap.docs[0].id), { nombre });
+        mostrarToast("✅ Ciclo actualizado");
+        registrarAuditoria("ciclo", "editar", `Editó el ciclo "${nombre}"`);
+      } else {
+        await addDoc(collection(db, "ciclos"), { nombre, creadoEn: serverTimestamp() });
+        mostrarToast("✅ Ciclo guardado");
+        registrarAuditoria("ciclo", "crear", `Agregó el ciclo "${nombre}"`);
+      }
+    } else {
+      await addDoc(collection(db, "ciclos"), { nombre, creadoEn: serverTimestamp() });
+      mostrarToast("✅ Ciclo agregado");
+      registrarAuditoria("ciclo", "crear", `Agregó el ciclo "${nombre}"`);
+    }
+    cerrarModalCiclo();
+  } catch(e) { mostrarToast("Error al guardar", "rojo"); }
+  finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
+};
+
+window.eliminarCiclo = async function(id, nombre) {
+  if (!confirm('¿Eliminar el ciclo "' + nombre + '"?')) return;
+  try {
+    await updateDoc(doc(db, "ciclos", id), { eliminado: true });
+    mostrarToast("Ciclo eliminado");
+    registrarAuditoria("ciclo", "eliminar", `Eliminó el ciclo "${nombre}"`);
+  } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
+};
+
+document.getElementById("ciclo-buscar")?.addEventListener("input", renderCiclosCfg);
+document.getElementById("modal-ciclo-cfg")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-ciclo-cfg")) cerrarModalCiclo();
 });
 
 // ── USUARIOS Y ROLES ──
