@@ -3325,22 +3325,6 @@ window.entregar = async function(id) {
   const s = todasSolicitudes.find(x => x.id === id);
   if (!s) return;
 
-  const alertaEl = document.getElementById("alerta-incidencia");
-  try {
-    const snapHist = await getDocs(query(
-      collection(db, "incidencias"),
-      where("matricula", "==", s.matricula)
-    ));
-    if (!snapHist.empty) {
-      const items = snapHist.docs.map(d => d.data());
-      alertaEl.style.display = "block";
-      alertaEl.innerHTML = `⚠️ <strong>Este estudiante tiene ${items.length} incidencia(s) previa(s):</strong><br>` +
-        items.map(i => `• ${i.herramienta} — <em>${i.tipo}</em> (${i.fecha || "sin fecha"})`).join("<br>");
-    } else {
-      alertaEl.style.display = "none";
-    }
-  } catch(e) { alertaEl.style.display = "none"; }
-
   document.getElementById("info-entrega").innerHTML =
     `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
 
@@ -3368,7 +3352,26 @@ window.entregar = async function(id) {
   document.getElementById("lista-adicionales").innerHTML = "";
   document.getElementById("btn-toggle-entrega").textContent = "Desmarcar todas";
 
+  // La ventana se abre YA, sin esperar la consulta de incidencias de abajo
+  // (esa consulta puede tardar un instante y antes dejaba la pantalla en
+  // blanco mientras tanto).
   document.getElementById("modal-entrega").classList.add("abierto");
+
+  const alertaEl = document.getElementById("alerta-incidencia");
+  try {
+    const snapHist = await getDocs(query(
+      collection(db, "incidencias"),
+      where("matricula", "==", s.matricula)
+    ));
+    if (!snapHist.empty) {
+      const items = snapHist.docs.map(d => d.data());
+      alertaEl.style.display = "block";
+      alertaEl.innerHTML = `⚠️ <strong>Este estudiante tiene ${items.length} incidencia(s) previa(s):</strong><br>` +
+        items.map(i => `• ${i.herramienta} — <em>${i.tipo}</em> (${i.fecha || "sin fecha"})`).join("<br>");
+    } else {
+      alertaEl.style.display = "none";
+    }
+  } catch(e) { alertaEl.style.display = "none"; }
 };
 
 window.toggleMarcarTodasEntrega = function() {
