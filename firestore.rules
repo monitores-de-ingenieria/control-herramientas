@@ -194,34 +194,23 @@ service cloud.firestore {
 
     // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
     // tiene una solicitud activa hoy, sin exponer nombre/teléfono/matrícula
-    // ni el ID real de la solicitud — solo trae un "token" secreto que el
-    // propio navegador que creó la solicitud ya tiene guardado en su
-    // localStorage. Sin ese token, nadie puede tocar el registro de otra
-    // matrícula, aunque sepa cuál es.
+    // ni el ID real de la solicitud ni el token — esos dos solo viven en
+    // "solicitudes" (lectura solo-staff) y en el localStorage del navegador
+    // que creó la solicitud. Aquí solo va lo que el formulario necesita
+    // mostrar: estado y lista de herramientas.
     match /activaHoy/{matricula} {
       allow read: if true;
       allow create: if tieneSeccion("solicitudes") || (
-        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "token", "actualizadoEn"]) &&
+        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
-        herramientasValidas(request.resource.data.herramientas) &&
-        request.resource.data.token is string && request.resource.data.token.size() >= 16
+        herramientasValidas(request.resource.data.herramientas)
       );
       allow update: if tieneSeccion("solicitudes") || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "token", "actualizadoEn"]) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
-        herramientasValidas(request.resource.data.herramientas) &&
-        request.resource.data.token is string && request.resource.data.token.size() >= 16 &&
-        (
-          // Caso normal: agregando herramientas a TU misma solicitud activa
-          // (el token nuevo debe coincidir con el que ya estaba guardado).
-          request.resource.data.token == resource.data.token ||
-          // Caso "setDoc sin merge" sobre una ficha vieja ya inactiva: en la
-          // práctica es una solicitud nueva del mismo estudiante, así que no
-          // se le exige continuidad de token con la visita anterior.
-          !(resource.data.estado in ["pendiente", "entregada"])
-        )
+        herramientasValidas(request.resource.data.herramientas)
       );
     }
 
