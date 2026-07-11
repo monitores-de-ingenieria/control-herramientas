@@ -173,10 +173,15 @@ service cloud.firestore {
     }
     match /ciclos/{id} {
       allow read: if true;
-      // Cualquiera (sin login) puede agregar un ciclo nuevo desde el
-      // formulario público (ej. "1-2027" cuando empiece un cuatrimestre
-      // que aún no está en la lista) — se valida el mismo formato que ya
-      // exige el cliente, para que no se cuele texto libre.
+      // Camino admin: el staff con la sección puede crear con más campos
+      // (ej. creadoEn) — es lo que manda admin/index.html al guardar.
+      allow create: if tieneSeccion("ciclos-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
+      // Camino público (sin login, desde el formulario del estudiante):
+      // más estricto — ej. "1-2027" cuando empiece un cuatrimestre que aún
+      // no está en la lista. Mismo formato que ya exige el cliente, y solo
+      // el campo "nombre", nada más.
       allow create: if
         request.resource.data.keys().hasOnly(["nombre"]) &&
         request.resource.data.nombre is string &&
