@@ -1044,6 +1044,8 @@
 
   /* ── Materias del profesor: varios horarios por materia ── */
   .prof-materia-fila { background:var(--card2); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:10px; border:1px solid var(--borde); }
+  .pm-select-existente { width:100%; padding:8px 10px; background:var(--card2); border:1.5px dashed var(--borde); border-radius:7px; color:var(--texto-dim); font-size:12px; margin-bottom:8px; cursor:pointer; }
+  .pm-select-existente:focus { outline:none; border-color:var(--verde); }
   .pm-header { display:flex; gap:8px; align-items:center; }
   .pm-header .pm-nombre { flex:1; min-width:0; padding:9px 10px; background:var(--bg); border:1.5px solid var(--borde); border-radius:7px; color:var(--texto); font-size:13px; font-weight:700; }
   .pm-header .pm-nombre:focus { outline:none; border-color:var(--verde); }
@@ -1161,6 +1163,7 @@
 
       <div class="nav-grupo">Configuración</div>
       <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="materias-cfg" title="Materias"><span class="nav-icono">📚</span><span class="nav-texto">Materias</span></div>
       <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono">🏢</span><span class="nav-texto">Laboratorios / Talleres</span></div>
       <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
@@ -1534,6 +1537,24 @@
         </div>
       </div>
 
+      <div class="vista" id="vista-materias-cfg">
+        <div class="pagina-titulo">
+          <div><h2>Materias</h2><p>Catálogo de materias con su código, para elegirlas al asignarle horario a un profesor</p></div>
+          <button class="btn btn-verde" onclick="abrirModalMateria()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva materia">➕ Agregar materia</button>
+        </div>
+        <div class="seccion-tabla">
+          <div class="tabla-header">
+            <h3>Lista de materias</h3>
+            <div class="filtros">
+              <input type="text" id="materia-buscar" placeholder="Buscar materia...">
+            </div>
+          </div>
+          <div id="materia-cfg-wrap">
+            <div class="cargando"><div class="spinner"></div>Cargando materias...</div>
+          </div>
+        </div>
+      </div>
+
       <div class="vista" id="vista-usuarios-cfg">
         <div class="pagina-titulo">
           <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
@@ -1601,6 +1622,29 @@
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
       <button class="btn btn-verde" id="prof-btn-guardar" onclick="guardarProfesor()">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-materia-cfg">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">
+      <span id="materia-modal-titulo">➕ Agregar materia</span>
+      <button class="modal-cerrar" onclick="cerrarModalMateria()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <label>Código</label>
+      <input type="text" id="materia-input-codigo" placeholder="Ej. IMC105004"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px;text-transform:uppercase">
+    </div>
+    <div class="modal-campo">
+      <label>Nombre</label>
+      <input type="text" id="materia-input-nombre" placeholder="Ej. Taller de Soldadura"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModalMateria()">Cancelar</button>
+      <button class="btn btn-verde" id="materia-btn-guardar" onclick="guardarMateria()">✅ Guardar</button>
     </div>
   </div>
 </div>
@@ -1716,6 +1760,7 @@
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="ciclos-cfg"> Ciclos</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="historial"> Historial</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="profesores-cfg"> Profesores (cfg)</label>
+        <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="materias-cfg"> Materias</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="herramientas-cfg"> Herramientas</label>
         <label style="display:flex;gap:6px;align-items:center;font-size:13px;font-weight:400;cursor:pointer"><input type="checkbox" class="usr-seccion-chk" value="auditoria-cfg"> Auditoría</label>
       </div>
@@ -2215,6 +2260,7 @@ onAuthStateChanged(auth, async user => {
     cargarPrestamosExternos();
     cargarHerramientasCfg();
     cargarProfesoresCfg();
+    cargarMateriasCfg();
     cargarLaboratoriosCfg();
     cargarCiclosCfg();
     cargarUsuariosCfg();
@@ -2247,7 +2293,7 @@ async function registrarAuditoria(tipo, accion, descripcion) {
 }
 
 let _auditoriaLista = [];
-const AUDIT_ICONOS = { herramienta:"🔧", profesor:"👤", usuario:"🔐", prestamo:"📋", stock:"📦" };
+const AUDIT_ICONOS = { herramienta:"🔧", profesor:"👤", materia:"📚", usuario:"🔐", prestamo:"📋", stock:"📦" };
 const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
 
 async function cargarAuditoria() {
@@ -5031,19 +5077,14 @@ window.profAgregarFilaMateria = function(m = {}) {
   const wrap = document.getElementById("prof-materias-wrap");
   const fila = document.createElement("div");
   fila.className = "prof-materia-fila";
-  const nombreActual = m.nombre || "";
-  // Las opciones salen de Laboratorios / Talleres (labCfgLista) — si el
-  // nombre guardado no está en esa lista (ej. se escribió antes de que
-  // existiera esa sección), se agrega igual como opción para no perderlo.
-  const opciones = (labCfgLista || []).map(l => l.nombre);
-  if (nombreActual && !opciones.includes(nombreActual)) opciones.unshift(nombreActual);
   fila.innerHTML = `
+    <select class="pm-select-existente" onchange="profElegirMateriaExistente(this)">
+      <option value="">📋 Elegir de una materia ya registrada...</option>
+      ${materiasDisponiblesGlobal().map(op => `<option value="${op.codigo.replace(/"/g,'&quot;')}||${op.nombre.replace(/"/g,'&quot;')}">${op.codigo ? op.codigo + " — " : ""}${op.nombre}</option>`).join("")}
+    </select>
     <div class="pm-header">
       <input type="text" class="pm-codigo" placeholder="Código (ej. IMC105004)" value="${(m.codigo||"").replace(/"/g,'&quot;')}">
-      <select class="pm-nombre">
-        <option value="">Elige un laboratorio/taller...</option>
-        ${opciones.map(o => `<option value="${o.replace(/"/g,'&quot;')}"${o===nombreActual?" selected":""}>${o}</option>`).join("")}
-      </select>
+      <input type="text" class="pm-nombre" placeholder="Materia (ej. Taller de Soldadura)" value="${(m.nombre||"").replace(/"/g,'&quot;')}">
       <button type="button" class="btn-quitar-fila" onclick="this.closest('.prof-materia-fila').remove()" title="Quitar esta materia">✕</button>
     </div>
     <div class="pm-horarios-wrap"></div>
@@ -5090,6 +5131,137 @@ window.profAgregarHorario = function(btnRef, h = {}) {
   });
   wrapHorarios.appendChild(horarioRow);
 };
+
+// Junta todas las materias (código+nombre) disponibles para elegir: primero
+// las del catálogo dedicado (materiaCfgLista), y también las que ya se le
+// hayan escrito a algún profesor (por si acaso se agregaron directo ahí
+// antes de que existiera este catálogo), sin repetir.
+function materiasDisponiblesGlobal() {
+  const vistas = new Set();
+  const resultado = [];
+  (materiaCfgLista || []).forEach(m => {
+    if (!m.nombre) return;
+    const clave = (m.codigo || "") + "||" + m.nombre;
+    if (vistas.has(clave)) return;
+    vistas.add(clave);
+    resultado.push({ codigo: m.codigo || "", nombre: m.nombre });
+  });
+  (profCfgLista || []).forEach(p => (p.materias || []).forEach(m => {
+    if (!m.nombre) return;
+    const clave = (m.codigo || "") + "||" + m.nombre;
+    if (vistas.has(clave)) return;
+    vistas.add(clave);
+    resultado.push({ codigo: m.codigo || "", nombre: m.nombre });
+  }));
+  return resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
+}
+
+window.profElegirMateriaExistente = function(select) {
+  if (!select.value) return;
+  const [codigo, ...resto] = select.value.split("||");
+  const fila = select.closest(".prof-materia-fila");
+  fila.querySelector(".pm-codigo").value = codigo;
+  fila.querySelector(".pm-nombre").value = resto.join("||");
+  select.selectedIndex = 0;
+};
+
+// ══════════════════════════════════════════════
+// ── MATERIAS (catálogo con código, independiente de los profesores) ──
+// ══════════════════════════════════════════════
+
+let materiaCfgEditar = null;
+let materiaCfgLista = [];
+
+async function cargarMateriasCfg() {
+  try {
+    onSnapshot(query(collection(db, "materias"), orderBy("nombre", "asc")), snap => {
+      materiaCfgLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      renderMateriasCfg();
+    }, err => {
+      console.error("Error cargando materias:", err);
+      const w = document.getElementById("materia-cfg-wrap");
+      if (w) w.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">⚠️</div><p>No se pudo cargar (' + (err.code || err.message) + '). Revisa las reglas de Firestore para la colección "materias".</p></div>';
+    });
+  } catch(e) {
+    const w = document.getElementById("materia-cfg-wrap");
+    if (w) w.innerHTML = '<div class="cargando">Error al cargar materias.</div>';
+  }
+}
+
+function renderMateriasCfg() {
+  const wrap = document.getElementById("materia-cfg-wrap");
+  if (!wrap) return;
+  const buscar = (document.getElementById("materia-buscar")?.value || "").toLowerCase();
+  const lista = buscar
+    ? materiaCfgLista.filter(m => m.nombre.toLowerCase().includes(buscar) || (m.codigo || "").toLowerCase().includes(buscar))
+    : materiaCfgLista;
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📚</div><p>No hay materias registradas todavía.</p></div>';
+    return;
+  }
+  wrap.innerHTML = '<table><thead><tr><th>#</th><th>Código</th><th>Nombre</th><th>Acciones</th></tr></thead><tbody>'
+    + lista.map((m, i) => {
+        const nombreEsc = escapeAttr(m.nombre);
+        const codigoEsc = escapeAttr(m.codigo || "");
+        return '<tr>'
+          + '<td style="color:var(--texto-dim)">' + (i + 1) + '</td>'
+          + '<td>' + (m.codigo ? '<span class="pmi-codigo">' + escapeHtml(m.codigo) + '</span>' : '<span style="color:var(--texto-dim)">—</span>') + '</td>'
+          + '<td><div class="est-nombre">' + escapeHtml(m.nombre) + '</div></td>'
+          + '<td><div class="acciones-celda">'
+          + '<button class="btn btn-outline" onclick="abrirModalMateria(\'' + m.id + '\',\'' + codigoEsc + '\',\'' + nombreEsc + '\')" title="Editar materia">✏️ Editar</button>'
+          + '<button class="btn btn-rojo" onclick="eliminarMateria(\'' + m.id + '\',\'' + nombreEsc + '\')" title="Eliminar materia">🗑</button>'
+          + '</div></td>'
+          + '</tr>';
+      }).join("")
+    + '</tbody></table>';
+}
+
+window.abrirModalMateria = function(id = null, codigo = "", nombre = "") {
+  materiaCfgEditar = id;
+  document.getElementById("materia-modal-titulo").textContent = id ? "✏️ Editar materia" : "➕ Agregar materia";
+  document.getElementById("materia-input-codigo").value = codigo;
+  document.getElementById("materia-input-nombre").value = nombre;
+  document.getElementById("modal-materia-cfg").classList.add("abierto");
+};
+
+window.cerrarModalMateria = function() {
+  document.getElementById("modal-materia-cfg").classList.remove("abierto");
+  materiaCfgEditar = null;
+};
+
+window.guardarMateria = async function() {
+  const codigo = document.getElementById("materia-input-codigo").value.trim().toUpperCase();
+  const nombre = document.getElementById("materia-input-nombre").value.trim();
+  if (!nombre) { mostrarToast("Escribe el nombre de la materia", "rojo"); return; }
+  const btn = document.getElementById("materia-btn-guardar");
+  btn.disabled = true; btn.textContent = "Guardando...";
+  try {
+    if (materiaCfgEditar) {
+      await updateDoc(doc(db, "materias", materiaCfgEditar), { codigo, nombre });
+      mostrarToast("✅ Materia actualizada");
+      registrarAuditoria("materia", "editar", `Editó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
+    } else {
+      await addDoc(collection(db, "materias"), { codigo, nombre, creadoEn: serverTimestamp() });
+      mostrarToast("✅ Materia agregada");
+      registrarAuditoria("materia", "crear", `Agregó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
+    }
+    cerrarModalMateria();
+  } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
+  finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
+};
+
+window.eliminarMateria = async function(id, nombre) {
+  if (!confirm('¿Eliminar la materia "' + nombre + '" del catálogo? (Los profesores que ya la tengan asignada no se ven afectados).')) return;
+  try {
+    await deleteDoc(doc(db, "materias", id));
+    mostrarToast("Materia eliminada del catálogo");
+  } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
+};
+
+document.getElementById("materia-buscar")?.addEventListener("input", renderMateriasCfg);
+document.getElementById("modal-materia-cfg")?.addEventListener("click", e => {
+  if (e.target === document.getElementById("modal-materia-cfg")) cerrarModalMateria();
+});
 
 window.cerrarModalProfesor = function() {
   document.getElementById("modal-profesor-cfg").classList.remove("abierto");

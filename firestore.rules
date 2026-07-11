@@ -192,6 +192,15 @@ service cloud.firestore {
       allow delete: if tieneSeccion("ciclos-cfg");
     }
 
+    // ── materias ── (catálogo del panel, Configuración → Materias).
+    // Sin esto se queda con permission-denied igual que le pasó a auditoria.
+    match /materias/{id} {
+      allow read: if true;
+      allow write: if tieneSeccion("materias-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
+    }
+
     // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
     // tiene una solicitud activa hoy, sin exponer nombre/teléfono/matrícula
     // ni el ID real de la solicitud ni el token — esos dos solo viven en
