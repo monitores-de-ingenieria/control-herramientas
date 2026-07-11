@@ -1907,7 +1907,7 @@
     <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
       <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-      <button class="btn btn-outline" onclick="cerrarModalRetorno();entregar(solicitudActivaId)" title="Entregar una herramienta adicional a esta solicitud">+ Agregar</button>
+      <button class="btn btn-outline" onclick="agregarAdicionalDesdeRetorno()" title="Entregar una herramienta adicional a esta solicitud">+ Agregar</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
@@ -3308,6 +3308,16 @@ document.getElementById("modal-solicitud").addEventListener("click", e => {
 
 // ── ACCIONES ──
 let solicitudActivaId = null;
+
+// El onclick del HTML no puede leer "solicitudActivaId" directo (es una
+// variable del módulo, invisible fuera de él) — por eso este wrapper sí
+// expuesto en window, igual que el resto de las funciones que se llaman
+// desde atributos onclick.
+window.agregarAdicionalDesdeRetorno = function() {
+  const id = solicitudActivaId;
+  cerrarModalRetorno();
+  entregar(id);
+};
 
 // ─── MODAL ENTREGA ───
 window.entregar = async function(id) {
