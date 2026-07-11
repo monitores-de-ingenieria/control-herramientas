@@ -756,6 +756,11 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
 }
 .btn-combo:hover  { transform: translateY(-1px); }
 .btn-combo:active { transform: scale(.95); }
+.btn-combo.combo-activo {
+  background: #fdecea;
+  color: #c0392b;
+  box-shadow: 0 3px 8px rgba(192,57,43,0.25);
+}
 
 /* Mensajes EPP / Final */
 .mensaje {

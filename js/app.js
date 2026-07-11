@@ -308,7 +308,7 @@ function renderizarHerramientas(herramientas) {
     header.style.gridColumn = "1 / -1";
     header.innerHTML = `
       <span class="grupo-practica-titulo">🏷️ ${practica}</span>
-      <button type="button" class="btn-combo" data-practica="${practica}">+ Combo completo</button>
+      <button type="button" class="btn-combo" id="btn-combo-${CSS.escape(practica)}" data-practica="${practica}">+ Combo completo</button>
     `;
     gridHerramientas.appendChild(header);
 
@@ -336,6 +336,38 @@ function renderizarHerramientas(herramientas) {
 }
 
 // Marca 1 unidad de cada herramienta del grupo indicado (si hay disponibilidad).
+function comboEstaCompleto(practica) {
+  const tools = herramientasDisponibles.filter(h => h.practica === practica);
+  if (!tools.length) return false;
+  return tools.every(h => (cantidadesSeleccionadas[claveHerramienta(h)] || 0) > 0);
+}
+
+function actualizarBotonCombo(practica) {
+  const btn = document.getElementById(`btn-combo-${CSS.escape(practica)}`);
+  if (!btn) return;
+  if (comboEstaCompleto(practica)) {
+    btn.textContent = "✕ Quitar combo";
+    btn.classList.add("combo-activo");
+  } else {
+    btn.textContent = "+ Combo completo";
+    btn.classList.remove("combo-activo");
+  }
+}
+
+function quitarComboCompleto(practica) {
+  const tools = herramientasDisponibles.filter(h => h.practica === practica);
+  tools.forEach(h => {
+    const key = claveHerramienta(h);
+    cantidadesSeleccionadas[key] = 0;
+    const span = document.getElementById(`cant-${key}`);
+    if (span) span.textContent = "0";
+    const card = gridHerramientas.querySelector(`button[data-codigo="${key}"]`)?.closest(".tarjeta-herramienta");
+    if (card) card.classList.remove("seleccionada");
+    const btnSumar = gridHerramientas.querySelector(`button[data-codigo="${key}"][data-accion="sumar"]`);
+    if (btnSumar) btnSumar.disabled = false;
+  });
+}
+
 function agregarComboCompleto(practica) {
   const tools = herramientasDisponibles.filter(h => h.practica === practica);
   const sinDisponibilidad = [];
@@ -364,7 +396,13 @@ function agregarComboCompleto(practica) {
 gridHerramientas.addEventListener("click", (e) => {
   const comboBtn = e.target.closest("button.btn-combo");
   if (comboBtn) {
-    agregarComboCompleto(comboBtn.dataset.practica);
+    const practica = comboBtn.dataset.practica;
+    if (comboEstaCompleto(practica)) {
+      quitarComboCompleto(practica);
+    } else {
+      agregarComboCompleto(practica);
+    }
+    actualizarBotonCombo(practica);
     return;
   }
 
@@ -397,6 +435,8 @@ gridHerramientas.addEventListener("click", (e) => {
   // Marcar/desmarcar tarjeta visualmente
   const card = gridHerramientas.querySelector(`button[data-codigo="${codigo}"]`)?.closest(".tarjeta-herramienta");
   if (card) card.classList.toggle("seleccionada", cantidad > 0);
+
+  if (info && info.practica) actualizarBotonCombo(info.practica);
 
   const btnSumar = gridHerramientas.querySelector(`button[data-codigo="${codigo}"][data-accion="sumar"]`);
   if (btnSumar) btnSumar.disabled = cantidad >= limite;
