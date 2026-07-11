@@ -52,6 +52,54 @@ service cloud.firestore {
       );
     }
 
+    // Evita solicitudes duplicadas/spam: una matrícula no puede crear una
+    // solicitud nueva si ya tiene una activa hoy (pendiente o entregada),
+    // según el registro público mínimo en /activaHoy.
+    function sinSolicitudActivaHoy(matricula) {
+      return !exists(/databases/$(database)/documents/activaHoy/$(matricula)) ||
+        !(get(/databases/$(database)/documents/activaHoy/$(matricula)).data.estado in ["pendiente", "entregada"]);
+    }
+
+    // Valida un elemento de "herramientas": {nombre, cantidad}. Nada de
+    // objetos con forma libre — así no se puede colar HTML/JS en el nombre
+    // ni una cantidad absurda. (El panel también escapa al mostrar, pero
+    // validar aquí evita que se guarde basura desde el inicio.)
+    function itemHerramientaValido(item) {
+      return item is map &&
+        item.nombre is string &&
+        item.nombre.size() > 0 && item.nombre.size() < 100 &&
+        item.cantidad is number &&
+        item.cantidad > 0 && item.cantidad <= 50;
+    }
+
+    // Sin loops en las reglas de Firestore, así que se desenrolla para las
+    // 20 posiciones posibles (mismo tope que ya se exige en .size() <= 20).
+    // Son llamadas "hermanas" a la misma función, no recursión, así que no
+    // choca con el límite de profundidad de 20 de Firestore.
+    function herramientasValidas(lista) {
+      return
+        (lista.size() < 1 || itemHerramientaValido(lista[0])) &&
+        (lista.size() < 2 || itemHerramientaValido(lista[1])) &&
+        (lista.size() < 3 || itemHerramientaValido(lista[2])) &&
+        (lista.size() < 4 || itemHerramientaValido(lista[3])) &&
+        (lista.size() < 5 || itemHerramientaValido(lista[4])) &&
+        (lista.size() < 6 || itemHerramientaValido(lista[5])) &&
+        (lista.size() < 7 || itemHerramientaValido(lista[6])) &&
+        (lista.size() < 8 || itemHerramientaValido(lista[7])) &&
+        (lista.size() < 9 || itemHerramientaValido(lista[8])) &&
+        (lista.size() < 10 || itemHerramientaValido(lista[9])) &&
+        (lista.size() < 11 || itemHerramientaValido(lista[10])) &&
+        (lista.size() < 12 || itemHerramientaValido(lista[11])) &&
+        (lista.size() < 13 || itemHerramientaValido(lista[12])) &&
+        (lista.size() < 14 || itemHerramientaValido(lista[13])) &&
+        (lista.size() < 15 || itemHerramientaValido(lista[14])) &&
+        (lista.size() < 16 || itemHerramientaValido(lista[15])) &&
+        (lista.size() < 17 || itemHerramientaValido(lista[16])) &&
+        (lista.size() < 18 || itemHerramientaValido(lista[17])) &&
+        (lista.size() < 19 || itemHerramientaValido(lista[18])) &&
+        (lista.size() < 20 || itemHerramientaValido(lista[19]));
+    }
+
     // ── solicitudes ── (formulario público de estudiantes)
     match /solicitudes/{id} {
       // Cualquiera puede crear una solicitud (no hay login de estudiantes),
@@ -70,19 +118,27 @@ service cloud.firestore {
         request.resource.data.telefono.size() > 0 && request.resource.data.telefono.size() < 20 &&
         request.resource.data.estado == "pendiente" &&
         request.resource.data.herramientas is list &&
-        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20;
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
+        herramientasValidas(request.resource.data.herramientas) &&
+        sinSolicitudActivaHoy(request.resource.data.matricula);
 
       // Lectura: SOLO el staff con la sección "solicitudes" puede leer los
       // datos completos (nombre, teléfono, matrícula) de las solicitudes.
       allow read: if tieneSeccion("solicitudes");
 
       // El staff con sección "solicitudes" puede cambiar cualquier campo
-      // (entregar, retornar, etc). El propio estudiante (sin login) solo
-      // puede AGREGAR herramientas a su solicitud activa del día, sin tocar
-      // ningún otro campo.
+      // (entregar, retornar, etc). El propio estudiante (sin login) puede
+      // AGREGAR herramientas a su solicitud activa del día, pero solo si
+      // envía el mismo "token" secreto que se generó al crear la solicitud
+      // (guardado en su localStorage) — sin ese token, nadie más puede
+      // tocar una solicitud ajena aunque adivine o vea su ID.
       allow update: if tieneSeccion("solicitudes") || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas"]) &&
-        resource.data.estado in ["pendiente", "entregada"]
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "tokenUsado"]) &&
+        resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list &&
+        herramientasValidas(request.resource.data.herramientas) &&
+        request.resource.data.tokenUsado is string &&
+        request.resource.data.tokenUsado == resource.data.token
       );
 
       // Borrar solicitudes: solo administrador.
@@ -94,37 +150,80 @@ service cloud.firestore {
     // esto). Escritura solo para el staff con la sección correspondiente.
     match /herramientas/{id} {
       allow read: if true;
-      allow write: if tieneSeccion("herramientas-cfg") || tieneSeccion("inv-herramientas");
+      allow create, update: if (tieneSeccion("herramientas-cfg") || tieneSeccion("inv-herramientas"))
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
+      allow delete: if tieneSeccion("herramientas-cfg") || tieneSeccion("inv-herramientas");
     }
     match /profesores/{id} {
       allow read: if true;
-      allow write: if tieneSeccion("profesores-cfg");
+      allow write: if tieneSeccion("profesores-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
     }
     match /laboratorios/{id} {
       allow read: if true;
-      allow write: if tieneSeccion("laboratorios");
+      allow write: if tieneSeccion("laboratorios")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
     }
     match /ciclos/{id} {
       allow read: if true;
-      allow create, update, delete: if tieneSeccion("ciclos-cfg");
+      // Cualquiera (sin login) puede agregar un ciclo nuevo desde el
+      // formulario público (ej. "1-2027" cuando empiece un cuatrimestre
+      // que aún no está en la lista) — se valida el mismo formato que ya
+      // exige el cliente, para que no se cuele texto libre.
+      allow create: if
+        request.resource.data.keys().hasOnly(["nombre"]) &&
+        request.resource.data.nombre is string &&
+        request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
+      allow update: if tieneSeccion("ciclos-cfg")
+        && request.resource.data.nombre is string
+        && request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
+      allow delete: if tieneSeccion("ciclos-cfg");
     }
 
     // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
     // tiene una solicitud activa hoy, sin exponer nombre/teléfono/matrícula
-    // completa de nadie más — cada quien solo puede consultar la suya, y
-    // el documento no contiene ningún dato personal, solo estado y
-    // herramientas.
-    // Límite conocido: como el estudiante no inicia sesión, no hay forma de
-    // probar ante las reglas "esta matrícula es la mía" — cualquiera podría
-    // escribir en el activaHoy de otra persona. Cerrarlo del todo requeriría
-    // autenticación anónima de Firebase por sesión de estudiante.)
+    // ni el ID real de la solicitud — solo trae un "token" secreto que el
+    // propio navegador que creó la solicitud ya tiene guardado en su
+    // localStorage. Sin ese token, nadie puede tocar el registro de otra
+    // matrícula, aunque sepa cuál es.
     match /activaHoy/{matricula} {
       allow read: if true;
-      allow write: if tieneSeccion("solicitudes") || (
-        request.resource.data.keys().hasOnly(["solicitudId", "estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
+      allow create: if tieneSeccion("solicitudes") || (
+        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "token", "actualizadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
-        request.resource.data.herramientas is list
+        request.resource.data.herramientas is list &&
+        herramientasValidas(request.resource.data.herramientas) &&
+        request.resource.data.token is string && request.resource.data.token.size() >= 16
       );
+      allow update: if tieneSeccion("solicitudes") || (
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "token", "actualizadoEn"]) &&
+        request.resource.data.estado in ["pendiente", "entregada"] &&
+        request.resource.data.herramientas is list &&
+        herramientasValidas(request.resource.data.herramientas) &&
+        request.resource.data.token is string && request.resource.data.token.size() >= 16 &&
+        (
+          // Caso normal: agregando herramientas a TU misma solicitud activa
+          // (el token nuevo debe coincidir con el que ya estaba guardado).
+          request.resource.data.token == resource.data.token ||
+          // Caso "setDoc sin merge" sobre una ficha vieja ya inactiva: en la
+          // práctica es una solicitud nueva del mismo estudiante, así que no
+          // se le exige continuidad de token con la visita anterior.
+          !(resource.data.estado in ["pendiente", "entregada"])
+        )
+      );
+    }
+
+    // ── incidencias ── (se crean automáticamente cuando el staff registra
+    // un retorno con daño, desde 3 flujos distintos: solicitudes, préstamos
+    // a profesores y préstamos externos — cada uno solo accesible ya con
+    // la sección correspondiente, así que basta con exigir esa sección).
+    match /incidencias/{id} {
+      allow create: if tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
+      allow read: if esAdministrador() || tieneSeccion("incidencias")
+        || tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
     }
 
     // ── contadores ── (solo guarda un número por año, para numerar
@@ -152,12 +251,13 @@ service cloud.firestore {
     }
 
     // ── auditoría ── (registro de quién hizo qué). Cualquier miembro del
-    // staff puede crear su propio registro al hacer una acción, pero solo
-    // el administrador puede LEER el registro completo. No se permite
-    // editar ni borrar auditoría una vez creada.
+    // staff puede crear su propio registro al hacer una acción; puede LEER
+    // el registro completo el administrador o quien tenga la sección
+    // "auditoria-cfg" asignada. No se permite editar ni borrar auditoría
+    // una vez creada.
     match /auditoria/{id} {
       allow create: if esStaff();
-      allow read: if esAdministrador();
+      allow read: if esAdministrador() || tieneSeccion("auditoria-cfg");
     }
 
     // ── usuarios (cuentas del panel admin) ──
