@@ -2,7 +2,7 @@
 // sin conexión. Las peticiones a Firebase/Firestore NO se cachean:
 // siempre van a la red porque los datos deben ser en tiempo real.
 
-const CACHE_NAME = "control-herramientas-v2"; // <-- sube este número cada vez que publiques cambios
+const CACHE_NAME = "control-herramientas-v3"; // <-- sube este número cada vez que publiques cambios
 
 const ARCHIVOS_SHELL = [
   "./",
