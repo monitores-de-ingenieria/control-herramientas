@@ -722,10 +722,22 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
 
       const listaActualizada = Object.values(mapa);
 
-      await updateDoc(doc(db, "solicitudes", solicitudExistenteId), {
+      // Una vez que la solicitud ya fue entregada, el panel admin deja de
+      // mirar el campo "herramientas" y usa "herramientasEntregadas" en su
+      // lugar (para no perder el detalle de qué se entregó realmente). Si
+      // no sincronizamos los dos campos aquí, lo que el estudiante agregue
+      // después de la entrega queda guardado pero invisible para el panel.
+      const datosActualizacion = {
         herramientas: listaActualizada,
         tokenUsado: solicitudExistente.token
-      });
+      };
+      if (solicitudExistente.estado === "entregada") {
+        datosActualizacion.herramientasEntregadas = listaActualizada.map(h =>
+          h.estadoEntrega ? h : { ...h, estadoEntrega: "entregada" }
+        );
+      }
+
+      await updateDoc(doc(db, "solicitudes", solicitudExistenteId), datosActualizacion);
 
       try {
         await updateDoc(doc(db, "activaHoy", solicitudExistente.matricula), {
