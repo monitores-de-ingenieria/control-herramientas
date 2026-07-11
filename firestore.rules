@@ -128,15 +128,19 @@ service cloud.firestore {
 
       // El staff con sección "solicitudes" puede cambiar cualquier campo
       // (entregar, retornar, etc). El propio estudiante (sin login) puede
-      // AGREGAR herramientas a su solicitud activa del día, pero solo si
-      // envía el mismo "token" secreto que se generó al crear la solicitud
-      // (guardado en su localStorage) — sin ese token, nadie más puede
-      // tocar una solicitud ajena aunque adivine o vea su ID.
+      // AGREGAR herramientas a su solicitud activa del día (incluso si ya
+      // fue entregada — por eso también se permite tocar
+      // "herramientasEntregadas"), pero solo si envía el mismo "token"
+      // secreto que se generó al crear la solicitud (guardado en su
+      // localStorage) — sin ese token, nadie más puede tocar una solicitud
+      // ajena aunque adivine o vea su ID.
       allow update: if tieneSeccion("solicitudes") || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "tokenUsado"]) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "herramientasEntregadas", "tokenUsado"]) &&
         resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
         herramientasValidas(request.resource.data.herramientas) &&
+        (!("herramientasEntregadas" in request.resource.data) ||
+          (request.resource.data.herramientasEntregadas is list && herramientasValidas(request.resource.data.herramientasEntregadas))) &&
         request.resource.data.tokenUsado is string &&
         request.resource.data.tokenUsado == resource.data.token
       );
