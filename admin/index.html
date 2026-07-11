@@ -4962,6 +4962,11 @@ let profCfgEditar = null;
 let profCfgLista  = [];
 
 const PROFESORES_RESPALDO_ADMIN = ["Daniel Camejo","José Peña","Julio Durán","Víctor Félix"];
+// Respaldo inicial de materias — igual que PROFESORES_RESPALDO_ADMIN, se usa
+// solo mientras la colección "materias" está vacía; en cuanto agregues una
+// desde el panel, ya vive en Firestore y esta lista deja de hacer falta
+// para esa materia. Agrégale aquí las que ya conozcas (código + nombre).
+const MATERIAS_RESPALDO_ADMIN = [];
 
 async function cargarProfesoresCfg() {
   try {
@@ -5132,28 +5137,14 @@ window.profAgregarHorario = function(btnRef, h = {}) {
   wrapHorarios.appendChild(horarioRow);
 };
 
-// Junta todas las materias (código+nombre) disponibles para elegir: primero
-// las del catálogo dedicado (materiaCfgLista), y también las que ya se le
-// hayan escrito a algún profesor (por si acaso se agregaron directo ahí
-// antes de que existiera este catálogo), sin repetir.
+// El picker del profesor jala ÚNICAMENTE del catálogo de Materias
+// (materiaCfgLista, que ya combina Firestore + respaldo) — no escanea lo que
+// cada profesor tenga escrito, para que el catálogo sea la única fuente.
 function materiasDisponiblesGlobal() {
-  const vistas = new Set();
-  const resultado = [];
-  (materiaCfgLista || []).forEach(m => {
-    if (!m.nombre) return;
-    const clave = (m.codigo || "") + "||" + m.nombre;
-    if (vistas.has(clave)) return;
-    vistas.add(clave);
-    resultado.push({ codigo: m.codigo || "", nombre: m.nombre });
-  });
-  (profCfgLista || []).forEach(p => (p.materias || []).forEach(m => {
-    if (!m.nombre) return;
-    const clave = (m.codigo || "") + "||" + m.nombre;
-    if (vistas.has(clave)) return;
-    vistas.add(clave);
-    resultado.push({ codigo: m.codigo || "", nombre: m.nombre });
-  }));
-  return resultado.sort((a, b) => a.nombre.localeCompare(b.nombre));
+  return (materiaCfgLista || [])
+    .filter(m => m.nombre)
+    .map(m => ({ codigo: m.codigo || "", nombre: m.nombre }))
+    .sort((a, b) => a.nombre.localeCompare(b.nombre));
 }
 
 window.profElegirMateriaExistente = function(select) {
@@ -5175,7 +5166,14 @@ let materiaCfgLista = [];
 async function cargarMateriasCfg() {
   try {
     onSnapshot(query(collection(db, "materias"), orderBy("nombre", "asc")), snap => {
-      materiaCfgLista = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const todosValidos = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const nombresFirestore = new Set(todosValidos.map(m => m.nombre.toLowerCase()));
+      const eliminadas = new Set(todosValidos.filter(m => m.eliminada).map(m => m.nombre.toLowerCase()));
+      const enFirestore = todosValidos.filter(m => !m.eliminada);
+      const delRespaldo = MATERIAS_RESPALDO_ADMIN
+        .filter(m => !nombresFirestore.has(m.nombre.toLowerCase()) && !eliminadas.has(m.nombre.toLowerCase()))
+        .map((m, i) => ({ id: "local-" + i, codigo: m.codigo || "", nombre: m.nombre, local: true }));
+      materiaCfgLista = [...enFirestore, ...delRespaldo].sort((a, b) => a.nombre.localeCompare(b.nombre));
       renderMateriasCfg();
     }, err => {
       console.error("Error cargando materias:", err);
@@ -5203,21 +5201,23 @@ function renderMateriasCfg() {
     + lista.map((m, i) => {
         const nombreEsc = escapeAttr(m.nombre);
         const codigoEsc = escapeAttr(m.codigo || "");
+        const local = m.local ? ' <span style="font-size:10px;color:var(--texto-dim)">(respaldo)</span>' : '';
         return '<tr>'
           + '<td style="color:var(--texto-dim)">' + (i + 1) + '</td>'
           + '<td>' + (m.codigo ? '<span class="pmi-codigo">' + escapeHtml(m.codigo) + '</span>' : '<span style="color:var(--texto-dim)">—</span>') + '</td>'
-          + '<td><div class="est-nombre">' + escapeHtml(m.nombre) + '</div></td>'
+          + '<td><div class="est-nombre">' + escapeHtml(m.nombre) + local + '</div></td>'
           + '<td><div class="acciones-celda">'
-          + '<button class="btn btn-outline" onclick="abrirModalMateria(\'' + m.id + '\',\'' + codigoEsc + '\',\'' + nombreEsc + '\')" title="Editar materia">✏️ Editar</button>'
-          + '<button class="btn btn-rojo" onclick="eliminarMateria(\'' + m.id + '\',\'' + nombreEsc + '\')" title="Eliminar materia">🗑</button>'
+          + '<button class="btn btn-outline" onclick="abrirModalMateria(\'' + m.id + '\',\'' + codigoEsc + '\',\'' + nombreEsc + '\',' + (m.local||false) + ')" title="Editar materia">✏️ Editar</button>'
+          + '<button class="btn btn-rojo" onclick="eliminarMateria(\'' + m.id + '\',\'' + nombreEsc + '\',' + (m.local||false) + ')" title="Eliminar materia">🗑</button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
     + '</tbody></table>';
 }
 
-window.abrirModalMateria = function(id = null, codigo = "", nombre = "") {
-  materiaCfgEditar = id;
+window.abrirModalMateria = function(id = null, codigo = "", nombre = "", esLocal = false) {
+  materiaCfgEditar = esLocal ? null : id;
+  window._materiaLocalNombre = esLocal ? nombre : null;
   document.getElementById("materia-modal-titulo").textContent = id ? "✏️ Editar materia" : "➕ Agregar materia";
   document.getElementById("materia-input-codigo").value = codigo;
   document.getElementById("materia-input-nombre").value = nombre;
@@ -5242,19 +5242,30 @@ window.guardarMateria = async function() {
       registrarAuditoria("materia", "editar", `Editó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
     } else {
       await addDoc(collection(db, "materias"), { codigo, nombre, creadoEn: serverTimestamp() });
-      mostrarToast("✅ Materia agregada");
+      mostrarToast(window._materiaLocalNombre ? "✅ Materia de respaldo guardada en Firestore" : "✅ Materia agregada");
       registrarAuditoria("materia", "crear", `Agregó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
+      // Si veníamos de una materia "de respaldo" y le cambiaron el nombre,
+      // marcamos el nombre original como eliminado para que no reaparezca
+      // duplicado desde MATERIAS_RESPALDO_ADMIN.
+      if (window._materiaLocalNombre && window._materiaLocalNombre !== nombre) {
+        await addDoc(collection(db, "materias"), { nombre: window._materiaLocalNombre, eliminada: true, creadoEn: serverTimestamp() });
+      }
     }
     cerrarModalMateria();
   } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
   finally { btn.disabled = false; btn.textContent = "✅ Guardar"; }
 };
 
-window.eliminarMateria = async function(id, nombre) {
+window.eliminarMateria = async function(id, nombre, esLocal = false) {
   if (!confirm('¿Eliminar la materia "' + nombre + '" del catálogo? (Los profesores que ya la tengan asignada no se ven afectados).')) return;
   try {
-    await deleteDoc(doc(db, "materias", id));
+    if (esLocal) {
+      await addDoc(collection(db, "materias"), { nombre, eliminada: true, creadoEn: serverTimestamp() });
+    } else {
+      await deleteDoc(doc(db, "materias", id));
+    }
     mostrarToast("Materia eliminada del catálogo");
+    registrarAuditoria("materia", "eliminar", `Eliminó la materia "${nombre}"`);
   } catch(e) { mostrarToast("Error al eliminar", "rojo"); }
 };
 
