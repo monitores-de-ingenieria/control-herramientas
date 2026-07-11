@@ -729,8 +729,11 @@ h1, h2, h3 { font-family: var(--fuente-titulo); }
 /* En móvil, el botón de enviar queda fijo abajo, tipo app premium */
 @media (max-width: 699px) {
   #pantalla-formulario #btn-enviar {
-    position: sticky;
+    position: fixed;
+    left: 16px;
+    right: 16px;
     bottom: 12px;
+    width: auto;
     z-index: 15;
   }
 }
