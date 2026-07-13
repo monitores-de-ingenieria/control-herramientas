@@ -2233,12 +2233,19 @@ const _authTimeout = setTimeout(() => {
 
 onAuthStateChanged(auth, async user => {
   clearTimeout(_authTimeout);
-  document.getElementById("pantalla-carga").style.display = "none";
   const loginEl = document.getElementById("pantalla-login");
   const appEl = document.getElementById("app");
+  const cargaEl = document.getElementById("pantalla-carga");
   if (user) {
     loginEl.classList.remove("visible");
-    appEl.classList.add("visible");
+    // Ojo: NO se muestra el panel todavía aquí. Antes se mostraba de una
+    // vez (con todo el sidebar visible) y las secciones restringidas se
+    // ocultaban después de que aplicarRolUsuario() terminara de leer el
+    // rol — eso dejaba una ventana donde un "encargado" veía por un
+    // instante secciones que no le corresponden (y si le daba clic justo
+    // ahí, no pasaba nada, porque el permiso ya lo bloqueaba por dentro
+    // aunque el botón siguiera visible). Se mantiene la pantalla de carga
+    // puesta hasta que ya sabemos qué secciones puede ver.
     const letra = (user.email || "A")[0].toUpperCase();
     document.getElementById("admin-avatar").textContent = letra;
     // Reset defensivo: algunos navegadores restauran el valor de los <select>
@@ -2264,7 +2271,10 @@ onAuthStateChanged(auth, async user => {
     cargarUsuariosCfg();
     cargarAuditoria();
     await aplicarRolUsuario(user);
+    cargaEl.style.display = "none";
+    appEl.classList.add("visible");
   } else {
+    cargaEl.style.display = "none";
     loginEl.classList.add("visible");
     appEl.classList.remove("visible");
     document.getElementById("login-email").value = "";
