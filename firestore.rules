@@ -56,13 +56,17 @@ service cloud.firestore {
     // solicitud nueva si ya tiene una activa hoy (pendiente o entregada),
     // según el registro público mínimo en /activaHoy.
     function sinSolicitudActivaHoy(matricula) {
-      let ref = get(/databases/$(database)/documents/activaHoy/$(matricula));
       return !exists(/databases/$(database)/documents/activaHoy/$(matricula)) ||
-        !(ref.data.estado in ["pendiente", "entregada"]) ||
-        // Si el registro tiene más de ~20 horas, se trata como de un día
-        // anterior — cada día es una solicitud nueva, lo de ayer queda en
-        // el historial y no debe seguir bloqueando matrículas indefinidamente.
-        (("creadoEn" in ref.data) && (request.time - ref.data.creadoEn) > duration.value(20, "h"));
+        (
+          !(get(/databases/$(database)/documents/activaHoy/$(matricula)).data.estado in ["pendiente", "entregada"]) ||
+          // Si el registro tiene más de ~20 horas, se trata como de un día
+          // anterior — cada día es una solicitud nueva, lo de ayer queda en
+          // el historial y no debe seguir bloqueando matrículas indefinidamente.
+          (
+            ("creadoEn" in get(/databases/$(database)/documents/activaHoy/$(matricula)).data) &&
+            (request.time - get(/databases/$(database)/documents/activaHoy/$(matricula)).data.creadoEn) > duration.value(20, "h")
+          )
+        );
     }
 
     // Valida un elemento de "herramientas": {nombre, cantidad}. Nada de
