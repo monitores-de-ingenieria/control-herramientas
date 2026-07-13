@@ -579,6 +579,11 @@ async function buscarSolicitudActivaHoy(matricula) {
     const data = snap.data();
     if (data.estado !== "pendiente" && data.estado !== "entregada") return null;
 
+    // Si el registro es de un día anterior, no cuenta como "activo hoy" —
+    // cada día es una solicitud nueva, lo de ayer queda en el historial.
+    const fechaRegistro = (data.creadoEn || data.actualizadoEn)?.toDate?.();
+    if (fechaRegistro && fechaRegistro.toDateString() !== new Date().toDateString()) return null;
+
     // activaHoy ya NO trae el ID real de la solicitud (para que nadie con
     // solo la matrícula de otra persona pueda ubicarla y modificarla).
     // El ID + token solo existen en el localStorage del navegador donde
