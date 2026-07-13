@@ -1044,8 +1044,6 @@
 
   /* ── Materias del profesor: varios horarios por materia ── */
   .prof-materia-fila { background:var(--card2); padding:12px; border-radius:10px; display:flex; flex-direction:column; gap:10px; border:1px solid var(--borde); }
-  .pm-select-existente { width:100%; padding:8px 10px; background:var(--card2); border:1.5px dashed var(--borde); border-radius:7px; color:var(--texto-dim); font-size:12px; margin-bottom:8px; cursor:pointer; }
-  .pm-select-existente:focus { outline:none; border-color:var(--verde); }
   .pm-header { display:flex; gap:8px; align-items:center; }
   .pm-header .pm-nombre { flex:1; min-width:0; padding:9px 10px; background:var(--bg); border:1.5px solid var(--borde); border-radius:7px; color:var(--texto); font-size:13px; font-weight:700; }
   .pm-header .pm-nombre:focus { outline:none; border-color:var(--verde); }
@@ -4965,8 +4963,19 @@ const PROFESORES_RESPALDO_ADMIN = ["Daniel Camejo","José Peña","Julio Durán",
 // Respaldo inicial de materias — igual que PROFESORES_RESPALDO_ADMIN, se usa
 // solo mientras la colección "materias" está vacía; en cuanto agregues una
 // desde el panel, ya vive en Firestore y esta lista deja de hacer falta
-// para esa materia. Agrégale aquí las que ya conozcas (código + nombre).
-const MATERIAS_RESPALDO_ADMIN = [];
+// para esa materia. Mismos nombres que LABORATORIOS_RESPALDO_ADMIN porque en
+// este taller cada materia se llama igual que el taller donde se imparte.
+// Sin código todavía — edítalas desde el panel en cuanto sepas el código
+// real de cada una (ej. IMC105004).
+const MATERIAS_RESPALDO_ADMIN = [
+  { codigo: "", nombre: "Taller mecánica básica" },
+  { codigo: "", nombre: "Lab. ciencia de los materiales" },
+  { codigo: "", nombre: "Máquinas especiales" },
+  { codigo: "", nombre: "Taller de procesos industriales" },
+  { codigo: "", nombre: "Taller de soldadura" },
+  { codigo: "", nombre: "Taller máquinas y herramientas I" },
+  { codigo: "", nombre: "Taller máquinas y herramientas II" }
+];
 
 async function cargarProfesoresCfg() {
   try {
@@ -5082,14 +5091,27 @@ window.profAgregarFilaMateria = function(m = {}) {
   const wrap = document.getElementById("prof-materias-wrap");
   const fila = document.createElement("div");
   fila.className = "prof-materia-fila";
+  const opciones = materiasDisponiblesGlobal();
+  const codigoActual = m.codigo || "";
+  const nombreActual = m.nombre || "";
+  // Si el código/nombre guardado no está en el catálogo (ej. se escribió
+  // antes de existir Materias, o la materia se borró del catálogo después),
+  // se agrega igual como opción para no perder el dato ya guardado.
+  const opcionesCodigo = opciones.filter(o => o.codigo);
+  if (codigoActual && !opcionesCodigo.some(o => o.codigo === codigoActual)) opcionesCodigo.unshift({ codigo: codigoActual, nombre: nombreActual });
+  const opcionesNombre = [...opciones];
+  if (nombreActual && !opcionesNombre.some(o => o.nombre === nombreActual)) opcionesNombre.unshift({ codigo: codigoActual, nombre: nombreActual });
+
   fila.innerHTML = `
-    <select class="pm-select-existente" onchange="profElegirMateriaExistente(this)">
-      <option value="">📋 Elegir de una materia ya registrada...</option>
-      ${materiasDisponiblesGlobal().map(op => `<option value="${op.codigo.replace(/"/g,'&quot;')}||${op.nombre.replace(/"/g,'&quot;')}">${op.codigo ? op.codigo + " — " : ""}${op.nombre}</option>`).join("")}
-    </select>
     <div class="pm-header">
-      <input type="text" class="pm-codigo" placeholder="Código (ej. IMC105004)" value="${(m.codigo||"").replace(/"/g,'&quot;')}">
-      <input type="text" class="pm-nombre" placeholder="Materia (ej. Taller de Soldadura)" value="${(m.nombre||"").replace(/"/g,'&quot;')}">
+      <select class="pm-codigo" onchange="profSincronizarMateria(this,'codigo')">
+        <option value="">Código...</option>
+        ${opcionesCodigo.map(o => `<option value="${o.codigo.replace(/"/g,'&quot;')}"${o.codigo===codigoActual?" selected":""}>${o.codigo}</option>`).join("")}
+      </select>
+      <select class="pm-nombre" onchange="profSincronizarMateria(this,'nombre')">
+        <option value="">Elige la materia...</option>
+        ${opcionesNombre.map(o => `<option value="${o.nombre.replace(/"/g,'&quot;')}" data-codigo="${o.codigo.replace(/"/g,'&quot;')}"${o.nombre===nombreActual?" selected":""}>${o.nombre}</option>`).join("")}
+      </select>
       <button type="button" class="btn-quitar-fila" onclick="this.closest('.prof-materia-fila').remove()" title="Quitar esta materia">✕</button>
     </div>
     <div class="pm-horarios-wrap"></div>
@@ -5147,13 +5169,28 @@ function materiasDisponiblesGlobal() {
     .sort((a, b) => a.nombre.localeCompare(b.nombre));
 }
 
-window.profElegirMateriaExistente = function(select) {
-  if (!select.value) return;
-  const [codigo, ...resto] = select.value.split("||");
+// Código y Materia están enlazados: como cada código es único por materia,
+// elegir uno completa el otro automáticamente.
+window.profSincronizarMateria = function(select, tipo) {
   const fila = select.closest(".prof-materia-fila");
-  fila.querySelector(".pm-codigo").value = codigo;
-  fila.querySelector(".pm-nombre").value = resto.join("||");
-  select.selectedIndex = 0;
+  if (!select.value) return;
+  if (tipo === "codigo") {
+    const codigo = select.value;
+    const opciones = materiasDisponiblesGlobal();
+    const match = opciones.find(o => o.codigo === codigo);
+    if (match) {
+      const selNombre = fila.querySelector(".pm-nombre");
+      if ([...selNombre.options].some(op => op.value === match.nombre)) selNombre.value = match.nombre;
+    }
+  } else {
+    // El option del nombre ya trae su código en data-codigo.
+    const opt = select.selectedOptions[0];
+    const codigo = opt?.dataset.codigo || "";
+    if (codigo) {
+      const selCodigo = fila.querySelector(".pm-codigo");
+      if ([...selCodigo.options].some(op => op.value === codigo)) selCodigo.value = codigo;
+    }
+  }
 };
 
 // ══════════════════════════════════════════════
