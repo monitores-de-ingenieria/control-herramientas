@@ -37,14 +37,10 @@ service cloud.firestore {
       );
     }
 
-    // Encargado o administrador: cualquier miembro del staff con sesión.
     function esStaff() {
       return estaAutenticado() && (esAdminRaiz() || exists(/databases/$(database)/documents/usuarios/$(request.auth.uid)));
     }
 
-    // Igual que esStaff(), pero además exige que la sección venga en el
-    // campo "secciones" del documento del usuario (o que sea administrador,
-    // que ve todo). Esto es lo que limita a cada encargado a su área.
     function tieneSeccion(seccion) {
       return esStaff() && (
         esAdministrador() ||
@@ -52,25 +48,34 @@ service cloud.firestore {
       );
     }
 
+    // Convierte un Timestamp a un entero AAAAMMDD según el día calendario
+    // en Rep. Dom. (UTC-4 fijo, sin horario de verano) — así se puede
+    // comparar "es el mismo día" sin depender de la hora exacta ni de
+    // ventanas rodantes de horas.
+    function diaLocal(ts) {
+      return (ts - duration.value(4, "h")).year() * 10000
+        + (ts - duration.value(4, "h")).month() * 100
+        + (ts - duration.value(4, "h")).day();
+    }
+
+    // Timestamp de referencia de una ficha activaHoy: usa "creadoEn" si
+    // existe, si no "actualizadoEn" (fichas viejas solo traen el segundo).
+    // Si por algún motivo no hay ninguno de los dos, se asume "ahora mismo"
+    // (falla cerrado: la trata como de HOY, o sea, sigue bloqueando).
+    function fechaFicha(datos) {
+      return datos.get("creadoEn", datos.get("actualizadoEn", request.time));
+    }
+
     // Evita solicitudes duplicadas/spam: una matrícula no puede crear una
-    // solicitud nueva si ya tiene una activa hoy (pendiente o entregada),
-    // según el registro público mínimo en /activaHoy.
+    // solicitud nueva si ya tiene una activa (pendiente o entregada) creada
+    // EL MISMO DÍA CALENDARIO — según /activaHoy. Si ya es otro día, cuenta
+    // como un ciclo nuevo aunque la anterior nunca se marcara "retornada"
+    // (eso queda en el historial).
     function sinSolicitudActivaHoy(matricula) {
-      return !exists(/databases/$(database)/documents/activaHoy/$(matricula)) ||
-        !(get(/databases/$(database)/documents/activaHoy/$(matricula)).data.estado in ["pendiente", "entregada"]) ||
-        // Si el registro tiene más de ~20 horas, se trata como de un día
-        // anterior — cada día es una solicitud nueva, lo de ayer queda en
-        // el historial y no debe seguir bloqueando matrículas indefinidamente.
-        // Se acepta "creadoEn" o "actualizadoEn" (fichas viejas solo tienen
-        // el segundo).
-        (
-          ("creadoEn" in get(/databases/$(database)/documents/activaHoy/$(matricula)).data) &&
-          (request.time - get(/databases/$(database)/documents/activaHoy/$(matricula)).data.creadoEn) > duration.value(20, "h")
-        ) ||
-        (
-          ("actualizadoEn" in get(/databases/$(database)/documents/activaHoy/$(matricula)).data) &&
-          (request.time - get(/databases/$(database)/documents/activaHoy/$(matricula)).data.actualizadoEn) > duration.value(20, "h")
-        );
+      let ref = /databases/$(database)/documents/activaHoy/$(matricula);
+      return !exists(ref) ||
+        !(get(ref).data.estado in ["pendiente", "entregada"]) ||
+        diaLocal(fechaFicha(get(ref).data)) != diaLocal(request.time);
     }
 
     // Valida un elemento de "herramientas": {nombre, cantidad}. Nada de
@@ -115,11 +120,6 @@ service cloud.firestore {
 
     // ── solicitudes ── (formulario público de estudiantes)
     match /solicitudes/{id} {
-      // Cualquiera puede crear una solicitud (no hay login de estudiantes),
-      // pero se valida la forma mínima del documento para evitar basura/abuso.
-      // La matrícula fuerza el mismo formato que ya exige el cliente
-      // (0-00-0000); el teléfono no tiene formato fijo en el cliente, así
-      // que aquí solo se limita el tamaño para no romper el formulario.
       allow create: if
         request.resource.data.keys().hasOnly([
           "nombre", "apellido", "matricula", "ciclo", "telefono",
@@ -145,18 +145,8 @@ service cloud.firestore {
         herramientasValidas(request.resource.data.herramientas) &&
         sinSolicitudActivaHoy(request.resource.data.matricula);
 
-      // Lectura: SOLO el staff con la sección "solicitudes" puede leer los
-      // datos completos (nombre, teléfono, matrícula) de las solicitudes.
       allow read: if tieneSeccion("solicitudes");
 
-      // El staff con sección "solicitudes" puede cambiar cualquier campo
-      // (entregar, retornar, etc). El propio estudiante (sin login) puede
-      // AGREGAR herramientas a su solicitud activa del día (incluso si ya
-      // fue entregada — por eso también se permite tocar
-      // "herramientasEntregadas"), pero solo si envía el mismo "token"
-      // secreto que se generó al crear la solicitud (guardado en su
-      // localStorage) — sin ese token, nadie más puede tocar una solicitud
-      // ajena aunque adivine o vea su ID.
       allow update: if tieneSeccion("solicitudes") || (
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "herramientasEntregadas", "tokenUsado"]) &&
         resource.data.estado in ["pendiente", "entregada"] &&
@@ -168,13 +158,9 @@ service cloud.firestore {
         request.resource.data.tokenUsado == resource.data.token
       );
 
-      // Borrar solicitudes: solo administrador.
       allow delete: if esAdministrador();
     }
 
-    // ── herramientas / profesores / laboratorios / ciclos ──
-    // Lectura pública (el formulario del estudiante llena sus <select> con
-    // esto). Escritura solo para el staff con la sección correspondiente.
     match /herramientas/{id} {
       allow read: if true;
       allow create, update: if (tieneSeccion("herramientas-cfg") || tieneSeccion("inv-herramientas"))
@@ -205,8 +191,6 @@ service cloud.firestore {
       allow delete: if tieneSeccion("ciclos-cfg");
     }
 
-    // ── materias ── (catálogo del panel, Configuración → Materias).
-    // Sin esto se queda con permission-denied igual que le pasó a auditoria.
     match /materias/{id} {
       allow read: if true;
       allow write: if tieneSeccion("materias-cfg")
@@ -214,12 +198,6 @@ service cloud.firestore {
         && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
     }
 
-    // ── activaHoy ── (ficha pública MÍNIMA para saber si un estudiante ya
-    // tiene una solicitud activa hoy, sin exponer nombre/teléfono/matrícula
-    // ni el ID real de la solicitud ni el token — esos dos solo viven en
-    // "solicitudes" (lectura solo-staff) y en el localStorage del navegador
-    // que creó la solicitud. Aquí solo va lo que el formulario necesita
-    // mostrar: estado y lista de herramientas.
     match /activaHoy/{matricula} {
       allow read: if true;
       allow create: if tieneSeccion("solicitudes") || (
@@ -236,38 +214,25 @@ service cloud.firestore {
         herramientasValidas(request.resource.data.herramientas) &&
         request.resource.data.tokenUsado is string &&
         (
-          // Mismo dueño (token coincide) — o el registro anterior ya
-          // estaba cerrado (retornada/cancelada) — o el registro anterior
-          // tiene más de ~20h, así que se trata como de un día pasado y se
-          // puede reemplazar por una solicitud nueva.
           request.resource.data.tokenUsado == resource.data.token ||
           !(resource.data.estado in ["pendiente", "entregada"]) ||
-          (("creadoEn" in resource.data) && (request.time - resource.data.creadoEn) > duration.value(20, "h")) ||
-          (("actualizadoEn" in resource.data) && (request.time - resource.data.actualizadoEn) > duration.value(20, "h"))
+          diaLocal(fechaFicha(resource.data)) != diaLocal(request.time)
         )
       );
     }
 
-    // ── incidencias ── (se crean automáticamente cuando el staff registra
-    // un retorno con daño, desde 3 flujos distintos: solicitudes, préstamos
-    // a profesores y préstamos externos — cada uno solo accesible ya con
-    // la sección correspondiente, así que basta con exigir esa sección).
     match /incidencias/{id} {
       allow create: if tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
       allow read: if esAdministrador() || tieneSeccion("incidencias")
         || tieneSeccion("solicitudes") || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas");
     }
 
-    // ── contadores ── (solo guarda un número por año, para numerar
-    // solicitudes sin tener que descargar toda la colección de solicitudes)
     match /contadores/{anio} {
       allow read: if true;
       allow create: if request.resource.data.ultimo == 1;
       allow update: if esStaff() || request.resource.data.ultimo == resource.data.ultimo + 1;
     }
 
-    // ── préstamos a profesores / externos ── (gestión interna, solo staff
-    // con su sección correspondiente)
     match /prestamos_profesores/{id} {
       allow read, write: if tieneSeccion("prestamos-prof");
     }
@@ -275,34 +240,20 @@ service cloud.firestore {
       allow read, write: if tieneSeccion("prestadas");
     }
 
-    // ── historial ── (agrega datos de solicitudes + préstamos, así que
-    // puede verlo cualquiera con al menos una de esas secciones)
     match /historial/{id} {
       allow read, write: if esAdministrador()
         || tieneSeccion("prestamos-prof") || tieneSeccion("prestadas") || tieneSeccion("solicitudes");
     }
 
-    // ── auditoría ── (registro de quién hizo qué). Cualquier miembro del
-    // staff puede crear su propio registro al hacer una acción; puede LEER
-    // el registro completo el administrador o quien tenga la sección
-    // "auditoria-cfg" asignada. No se permite editar ni borrar auditoría
-    // una vez creada.
     match /auditoria/{id} {
       allow create: if esStaff();
       allow read: if esAdministrador() || tieneSeccion("auditoria-cfg");
     }
 
-    // ── usuarios (cuentas del panel admin) ──
     match /usuarios/{uid} {
-      // Cada quien puede leer su propio documento (para saber su rol al
-      // iniciar sesión), y el administrador puede leer/gestionar todos.
       allow read: if estaAutenticado() && (request.auth.uid == uid || esAdministrador());
-
-      // Solo el administrador crea/edita/borra cuentas de staff...
       allow create, delete: if esAdministrador();
       allow update: if esAdministrador() ||
-        // ...excepto que un encargado puede marcar su propia bandera de
-        // "debe cambiar contraseña" a false después de cambiarla.
         (estaAutenticado() && request.auth.uid == uid &&
          request.resource.data.diff(resource.data).affectedKeys().hasOnly(["debeCambiarContrasena"]));
     }
