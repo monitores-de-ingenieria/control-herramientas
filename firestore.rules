@@ -57,15 +57,19 @@ service cloud.firestore {
     // según el registro público mínimo en /activaHoy.
     function sinSolicitudActivaHoy(matricula) {
       return !exists(/databases/$(database)/documents/activaHoy/$(matricula)) ||
+        !(get(/databases/$(database)/documents/activaHoy/$(matricula)).data.estado in ["pendiente", "entregada"]) ||
+        // Si el registro tiene más de ~20 horas, se trata como de un día
+        // anterior — cada día es una solicitud nueva, lo de ayer queda en
+        // el historial y no debe seguir bloqueando matrículas indefinidamente.
+        // Se acepta "creadoEn" o "actualizadoEn" (fichas viejas solo tienen
+        // el segundo).
         (
-          !(get(/databases/$(database)/documents/activaHoy/$(matricula)).data.estado in ["pendiente", "entregada"]) ||
-          // Si el registro tiene más de ~20 horas, se trata como de un día
-          // anterior — cada día es una solicitud nueva, lo de ayer queda en
-          // el historial y no debe seguir bloqueando matrículas indefinidamente.
-          (
-            ("creadoEn" in get(/databases/$(database)/documents/activaHoy/$(matricula)).data) &&
-            (request.time - get(/databases/$(database)/documents/activaHoy/$(matricula)).data.creadoEn) > duration.value(20, "h")
-          )
+          ("creadoEn" in get(/databases/$(database)/documents/activaHoy/$(matricula)).data) &&
+          (request.time - get(/databases/$(database)/documents/activaHoy/$(matricula)).data.creadoEn) > duration.value(20, "h")
+        ) ||
+        (
+          ("actualizadoEn" in get(/databases/$(database)/documents/activaHoy/$(matricula)).data) &&
+          (request.time - get(/databases/$(database)/documents/activaHoy/$(matricula)).data.actualizadoEn) > duration.value(20, "h")
         );
     }
 
@@ -192,19 +196,9 @@ service cloud.firestore {
     }
     match /ciclos/{id} {
       allow read: if true;
-      // Camino admin: el staff con la sección puede crear con más campos
-      // (ej. creadoEn) — es lo que manda admin/index.html al guardar.
       allow create: if tieneSeccion("ciclos-cfg")
         && request.resource.data.nombre is string
         && request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
-      // Camino público (sin login, desde el formulario del estudiante):
-      // más estricto — ej. "1-2027" cuando empiece un cuatrimestre que aún
-      // no está en la lista. Mismo formato que ya exige el cliente, y solo
-      // el campo "nombre", nada más.
-      allow create: if
-        request.resource.data.keys().hasOnly(["nombre"]) &&
-        request.resource.data.nombre is string &&
-        request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
       allow update: if tieneSeccion("ciclos-cfg")
         && request.resource.data.nombre is string
         && request.resource.data.nombre.matches('^[0-9]{1,2}-[0-9]{4}$');
@@ -236,19 +230,20 @@ service cloud.firestore {
         request.resource.data.token is string && request.resource.data.token.size() >= 16
       );
       allow update: if tieneSeccion("solicitudes") || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn", "token"]) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "tokenUsado"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
         herramientasValidas(request.resource.data.herramientas) &&
-        request.resource.data.token is string && request.resource.data.token.size() >= 16 &&
+        request.resource.data.tokenUsado is string &&
         (
           // Mismo dueño (token coincide) — o el registro anterior ya
           // estaba cerrado (retornada/cancelada) — o el registro anterior
           // tiene más de ~20h, así que se trata como de un día pasado y se
           // puede reemplazar por una solicitud nueva.
-          request.resource.data.token == resource.data.token ||
+          request.resource.data.tokenUsado == resource.data.token ||
           !(resource.data.estado in ["pendiente", "entregada"]) ||
-          (("creadoEn" in resource.data) && (request.time - resource.data.creadoEn) > duration.value(20, "h"))
+          (("creadoEn" in resource.data) && (request.time - resource.data.creadoEn) > duration.value(20, "h")) ||
+          (("actualizadoEn" in resource.data) && (request.time - resource.data.actualizadoEn) > duration.value(20, "h"))
         )
       );
     }
