@@ -578,11 +578,8 @@ async function buscarSolicitudActivaHoy(matricula) {
 
     const data = snap.data();
     if (data.estado !== "pendiente" && data.estado !== "entregada") return null;
-
-    // Si el registro es de un día anterior, no cuenta como "activo hoy" —
-    // cada día es una solicitud nueva, lo de ayer queda en el historial.
-    const fechaRegistro = (data.creadoEn || data.actualizadoEn)?.toDate?.();
-    if (fechaRegistro && fechaRegistro.toDateString() !== new Date().toDateString()) return null;
+    const ts = (data.creadoEn || data.actualizadoEn)?.toDate?.();
+    if (ts && ts.toDateString() !== new Date().toDateString()) return null; // ficha vieja de otro día, ya no cuenta
 
     // activaHoy ya NO trae el ID real de la solicitud (para que nadie con
     // solo la matrícula de otra persona pueda ubicarla y modificarla).
@@ -799,7 +796,11 @@ function abrirModalDuplicado(solicitud, herramientasDisp) {
       
     } catch (err) {
       console.error("Error al agregar herramientas:", err);
-      mostrarError("No se pudo actualizar la solicitud. Revisa tu conexión.");
+      if (err.code === "permission-denied") {
+        mostrarError("Esta solicitud ya no está activa (puede que ya haya sido retornada). Actualiza la página para hacer una solicitud nueva si necesitas más herramientas.");
+      } else {
+        mostrarError("No se pudo actualizar la solicitud. Revisa tu conexión.");
+      }
       btnAgregar.disabled = false;
       btnAgregar.textContent = "+ Agregar herramientas";
     }
@@ -901,6 +902,7 @@ btnContinuar.addEventListener("click", async () => {
         estado: "pendiente",
         herramientas: datosSolicitudPendiente.herramientas,
         numeroSolicitud: numero,
+        creadoEn: serverTimestamp(),
         actualizadoEn: serverTimestamp()
       });
     } catch (errFicha) {
