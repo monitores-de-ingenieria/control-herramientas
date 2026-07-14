@@ -198,26 +198,25 @@ service cloud.firestore {
         && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
     }
 
+    // ── activaHoy ── (ficha pública MÍNIMA: estado + lista de herramientas +
+    // número de solicitud. Nunca datos personales, nunca el ID real de la
+    // solicitud, y nunca ningún token — este documento es de LECTURA
+    // PÚBLICA, así que cualquier secreto guardado aquí dejaría de ser
+    // secreto. La protección real vive en /solicitudes, que solo lee el
+    // staff.)
     match /activaHoy/{matricula} {
       allow read: if true;
       allow create: if tieneSeccion("solicitudes") || (
-        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn", "token"]) &&
+        request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
-        herramientasValidas(request.resource.data.herramientas) &&
-        request.resource.data.token is string && request.resource.data.token.size() >= 16
+        herramientasValidas(request.resource.data.herramientas)
       );
       allow update: if tieneSeccion("solicitudes") || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "tokenUsado"]) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
-        herramientasValidas(request.resource.data.herramientas) &&
-        request.resource.data.tokenUsado is string &&
-        (
-          request.resource.data.tokenUsado == resource.data.token ||
-          !(resource.data.estado in ["pendiente", "entregada"]) ||
-          diaLocal(fechaFicha(resource.data)) != diaLocal(request.time)
-        )
+        herramientasValidas(request.resource.data.herramientas)
       );
     }
 
