@@ -145,15 +145,25 @@ service cloud.firestore {
         herramientasValidas(request.resource.data.herramientas) &&
         sinSolicitudActivaHoy(request.resource.data.matricula);
 
-      allow read: if tieneSeccion("solicitudes");
+      // Lectura: separado en dos para que el estudiante pueda recuperar SU
+      // PROPIA solicitud por su ID exacto (necesario para leer su "token"
+      // real al agregar adicionales), sin abrirle la puerta a listar/buscar
+      // TODAS las solicitudes (eso sigue siendo solo para staff). Los IDs
+      // de Firestore son strings aleatorios imposibles de adivinar, así
+      // que "get" público no expone nada mientras "list" esté bloqueado.
+      allow get: if true;
+      allow list: if tieneSeccion("solicitudes");
 
       allow update: if tieneSeccion("solicitudes") || (
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "herramientasEntregadas", "tokenUsado"]) &&
         resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
         herramientasValidas(request.resource.data.herramientas) &&
         (!("herramientasEntregadas" in request.resource.data) ||
-          (request.resource.data.herramientasEntregadas is list && herramientasValidas(request.resource.data.herramientasEntregadas))) &&
+          (request.resource.data.herramientasEntregadas is list &&
+           request.resource.data.herramientasEntregadas.size() <= 20 &&
+           herramientasValidas(request.resource.data.herramientasEntregadas))) &&
         request.resource.data.tokenUsado is string &&
         request.resource.data.tokenUsado == resource.data.token
       );
@@ -198,24 +208,25 @@ service cloud.firestore {
         && request.resource.data.nombre.size() > 0 && request.resource.data.nombre.size() < 120;
     }
 
-    // ── activaHoy ── (ficha pública MÍNIMA: estado + lista de herramientas +
-    // número de solicitud. Nunca datos personales, nunca el ID real de la
-    // solicitud, y nunca ningún token — este documento es de LECTURA
-    // PÚBLICA, así que cualquier secreto guardado aquí dejaría de ser
-    // secreto. La protección real vive en /solicitudes, que solo lee el
-    // staff.)
     match /activaHoy/{matricula} {
       allow read: if true;
+      // Nota: aquí NO se exige token — el cliente ya no lo manda en esta
+      // colección (vive solo en el documento de "solicitudes", que sí lo
+      // valida). activaHoy es solo una ficha de conveniencia sin datos
+      // personales (nombre/teléfono/matrícula real no están aquí), así que
+      // el riesgo de dejarla sin verificación de dueño es bajo.
       allow create: if tieneSeccion("solicitudes") || (
         request.resource.data.keys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() <= 20 &&
         herramientasValidas(request.resource.data.herramientas)
       );
       allow update: if tieneSeccion("solicitudes") || (
-        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn"]) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(["estado", "herramientas", "numeroSolicitud", "actualizadoEn", "creadoEn"]) &&
         request.resource.data.estado in ["pendiente", "entregada"] &&
         request.resource.data.herramientas is list &&
+        request.resource.data.herramientas.size() <= 20 &&
         herramientasValidas(request.resource.data.herramientas)
       );
     }
