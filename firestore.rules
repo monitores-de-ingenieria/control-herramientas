@@ -145,14 +145,9 @@ service cloud.firestore {
         herramientasValidas(request.resource.data.herramientas) &&
         sinSolicitudActivaHoy(request.resource.data.matricula);
 
-      // Lectura: separado en dos para que el estudiante pueda recuperar SU
-      // PROPIA solicitud por su ID exacto (necesario para leer su "token"
-      // real al agregar adicionales), sin abrirle la puerta a listar/buscar
-      // TODAS las solicitudes (eso sigue siendo solo para staff). Los IDs
-      // de Firestore son strings aleatorios imposibles de adivinar, así
-      // que "get" público no expone nada mientras "list" esté bloqueado.
-      allow get: if true;
-      allow list: if tieneSeccion("solicitudes");
+      // Lectura: SOLO el staff con la sección "solicitudes" puede leer los
+      // datos completos (nombre, teléfono, matrícula) de las solicitudes.
+      allow read: if tieneSeccion("solicitudes");
 
       allow update: if tieneSeccion("solicitudes") || (
         request.resource.data.diff(resource.data).affectedKeys().hasOnly(["herramientas", "herramientasEntregadas", "tokenUsado"]) &&
