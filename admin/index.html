@@ -1959,7 +1959,6 @@
         <input type="text" id="entrega-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderEntregaPickerGrid()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="entrega-picker-grid" class="her-grid picking-grid"></div>
-        <button class="btn btn-outline" onclick="entregaAgregarManual()" style="margin-top:10px;width:100%" title="Escribir el nombre a mano (si no está en el catálogo)">✏️ Escribir a mano</button>
       </div>
       <div class="picking-recibo">
         <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--rojo)"></div>
@@ -3484,6 +3483,8 @@ window.entregaPickerAgregar = function(nombre) {
   _entregaAdicionales[nombre] = (_entregaAdicionales[nombre] || 0) + 1;
   renderReciboEntrega();
   renderEntregaPickerGrid();
+  const lista = document.getElementById("lista-entrega");
+  lista.scrollTop = lista.scrollHeight;
 };
 
 window.entregaAdicionalAjustar = function(nombre, delta) {
