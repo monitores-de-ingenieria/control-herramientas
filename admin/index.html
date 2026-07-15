@@ -3489,7 +3489,7 @@ window.cerrarPickerFotosSolicitud = function() {
   document.getElementById("modal-fotos-solicitud").classList.remove("abierto");
 };
 
-function renderPickerFotosSolicitud() {
+window.renderPickerFotosSolicitud = function renderPickerFotosSolicitud() {
   const wrap = document.getElementById("sol-picker-grid");
   const q = (document.getElementById("sol-picker-buscar").value || "").toLowerCase();
   const lista = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q));
