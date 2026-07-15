@@ -908,6 +908,24 @@
 
   .modal-cerrar { background: none; border: none; color: var(--texto-dim); font-size: 20px; cursor: pointer; }
 
+  /* ── Modal "ficha de picking" — dos paneles (buscar+fotos / recibo) ── */
+  .modal-picking { display: flex; flex-direction: column; max-height: 88vh; }
+  .picking-layout { display: grid; grid-template-columns: 1.3fr 1fr; gap: 16px; flex: 1; min-height: 0; }
+  .picking-buscar { display: flex; flex-direction: column; min-height: 0; }
+  .picking-grid { flex: 1; overflow-y: auto; padding: 4px 4px 4px 0; margin-top: 10px; max-height: 46vh; }
+  .picking-grid .her-card { cursor: pointer; }
+  .picking-grid .her-card:hover { border-color: var(--verde); }
+  .picking-recibo {
+    display: flex; flex-direction: column; min-height: 0;
+    background: var(--bg); border: 1px dashed var(--borde); border-radius: 10px; padding: 12px;
+  }
+  .picking-recibo-lista { flex: 1; overflow-y: auto; }
+  .picking-recibo-lista .fila-herramienta { position: relative; }
+  @media (max-width: 720px) {
+    .picking-layout { grid-template-columns: 1fr; }
+    .picking-grid { max-height: 200px; }
+  }
+
   .modal-campo { margin-bottom: 12px; }
   .modal-campo label { display: block; font-size: 10px; color: var(--texto-dim); font-weight: 800; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
   .modal-campo .valor { font-size: 13px; font-weight: 500; }
@@ -1930,28 +1948,31 @@
 </div>
 
 <div class="modal-overlay" id="modal-entrega">
-  <div class="modal" style="max-width:560px">
+  <div class="modal modal-picking" style="max-width:920px">
     <div class="modal-titulo">
       ✓ Entregar Herramientas
       <button class="modal-cerrar" onclick="cerrarModalEntrega()">✕</button>
     </div>
-    <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--rojo)"></div>
-    <div id="info-entrega" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
-      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
-    </div>
-    <div id="lista-entrega" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:260px;overflow-y:auto"></div>
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-        <button class="btn btn-outline" onclick="agregarFilaAdicional()" title="Agregar una herramienta adicional a esta entrega">+ Agregar</button>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="entrega-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderEntregaPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="entrega-picker-grid" class="her-grid picking-grid"></div>
+        <button class="btn btn-outline" onclick="entregaAgregarManual()" style="margin-top:10px;width:100%" title="Escribir el nombre a mano (si no está en el catálogo)">✏️ Escribir a mano</button>
       </div>
-      <div id="lista-adicionales"></div>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
-      <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
+      <div class="picking-recibo">
+        <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--rojo)"></div>
+        <div id="info-entrega" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Recibo de entrega</span>
+          <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
+        </div>
+        <div id="lista-entrega" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
+          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -3392,18 +3413,15 @@ window.agregarAdicionalDesdeRetorno = function() {
 };
 
 // ─── MODAL ENTREGA ───
-window.entregar = async function(id) {
-  solicitudActivaId = id;
-  const s = todasSolicitudes.find(x => x.id === id);
+let _entregaAdicionales = {};
+
+function renderReciboEntrega() {
+  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
-
-  document.getElementById("info-entrega").innerHTML =
-    `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
-
   const lista = document.getElementById("lista-entrega");
   const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
   const herOrig = base.filter(h => !h.adicional);
-  const herAdic = base.filter(h => h.adicional);
+  const herAdicPrevias = base.filter(h => h.adicional);
   const renderFilas = (arr, offset) => arr.map((h, i) => `
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-e-${offset+i}" data-idx="${offset+i}" checked>
@@ -3412,17 +3430,88 @@ window.entregar = async function(id) {
       <span class="h-cant">x${h.cantidad}</span>
     </div>`).join("");
   let listaHtml = renderFilas(herOrig, 0);
-  if (herAdic.length > 0) {
+  if (herAdicPrevias.length > 0) {
     listaHtml += `<div style="display:flex;align-items:center;gap:8px;margin:8px 4px 4px">
       <div style="flex:1;height:1px;background:var(--borde)"></div>
-      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES (${herAdic.length})</span>
+      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES</span>
       <div style="flex:1;height:1px;background:var(--borde)"></div>
-    </div>` + renderFilas(herAdic, herOrig.length);
+    </div>` + renderFilas(herAdicPrevias, herOrig.length);
+  }
+  const nuevos = Object.entries(_entregaAdicionales);
+  if (nuevos.length > 0) {
+    listaHtml += `<div style="display:flex;align-items:center;gap:8px;margin:8px 4px 4px">
+      <div style="flex:1;height:1px;background:var(--borde)"></div>
+      <span style="font-size:10px;font-weight:800;color:var(--verde);white-space:nowrap">🆕 AGREGANDO AHORA</span>
+      <div style="flex:1;height:1px;background:var(--borde)"></div>
+    </div>` + nuevos.map(([nombre, cant]) => `
+      <div class="fila-herramienta">
+        ${herFotoHtmlPorNombre(nombre)}
+        <span class="h-nombre">${escapeHtml(nombre)}</span>
+        <button type="button" class="btn btn-outline" onclick="entregaAdicionalAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
+        <span class="h-cant">x${cant}</span>
+        <button type="button" class="btn btn-outline" onclick="entregaAdicionalAjustar('${escapeAttr(nombre)}',1)" style="padding:2px 8px">+</button>
+        <button type="button" class="btn btn-rojo" onclick="entregaAdicionalQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px" title="Quitar">✕</button>
+      </div>`).join("");
   }
   lista.innerHTML = listaHtml || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
+}
 
-  document.getElementById("lista-adicionales").innerHTML = "";
+window.renderEntregaPickerGrid = function() {
+  const wrap = document.getElementById("entrega-picker-grid");
+  const q = (document.getElementById("entrega-picker-buscar").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>';
+    return;
+  }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    const enRecibo = _entregaAdicionales[h.nombre] || 0;
+    return `
+      <div class="her-card" onclick="entregaPickerAgregar('${escapeAttr(h.nombre)}')" title="Agregar al recibo">
+        <div class="her-foto-wrap">${foto}${enRecibo > 0 ? `<span class="her-ribbon popular">x${enRecibo}</span>` : ""}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.entregaPickerAgregar = function(nombre) {
+  _entregaAdicionales[nombre] = (_entregaAdicionales[nombre] || 0) + 1;
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
+window.entregaAdicionalAjustar = function(nombre, delta) {
+  const nuevo = (_entregaAdicionales[nombre] || 0) + delta;
+  if (nuevo <= 0) delete _entregaAdicionales[nombre];
+  else _entregaAdicionales[nombre] = nuevo;
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
+window.entregaAdicionalQuitar = function(nombre) {
+  delete _entregaAdicionales[nombre];
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
+window.entregar = async function(id) {
+  solicitudActivaId = id;
+  const s = todasSolicitudes.find(x => x.id === id);
+  if (!s) return;
+
+  document.getElementById("info-entrega").innerHTML =
+    `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
+
+  _entregaAdicionales = {};
   document.getElementById("btn-toggle-entrega").textContent = "Desmarcar todas";
+  document.getElementById("entrega-picker-buscar").value = "";
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
 
   // La ventana se abre YA, sin esperar la consulta de incidencias de abajo
   // (esa consulta puede tardar un instante y antes dejaba la pantalla en
@@ -3530,6 +3619,17 @@ window.solPickerAjustar = function(nombre, delta) {
 
 // ── Opción "escribir a mano" (por si la herramienta no tiene foto o no
 // está en el catálogo) — funciona en los dos modos del selector. ──
+window.entregaAgregarManual = function() {
+  const nombre = prompt("Nombre de la herramienta:");
+  if (!nombre || !nombre.trim()) return;
+  const cantidadTexto = prompt("Cantidad:", "1");
+  const cantidad = Math.max(1, parseInt(cantidadTexto) || 1);
+  const n = nombre.trim();
+  _entregaAdicionales[n] = (_entregaAdicionales[n] || 0) + cantidad;
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
 window.agregarFilaAdicionalManual = async function() {
   const nombre = prompt("Nombre de la herramienta:");
   if (!nombre || !nombre.trim()) return;
@@ -3646,10 +3746,8 @@ window.confirmarEntrega = async function() {
     }
   });
 
-  document.querySelectorAll("#lista-adicionales .fila-adicional").forEach(fila => {
-    const nombre = fila.querySelector(".nombre-adicional").value.trim();
-    const cantidad = parseInt(fila.querySelector(".cant-adicional").value) || 1;
-    if (nombre) herramientasEntregadas.push({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" });
+  Object.entries(_entregaAdicionales).forEach(([nombre, cantidad]) => {
+    herramientasEntregadas.push({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" });
   });
 
   try {
