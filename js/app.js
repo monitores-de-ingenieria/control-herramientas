@@ -873,11 +873,11 @@ btnEnviar.addEventListener("click", async (e) => {
     });
 
   datosSolicitudPendiente = {
-    nombre:       sanitizar(document.getElementById("nombre").value.trim()),
-    apellido:     sanitizar(document.getElementById("apellido").value.trim()),
-    matricula:    sanitizar(document.getElementById("matricula").value.trim()),
+    nombre:       document.getElementById("nombre").value.trim(),
+    apellido:     document.getElementById("apellido").value.trim(),
+    matricula:    document.getElementById("matricula").value.trim(),
     ciclo:        document.getElementById("ciclo").value,
-    telefono:     sanitizar(document.getElementById("telefono").value.trim()),
+    telefono:     document.getElementById("telefono").value.trim(),
     profesor:     document.getElementById("profesor").value,
     laboratorio:  document.getElementById("laboratorio").value,
     herramientas: herramientasElegidas,
