@@ -1820,15 +1820,16 @@
   </div>
 </div>
 
-<div class="modal-overlay" id="modal-fotos-solicitud">
+<div class="modal-overlay" id="modal-fotos-solicitud" style="z-index:200">
   <div class="modal" style="max-width:760px">
     <div class="modal-titulo">
       <span id="sol-picker-titulo">📷 Elegir herramientas adicionales</span>
       <button class="modal-cerrar" onclick="cerrarPickerFotosSolicitud()">✕</button>
     </div>
-    <div class="modal-campo">
+    <div class="modal-campo" style="display:flex;gap:8px;align-items:center">
       <input type="text" id="sol-picker-buscar" placeholder="Buscar herramienta..." oninput="renderPickerFotosSolicitud()"
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+      <button type="button" class="btn btn-outline" onclick="agregarFilaAdicionalManual()" style="white-space:nowrap">✏️ Escribir</button>
     </div>
     <div id="sol-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
     <div class="modal-acciones">
@@ -3525,6 +3526,51 @@ window.solPickerAjustar = function(nombre, delta) {
   if (nuevo === 0) delete _solPickerCant[nombre];
   else _solPickerCant[nombre] = nuevo;
   renderPickerFotosSolicitud();
+};
+
+// ── Opción "escribir a mano" (por si la herramienta no tiene foto o no
+// está en el catálogo) — funciona en los dos modos del selector. ──
+window.agregarFilaAdicionalManual = async function() {
+  const nombre = prompt("Nombre de la herramienta:");
+  if (!nombre || !nombre.trim()) return;
+  const cantidadTexto = prompt("Cantidad:", "1");
+  const cantidad = parseInt(cantidadTexto) || 1;
+
+  if (_solPickerModo === "entrega-modal") {
+    const div = document.createElement("div");
+    div.className = "fila-adicional";
+    div.innerHTML = `
+      <div style="position:relative;flex:1">
+        <input type="text" class="nombre-adicional" value="${escapeAttr(nombre.trim())}" readonly style="background:var(--bg);cursor:default">
+      </div>
+      <input type="number" class="cant-adicional" value="${cantidad}" min="1" style="width:60px">
+      <button class="btn-quitar-fila" onclick="this.parentElement.remove()">✕</button>
+    `;
+    document.getElementById("lista-adicionales").appendChild(div);
+    cerrarPickerFotosSolicitud();
+    mostrarToast('Agregada — no olvides "Guardar entrega"');
+    return;
+  }
+
+  const s = todasSolicitudes.find(x => x.id === _solPickerRetornoId);
+  if (!s) { mostrarToast("No se encontró la solicitud", "rojo"); return; }
+  const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const listaFinal = [...base, { nombre: nombre.trim(), cantidad, adicional: true, estadoEntrega: "entregada" }];
+
+  try {
+    await updateDoc(doc(db, "solicitudes", s.id), { herramientasEntregadas: listaFinal });
+    try {
+      await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: listaFinal });
+    } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
+    s.herramientasEntregadas = listaFinal;
+    renderTabla();
+    cargarDashboard();
+    cerrarPickerFotosSolicitud();
+    mostrarToast("✓ Herramienta adicional agregada");
+  } catch (e) {
+    console.error("Error al agregar adicional:", e);
+    mostrarToast("Error al agregar: " + e.message, "rojo");
+  }
 };
 
 window.confirmarPickerFotosSolicitud = async function() {
