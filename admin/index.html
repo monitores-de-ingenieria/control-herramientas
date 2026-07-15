@@ -1303,10 +1303,10 @@
           <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde);white-space:nowrap">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul);white-space:nowrap">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo);white-space:nowrap">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
-          <span style="margin-left:auto;align-self:center;display:flex;align-items:center;gap:6px;padding:5px 12px;background:rgba(63,185,80,.10);border:1px solid rgba(63,185,80,.35);border-radius:20px;white-space:nowrap;flex-shrink:0;font-size:12px">
-            <span style="font-size:12px">⚙️</span>
-            <span style="color:var(--texto-dim);font-weight:600">Prestadas hoy:</span>
-            <span id="tab-total-herramientas-hoy" style="font-weight:800;color:var(--verde)">—</span>
+          <span style="margin-left:auto;align-self:center;display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg, rgba(63,185,80,.16), rgba(63,185,80,.06));border:1px solid rgba(63,185,80,.4);border-radius:20px;white-space:nowrap;flex-shrink:0;font-size:12px;box-shadow:0 2px 8px rgba(63,185,80,.15)">
+            <span style="font-size:14px">🧰</span>
+            <span style="color:var(--texto-dim);font-weight:600;letter-spacing:.2px">Prestadas hoy</span>
+            <span id="tab-total-herramientas-hoy" style="font-weight:800;color:var(--verde);font-size:14px">—</span>
           </span>
         </div>
 
@@ -1819,6 +1819,25 @@
     </div>
   </div>
 </div>
+
+<div class="modal-overlay" id="modal-fotos-solicitud">
+  <div class="modal" style="max-width:760px">
+    <div class="modal-titulo">
+      <span id="sol-picker-titulo">📷 Elegir herramientas adicionales</span>
+      <button class="modal-cerrar" onclick="cerrarPickerFotosSolicitud()">✕</button>
+    </div>
+    <div class="modal-campo">
+      <input type="text" id="sol-picker-buscar" placeholder="Buscar herramienta..." oninput="renderPickerFotosSolicitud()"
+        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+    </div>
+    <div id="sol-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarPickerFotosSolicitud()">Cancelar</button>
+      <button class="btn btn-verde" onclick="confirmarPickerFotosSolicitud()">✅ Agregar seleccionadas</button>
+    </div>
+  </div>
+</div>
+
 
 <div class="modal-overlay" id="modal-retorno-pp">
   <div class="modal" style="max-width:520px">
@@ -3368,9 +3387,7 @@ let solicitudActivaId = null;
 // expuesto en window, igual que el resto de las funciones que se llaman
 // desde atributos onclick.
 window.agregarAdicionalDesdeRetorno = function() {
-  const id = solicitudActivaId;
-  cerrarModalRetorno();
-  entregar(id);
+  abrirFotosAdicionalRetorno(solicitudActivaId);
 };
 
 // ─── MODAL ENTREGA ───
@@ -3436,40 +3453,132 @@ window.toggleMarcarTodasEntrega = function() {
 };
 
 window.agregarFilaAdicional = function() {
-  const div = document.createElement("div");
-  div.className = "fila-adicional";
-  div.innerHTML = `
-    <div style="position:relative;flex:1">
-      <input type="text" placeholder="Buscar herramienta..." class="nombre-adicional" autocomplete="off">
-      <div class="dropdown-herramientas" style="display:none;position:absolute;top:100%;left:0;right:0;background:var(--card2);border:1px solid var(--borde);border-radius:7px;z-index:50;max-height:180px;overflow-y:auto"></div>
-    </div>
-    <input type="number" class="cant-adicional" value="1" min="1" placeholder="Cant." style="width:60px">
-    <button class="btn-quitar-fila" onclick="this.parentElement.remove()">✕</button>
-  `;
-  document.getElementById("lista-adicionales").appendChild(div);
+  abrirFotosAdicionalEntrega();
+};
 
-  const input = div.querySelector(".nombre-adicional");
-  const dropdown = div.querySelector(".dropdown-herramientas");
+// ── Selector con fotos para agregar herramientas adicionales ──
+// Reutiliza las mismas fotos locales que ya usa el formulario del
+// estudiante y "préstamos a profesores" — no sube nada a ningún lado,
+// cero relación con Firebase Storage.
+let _solPickerCant = {};
+let _solPickerModo = "entrega-modal"; // "entrega-modal" | "retorno-directo"
+let _solPickerRetornoId = null;
 
-  input.addEventListener("input", () => {
-    const q = input.value.toLowerCase();
-    const matches = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q)).slice(0, 8);
-    if (!q || matches.length === 0) { dropdown.style.display = "none"; return; }
-    dropdown.innerHTML = matches.map(h =>
-      `<div class="dropdown-item" data-nombre="${escapeHtml(h.nombre)}" style="padding:8px 12px;cursor:pointer;font-size:13px;border-bottom:1px solid var(--borde)">${escapeHtml(h.nombre)}</div>`
-    ).join("");
-    dropdown.style.display = "block";
-    dropdown.querySelectorAll(".dropdown-item").forEach(item => {
-      item.addEventListener("mousedown", () => {
-        input.value = item.dataset.nombre;
-        dropdown.style.display = "none";
-      });
-      item.addEventListener("mouseover", () => item.style.background = "var(--hover)");
-      item.addEventListener("mouseout", () => item.style.background = "");
+window.abrirFotosAdicionalEntrega = function() {
+  _solPickerModo = "entrega-modal";
+  _solPickerRetornoId = null;
+  _solPickerCant = {};
+  document.getElementById("sol-picker-titulo").textContent = "📷 Elegir herramientas adicionales";
+  document.getElementById("sol-picker-buscar").value = "";
+  renderPickerFotosSolicitud();
+  document.getElementById("modal-fotos-solicitud").classList.add("abierto");
+};
+
+window.abrirFotosAdicionalRetorno = function(id) {
+  _solPickerModo = "retorno-directo";
+  _solPickerRetornoId = id;
+  _solPickerCant = {};
+  document.getElementById("sol-picker-titulo").textContent = "📷 Agregar herramientas adicionales";
+  document.getElementById("sol-picker-buscar").value = "";
+  renderPickerFotosSolicitud();
+  document.getElementById("modal-fotos-solicitud").classList.add("abierto");
+};
+
+window.cerrarPickerFotosSolicitud = function() {
+  document.getElementById("modal-fotos-solicitud").classList.remove("abierto");
+};
+
+function renderPickerFotosSolicitud() {
+  const wrap = document.getElementById("sol-picker-grid");
+  const q = (document.getElementById("sol-picker-buscar").value || "").toLowerCase();
+  const lista = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>';
+    return;
+  }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    const cant = _solPickerCant[h.nombre] || 0;
+    const nombreEsc = escapeAttr(h.nombre);
+    return `
+      <div class="her-card${cant > 0 ? ' stock-bajo' : ''}">
+        <div class="her-foto-wrap">${foto}</div>
+        <div class="her-cuerpo">
+          <div class="her-nombre">${escapeHtml(h.nombre)}</div>
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
+            <button type="button" onclick="solPickerAjustar('${nombreEsc}',-1)" class="btn btn-outline" style="padding:4px 10px;flex:1">−</button>
+            <span style="min-width:18px;text-align:center;font-weight:700">${cant}</span>
+            <button type="button" onclick="solPickerAjustar('${nombreEsc}',1)" class="btn btn-outline" style="padding:4px 10px;flex:1">+</button>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+window.solPickerAjustar = function(nombre, delta) {
+  const actual = _solPickerCant[nombre] || 0;
+  const nuevo = Math.max(0, actual + delta);
+  if (nuevo === 0) delete _solPickerCant[nombre];
+  else _solPickerCant[nombre] = nuevo;
+  renderPickerFotosSolicitud();
+};
+
+window.confirmarPickerFotosSolicitud = async function() {
+  const seleccion = Object.entries(_solPickerCant);
+  if (!seleccion.length) { mostrarToast("Elige al menos una herramienta", "rojo"); return; }
+
+  if (_solPickerModo === "entrega-modal") {
+    // Solo agrega filas visuales al modal de entrega (mismo formato que
+    // "agregarFilaAdicional" producía a mano); se guardan de verdad recién
+    // cuando se presiona "Guardar entrega" — cero riesgo, mismo mecanismo
+    // de siempre, solo con selección visual en vez de escribir el nombre.
+    const lista = document.getElementById("lista-adicionales");
+    seleccion.forEach(([nombre, cantidad]) => {
+      const div = document.createElement("div");
+      div.className = "fila-adicional";
+      div.innerHTML = `
+        <div style="position:relative;flex:1">
+          <input type="text" class="nombre-adicional" value="${escapeAttr(nombre)}" readonly
+            style="background:var(--bg);cursor:default">
+        </div>
+        <input type="number" class="cant-adicional" value="${cantidad}" min="1" style="width:60px">
+        <button class="btn-quitar-fila" onclick="this.parentElement.remove()">✕</button>
+      `;
+      lista.appendChild(div);
     });
-  });
+    cerrarPickerFotosSolicitud();
+    mostrarToast(`${seleccion.length} herramienta(s) agregada(s) — no olvides "Guardar entrega"`);
+    return;
+  }
 
-  input.addEventListener("blur", () => setTimeout(() => dropdown.style.display = "none", 150));
+  // Modo "retorno-directo": la solicitud ya está entregada, así que esto
+  // sí escribe directo a Firestore (igual que cuando se agrega desde el
+  // lado del estudiante), sin pasar por el modal de entrega completo.
+  const s = todasSolicitudes.find(x => x.id === _solPickerRetornoId);
+  if (!s) { mostrarToast("No se encontró la solicitud", "rojo"); cerrarPickerFotosSolicitud(); return; }
+
+  const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const nuevas = seleccion.map(([nombre, cantidad]) => ({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" }));
+  const listaFinal = [...base, ...nuevas];
+
+  try {
+    await updateDoc(doc(db, "solicitudes", s.id), { herramientasEntregadas: listaFinal });
+    try {
+      await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: listaFinal });
+    } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
+    s.herramientasEntregadas = listaFinal;
+    renderTabla();
+    cargarDashboard();
+    cerrarPickerFotosSolicitud();
+    mostrarToast("✓ Herramientas adicionales agregadas");
+  } catch (e) {
+    console.error("Error al agregar adicional:", e);
+    mostrarToast("Error al agregar: " + e.message, "rojo");
+  }
 };
 
 window.cerrarModalEntrega = function() {
