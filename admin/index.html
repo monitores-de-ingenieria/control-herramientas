@@ -1308,13 +1308,13 @@
           </div>
         </div>
 
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-          <div style="flex:1;min-width:200px;position:relative">
+        <div class="filtros" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
+          <div class="buscar-wrap" style="flex:1;min-width:200px">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
               style="width:100%">
-            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
+            <span class="buscar-icono">🔍</span>
           </div>
-          <select id="filtro-estado" class="filtros" style="min-width:150px;flex-shrink:0">
+          <select id="filtro-estado" style="min-width:150px;flex-shrink:0">
             <option value="">Estado: Todos</option>
             <option value="pendiente">Pendiente</option>
             <option value="entregada">Entregada</option>
@@ -1322,7 +1322,7 @@
             <option value="cancelada">Cancelada</option>
             <option value="incidencia">⚠️ Con Incidencia</option>
           </select>
-          <select id="filtro-profesor" class="filtros" style="min-width:150px;flex-shrink:0">
+          <select id="filtro-profesor" style="min-width:150px;flex-shrink:0">
             <option value="">Profesor: Todos</option>
           </select>
         </div>
