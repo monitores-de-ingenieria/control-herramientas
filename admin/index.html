@@ -920,7 +920,7 @@
     display: flex; flex-direction: column; min-height: 0;
     background: var(--bg); border: 1px dashed var(--borde); border-radius: 10px; padding: 12px;
   }
-  .picking-recibo-lista { flex: 1; overflow-y: auto; }
+  .picking-recibo-lista { flex: 1; overflow-y: auto; max-height: 55vh; }
   .picking-recibo-lista .fila-herramienta { position: relative; }
   @media (max-width: 720px) {
     .picking-layout { grid-template-columns: 1fr; }
@@ -3875,13 +3875,23 @@ window.renderRetornoPickerGrid = function() {
 };
 
 window.retornoPickerAgregar = function(nombre) {
-  // Solo agrega al recibo visual (lista derecha), no guarda en Firestore todavía
   const lista = document.getElementById("lista-retorno");
   if (!lista) return;
 
-  // Verificar si ya está en el recibo
-  const yaExiste = [...lista.querySelectorAll(".h-nombre")].some(el => el.textContent.trim() === nombre);
+  // No duplicar
+  const yaExiste = [...lista.querySelectorAll(".h-nombre")].some(el => el.textContent.replace(/\(adicional\)/i,"").trim() === nombre);
   if (yaExiste) { mostrarToast("Ya está en el recibo", "rojo"); return; }
+
+  // Agregar separador ADICIONALES la primera vez
+  if (!lista.querySelector(".separador-adicionales")) {
+    const sep = document.createElement("div");
+    sep.className = "separador-adicionales";
+    sep.style.cssText = "display:flex;align-items:center;gap:8px;margin:8px 4px 4px";
+    sep.innerHTML = `<div style="flex:1;height:1px;background:var(--borde)"></div>
+      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES</span>
+      <div style="flex:1;height:1px;background:var(--borde)"></div>`;
+    lista.appendChild(sep);
+  }
 
   const idx = lista.querySelectorAll(".fila-herramienta").length;
   const div = document.createElement("div");
@@ -3909,6 +3919,8 @@ window.retornoPickerAgregar = function(nombre) {
     else if (sel.value === "no_retornada") sel.value = "retornada";
   });
 
+  // Scroll al final para ver la herramienta recién agregada
+  lista.scrollTop = lista.scrollHeight;
   mostrarToast(`✓ ${nombre} agregada al recibo`);
 };
 
