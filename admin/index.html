@@ -2022,6 +2022,7 @@
         <div id="lista-entrega" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
+          <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía">💾 Guardar cambios</button>
           <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
         </div>
       </div>
@@ -3245,7 +3246,7 @@ function renderTabla() {
                 <span style="font-size:11px;color:var(--texto-dim)">herramientas</span>
               </span>
             </td>
-            <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}</td>
+            <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}${s.estado === "pendiente" && (Date.now() - fechaDe(s.creadoEn).getTime()) > 15*60*1000 ? ' <span class="badge badge-cancelada" title="Pendiente hace más de 15 minutos">⏰</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
@@ -3613,6 +3614,7 @@ window.entregar = async function(id) {
   _entregaAdicionales = {};
   document.getElementById("btn-toggle-entrega").textContent = "Desmarcar todas";
   document.getElementById("entrega-picker-buscar").value = "";
+  document.getElementById("btn-guardar-sin-entregar").style.display = s.estado === "pendiente" ? "" : "none";
   renderReciboEntrega();
   renderEntregaPickerGrid();
 
@@ -3833,6 +3835,33 @@ window.confirmarPickerFotosSolicitud = async function() {
 window.cerrarModalEntrega = function() {
   document.getElementById("modal-entrega").classList.remove("abierto");
   solicitudActivaId = null;
+};
+
+window.guardarCambiosPendiente = async function() {
+  if (!solicitudActivaId) return;
+  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
+  if (!s) return;
+
+  const checks = document.querySelectorAll("#lista-entrega input[type='checkbox']");
+  const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const lista = [];
+  checks.forEach((chk, i) => {
+    if (chk.checked && base[i]) lista.push({ ...base[i] });
+  });
+  Object.entries(_entregaAdicionales).forEach(([nombre, cantidad]) => {
+    lista.push({ nombre, cantidad, adicional: true });
+  });
+
+  try {
+    await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientas: lista });
+    try {
+      await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: lista });
+    } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
+    s.herramientas = lista;
+    renderTabla();
+    cerrarModalEntrega();
+    mostrarToast("✓ Cambios guardados (aún pendiente de entregar)");
+  } catch(e) { console.error("Error al guardar:", e); mostrarToast("Error al guardar: " + e.message, "rojo"); }
 };
 
 window.confirmarEntrega = async function() {
