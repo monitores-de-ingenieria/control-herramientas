@@ -252,8 +252,10 @@
     overflow-x: hidden;
     padding: 8px 0;
     transition: all .25s ease;
+    display: flex;
+    flex-direction: column;
   }
-
+  .sb-spacer { flex: 1; min-height: 20px; }
   /* Logo en sidebar */
   .sb-brand {
     display: flex;
@@ -773,16 +775,27 @@
   .filtros { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
 
   .filtros input, .filtros select {
-    padding: 6px 11px;
+    padding: 9px 13px;
     background: var(--bg);
-    border: 1px solid var(--borde);
-    border-radius: 7px;
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
     color: var(--texto);
     font-size: 12px;
-    transition: border-color .15s;
+    font-family: inherit;
+    transition: border-color .2s, box-shadow .2s;
   }
-
-  .filtros input:focus, .filtros select:focus { outline: none; border-color: var(--verde); }
+  .filtros input:focus, .filtros select:focus {
+    outline: none;
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px var(--verde-glow);
+  }
+  .buscar-wrap { position: relative; }
+  .buscar-wrap input { padding-left: 34px; }
+  .buscar-wrap .buscar-icono {
+    position: absolute; left: 11px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px; color: var(--texto-dim); pointer-events: none;
+  }
 
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
 
@@ -896,17 +909,40 @@
   .modal {
     background: var(--card); border: 1px solid var(--borde);
     border-radius: 14px; padding: 24px;
-    width: 100%; max-width: 520px; max-height: 88vh; overflow-y: auto;
+    width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto;
     box-shadow: 0 20px 60px rgba(0,0,0,0.5);
   }
 
   .modal-titulo {
-    font-size: 16px; font-weight: 800; margin-bottom: 16px;
+    font-size: 18px; font-weight: 800; margin-bottom: 16px;
     display: flex; justify-content: space-between; align-items: center;
-    padding-bottom: 12px; border-bottom: 1px solid var(--borde);
+    padding: 14px 18px; margin: -24px -24px 16px;
+    background: linear-gradient(135deg, var(--verde) 0%, #0d3320 100%);
+    color: #fff; border-radius: 14px 14px 0 0;
+    letter-spacing: -.2px;
   }
 
-  .modal-cerrar { background: none; border: none; color: var(--texto-dim); font-size: 20px; cursor: pointer; }
+  .modal-cerrar { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: #fff; font-size: 18px; cursor: pointer; border-radius: 50%; width: 30px; height: 30px; display:flex; align-items:center; justify-content:center; transition: background .15s; }
+  .modal-cerrar:hover { background: rgba(255,255,255,0.28); }
+
+  /* ── Modal "ficha de picking" — dos paneles (buscar+fotos / recibo) ── */
+  .modal-picking { display: flex; flex-direction: column; max-height: 92vh; }
+  .picking-layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 20px; flex: 1; min-height: 0; }
+  .picking-buscar { display: flex; flex-direction: column; min-height: 0; }
+  .picking-grid { flex: 1; overflow-y: auto; padding: 4px 4px 4px 0; margin-top: 10px; max-height: 62vh; grid-auto-rows: min-content; align-content: start; }
+  .picking-grid .her-card { cursor: pointer; height: auto; }
+  .picking-grid .her-foto-wrap { height: 120px; }
+  .picking-grid .her-card:hover { border-color: var(--verde); }
+  .picking-recibo {
+    display: flex; flex-direction: column; min-height: 0;
+    background: var(--bg); border: 1px dashed var(--borde); border-radius: 10px; padding: 12px;
+  }
+  .picking-recibo-lista { flex: 1; overflow-y: auto; max-height: 55vh; }
+  .picking-recibo-lista .fila-herramienta { position: relative; }
+  @media (max-width: 720px) {
+    .picking-layout { grid-template-columns: 1fr; }
+    .picking-grid { max-height: 200px; }
+  }
 
   .modal-campo { margin-bottom: 12px; }
   .modal-campo label { display: block; font-size: 10px; color: var(--texto-dim); font-weight: 800; text-transform: uppercase; letter-spacing: .07em; margin-bottom: 4px; }
@@ -1089,35 +1125,6 @@
   .usr-secciones { margin-top:6px; display:flex; flex-wrap:wrap; gap:4px; }
   .usr-chip-sec { background:var(--card2); padding:2px 8px; border-radius:20px; font-size:10px; color:var(--texto-dim); }
   .usr-acciones { display:flex; gap:6px; flex-shrink:0; }
-/* Buscadores y selects premium (aplica a todos por atributo, sin tocar el HTML) */
-input[id$="-buscar"] {
-  padding: 9px 14px 9px 34px;
-  background: var(--card) url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" fill="none" stroke="%23888" stroke-width="2"><circle cx="6" cy="6" r="5"/><line x1="10" y1="10" x2="13" y2="13"/></svg>') 10px center no-repeat;
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  color: var(--texto);
-  font-size: 13px;
-  transition: border-color .18s, box-shadow .18s;
-}
-input[id$="-buscar"]:focus {
-  outline: none;
-  border-color: var(--verde);
-  box-shadow: 0 0 0 3px rgba(63,185,80,.15);
-}
-select[id*="filtro"] {
-  padding: 8px 14px;
-  background: var(--card);
-  border: 1px solid var(--borde);
-  border-radius: 10px;
-  color: var(--texto);
-  font-size: 12px;
-  transition: border-color .18s, box-shadow .18s;
-}
-select[id*="filtro"]:focus {
-  outline: none;
-  border-color: var(--verde);
-  box-shadow: 0 0 0 3px rgba(63,185,80,.15);
-}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -1196,6 +1203,7 @@ select[id*="filtro"]:focus {
       <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
+      <div class="sb-spacer"></div>
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
 
@@ -1303,10 +1311,10 @@ select[id*="filtro"]:focus {
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
-              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s">
+              style="width:100%">
             <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
           </div>
-          <select id="filtro-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s;min-width:150px;flex-shrink:0">
+          <select id="filtro-estado" class="filtros" style="min-width:150px;flex-shrink:0">
             <option value="">Estado: Todos</option>
             <option value="pendiente">Pendiente</option>
             <option value="entregada">Entregada</option>
@@ -1314,7 +1322,7 @@ select[id*="filtro"]:focus {
             <option value="cancelada">Cancelada</option>
             <option value="incidencia">⚠️ Con Incidencia</option>
           </select>
-          <select id="filtro-profesor" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s;min-width:150px;flex-shrink:0">
+          <select id="filtro-profesor" class="filtros" style="min-width:150px;flex-shrink:0">
             <option value="">Profesor: Todos</option>
           </select>
         </div>
@@ -1380,7 +1388,7 @@ select[id*="filtro"]:focus {
             <div class="her-chip" data-pp-estado="activo" style="color:var(--verde)" onclick="ppFiltrarChip('activo',this)">🟢 Activos</div>
             <div class="her-chip" data-pp-estado="retornado" style="color:var(--texto-dim)" onclick="ppFiltrarChip('retornado',this)">⚪ Retornados</div>
           </div>
-          <input type="text" id="pp-buscar" placeholder="🔍 Buscar profesor...">
+          <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
         </div>
 
         <div id="pp-tabla-wrap" class="pp-grid">
@@ -1404,7 +1412,7 @@ select[id*="filtro"]:focus {
           <div class="tabla-header">
             <h3>Historial de herramientas prestadas</h3>
             <div class="filtros">
-              <input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px">
+              <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px"></div>
               <select id="ext-filtro-estado">
                 <option value="">Todos los estados</option>
                 <option value="prestado">Prestado</option>
@@ -1425,6 +1433,8 @@ select[id*="filtro"]:focus {
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
           <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel">📊 Excel</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF">📄 PDF</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva">📦 Entrada de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
           </div>
@@ -1434,9 +1444,7 @@ select[id*="filtro"]:focus {
 
         <div class="her-toolbar">
           <div class="her-categoria-chips" id="her-chips"></div>
-          <input type="text" id="her-buscar" placeholder="🔍 Buscar herramienta...">
-          <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el inventario a Excel">📊 Excel</button>
-          <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el inventario a PDF">📄 PDF</button>
+          <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="her-buscar" placeholder="Buscar herramienta..."></div>
         </div>
 
         <div id="her-cfg-wrap" class="her-grid">
@@ -1498,8 +1506,8 @@ select[id*="filtro"]:focus {
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..."
-              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
+              style="width:100%;padding:10px 14px 10px 38px;background:var(--card);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:13px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:15px">🔍</span>
           </div>
           <select id="hist-tipo" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
             <option value="">Tipo: Todos</option>
@@ -1556,7 +1564,10 @@ select[id*="filtro"]:focus {
           <div class="tabla-header">
             <h3>Lista de profesores</h3>
             <div class="filtros">
-              <input type="text" id="prof-buscar" placeholder="Buscar profesor...">
+              <div style="position:relative">
+                <input type="text" id="prof-buscar" placeholder="🔍  Buscar profesor..." style="padding:8px 14px 8px 36px;border:1.5px solid var(--borde);border-radius:10px;font-size:12px;background:var(--bg);color:var(--texto);width:200px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
+                <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--texto-dim)">🔍</span>
+              </div>
             </div>
           </div>
           <div class="prof-resumen" id="prof-resumen"></div>
@@ -1593,7 +1604,7 @@ select[id*="filtro"]:focus {
           <div class="tabla-header">
             <h3>Cuentas del sistema</h3>
             <div class="filtros">
-              <input type="text" id="usr-buscar" placeholder="Buscar usuario...">
+              <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="usr-buscar" placeholder="Buscar usuario..."></div>
             </div>
           </div>
           <div class="usr-resumen" id="usr-resumen"></div>
@@ -1802,7 +1813,7 @@ select[id*="filtro"]:focus {
 </div>
 
 <div class="modal-overlay" id="modal-nuevo-pp">
-  <div class="modal" style="max-width:560px;overflow:visible">
+  <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
       ➕ Nuevo préstamo a profesor
       <button class="modal-cerrar" onclick="cerrarModalNuevoProf()">✕</button>
@@ -1819,16 +1830,20 @@ select[id*="filtro"]:focus {
         <option value="">Selecciona un laboratorio</option>
       </select>
     </div>
-    <div class="modal-campo">
-      <label>Herramientas entregadas</label>
-      <div id="pp-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="pp-picker-buscar-inline" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderPPPickerGridInline()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="pp-picker-grid-inline" class="her-grid picking-grid"></div>
       </div>
-      <button type="button" onclick="ppAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%" title="Agregar una fila para escribir el nombre de la herramienta">+ Agregar herramienta (escribir)</button>
-      <button type="button" onclick="abrirPickerFotosPP()" class="btn btn-verde" style="margin-top:8px;width:100%" title="Elegir herramientas visualmente desde sus fotos">📷 Elegir herramientas con fotos</button>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
-      <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor">✅ Registrar entrega</button>
+      <div class="picking-recibo">
+        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Recibo de entrega</div>
+        <div id="pp-lista-herramientas" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
+          <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor">✅ Registrar entrega</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1872,21 +1887,30 @@ select[id*="filtro"]:focus {
 
 
 <div class="modal-overlay" id="modal-retorno-pp">
-  <div class="modal" style="max-width:520px">
+  <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
       ↩ Retorno — <span id="pp-retorno-nombre"></span>
       <button class="modal-cerrar" onclick="cerrarModalRetornoProf()">✕</button>
     </div>
-    <p style="font-size:13px;color:var(--texto-dim);margin-bottom:14px">Marca el estado de cada herramienta al momento de la devolución.</p>
-    <div id="pp-retorno-lista"></div>
-    <div class="modal-campo" style="margin-top:12px">
-      <label>Nota / observación <span id="pp-retorno-nota-hint" style="color:var(--texto-dim);font-weight:400"></span></label>
-      <textarea id="pp-retorno-nota" rows="3" placeholder="Ej: no recuerdo si se devolvió en su momento, marco por revisión de inventario..."
-        style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:13px;resize:vertical"></textarea>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor">✅ Confirmar retorno</button>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="pp-retorno-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderPPRetornoPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="pp-retorno-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <p style="font-size:12px;color:var(--texto-dim);margin-bottom:10px">Marca el estado de cada herramienta al momento de la devolución.</p>
+        <div id="pp-retorno-lista" class="picking-recibo-lista"></div>
+        <div class="modal-campo" style="margin-top:10px">
+          <label>Nota / observación <span id="pp-retorno-nota-hint" style="color:var(--texto-dim);font-weight:400"></span></label>
+          <textarea id="pp-retorno-nota" rows="2" placeholder="Ej: no recuerdo si se devolvió en su momento..."
+            style="width:100%;padding:8px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12.5px;resize:vertical"></textarea>
+        </div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor">✅ Confirmar retorno</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1898,12 +1922,14 @@ select[id*="filtro"]:focus {
       <button class="modal-cerrar" id="modal-cerrar">✕</button>
     </div>
     <div id="modal-contenido"></div>
-    <div class="modal-acciones" id="modal-acciones"></div>
+    <div class="modal-acciones" id="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModal()">✕ Cerrar</button>
+    </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-nuevo-ext">
-  <div class="modal" style="max-width:520px">
+  <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
       ➕ Registrar salida a otro departamento
       <button class="modal-cerrar" onclick="cerrarModalNuevoExt()">✕</button>
@@ -1918,30 +1944,44 @@ select[id*="filtro"]:focus {
       <input type="text" id="ext-responsable" placeholder="Nombre del responsable"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
     </div>
-    <div class="modal-campo">
-      <label>Herramientas que salen</label>
-      <div id="ext-lista-herramientas" style="background:var(--bg);border:1px solid var(--borde);border-radius:8px;padding:10px;overflow:visible">
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="ext-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderExtPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="ext-picker-grid" class="her-grid picking-grid"></div>
       </div>
-      <button type="button" onclick="extAgregarFila()" class="btn btn-outline" style="margin-top:8px;width:100%" title="Agregar otra herramienta a la salida">+ Agregar herramienta</button>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
-      <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento">✅ Registrar salida</button>
+      <div class="picking-recibo">
+        <div style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase;margin-bottom:6px">Herramientas que salen</div>
+        <div id="ext-lista-herramientas" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
+          <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento">✅ Registrar salida</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-retorno-ext">
-  <div class="modal" style="max-width:520px">
+  <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
       ↩ Retorno — <span id="ext-retorno-nombre"></span>
       <button class="modal-cerrar" onclick="cerrarModalRetornoExt()">✕</button>
     </div>
-    <p style="font-size:13px;color:var(--texto-dim);margin-bottom:14px">Marca el estado de cada herramienta al momento de la devolución.</p>
-    <div id="ext-retorno-lista"></div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento">✅ Confirmar retorno</button>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="ext-retorno-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderExtRetornoPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="ext-retorno-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <p style="font-size:12px;color:var(--texto-dim);margin-bottom:10px">Marca el estado de cada herramienta al momento de la devolución.</p>
+        <div id="ext-retorno-lista" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento">✅ Confirmar retorno</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -1961,51 +2001,59 @@ select[id*="filtro"]:focus {
 </div>
 
 <div class="modal-overlay" id="modal-entrega">
-  <div class="modal" style="max-width:560px">
+  <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
       ✓ Entregar Herramientas
       <button class="modal-cerrar" onclick="cerrarModalEntrega()">✕</button>
     </div>
-    <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:14px;font-size:13px;color:var(--rojo)"></div>
-    <div id="info-entrega" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas a entregar</span>
-      <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
-    </div>
-    <div id="lista-entrega" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:260px;overflow-y:auto"></div>
-    <div style="margin-bottom:14px">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-        <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-        <button class="btn btn-outline" onclick="agregarFilaAdicional()" title="Agregar una herramienta adicional a esta entrega">+ Agregar</button>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="entrega-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderEntregaPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="entrega-picker-grid" class="her-grid picking-grid"></div>
       </div>
-      <div id="lista-adicionales"></div>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
-      <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
+      <div class="picking-recibo">
+        <div id="alerta-incidencia" style="display:none;background:rgba(239,68,68,0.12);border:1px solid var(--rojo);border-radius:8px;padding:10px 14px;margin-bottom:10px;font-size:12px;color:var(--rojo)"></div>
+        <div id="info-entrega" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Recibo de entrega</span>
+          <button class="btn btn-outline" id="btn-toggle-entrega" onclick="toggleMarcarTodasEntrega()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como entregadas">Marcar todas</button>
+        </div>
+        <div id="lista-entrega" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
+          <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
+          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
 
 <div class="modal-overlay" id="modal-retorno">
-  <div class="modal" style="max-width:560px">
+  <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
       ↩ Registrar Retorno
       <button class="modal-cerrar" onclick="cerrarModalRetorno()">✕</button>
     </div>
-    <div id="info-retorno" style="margin-bottom:14px;font-size:13px;color:var(--texto-dim)"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
-      <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas ✅</button>
-    </div>
-    <div id="lista-retorno" style="background:var(--bg);border-radius:8px;padding:8px;margin-bottom:14px;max-height:300px;overflow-y:auto"></div>
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
-      <span style="font-size:12px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Herramientas adicionales</span>
-      <button class="btn btn-outline" onclick="agregarAdicionalDesdeRetorno()" title="Entregar una herramienta adicional a esta solicitud">+ Agregar</button>
-    </div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
-      <button class="btn btn-azul" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante">↩ Confirmar Retorno</button>
+    <div class="picking-layout">
+      <div class="picking-buscar">
+        <input type="text" id="retorno-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderRetornoPickerGrid()"
+          style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
+        <div id="retorno-picker-grid" class="her-grid picking-grid"></div>
+      </div>
+      <div class="picking-recibo">
+        <div id="info-retorno" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+          <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
+          <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas ✅</button>
+        </div>
+        <div id="lista-retorno" class="picking-recibo-lista"></div>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-wrap:wrap;gap:6px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()">Cerrar</button>
+          <button class="btn btn-verde" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px">➕ Confirmar adicionales</button>
+          <button class="btn btn-azul" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante">↩ Confirmar Retorno</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -2883,14 +2931,18 @@ window.dashIrDia = function(fechaIso) {
   }, 80);
 };
 
-async function cargarDashboard() {
+function cargarDashboard() {
+  // Escuchar en tiempo real las dos colecciones
+  onSnapshot(collection(db, "solicitudes"), snapSol => {
+    const todas = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
+    getDocs(collection(db, "prestamos_profesores")).then(snapProf => {
+      _actualizarDashboard(todas, snapProf.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+  });
+}
+
+async function _actualizarDashboard(todas, prestProf) {
   try {
-    const [snapSol, snapProf] = await Promise.all([
-      getDocs(collection(db, "solicitudes")),
-      getDocs(collection(db, "prestamos_profesores"))
-    ]);
-    const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
-    const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const fechaDe = (ts) => ts?.toDate ? ts.toDate() : new Date(ts||0);
     const esMismoDiaQue = (ts, ref) => {
@@ -3096,7 +3148,6 @@ function esMismodia(ts) {
 }
 
 function fechaDe(ts) { return ts?.toDate ? ts.toDate() : new Date(ts || 0); }
-
 let _solOrdenCol = "fecha";
 let _solOrdenDir = -1;
 window.ordenarPor = function(col) {
@@ -3374,6 +3425,10 @@ window.abrirModal = function(id) {
 
   const acciones = document.getElementById("modal-acciones");
   acciones.innerHTML = "";
+  // Botón cerrar siempre presente
+  const bCerrar = document.createElement("button");
+  bCerrar.className = "btn btn-outline"; bCerrar.textContent = "✕ Cerrar";
+  bCerrar.onclick = cerrarModal;
   if (s.estado === "pendiente") {
     const b = document.createElement("button");
     b.className = "btn btn-verde"; b.textContent = "✓ Entregar";
@@ -3394,7 +3449,7 @@ window.abrirModal = function(id) {
     b.onclick = () => { cerrarModal(); retornar(id); };
     acciones.appendChild(b);
   }
-
+  acciones.appendChild(bCerrar);
   document.getElementById("modal-solicitud").classList.add("abierto");
 };
 
@@ -3459,18 +3514,15 @@ window.agregarAdicionalDesdeRetorno = function() {
 };
 
 // ─── MODAL ENTREGA ───
-window.entregar = async function(id) {
-  solicitudActivaId = id;
-  const s = todasSolicitudes.find(x => x.id === id);
+let _entregaAdicionales = {};
+
+function renderReciboEntrega() {
+  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
-
-  document.getElementById("info-entrega").innerHTML =
-    `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
-
   const lista = document.getElementById("lista-entrega");
   const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
   const herOrig = base.filter(h => !h.adicional);
-  const herAdic = base.filter(h => h.adicional);
+  const herAdicPrevias = base.filter(h => h.adicional);
   const renderFilas = (arr, offset) => arr.map((h, i) => `
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-e-${offset+i}" data-idx="${offset+i}" checked>
@@ -3479,17 +3531,90 @@ window.entregar = async function(id) {
       <span class="h-cant">x${h.cantidad}</span>
     </div>`).join("");
   let listaHtml = renderFilas(herOrig, 0);
-  if (herAdic.length > 0) {
+  if (herAdicPrevias.length > 0) {
     listaHtml += `<div style="display:flex;align-items:center;gap:8px;margin:8px 4px 4px">
       <div style="flex:1;height:1px;background:var(--borde)"></div>
-      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES (${herAdic.length})</span>
+      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES</span>
       <div style="flex:1;height:1px;background:var(--borde)"></div>
-    </div>` + renderFilas(herAdic, herOrig.length);
+    </div>` + renderFilas(herAdicPrevias, herOrig.length);
+  }
+  const nuevos = Object.entries(_entregaAdicionales);
+  if (nuevos.length > 0) {
+    listaHtml += `<div style="display:flex;align-items:center;gap:8px;margin:8px 4px 4px">
+      <div style="flex:1;height:1px;background:var(--borde)"></div>
+      <span style="font-size:10px;font-weight:800;color:var(--verde);white-space:nowrap">🆕 AGREGANDO AHORA</span>
+      <div style="flex:1;height:1px;background:var(--borde)"></div>
+    </div>` + nuevos.map(([nombre, cant]) => `
+      <div class="fila-herramienta">
+        ${herFotoHtmlPorNombre(nombre)}
+        <span class="h-nombre">${escapeHtml(nombre)}</span>
+        <button type="button" class="btn btn-outline" onclick="entregaAdicionalAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
+        <span class="h-cant">x${cant}</span>
+        <button type="button" class="btn btn-outline" onclick="entregaAdicionalAjustar('${escapeAttr(nombre)}',1)" style="padding:2px 8px">+</button>
+        <button type="button" class="btn btn-rojo" onclick="entregaAdicionalQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px" title="Quitar">✕</button>
+      </div>`).join("");
   }
   lista.innerHTML = listaHtml || "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas</div>";
+}
 
-  document.getElementById("lista-adicionales").innerHTML = "";
+window.renderEntregaPickerGrid = function() {
+  const wrap = document.getElementById("entrega-picker-grid");
+  const q = (document.getElementById("entrega-picker-buscar").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) {
+    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>';
+    return;
+  }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    const enRecibo = _entregaAdicionales[h.nombre] || 0;
+    return `
+      <div class="her-card" onclick="entregaPickerAgregar('${escapeAttr(h.nombre)}')" title="Agregar al recibo">
+        <div class="her-foto-wrap">${foto}${enRecibo > 0 ? `<span class="her-ribbon popular">x${enRecibo}</span>` : ""}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.entregaPickerAgregar = function(nombre) {
+  _entregaAdicionales[nombre] = (_entregaAdicionales[nombre] || 0) + 1;
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+  const lista = document.getElementById("lista-entrega");
+  lista.scrollTop = lista.scrollHeight;
+};
+
+window.entregaAdicionalAjustar = function(nombre, delta) {
+  const nuevo = (_entregaAdicionales[nombre] || 0) + delta;
+  if (nuevo <= 0) delete _entregaAdicionales[nombre];
+  else _entregaAdicionales[nombre] = nuevo;
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
+window.entregaAdicionalQuitar = function(nombre) {
+  delete _entregaAdicionales[nombre];
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
+window.entregar = async function(id) {
+  solicitudActivaId = id;
+  const s = todasSolicitudes.find(x => x.id === id);
+  if (!s) return;
+
+  document.getElementById("info-entrega").innerHTML =
+    `<strong>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong> · ${escapeHtml(s.matricula)} · ${escapeHtml(s.laboratorio) || ""}`;
+
+  _entregaAdicionales = {};
   document.getElementById("btn-toggle-entrega").textContent = "Desmarcar todas";
+  document.getElementById("entrega-picker-buscar").value = "";
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
 
   // La ventana se abre YA, sin esperar la consulta de incidencias de abajo
   // (esa consulta puede tardar un instante y antes dejaba la pantalla en
@@ -3556,7 +3681,7 @@ window.cerrarPickerFotosSolicitud = function() {
   document.getElementById("modal-fotos-solicitud").classList.remove("abierto");
 };
 
-function renderPickerFotosSolicitud() {
+window.renderPickerFotosSolicitud = function renderPickerFotosSolicitud() {
   const wrap = document.getElementById("sol-picker-grid");
   const q = (document.getElementById("sol-picker-buscar").value || "").toLowerCase();
   const lista = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q));
@@ -3597,6 +3722,17 @@ window.solPickerAjustar = function(nombre, delta) {
 
 // ── Opción "escribir a mano" (por si la herramienta no tiene foto o no
 // está en el catálogo) — funciona en los dos modos del selector. ──
+window.entregaAgregarManual = function() {
+  const nombre = prompt("Nombre de la herramienta:");
+  if (!nombre || !nombre.trim()) return;
+  const cantidadTexto = prompt("Cantidad:", "1");
+  const cantidad = Math.max(1, parseInt(cantidadTexto) || 1);
+  const n = nombre.trim();
+  _entregaAdicionales[n] = (_entregaAdicionales[n] || 0) + cantidad;
+  renderReciboEntrega();
+  renderEntregaPickerGrid();
+};
+
 window.agregarFilaAdicionalManual = async function() {
   const nombre = prompt("Nombre de la herramienta:");
   if (!nombre || !nombre.trim()) return;
@@ -3713,10 +3849,8 @@ window.confirmarEntrega = async function() {
     }
   });
 
-  document.querySelectorAll("#lista-adicionales .fila-adicional").forEach(fila => {
-    const nombre = fila.querySelector(".nombre-adicional").value.trim();
-    const cantidad = parseInt(fila.querySelector(".cant-adicional").value) || 1;
-    if (nombre) herramientasEntregadas.push({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" });
+  Object.entries(_entregaAdicionales).forEach(([nombre, cantidad]) => {
+    herramientasEntregadas.push({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" });
   });
 
   try {
@@ -3785,7 +3919,78 @@ window.retornar = function(id) {
   });
 
   document.getElementById("btn-toggle-retorno").textContent = "Desmarcar todas ✅";
+  document.getElementById("retorno-picker-buscar").value = "";
+  renderRetornoPickerGrid();
   document.getElementById("modal-retorno").classList.add("abierto");
+};
+
+window.renderRetornoPickerGrid = function() {
+  const wrap = document.getElementById("retorno-picker-grid");
+  const q = (document.getElementById("retorno-picker-buscar").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    return `
+      <div class="her-card" onclick="retornoPickerAgregar('${escapeAttr(h.nombre)}')" title="Agregar al recibo de retorno">
+        <div class="her-foto-wrap">${foto}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.retornoPickerAgregar = function(nombre) {
+  const lista = document.getElementById("lista-retorno");
+  if (!lista) return;
+
+  // No duplicar
+  const yaExiste = [...lista.querySelectorAll(".h-nombre")].some(el => el.textContent.replace(/\(adicional\)/i,"").trim() === nombre);
+  if (yaExiste) { mostrarToast("Ya está en el recibo", "rojo"); return; }
+
+  // Agregar separador ADICIONALES la primera vez
+  if (!lista.querySelector(".separador-adicionales")) {
+    const sep = document.createElement("div");
+    sep.className = "separador-adicionales";
+    sep.style.cssText = "display:flex;align-items:center;gap:8px;margin:8px 4px 4px";
+    sep.innerHTML = `<div style="flex:1;height:1px;background:var(--borde)"></div>
+      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES</span>
+      <div style="flex:1;height:1px;background:var(--borde)"></div>`;
+    lista.appendChild(sep);
+  }
+
+  const idx = lista.querySelectorAll(".fila-herramienta").length;
+  const div = document.createElement("div");
+  div.className = "fila-herramienta";
+  div.dataset.adicional = "1";
+  div.innerHTML = `
+    <input type="checkbox" id="chk-r-${idx}" data-idx="${idx}" checked>
+    <span class="h-nombre">${nombre} <span style="font-size:10px;color:var(--azul)">(adicional)</span></span>
+    <span class="h-cant" style="color:var(--verde);font-weight:700">x1</span>
+    <select class="select-estado" id="estado-r-${idx}">
+      <option value="retornada">✅ Retornada</option>
+      <option value="dañada">🔴 Dañada</option>
+      <option value="no_retornada">⚠️ No retornada</option>
+      <option value="perdida">❌ Perdida</option>
+    </select>
+    <button onclick="this.closest('.fila-herramienta').remove()" style="background:none;border:none;color:var(--rojo);cursor:pointer;font-size:16px;padding:0 4px">✕</button>
+  `;
+  lista.appendChild(div);
+
+  // Sincronizar checkbox con select
+  const chk = div.querySelector("input[type='checkbox']");
+  const sel = div.querySelector("select");
+  chk.addEventListener("change", () => {
+    if (!chk.checked) sel.value = "no_retornada";
+    else if (sel.value === "no_retornada") sel.value = "retornada";
+  });
+
+  // Scroll al final para ver la herramienta recién agregada
+  lista.scrollTop = lista.scrollHeight;
+  mostrarToast(`✓ ${nombre} agregada al recibo`);
 };
 
 window.toggleMarcarTodasRetorno = function() {
@@ -3806,6 +4011,33 @@ window.cerrarModalRetorno = function() {
   solicitudActivaId = null;
 };
 
+window.cerrarModalRetornoConAviso = function() {
+  const adicionales = document.querySelectorAll("#lista-retorno .fila-herramienta[data-adicional='1']");
+  if (adicionales.length > 0) {
+    if (!confirm(`Tienes ${adicionales.length} herramienta(s) adicional(es) seleccionada(s). ¿Cerrar sin guardarlas?`)) return;
+  }
+  cerrarModalRetorno();
+};
+
+window.confirmarAdicionalesRetorno = async function() {
+  if (!solicitudActivaId) return;
+  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
+  if (!s) return;
+  const adicionales = [...document.querySelectorAll("#lista-retorno .fila-herramienta[data-adicional='1']")];
+  if (!adicionales.length) { mostrarToast("No hay adicionales que guardar", "rojo"); return; }
+  const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const nuevas = adicionales.map(f => ({ nombre: f.querySelector(".h-nombre").childNodes[0].textContent.trim(), cantidad: 1, adicional: true, estadoEntrega: "entregada" }));
+  const listaFinal = [...base, ...nuevas];
+  try {
+    await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientasEntregadas: listaFinal });
+    try { await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: listaFinal }); } catch(e) {}
+    s.herramientasEntregadas = listaFinal;
+    // Quitar marcador de adicional para que queden como parte del recibo normal
+    adicionales.forEach(f => { delete f.dataset.adicional; });
+    mostrarToast(`✅ ${nuevas.length} herramienta(s) adicional(es) entregada(s)`);
+  } catch(e) { mostrarToast("Error al guardar adicionales: " + e.message, "rojo"); }
+};
+
 window.confirmarRetorno = async function() {
   if (!solicitudActivaId) return;
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
@@ -3815,13 +4047,18 @@ window.confirmarRetorno = async function() {
   const resultado = [];
   const incidencias = [];
 
-  herramientas.forEach((h, i) => {
-    const chk = document.getElementById(`chk-r-${i}`);
-    const sel = document.getElementById(`estado-r-${i}`);
+  // Leer todas las filas del DOM (incluye adicionales agregadas desde el picker)
+  const todasFilas = document.querySelectorAll("#lista-retorno .fila-herramienta");
+  todasFilas.forEach((fila, i) => {
+    const nombreEl = fila.querySelector(".h-nombre");
+    const nombre = nombreEl ? nombreEl.textContent.replace(/\(adicional\)/i,"").trim() : (herramientas[i]?.nombre || "");
+    const chk = fila.querySelector("input[type='checkbox']");
+    const sel = fila.querySelector("select");
     const estado = sel ? sel.value : (chk?.checked ? "retornada" : "no_retornada");
-    resultado.push({ ...h, estadoRetorno: estado });
+    const esAdicional = fila.dataset.adicional === "1";
+    resultado.push({ nombre, cantidad: 1, adicional: esAdicional, estadoRetorno: estado });
     if (estado !== "retornada") {
-      incidencias.push({ herramienta: h.nombre, tipo: estado });
+      incidencias.push({ herramienta: nombre, tipo: estado });
     }
   });
 
@@ -4005,7 +4242,6 @@ async function cargarPrestamosProf() {
       todosPrestamosProfVisible = [...todosPrestamosProf, ...activosAntiguos];
       ppActualizarStats();
       ppRenderTabla();
-      cargarDashboard();
     });
   } catch(e) {
     document.getElementById("pp-tabla-wrap").innerHTML =
@@ -4135,12 +4371,63 @@ function ppPoblarSelects() {
   });
 }
 
+let _ppNuevoCant = {};
+
 window.abrirModalNuevoPrestamoProf = function() {
   ppPoblarSelects();
-  document.getElementById("pp-lista-herramientas").innerHTML = "";
-  ppAgregarFila();
+  _ppNuevoCant = {};
+  document.getElementById("pp-picker-buscar-inline").value = "";
+  renderPPPickerGridInline();
+  renderPPReciboInline();
   document.getElementById("modal-nuevo-pp").classList.add("abierto");
 };
+
+window.renderPPPickerGridInline = function() {
+  const wrap = document.getElementById("pp-picker-grid-inline");
+  const q = (document.getElementById("pp-picker-buscar-inline").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    const enRecibo = _ppNuevoCant[h.nombre] || 0;
+    return `
+      <div class="her-card" onclick="ppNuevoAgregar('${escapeAttr(h.nombre)}')" title="Agregar al recibo">
+        <div class="her-foto-wrap">${foto}${enRecibo > 0 ? `<span class="her-ribbon popular">x${enRecibo}</span>` : ""}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.ppNuevoAgregar = function(nombre) {
+  _ppNuevoCant[nombre] = (_ppNuevoCant[nombre] || 0) + 1;
+  renderPPReciboInline(); renderPPPickerGridInline();
+};
+window.ppNuevoAjustar = function(nombre, delta) {
+  const nuevo = (_ppNuevoCant[nombre] || 0) + delta;
+  if (nuevo <= 0) delete _ppNuevoCant[nombre]; else _ppNuevoCant[nombre] = nuevo;
+  renderPPReciboInline(); renderPPPickerGridInline();
+};
+window.ppNuevoQuitar = function(nombre) {
+  delete _ppNuevoCant[nombre];
+  renderPPReciboInline(); renderPPPickerGridInline();
+};
+function renderPPReciboInline() {
+  const lista = document.getElementById("pp-lista-herramientas");
+  const entradas = Object.entries(_ppNuevoCant);
+  lista.innerHTML = entradas.length ? entradas.map(([nombre, cant]) => `
+    <div class="fila-herramienta">
+      ${herFotoHtmlPorNombre(nombre)}
+      <span class="h-nombre">${escapeHtml(nombre)}</span>
+      <button type="button" class="btn btn-outline" onclick="ppNuevoAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
+      <span class="h-cant">x${cant}</span>
+      <button type="button" class="btn btn-outline" onclick="ppNuevoAjustar('${escapeAttr(nombre)}',1)" style="padding:2px 8px">+</button>
+      <button type="button" class="btn btn-rojo" onclick="ppNuevoQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px">✕</button>
+    </div>`).join("") : "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas agregadas todavía</div>";
+}
 
 window.cerrarModalNuevoProf = function() {
   document.getElementById("modal-nuevo-pp").classList.remove("abierto");
@@ -4297,15 +4584,7 @@ window.confirmarNuevoPrestamoProf = async function() {
   if (!profesor)    { mostrarToast("Selecciona un profesor", "rojo"); return; }
   if (!laboratorio) { mostrarToast("Selecciona un laboratorio", "rojo"); return; }
 
-  const filas = document.getElementById("pp-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
-  const mapaHerr = {};
-  for (const fila of filas) {
-    const inputs = fila.querySelectorAll("input");
-    const nombre   = inputs[0].value.trim();
-    const cantidad = parseInt(inputs[1].value) || 1;
-    if (nombre) mapaHerr[nombre] = (mapaHerr[nombre] || 0) + cantidad;
-  }
-  const herramientas = Object.entries(mapaHerr).map(([nombre, cantidad]) => ({ nombre, cantidad }));
+  const herramientas = Object.entries(_ppNuevoCant).map(([nombre, cantidad]) => ({ nombre, cantidad }));
   if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
 
   const btn = document.getElementById("pp-btn-confirmar");
@@ -4353,7 +4632,41 @@ window.abrirRetornoProf = function(id) {
         <option value="perdida">❌ Perdida</option>
       </select>
     </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
+  document.getElementById("pp-retorno-picker-buscar").value = "";
+  renderPPRetornoPickerGrid();
   document.getElementById("modal-retorno-pp").classList.add("abierto");
+};
+
+window.renderPPRetornoPickerGrid = function() {
+  const wrap = document.getElementById("pp-retorno-picker-grid");
+  const q = (document.getElementById("pp-retorno-picker-buscar").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    return `
+      <div class="her-card" onclick="ppRetornoAgregarAdicional('${escapeAttr(h.nombre)}')" title="Agregar al retorno">
+        <div class="her-foto-wrap">${foto}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.ppRetornoAgregarAdicional = async function(nombre) {
+  if (!ppActivoId) return;
+  try {
+    const ref = doc(db, "prestamos_profesores", ppActivoId);
+    const snap = await getDoc(ref);
+    const existentes = snap.data()?.herramientas || [];
+    existentes.push({ nombre, cantidad: 1, adicional: true });
+    await updateDoc(ref, { herramientas: existentes });
+    mostrarToast("✓ Herramienta agregada");
+    abrirRetornoProf(ppActivoId);
+  } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
 };
 
 window.cerrarModalRetornoProf = function() {
@@ -4511,13 +4824,64 @@ function extRenderTabla() {
   document.getElementById(id)?.addEventListener("change", extRenderTabla);
 });
 
+let _extNuevoCant = {};
+
 window.abrirModalNuevoPrestamoExt = function() {
   document.getElementById("ext-departamento").value = "";
   document.getElementById("ext-responsable").value = "";
-  document.getElementById("ext-lista-herramientas").innerHTML = "";
-  extAgregarFila();
+  _extNuevoCant = {};
+  document.getElementById("ext-picker-buscar").value = "";
+  renderExtPickerGrid();
+  renderExtReciboInline();
   document.getElementById("modal-nuevo-ext").classList.add("abierto");
 };
+
+window.renderExtPickerGrid = function() {
+  const wrap = document.getElementById("ext-picker-grid");
+  const q = (document.getElementById("ext-picker-buscar").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    const enRecibo = _extNuevoCant[h.nombre] || 0;
+    return `
+      <div class="her-card" onclick="extNuevoAgregar('${escapeAttr(h.nombre)}')" title="Agregar al recibo">
+        <div class="her-foto-wrap">${foto}${enRecibo > 0 ? `<span class="her-ribbon popular">x${enRecibo}</span>` : ""}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.extNuevoAgregar = function(nombre) {
+  _extNuevoCant[nombre] = (_extNuevoCant[nombre] || 0) + 1;
+  renderExtReciboInline(); renderExtPickerGrid();
+};
+window.extNuevoAjustar = function(nombre, delta) {
+  const nuevo = (_extNuevoCant[nombre] || 0) + delta;
+  if (nuevo <= 0) delete _extNuevoCant[nombre]; else _extNuevoCant[nombre] = nuevo;
+  renderExtReciboInline(); renderExtPickerGrid();
+};
+window.extNuevoQuitar = function(nombre) {
+  delete _extNuevoCant[nombre];
+  renderExtReciboInline(); renderExtPickerGrid();
+};
+function renderExtReciboInline() {
+  const lista = document.getElementById("ext-lista-herramientas");
+  const entradas = Object.entries(_extNuevoCant);
+  lista.innerHTML = entradas.length ? entradas.map(([nombre, cant]) => `
+    <div class="fila-herramienta">
+      ${herFotoHtmlPorNombre(nombre)}
+      <span class="h-nombre">${escapeHtml(nombre)}</span>
+      <button type="button" class="btn btn-outline" onclick="extNuevoAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
+      <span class="h-cant">x${cant}</span>
+      <button type="button" class="btn btn-outline" onclick="extNuevoAjustar('${escapeAttr(nombre)}',1)" style="padding:2px 8px">+</button>
+      <button type="button" class="btn btn-rojo" onclick="extNuevoQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px">✕</button>
+    </div>`).join("") : "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas agregadas todavía</div>";
+}
 
 window.cerrarModalNuevoExt = function() {
   document.getElementById("modal-nuevo-ext").classList.remove("abierto");
@@ -4568,15 +4932,7 @@ window.confirmarNuevoPrestamoExt = async function() {
   if (!departamento) { mostrarToast("Escribe el departamento", "rojo"); return; }
   if (!responsable)  { mostrarToast("Escribe el responsable", "rojo"); return; }
 
-  const filas = document.getElementById("ext-lista-herramientas").querySelectorAll("div[data-fila-herramienta]");
-  const mapaHerrExt = {};
-  for (const fila of filas) {
-    const inputs = fila.querySelectorAll("input");
-    const nombre   = inputs[0].value.trim();
-    const cantidad = parseInt(inputs[1].value) || 1;
-    if (nombre) mapaHerrExt[nombre] = (mapaHerrExt[nombre] || 0) + cantidad;
-  }
-  const herramientas = Object.entries(mapaHerrExt).map(([nombre, cantidad]) => ({ nombre, cantidad }));
+  const herramientas = Object.entries(_extNuevoCant).map(([nombre, cantidad]) => ({ nombre, cantidad }));
   if (!herramientas.length) { mostrarToast("Agrega al menos una herramienta", "rojo"); return; }
 
   const btn = document.getElementById("ext-btn-confirmar");
@@ -4614,7 +4970,41 @@ window.abrirRetornoExt = function(id) {
         <option value="perdida">❌ Perdida</option>
       </select>
     </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
+  document.getElementById("ext-retorno-picker-buscar").value = "";
+  renderExtRetornoPickerGrid();
   document.getElementById("modal-retorno-ext").classList.add("abierto");
+};
+
+window.renderExtRetornoPickerGrid = function() {
+  const wrap = document.getElementById("ext-retorno-picker-grid");
+  const q = (document.getElementById("ext-retorno-picker-buscar").value || "").toLowerCase();
+  const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
+  wrap.innerHTML = lista.map(h => {
+    const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
+    const icono = h.icono || '🔧';
+    const foto = fotoUrl
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
+      : `<span class="her-foto-fallback">${icono}</span>`;
+    return `
+      <div class="her-card" onclick="extRetornoAgregarAdicional('${escapeAttr(h.nombre)}')" title="Agregar al retorno">
+        <div class="her-foto-wrap">${foto}</div>
+        <div class="her-cuerpo"><div class="her-nombre">${escapeHtml(h.nombre)}</div></div>
+      </div>`;
+  }).join("");
+};
+
+window.extRetornoAgregarAdicional = async function(nombre) {
+  if (!extActivoId) return;
+  try {
+    const ref = doc(db, "prestamos_externos", extActivoId);
+    const snap = await getDoc(ref);
+    const existentes = snap.data()?.herramientas || [];
+    existentes.push({ nombre, cantidad: 1, adicional: true });
+    await updateDoc(ref, { herramientas: existentes });
+    mostrarToast("✓ Herramienta agregada");
+    abrirRetornoExt(extActivoId);
+  } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
 };
 
 window.cerrarModalRetornoExt = function() {
@@ -6031,6 +6421,74 @@ document.getElementById("modal-usuario-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-usuario-cfg")) cerrarModalUsuario();
 });
 
+// ── EXPORTAR HERRAMIENTAS ──
+window.exportarHerramientasExcel = function() {
+  const lista = _herListaActual || [];
+  if (!lista.length) { mostrarToast("No hay herramientas que exportar", "rojo"); return; }
+  const datos = lista.map((h, i) => ({
+    "#": i + 1,
+    "Nombre": h.nombre || "—",
+    "Categoría": h.categoria || "Sin categoría",
+    "Cantidad disponible": h.cantidadDisponible ?? 0,
+    "Código": h.codigo || "—",
+    "Estado": (h.cantidadDisponible ?? 0) === 0 ? "Sin stock" : (h.cantidadDisponible ?? 0) <= 2 ? "Stock bajo" : "OK"
+  }));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(datos);
+  ws["!cols"] = [{ wch: 4 }, { wch: 28 }, { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 12 }];
+  XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+  XLSX.writeFile(wb, `inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.xlsx`);
+  mostrarToast("✅ Inventario exportado a Excel");
+};
+
+window.exportarHerramientasPDF = function() {
+  const lista = _herListaActual || [];
+  if (!lista.length) { mostrarToast("No hay herramientas que exportar", "rojo"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const fecha = new Date().toLocaleDateString("es-DO", { day:"2-digit", month:"long", year:"numeric" });
+  doc.setFillColor(27, 94, 56);
+  doc.rect(0, 0, 210, 28, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16); doc.setFont(undefined, "bold");
+  doc.text("Inventario de Herramientas", 14, 12);
+  doc.setFontSize(9); doc.setFont(undefined, "normal");
+  doc.text(`Taller Mecánica Industrial — UTESA    Generado: ${fecha}`, 14, 21);
+  doc.setTextColor(0, 0, 0);
+  doc.autoTable({
+    startY: 34,
+    head: [["#", "Nombre", "Categoría", "Cant.", "Estado"]],
+    body: lista.map((h, i) => [
+      i + 1,
+      h.nombre || "—",
+      h.categoria || "Sin categoría",
+      h.cantidadDisponible ?? 0,
+      (h.cantidadDisponible ?? 0) === 0 ? "Sin stock" : (h.cantidadDisponible ?? 0) <= 2 ? "Stock bajo" : "OK"
+    ]),
+    headStyles: { fillColor: [27, 94, 56], textColor: 255, fontStyle: "bold", fontSize: 9 },
+    bodyStyles: { fontSize: 8.5 },
+    alternateRowStyles: { fillColor: [234, 244, 238] },
+    columnStyles: { 0: { halign: "center", cellWidth: 10 }, 3: { halign: "center", cellWidth: 18 }, 4: { halign: "center", cellWidth: 24 } },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data) => {
+      if (data.column.index === 4 && data.row.section === "body") {
+        const v = data.cell.raw;
+        if (v === "Sin stock")  data.cell.styles.textColor = [217, 48, 37];
+        if (v === "Stock bajo") data.cell.styles.textColor = [210, 153, 34];
+        if (v === "OK")         data.cell.styles.textColor = [27, 94, 56];
+      }
+    }
+  });
+  const pags = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pags; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8); doc.setTextColor(150);
+    doc.text(`Página ${i} de ${pags}`, 196, 290, { align: "right" });
+  }
+  doc.save(`inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.pdf`);
+  mostrarToast("✅ Inventario exportado a PDF");
+};
+
 // ── TEMA ──
 function aplicarTema(tema) {
   if (tema === 'claro') {
@@ -6126,43 +6584,6 @@ function _histFilasExport() {
     };
   });
 }
-
-function _herFilasExport() {
-  return _herListaActual.map(h => ({
-    Código: h.codigo || "",
-    Nombre: h.nombre || "",
-    Categoría: h.practica || h.categoria || "",
-    Disponibles: h.cantidadDisponible ?? "",
-  }));
-}
-
-window.exportarHerramientasExcel = function() {
-  const filas = _herFilasExport();
-  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
-  const ws = XLSX.utils.json_to_sheet(filas);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, "Herramientas");
-  XLSX.writeFile(wb, `herramientas_${new Date().toISOString().slice(0,10)}.xlsx`);
-};
-
-window.exportarHerramientasPDF = function() {
-  const filas = _herFilasExport();
-  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
-  const { jsPDF } = window.jspdf;
-  const doc = new jsPDF({ orientation: "landscape" });
-  doc.setFontSize(14);
-  doc.text("Inventario de Herramientas — Taller Mecánica Industrial", 14, 14);
-  doc.setFontSize(9);
-  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
-  doc.autoTable({
-    startY: 26,
-    head: [Object.keys(filas[0])],
-    body: filas.map(f => Object.values(f)),
-    styles: { fontSize: 8 },
-    headStyles: { fillColor: [46, 125, 107] }
-  });
-  doc.save(`herramientas_${new Date().toISOString().slice(0,10)}.pdf`);
-};
 
 window.exportarHistorialExcel = function() {
   const filas = _histFilasExport();
