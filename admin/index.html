@@ -3252,6 +3252,7 @@ function renderTabla() {
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
                 ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
+                ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--azul);font-weight:700">✅ Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
             </td>
