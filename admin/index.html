@@ -1903,7 +1903,9 @@
       <button class="modal-cerrar" id="modal-cerrar">✕</button>
     </div>
     <div id="modal-contenido"></div>
-    <div class="modal-acciones" id="modal-acciones"></div>
+    <div class="modal-acciones" id="modal-acciones">
+      <button class="btn btn-outline" onclick="cerrarModal()">✕ Cerrar</button>
+    </div>
   </div>
 </div>
 
@@ -3365,6 +3367,10 @@ window.abrirModal = function(id) {
 
   const acciones = document.getElementById("modal-acciones");
   acciones.innerHTML = "";
+  // Botón cerrar siempre presente
+  const bCerrar = document.createElement("button");
+  bCerrar.className = "btn btn-outline"; bCerrar.textContent = "✕ Cerrar";
+  bCerrar.onclick = cerrarModal;
   if (s.estado === "pendiente") {
     const b = document.createElement("button");
     b.className = "btn btn-verde"; b.textContent = "✓ Entregar";
@@ -3385,7 +3391,7 @@ window.abrirModal = function(id) {
     b.onclick = () => { cerrarModal(); retornar(id); };
     acciones.appendChild(b);
   }
-
+  acciones.appendChild(bCerrar);
   document.getElementById("modal-solicitud").classList.add("abierto");
 };
 
