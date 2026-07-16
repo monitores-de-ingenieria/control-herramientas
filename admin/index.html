@@ -1435,6 +1435,8 @@ select[id*="filtro"]:focus {
         <div class="her-toolbar">
           <div class="her-categoria-chips" id="her-chips"></div>
           <input type="text" id="her-buscar" placeholder="🔍 Buscar herramienta...">
+          <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el inventario a Excel">📊 Excel</button>
+          <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el inventario a PDF">📄 PDF</button>
         </div>
 
         <div id="her-cfg-wrap" class="her-grid">
@@ -3093,11 +3095,20 @@ function esMismodia(ts) {
          d.getDate()     === hoy.getDate();
 }
 
+function fechaDe(ts) { return ts?.toDate ? ts.toDate() : new Date(ts || 0); }
+
+let _solOrdenCol = "fecha";
+let _solOrdenDir = -1;
+window.ordenarPor = function(col) {
+  if (_solOrdenCol === col) _solOrdenDir *= -1;
+  else { _solOrdenCol = col; _solOrdenDir = 1; }
+  renderTabla();
+};
 function solicitudesFiltradas() {
   const buscar = document.getElementById("filtro-buscar").value.toLowerCase();
   const estado = document.getElementById("filtro-estado").value;
   const profesor = document.getElementById("filtro-profesor").value;
-  return todasSolicitudes.filter(s => {
+  const filtradas = todasSolicitudes.filter(s => {
     if (estado !== "incidencia" && !esMismodia(s.creadoEn)) return false;
     const textoMatch = !buscar || `${s.nombre} ${s.apellido} ${s.matricula}`.toLowerCase().includes(buscar);
     const estadoMatch = !estado
@@ -3108,6 +3119,25 @@ function solicitudesFiltradas() {
     const profMatch = !profesor || s.profesor === profesor;
     return textoMatch && estadoMatch && profMatch;
   });
+  const val = (s) => {
+    switch (_solOrdenCol) {
+      case "fecha": return fechaDe(s.creadoEn).getTime();
+      case "estudiante": return `${s.nombre} ${s.apellido}`.toLowerCase();
+      case "matricula": return s.matricula || "";
+      case "profesor": return s.profesor || "";
+      case "taller": return s.laboratorio || "";
+      case "herramientas": return (s.herramientas || []).length;
+      case "estado": return s.estado || "";
+      default: return 0;
+    }
+  };
+  filtradas.sort((a, b) => {
+    const va = val(a), vb = val(b);
+    if (va < vb) return -1 * _solOrdenDir;
+    if (va > vb) return 1 * _solOrdenDir;
+    return 0;
+  });
+  return filtradas;
 }
 
 function renderTabla() {
@@ -3177,12 +3207,20 @@ function renderTabla() {
     });
   });
 
+  const flecha = (col) => _solOrdenCol === col ? (_solOrdenDir === 1 ? ' ▲' : ' ▼') : '';
   wrap.innerHTML = `
     <table>
       <thead>
         <tr>
-          <th>#</th><th>Fecha y Hora</th><th>Estudiante</th><th>Matrícula</th>
-          <th>Profesor</th><th>Taller / Lab</th><th>Herramientas</th><th>Estado</th><th>Acciones</th>
+          <th>#</th>
+          <th style="cursor:pointer" onclick="ordenarPor('fecha')">Fecha y Hora${flecha('fecha')}</th>
+          <th style="cursor:pointer" onclick="ordenarPor('estudiante')">Estudiante${flecha('estudiante')}</th>
+          <th style="cursor:pointer" onclick="ordenarPor('matricula')">Matrícula${flecha('matricula')}</th>
+          <th style="cursor:pointer" onclick="ordenarPor('profesor')">Profesor${flecha('profesor')}</th>
+          <th style="cursor:pointer" onclick="ordenarPor('taller')">Taller / Lab${flecha('taller')}</th>
+          <th style="cursor:pointer" onclick="ordenarPor('herramientas')">Herramientas${flecha('herramientas')}</th>
+          <th style="cursor:pointer" onclick="ordenarPor('estado')">Estado${flecha('estado')}</th>
+          <th>Acciones</th>
         </tr>
       </thead>
       <tbody>${filas}</tbody>
@@ -6088,6 +6126,43 @@ function _histFilasExport() {
     };
   });
 }
+
+function _herFilasExport() {
+  return _herListaActual.map(h => ({
+    Código: h.codigo || "",
+    Nombre: h.nombre || "",
+    Categoría: h.practica || h.categoria || "",
+    Disponibles: h.cantidadDisponible ?? "",
+  }));
+}
+
+window.exportarHerramientasExcel = function() {
+  const filas = _herFilasExport();
+  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
+  const ws = XLSX.utils.json_to_sheet(filas);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Herramientas");
+  XLSX.writeFile(wb, `herramientas_${new Date().toISOString().slice(0,10)}.xlsx`);
+};
+
+window.exportarHerramientasPDF = function() {
+  const filas = _herFilasExport();
+  if (!filas.length) { mostrarToast("No hay datos para exportar", "rojo"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "landscape" });
+  doc.setFontSize(14);
+  doc.text("Inventario de Herramientas — Taller Mecánica Industrial", 14, 14);
+  doc.setFontSize(9);
+  doc.text(`Generado: ${new Date().toLocaleString("es-DO")}`, 14, 20);
+  doc.autoTable({
+    startY: 26,
+    head: [Object.keys(filas[0])],
+    body: filas.map(f => Object.values(f)),
+    styles: { fontSize: 8 },
+    headStyles: { fillColor: [46, 125, 107] }
+  });
+  doc.save(`herramientas_${new Date().toISOString().slice(0,10)}.pdf`);
+};
 
 window.exportarHistorialExcel = function() {
   const filas = _histFilasExport();
