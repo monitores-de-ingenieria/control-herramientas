@@ -2027,8 +2027,9 @@
           <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas ✅</button>
         </div>
         <div id="lista-retorno" class="picking-recibo-lista"></div>
-        <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
-          <button class="btn btn-outline" onclick="cerrarModalRetorno()">Cerrar</button>
+        <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-wrap:wrap;gap:6px">
+          <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()">Cerrar</button>
+          <button class="btn btn-verde" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px">➕ Confirmar adicionales</button>
           <button class="btn btn-azul" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante">↩ Confirmar Retorno</button>
         </div>
       </div>
@@ -3944,6 +3945,33 @@ window.toggleMarcarTodasRetorno = function() {
 window.cerrarModalRetorno = function() {
   document.getElementById("modal-retorno").classList.remove("abierto");
   solicitudActivaId = null;
+};
+
+window.cerrarModalRetornoConAviso = function() {
+  const adicionales = document.querySelectorAll("#lista-retorno .fila-herramienta[data-adicional='1']");
+  if (adicionales.length > 0) {
+    if (!confirm(`Tienes ${adicionales.length} herramienta(s) adicional(es) seleccionada(s). ¿Cerrar sin guardarlas?`)) return;
+  }
+  cerrarModalRetorno();
+};
+
+window.confirmarAdicionalesRetorno = async function() {
+  if (!solicitudActivaId) return;
+  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
+  if (!s) return;
+  const adicionales = [...document.querySelectorAll("#lista-retorno .fila-herramienta[data-adicional='1']")];
+  if (!adicionales.length) { mostrarToast("No hay adicionales que guardar", "rojo"); return; }
+  const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const nuevas = adicionales.map(f => ({ nombre: f.querySelector(".h-nombre").childNodes[0].textContent.trim(), cantidad: 1, adicional: true, estadoEntrega: "entregada" }));
+  const listaFinal = [...base, ...nuevas];
+  try {
+    await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientasEntregadas: listaFinal });
+    try { await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: listaFinal }); } catch(e) {}
+    s.herramientasEntregadas = listaFinal;
+    // Quitar marcador de adicional para que queden como parte del recibo normal
+    adicionales.forEach(f => { delete f.dataset.adicional; });
+    mostrarToast(`✅ ${nuevas.length} herramienta(s) adicional(es) entregada(s)`);
+  } catch(e) { mostrarToast("Error al guardar adicionales: " + e.message, "rojo"); }
 };
 
 window.confirmarRetorno = async function() {
