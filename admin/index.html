@@ -256,6 +256,26 @@
     flex-direction: column;
   }
   .sb-spacer { flex: 1; min-height: 20px; }
+
+  .prestadas-flotante {
+    position: fixed;
+    bottom: 18px;
+    left: 232px;
+    display: flex; align-items: center; gap: 8px;
+    padding: 9px 16px;
+    background: linear-gradient(135deg, rgba(63,185,80,.18), rgba(63,185,80,.07));
+    border: 1px solid rgba(63,185,80,.45);
+    border-radius: 22px;
+    box-shadow: 0 4px 14px rgba(0,0,0,.25), 0 2px 8px rgba(63,185,80,.15);
+    backdrop-filter: blur(6px);
+    z-index: 60;
+    transition: left .25s ease;
+  }
+  .shell.sidebar-colapsado .prestadas-flotante { left: 72px; }
+  .prestadas-flotante .pf-icono { font-size: 16px; }
+  .prestadas-flotante .pf-texto { color: var(--texto-dim); font-weight: 600; font-size: 12px; letter-spacing: .2px; white-space: nowrap; }
+  .prestadas-flotante .pf-num { font-weight: 800; color: var(--verde); font-size: 15px; }
+  @media (max-width: 720px) { .prestadas-flotante { display: none; } }
   /* Logo en sidebar */
   .sb-brand {
     display: flex;
@@ -1209,6 +1229,12 @@
 
     </div>
 
+    <div class="prestadas-flotante" title="Herramientas prestadas hoy">
+      <span class="pf-icono">🧰</span>
+      <span class="pf-texto">Prestadas hoy</span>
+      <span class="pf-num" id="tab-total-herramientas-hoy">—</span>
+    </div>
+
     <div class="contenido">
 
       <div class="vista" id="vista-dashboard">
@@ -1340,11 +1366,6 @@
           <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde);white-space:nowrap">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul);white-space:nowrap">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo);white-space:nowrap">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
-          <span style="margin-left:auto;align-self:center;display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg, rgba(63,185,80,.16), rgba(63,185,80,.06));border:1px solid rgba(63,185,80,.4);border-radius:20px;white-space:nowrap;flex-shrink:0;font-size:12px;box-shadow:0 2px 8px rgba(63,185,80,.15)">
-            <span style="font-size:14px">🧰</span>
-            <span style="color:var(--texto-dim);font-weight:600;letter-spacing:.2px">Prestadas hoy</span>
-            <span id="tab-total-herramientas-hoy" style="font-weight:800;color:var(--verde);font-size:14px">—</span>
-          </span>
         </div>
 
         <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
@@ -3250,9 +3271,9 @@ function renderTabla() {
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-azul" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
-                ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--azul);font-weight:700">✅ Retornada</span>` : ""}
+                ${s.estado === "retornada" ? `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span style="font-size:11px;color:var(--rojo);font-weight:700">❌ Cancelada</span>` : ""}
               </div>
             </td>
@@ -3433,7 +3454,7 @@ window.abrirModal = function(id) {
   bCerrar.onclick = cerrarModal;
   if (s.estado === "pendiente") {
     const b = document.createElement("button");
-    b.className = "btn btn-verde"; b.textContent = "✓ Entregar";
+    b.className = "btn btn-azul"; b.textContent = "✓ Entregar";
     b.onclick = () => { cerrarModal(); entregar(id); };
     acciones.appendChild(b);
     const bc = document.createElement("button");
