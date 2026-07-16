@@ -252,8 +252,10 @@
     overflow-x: hidden;
     padding: 8px 0;
     transition: all .25s ease;
+    display: flex;
+    flex-direction: column;
   }
-
+  .sb-spacer { flex: 1; min-height: 20px; }
   /* Logo en sidebar */
   .sb-brand {
     display: flex;
@@ -773,16 +775,27 @@
   .filtros { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; }
 
   .filtros input, .filtros select {
-    padding: 6px 11px;
+    padding: 9px 13px;
     background: var(--bg);
-    border: 1px solid var(--borde);
-    border-radius: 7px;
+    border: 1.5px solid var(--borde);
+    border-radius: 10px;
     color: var(--texto);
     font-size: 12px;
-    transition: border-color .15s;
+    font-family: inherit;
+    transition: border-color .2s, box-shadow .2s;
   }
-
-  .filtros input:focus, .filtros select:focus { outline: none; border-color: var(--verde); }
+  .filtros input:focus, .filtros select:focus {
+    outline: none;
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px var(--verde-glow);
+  }
+  .buscar-wrap { position: relative; }
+  .buscar-wrap input { padding-left: 34px; }
+  .buscar-wrap .buscar-icono {
+    position: absolute; left: 11px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 13px; color: var(--texto-dim); pointer-events: none;
+  }
 
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
 
@@ -1190,6 +1203,7 @@
       <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
+      <div class="sb-spacer"></div>
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
 
@@ -1297,10 +1311,10 @@
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
-              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s">
+              style="width:100%">
             <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
           </div>
-          <select id="filtro-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s;min-width:150px;flex-shrink:0">
+          <select id="filtro-estado" class="filtros" style="min-width:150px;flex-shrink:0">
             <option value="">Estado: Todos</option>
             <option value="pendiente">Pendiente</option>
             <option value="entregada">Entregada</option>
@@ -1308,7 +1322,7 @@
             <option value="cancelada">Cancelada</option>
             <option value="incidencia">⚠️ Con Incidencia</option>
           </select>
-          <select id="filtro-profesor" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px;transition:border-color .2s,background .2s;min-width:150px;flex-shrink:0">
+          <select id="filtro-profesor" class="filtros" style="min-width:150px;flex-shrink:0">
             <option value="">Profesor: Todos</option>
           </select>
         </div>
@@ -1374,7 +1388,7 @@
             <div class="her-chip" data-pp-estado="activo" style="color:var(--verde)" onclick="ppFiltrarChip('activo',this)">🟢 Activos</div>
             <div class="her-chip" data-pp-estado="retornado" style="color:var(--texto-dim)" onclick="ppFiltrarChip('retornado',this)">⚪ Retornados</div>
           </div>
-          <input type="text" id="pp-buscar" placeholder="🔍 Buscar profesor...">
+          <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
         </div>
 
         <div id="pp-tabla-wrap" class="pp-grid">
@@ -1398,7 +1412,7 @@
           <div class="tabla-header">
             <h3>Historial de herramientas prestadas</h3>
             <div class="filtros">
-              <input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px">
+              <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px"></div>
               <select id="ext-filtro-estado">
                 <option value="">Todos los estados</option>
                 <option value="prestado">Prestado</option>
@@ -1419,6 +1433,8 @@
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
           <div style="display:flex;gap:8px">
+            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel">📊 Excel</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF">📄 PDF</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva">📦 Entrada de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
           </div>
@@ -1428,7 +1444,7 @@
 
         <div class="her-toolbar">
           <div class="her-categoria-chips" id="her-chips"></div>
-          <input type="text" id="her-buscar" placeholder="🔍 Buscar herramienta...">
+          <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="her-buscar" placeholder="Buscar herramienta..."></div>
         </div>
 
         <div id="her-cfg-wrap" class="her-grid">
@@ -1490,8 +1506,8 @@
         <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..."
-              style="width:100%;padding:8px 12px 8px 34px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-            <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:14px">🔍</span>
+              style="width:100%;padding:10px 14px 10px 38px;background:var(--card);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:13px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:15px">🔍</span>
           </div>
           <select id="hist-tipo" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
             <option value="">Tipo: Todos</option>
@@ -1548,7 +1564,10 @@
           <div class="tabla-header">
             <h3>Lista de profesores</h3>
             <div class="filtros">
-              <input type="text" id="prof-buscar" placeholder="Buscar profesor...">
+              <div style="position:relative">
+                <input type="text" id="prof-buscar" placeholder="🔍  Buscar profesor..." style="padding:8px 14px 8px 36px;border:1.5px solid var(--borde);border-radius:10px;font-size:12px;background:var(--bg);color:var(--texto);width:200px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
+                <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--texto-dim)">🔍</span>
+              </div>
             </div>
           </div>
           <div class="prof-resumen" id="prof-resumen"></div>
@@ -1585,7 +1604,7 @@
           <div class="tabla-header">
             <h3>Cuentas del sistema</h3>
             <div class="filtros">
-              <input type="text" id="usr-buscar" placeholder="Buscar usuario...">
+              <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="usr-buscar" placeholder="Buscar usuario..."></div>
             </div>
           </div>
           <div class="usr-resumen" id="usr-resumen"></div>
@@ -2912,14 +2931,18 @@ window.dashIrDia = function(fechaIso) {
   }, 80);
 };
 
-async function cargarDashboard() {
+function cargarDashboard() {
+  // Escuchar en tiempo real las dos colecciones
+  onSnapshot(collection(db, "solicitudes"), snapSol => {
+    const todas = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
+    getDocs(collection(db, "prestamos_profesores")).then(snapProf => {
+      _actualizarDashboard(todas, snapProf.docs.map(d => ({ id: d.id, ...d.data() })));
+    });
+  });
+}
+
+async function _actualizarDashboard(todas, prestProf) {
   try {
-    const [snapSol, snapProf] = await Promise.all([
-      getDocs(collection(db, "solicitudes")),
-      getDocs(collection(db, "prestamos_profesores"))
-    ]);
-    const todas     = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
-    const prestProf = snapProf.docs.map(d => ({ id: d.id, ...d.data() }));
 
     const fechaDe = (ts) => ts?.toDate ? ts.toDate() : new Date(ts||0);
     const esMismoDiaQue = (ts, ref) => {
@@ -6362,6 +6385,74 @@ window.eliminarUsuario = async function(id, nombre) {
 document.getElementById("modal-usuario-cfg")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-usuario-cfg")) cerrarModalUsuario();
 });
+
+// ── EXPORTAR HERRAMIENTAS ──
+window.exportarHerramientasExcel = function() {
+  const lista = _herListaActual || [];
+  if (!lista.length) { mostrarToast("No hay herramientas que exportar", "rojo"); return; }
+  const datos = lista.map((h, i) => ({
+    "#": i + 1,
+    "Nombre": h.nombre || "—",
+    "Categoría": h.categoria || "Sin categoría",
+    "Cantidad disponible": h.cantidadDisponible ?? 0,
+    "Código": h.codigo || "—",
+    "Estado": (h.cantidadDisponible ?? 0) === 0 ? "Sin stock" : (h.cantidadDisponible ?? 0) <= 2 ? "Stock bajo" : "OK"
+  }));
+  const wb = XLSX.utils.book_new();
+  const ws = XLSX.utils.json_to_sheet(datos);
+  ws["!cols"] = [{ wch: 4 }, { wch: 28 }, { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 12 }];
+  XLSX.utils.book_append_sheet(wb, ws, "Inventario");
+  XLSX.writeFile(wb, `inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.xlsx`);
+  mostrarToast("✅ Inventario exportado a Excel");
+};
+
+window.exportarHerramientasPDF = function() {
+  const lista = _herListaActual || [];
+  if (!lista.length) { mostrarToast("No hay herramientas que exportar", "rojo"); return; }
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const fecha = new Date().toLocaleDateString("es-DO", { day:"2-digit", month:"long", year:"numeric" });
+  doc.setFillColor(27, 94, 56);
+  doc.rect(0, 0, 210, 28, "F");
+  doc.setTextColor(255, 255, 255);
+  doc.setFontSize(16); doc.setFont(undefined, "bold");
+  doc.text("Inventario de Herramientas", 14, 12);
+  doc.setFontSize(9); doc.setFont(undefined, "normal");
+  doc.text(`Taller Mecánica Industrial — UTESA    Generado: ${fecha}`, 14, 21);
+  doc.setTextColor(0, 0, 0);
+  doc.autoTable({
+    startY: 34,
+    head: [["#", "Nombre", "Categoría", "Cant.", "Estado"]],
+    body: lista.map((h, i) => [
+      i + 1,
+      h.nombre || "—",
+      h.categoria || "Sin categoría",
+      h.cantidadDisponible ?? 0,
+      (h.cantidadDisponible ?? 0) === 0 ? "Sin stock" : (h.cantidadDisponible ?? 0) <= 2 ? "Stock bajo" : "OK"
+    ]),
+    headStyles: { fillColor: [27, 94, 56], textColor: 255, fontStyle: "bold", fontSize: 9 },
+    bodyStyles: { fontSize: 8.5 },
+    alternateRowStyles: { fillColor: [234, 244, 238] },
+    columnStyles: { 0: { halign: "center", cellWidth: 10 }, 3: { halign: "center", cellWidth: 18 }, 4: { halign: "center", cellWidth: 24 } },
+    margin: { left: 14, right: 14 },
+    didParseCell: (data) => {
+      if (data.column.index === 4 && data.row.section === "body") {
+        const v = data.cell.raw;
+        if (v === "Sin stock")  data.cell.styles.textColor = [217, 48, 37];
+        if (v === "Stock bajo") data.cell.styles.textColor = [210, 153, 34];
+        if (v === "OK")         data.cell.styles.textColor = [27, 94, 56];
+      }
+    }
+  });
+  const pags = doc.internal.getNumberOfPages();
+  for (let i = 1; i <= pags; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8); doc.setTextColor(150);
+    doc.text(`Página ${i} de ${pags}`, 196, 290, { align: "right" });
+  }
+  doc.save(`inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.pdf`);
+  mostrarToast("✅ Inventario exportado a PDF");
+};
 
 // ── TEMA ──
 function aplicarTema(tema) {
