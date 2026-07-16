@@ -3874,19 +3874,42 @@ window.renderRetornoPickerGrid = function() {
   }).join("");
 };
 
-window.retornoPickerAgregar = async function(nombre) {
-  if (!solicitudActivaId) return;
-  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
-  if (!s) return;
-  const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
-  const listaFinal = [...base, { nombre, cantidad: 1, adicional: true, estadoEntrega: "entregada" }];
-  try {
-    await updateDoc(doc(db, "solicitudes", s.id), { herramientasEntregadas: listaFinal });
-    try { await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: listaFinal }); } catch(e) {}
-    s.herramientasEntregadas = listaFinal;
-    retornar(s.id);
-    mostrarToast("✓ Herramienta adicional agregada al retorno");
-  } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
+window.retornoPickerAgregar = function(nombre) {
+  // Solo agrega al recibo visual (lista derecha), no guarda en Firestore todavía
+  const lista = document.getElementById("lista-retorno");
+  if (!lista) return;
+
+  // Verificar si ya está en el recibo
+  const yaExiste = [...lista.querySelectorAll(".h-nombre")].some(el => el.textContent.trim() === nombre);
+  if (yaExiste) { mostrarToast("Ya está en el recibo", "rojo"); return; }
+
+  const idx = lista.querySelectorAll(".fila-herramienta").length;
+  const div = document.createElement("div");
+  div.className = "fila-herramienta";
+  div.dataset.adicional = "1";
+  div.innerHTML = `
+    <input type="checkbox" id="chk-r-${idx}" data-idx="${idx}" checked>
+    <span class="h-nombre">${nombre} <span style="font-size:10px;color:var(--azul)">(adicional)</span></span>
+    <span class="h-cant" style="color:var(--verde);font-weight:700">x1</span>
+    <select class="select-estado" id="estado-r-${idx}">
+      <option value="retornada">✅ Retornada</option>
+      <option value="dañada">🔴 Dañada</option>
+      <option value="no_retornada">⚠️ No retornada</option>
+      <option value="perdida">❌ Perdida</option>
+    </select>
+    <button onclick="this.closest('.fila-herramienta').remove()" style="background:none;border:none;color:var(--rojo);cursor:pointer;font-size:16px;padding:0 4px">✕</button>
+  `;
+  lista.appendChild(div);
+
+  // Sincronizar checkbox con select
+  const chk = div.querySelector("input[type='checkbox']");
+  const sel = div.querySelector("select");
+  chk.addEventListener("change", () => {
+    if (!chk.checked) sel.value = "no_retornada";
+    else if (sel.value === "no_retornada") sel.value = "retornada";
+  });
+
+  mostrarToast(`✓ ${nombre} agregada al recibo`);
 };
 
 window.toggleMarcarTodasRetorno = function() {
@@ -3916,13 +3939,18 @@ window.confirmarRetorno = async function() {
   const resultado = [];
   const incidencias = [];
 
-  herramientas.forEach((h, i) => {
-    const chk = document.getElementById(`chk-r-${i}`);
-    const sel = document.getElementById(`estado-r-${i}`);
+  // Leer todas las filas del DOM (incluye adicionales agregadas desde el picker)
+  const todasFilas = document.querySelectorAll("#lista-retorno .fila-herramienta");
+  todasFilas.forEach((fila, i) => {
+    const nombreEl = fila.querySelector(".h-nombre");
+    const nombre = nombreEl ? nombreEl.textContent.replace(/\(adicional\)/i,"").trim() : (herramientas[i]?.nombre || "");
+    const chk = fila.querySelector("input[type='checkbox']");
+    const sel = fila.querySelector("select");
     const estado = sel ? sel.value : (chk?.checked ? "retornada" : "no_retornada");
-    resultado.push({ ...h, estadoRetorno: estado });
+    const esAdicional = fila.dataset.adicional === "1";
+    resultado.push({ nombre, cantidad: 1, adicional: esAdicional, estadoRetorno: estado });
     if (estado !== "retornada") {
-      incidencias.push({ herramienta: h.nombre, tipo: estado });
+      incidencias.push({ herramienta: nombre, tipo: estado });
     }
   });
 
