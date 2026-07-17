@@ -3384,7 +3384,7 @@ function renderTabla() {
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-azul" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "retornada" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center">👍 Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span class="badge badge-cancelada">❌ Cancelada</span>` : ""}
@@ -3687,7 +3687,7 @@ function renderReciboEntrega() {
       <div style="flex:1;height:1px;background:var(--borde)"></div>
     </div>` + nuevos.map(([nombre, cant]) => `
       <div class="fila-herramienta">
-        ${herFotoHtmlPorNombre(nombre)}
+        ${herFotoHtmlPorNombre(nombre, 40)}
         <span class="h-nombre">${escapeHtml(nombre)}</span>
         <button type="button" class="btn btn-outline" onclick="entregaAdicionalAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
         <span class="h-cant">x${cant}</span>
@@ -4435,7 +4435,7 @@ function herFotoHtmlPorNombre(nombre, size = 32) {
       + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0;cursor:zoom-in"'
       + ' onerror="this.style.display=\'none\'">';
   }
-  return '';
+  return '<span style="width:' + s + ';height:' + s + ';border-radius:' + r + ';background:var(--card2);border:1px solid var(--borde);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:' + Math.round(size*0.55) + 'px">🔧</span>';
 }
 
 window.anular = async function(id) {
