@@ -4255,7 +4255,10 @@ window.confirmarAdicionalesRetorno = async function() {
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
   const adicionales = [...document.querySelectorAll("#lista-retorno .fila-herramienta[data-adicional='1']")];
-  if (!adicionales.length) { mostrarToast("No hay adicionales que guardar", "rojo"); return; }
+  if (!adicionales.length) {
+    await confirmarPersonalizado("No hay ninguna herramienta adicional seleccionada para guardar.");
+    return;
+  }
   const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
   const nuevas = adicionales.map(f => ({ nombre: f.querySelector(".h-nombre").childNodes[0].textContent.trim(), cantidad: 1, adicional: true, estadoEntrega: "entregada" }));
   const listaFinal = [...base, ...nuevas];
