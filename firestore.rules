@@ -155,10 +155,16 @@ service cloud.firestore {
         request.resource.data.herramientas is list &&
         request.resource.data.herramientas.size() > 0 && request.resource.data.herramientas.size() <= 20 &&
         herramientasValidas(request.resource.data.herramientas) &&
+        // Solo puede AGREGAR: el arreglo nuevo debe seguir conteniendo todo
+        // lo que ya estaba, para que no se pueda borrar ni reemplazar lo
+        // que el estudiante (o el staff) ya había registrado.
+        request.resource.data.herramientas.hasAll(resource.data.herramientas) &&
         (!("herramientasEntregadas" in request.resource.data) ||
           (request.resource.data.herramientasEntregadas is list &&
            request.resource.data.herramientasEntregadas.size() <= 20 &&
-           herramientasValidas(request.resource.data.herramientasEntregadas))) &&
+           herramientasValidas(request.resource.data.herramientasEntregadas) &&
+           (!("herramientasEntregadas" in resource.data) ||
+             request.resource.data.herramientasEntregadas.hasAll(resource.data.herramientasEntregadas)))) &&
         request.resource.data.tokenUsado is string &&
         request.resource.data.tokenUsado == resource.data.token
       );
