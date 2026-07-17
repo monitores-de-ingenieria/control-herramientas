@@ -4030,6 +4030,11 @@ window.guardarCambiosPendiente = async function() {
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
 
+  if (Object.keys(_entregaAdicionales).length === 0) {
+    await confirmarPersonalizado("No has agregado ninguna herramienta adicional para guardar.");
+    return;
+  }
+
   const checks = document.querySelectorAll("#lista-entrega input[type='checkbox']");
   const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
   const lista = [];
@@ -4039,11 +4044,6 @@ window.guardarCambiosPendiente = async function() {
   Object.entries(_entregaAdicionales).forEach(([nombre, cantidad]) => {
     lista.push({ nombre, cantidad, adicional: true });
   });
-
-  if (lista.length === 0) {
-    await confirmarPersonalizado("No hay ninguna herramienta seleccionada para guardar.");
-    return;
-  }
 
   try {
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientas: lista });
