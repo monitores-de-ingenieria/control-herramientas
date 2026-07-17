@@ -974,6 +974,89 @@
 
   .modal-acciones { display: flex; gap: 8px; margin-top: 18px; justify-content: flex-end; }
 
+  /* ═══ Selector grande de herramientas adicionales (dos paneles) ═══ */
+  .picker-modal {
+    max-width: 1180px; width: 94vw; height: 84vh; max-height: 84vh;
+    padding: 0; overflow: hidden;
+    display: flex; flex-direction: column;
+  }
+  .picker-header {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 18px 24px; border-bottom: 1px solid var(--borde);
+    font-size: 16px; font-weight: 800; flex-shrink: 0;
+  }
+  .picker-body { flex: 1; display: flex; min-height: 0; }
+
+  .picker-main { flex: 1.7; min-width: 0; display: flex; flex-direction: column; padding: 20px 22px; border-right: 1px solid var(--borde); }
+  .picker-search-wrap { position: relative; margin-bottom: 16px; flex-shrink: 0; }
+  .picker-search-wrap input {
+    width: 100%; padding: 13px 14px 13px 42px;
+    background: var(--bg); border: 1.5px solid var(--borde); border-radius: 10px;
+    color: var(--texto); font-size: 14.5px;
+  }
+  .picker-search-wrap input:focus { outline: none; border-color: var(--verde); }
+  .picker-search-icono { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); opacity: .5; font-size: 16px; pointer-events: none; }
+
+  .picker-grid {
+    flex: 1; overflow-y: auto; padding-right: 8px; align-content: start;
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(195px, 1fr)); gap: 16px;
+  }
+  .picker-card {
+    background: var(--bg); border: 1.5px solid var(--borde); border-radius: 12px;
+    overflow: hidden; cursor: pointer; position: relative;
+    transition: transform .15s, box-shadow .15s, border-color .15s;
+  }
+  .picker-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(0,0,0,.35); border-color: var(--verde); }
+  .picker-card.en-carrito { border-color: var(--verde); box-shadow: 0 0 0 2px rgba(63,185,80,.35); }
+  .picker-card .picker-foto { height: 136px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 42px; position: relative; }
+  .picker-card .picker-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .picker-card .picker-badge {
+    position: absolute; top: 8px; right: 8px; background: var(--verde); color: #fff;
+    font-weight: 800; font-size: 12px; min-width: 22px; height: 22px; border-radius: 20px;
+    display: flex; align-items: center; justify-content: center; padding: 0 6px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.45);
+  }
+  .picker-card .picker-nombre { padding: 11px 12px 13px; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: space-between; gap: 6px; }
+  .picker-card .picker-stepper { display: flex; align-items: center; gap: 5px; flex-shrink: 0; }
+  .picker-card .picker-stepper button {
+    width: 24px; height: 24px; border-radius: 50%; border: none; cursor: pointer;
+    background: var(--card2); color: var(--texto); font-size: 14px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .picker-card .picker-stepper button.mas { background: var(--verde); color: #fff; }
+  .picker-card-custom {
+    grid-column: 1 / -1; display: flex; align-items: center; gap: 10px;
+    padding: 14px 16px; border: 1.5px dashed var(--borde); border-radius: 12px;
+    color: var(--texto-dim); font-size: 13px; cursor: pointer; transition: border-color .15s, color .15s;
+  }
+  .picker-card-custom:hover { border-color: var(--verde); color: var(--verde); }
+  .picker-vacio { grid-column: 1 / -1; text-align: center; padding: 40px 0; color: var(--texto-dim); font-size: 13px; }
+
+  /* Panel derecho: "ficha de picking" — el elemento distintivo de este selector */
+  .picker-cart { width: 300px; flex-shrink: 0; display: flex; flex-direction: column; background: var(--bg); }
+  .picker-cart-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 18px 14px; font-size: 12.5px; font-weight: 800; color: var(--texto-dim);
+    text-transform: uppercase; letter-spacing: .06em;
+  }
+  .picker-cart-count { background: var(--verde); color: #fff; border-radius: 20px; padding: 2px 10px; font-size: 12px; font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; }
+  .picker-cart-perforado { height: 0; border-top: 2px dashed var(--borde); margin: 0 18px 4px; }
+  .picker-cart-lista { flex: 1; overflow-y: auto; padding: 10px 14px 14px; display: flex; flex-direction: column; gap: 8px; }
+  .picker-cart-item { display: flex; align-items: center; gap: 8px; padding: 9px 10px; background: var(--card); border: 1px solid var(--borde); border-radius: 8px; font-size: 12.5px; }
+  .picker-cart-item .nombre { flex: 1; font-weight: 600; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .picker-cart-item .cant { font-family: ui-monospace, "SFMono-Regular", Consolas, monospace; font-weight: 700; min-width: 16px; text-align: center; }
+  .picker-cart-item button { width: 22px; height: 22px; border-radius: 50%; border: none; cursor: pointer; background: var(--card2); color: var(--texto); font-size: 13px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+  .picker-cart-item button.mas { background: var(--verde); color: #fff; }
+  .picker-cart-item button.quitar { background: rgba(239,68,68,0.15); color: var(--rojo); }
+  .picker-cart-vacio { padding: 34px 16px; text-align: center; color: var(--texto-dim); font-size: 12.5px; line-height: 1.5; }
+  .picker-cart-footer { padding: 14px 16px; border-top: 1px dashed var(--borde); display: flex; gap: 8px; }
+  .picker-cart-footer .btn { flex: 1; justify-content: center; }
+  @media (max-width: 860px) {
+    .picker-body { flex-direction: column; }
+    .picker-main { border-right: none; border-bottom: 1px solid var(--borde); }
+    .picker-cart { width: 100%; }
+  }
+
   .grid-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
 
   /* ═══════════════════════════════════════════
@@ -1904,20 +1987,31 @@
 </div>
 
 <div class="modal-overlay" id="modal-fotos-solicitud" style="z-index:200">
-  <div class="modal" style="max-width:760px">
-    <div class="modal-titulo">
+  <div class="modal picker-modal">
+    <div class="picker-header">
       <span id="sol-picker-titulo">📷 Elegir herramientas adicionales</span>
       <button class="modal-cerrar" onclick="cerrarPickerFotosSolicitud()">✕</button>
     </div>
-    <div class="modal-campo" style="display:flex;gap:8px;align-items:center">
-      <input type="text" id="sol-picker-buscar" placeholder="Buscar herramienta..." oninput="renderPickerFotosSolicitud()"
-        style="flex:1;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-      <button type="button" class="btn btn-outline" onclick="agregarFilaAdicionalManual()" style="white-space:nowrap">✏️ Escribir</button>
-    </div>
-    <div id="sol-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
-    <div class="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarPickerFotosSolicitud()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarPickerFotosSolicitud()">✅ Agregar seleccionadas</button>
+    <div class="picker-body">
+      <div class="picker-main">
+        <div class="picker-search-wrap">
+          <span class="picker-search-icono">🔍</span>
+          <input type="text" id="sol-picker-buscar" placeholder="Buscar herramienta por nombre..." oninput="renderPickerFotosSolicitud()">
+        </div>
+        <div id="sol-picker-grid" class="picker-grid"></div>
+      </div>
+      <div class="picker-cart">
+        <div class="picker-cart-header">
+          <span>🧾 Ficha de picking</span>
+          <span id="sol-picker-cart-count" class="picker-cart-count">0</span>
+        </div>
+        <div class="picker-cart-perforado"></div>
+        <div id="sol-picker-cart-lista" class="picker-cart-lista"></div>
+        <div class="picker-cart-footer">
+          <button class="btn btn-outline" onclick="cerrarPickerFotosSolicitud()">Cancelar</button>
+          <button class="btn btn-verde" onclick="confirmarPickerFotosSolicitud()">✅ Agregar</button>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -3731,40 +3825,81 @@ window.cerrarPickerFotosSolicitud = function() {
 
 window.renderPickerFotosSolicitud = function renderPickerFotosSolicitud() {
   const wrap = document.getElementById("sol-picker-grid");
-  const q = (document.getElementById("sol-picker-buscar").value || "").toLowerCase();
+  const qCruda = document.getElementById("sol-picker-buscar").value || "";
+  const q = qCruda.toLowerCase().trim();
   const lista = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q));
-  if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>';
-    return;
-  }
-  wrap.innerHTML = lista.map(h => {
+
+  let html = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
     const icono = h.icono || '🔧';
     const foto = fotoUrl
-      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
-      : `<span class="her-foto-fallback">${icono}</span>`;
+      ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='${icono}'">`
+      : icono;
     const cant = _solPickerCant[h.nombre] || 0;
     const nombreEsc = escapeAttr(h.nombre);
+    const badge = cant > 0 ? `<span class="picker-badge">${cant}</span>` : "";
     return `
-      <div class="her-card${cant > 0 ? ' stock-bajo' : ''}">
-        <div class="her-foto-wrap">${foto}</div>
-        <div class="her-cuerpo">
-          <div class="her-nombre">${escapeHtml(h.nombre)}</div>
-          <div style="display:flex;align-items:center;justify-content:space-between;gap:6px">
-            <button type="button" onclick="solPickerAjustar('${nombreEsc}',-1)" class="btn btn-outline" style="padding:4px 10px;flex:1">−</button>
-            <span style="min-width:18px;text-align:center;font-weight:700">${cant}</span>
-            <button type="button" onclick="solPickerAjustar('${nombreEsc}',1)" class="btn btn-outline" style="padding:4px 10px;flex:1">+</button>
-          </div>
+      <div class="picker-card${cant > 0 ? ' en-carrito' : ''}" onclick="solPickerAjustar('${nombreEsc}',1)">
+        <div class="picker-foto">${foto}${badge}</div>
+        <div class="picker-nombre">
+          <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(h.nombre)}</span>
+          ${cant > 0 ? `<span class="picker-stepper" onclick="event.stopPropagation()">
+            <button type="button" onclick="solPickerAjustar('${nombreEsc}',-1)">−</button>
+            <button type="button" class="mas" onclick="solPickerAjustar('${nombreEsc}',1)">+</button>
+          </span>` : ""}
         </div>
+      </div>`;
+  }).join("");
+
+  // Si lo escrito no coincide con nada del catálogo, se ofrece agregarlo
+  // tal cual (reemplaza el viejo botón aparte "✏️ Escribir").
+  const yaExiste = q && _herListaActual.some(h => h.nombre.toLowerCase() === q);
+  if (q && !yaExiste) {
+    html += `<div class="picker-card-custom" onclick="solPickerAjustar('${escapeAttr(qCruda.trim())}',1)">
+      ➕&nbsp; Agregar "<b>${escapeHtml(qCruda.trim())}</b>" de todas formas (no está en el catálogo)
+    </div>`;
+  }
+  if (!lista.length && !q) {
+    html = '<div class="picker-vacio">🧰 No hay herramientas en el catálogo todavía.</div>';
+  }
+
+  wrap.innerHTML = html;
+  renderPickerCart();
+};
+
+function renderPickerCart() {
+  const wrap = document.getElementById("sol-picker-cart-lista");
+  const countEl = document.getElementById("sol-picker-cart-count");
+  const seleccion = Object.entries(_solPickerCant);
+  countEl.textContent = seleccion.reduce((a, [, c]) => a + c, 0);
+  if (!seleccion.length) {
+    wrap.innerHTML = '<div class="picker-cart-vacio">Toca una herramienta a la izquierda<br>para agregarla aquí.</div>';
+    return;
+  }
+  wrap.innerHTML = seleccion.map(([nombre, cant]) => {
+    const nombreEsc = escapeAttr(nombre);
+    return `
+      <div class="picker-cart-item">
+        <span class="nombre" title="${escapeAttr(nombre)}">${escapeHtml(nombre)}</span>
+        <button type="button" onclick="solPickerAjustar('${nombreEsc}',-1)">−</button>
+        <span class="cant">${cant}</span>
+        <button type="button" class="mas" onclick="solPickerAjustar('${nombreEsc}',1)">+</button>
+        <button type="button" class="quitar" onclick="solPickerQuitar('${nombreEsc}')" title="Quitar">🗑</button>
       </div>`;
   }).join("");
 }
 
 window.solPickerAjustar = function(nombre, delta) {
+  if (!nombre) return;
   const actual = _solPickerCant[nombre] || 0;
   const nuevo = Math.max(0, actual + delta);
   if (nuevo === 0) delete _solPickerCant[nombre];
   else _solPickerCant[nombre] = nuevo;
+  renderPickerFotosSolicitud();
+};
+
+window.solPickerQuitar = function(nombre) {
+  delete _solPickerCant[nombre];
   renderPickerFotosSolicitud();
 };
 
