@@ -2182,8 +2182,8 @@
         <div id="lista-retorno" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-wrap:wrap;gap:6px">
           <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()">Cerrar</button>
-          <button class="btn btn-verde" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px">➕ Confirmar adicionales</button>
-          <button class="btn btn-azul" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante">↩ Confirmar Retorno</button>
+          <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px;color:var(--azul);border-color:var(--azul)">➕ Confirmar adicionales</button>
+          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="font-weight:800">↩ Confirmar Retorno</button>
         </div>
       </div>
     </div>
@@ -4277,6 +4277,10 @@ window.confirmarRetorno = async function() {
   if (!solicitudActivaId) return;
   const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
   if (!s) return;
+
+  if (!(await confirmarPersonalizado("¿Confirmar el retorno de todas las herramientas de esta solicitud? Esta acción no se puede deshacer."))) {
+    return;
+  }
 
   const herramientas = s.herramientasEntregadas || s.herramientas || [];
   const resultado = [];
