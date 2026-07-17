@@ -257,25 +257,6 @@
   }
   .sb-spacer { flex: 1; min-height: 20px; }
 
-  .prestadas-flotante {
-    position: fixed;
-    bottom: 18px;
-    left: 232px;
-    display: flex; align-items: center; gap: 8px;
-    padding: 9px 16px;
-    background: linear-gradient(135deg, rgba(63,185,80,.18), rgba(63,185,80,.07));
-    border: 1px solid rgba(63,185,80,.45);
-    border-radius: 22px;
-    box-shadow: 0 4px 14px rgba(0,0,0,.25), 0 2px 8px rgba(63,185,80,.15);
-    backdrop-filter: blur(6px);
-    z-index: 60;
-    transition: left .25s ease;
-  }
-  .shell.sidebar-colapsado .prestadas-flotante { left: 72px; }
-  .prestadas-flotante .pf-icono { font-size: 16px; }
-  .prestadas-flotante .pf-texto { color: var(--texto-dim); font-weight: 600; font-size: 12px; letter-spacing: .2px; white-space: nowrap; }
-  .prestadas-flotante .pf-num { font-weight: 800; color: var(--verde); font-size: 15px; }
-  @media (max-width: 720px) { .prestadas-flotante { display: none; } }
   /* Logo en sidebar */
   .sb-brand {
     display: flex;
@@ -1319,12 +1300,6 @@
 
     </div>
 
-    <div class="prestadas-flotante" title="Herramientas prestadas hoy">
-      <span class="pf-icono">🧰</span>
-      <span class="pf-texto">Prestadas hoy</span>
-      <span class="pf-num" id="tab-total-herramientas-hoy">—</span>
-    </div>
-
     <div class="contenido">
 
       <div class="vista" id="vista-dashboard">
@@ -1456,6 +1431,11 @@
           <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde);white-space:nowrap">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul);white-space:nowrap">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo);white-space:nowrap">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+          <span style="margin-left:auto;align-self:center;display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg, rgba(63,185,80,.16), rgba(63,185,80,.06));border:1px solid rgba(63,185,80,.4);border-radius:20px;white-space:nowrap;flex-shrink:0;font-size:12px;box-shadow:0 2px 8px rgba(63,185,80,.15)" title="Herramientas prestadas hoy">
+            <span style="font-size:14px">🧰</span>
+            <span style="color:var(--texto-dim);font-weight:600;letter-spacing:.2px">Prestadas hoy</span>
+            <span id="tab-total-herramientas-hoy" style="font-weight:800;color:var(--verde);font-size:14px">—</span>
+          </span>
         </div>
 
         <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
@@ -3420,7 +3400,9 @@ function renderTabla() {
   const desde = inicio + 1;
   const hasta = Math.min(inicio + porPagina, total);
   document.getElementById("pag-info").textContent = total > 0
-    ? `Mostrando ${desde}–${hasta} de ${total} solicitud${total !== 1 ? "es" : ""}`
+    ? (desde === 1 && hasta === total
+        ? `${total} solicitud${total !== 1 ? "es" : ""} en total`
+        : `Mostrando ${desde}–${hasta} de ${total} solicitud${total !== 1 ? "es" : ""}`)
     : "";
   const btns = document.getElementById("pag-btns");
   btns.innerHTML = "";
@@ -6996,7 +6978,9 @@ function histRenderTabla() {
   const totalPags = Math.ceil(total / histPorPagina);
   const desde = inicio + 1;
   const hasta = Math.min(inicio + histPorPagina, total);
-  document.getElementById("hist-pag-info").textContent = `Mostrando ${desde}–${hasta} de ${total} registro${total !== 1 ? "s" : ""}`;
+  document.getElementById("hist-pag-info").textContent = (desde === 1 && hasta === total)
+    ? `${total} registro${total !== 1 ? "s" : ""} en total`
+    : `Mostrando ${desde}–${hasta} de ${total} registro${total !== 1 ? "s" : ""}`;
   const btns = document.getElementById("hist-pag-btns");
   btns.innerHTML = "";
   for (let p = 1; p <= totalPags; p++) {
