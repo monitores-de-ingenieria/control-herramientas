@@ -867,6 +867,8 @@
   .btn-rojo   { background: rgba(248,81,73,0.1); color: var(--rojo); border: 1px solid rgba(248,81,73,0.2); }
   .btn-rojo:hover { background: var(--rojo); color: #fff; border-color: var(--rojo); transform: translateY(-1px); }
   .btn-azul   { background: rgba(56,139,253,0.1); color: var(--azul); border: 1px solid rgba(56,139,253,0.2); }
+  .btn-amarillo { background: rgba(210,153,34,0.12); color: var(--amarillo); border: 1px solid rgba(210,153,34,0.3); }
+  .btn-amarillo:hover { background: var(--amarillo); color: #000; border-color: var(--amarillo); transform: translateY(-1px); }
   .btn-azul:hover { background: var(--azul); color: #fff; border-color: var(--azul); transform: translateY(-1px); }
   .btn:disabled { opacity: .35; cursor: not-allowed; }
 
@@ -3376,7 +3378,7 @@ function renderTabla() {
             <td style="font-size:12px">${s.laboratorio || "—"}</td>
             <td style="white-space:nowrap">
               <span style="display:inline-flex;align-items:center;gap:5px">
-                <span style="width:20px;height:20px;border-radius:50%;background:var(--gradiente-verde);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${(s.herramientas||[]).length}</span>
+                <span style="width:20px;height:20px;border-radius:50%;background:var(--gradiente-verde);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0">${((s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas||[])).length}</span>
                 <span style="font-size:11px;color:var(--texto-dim)">herramientas</span>
               </span>
             </td>
@@ -3384,7 +3386,7 @@ function renderTabla() {
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-amarillo" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "retornada" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center">👍 Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span class="badge badge-cancelada">❌ Cancelada</span>` : ""}
@@ -3511,6 +3513,7 @@ window.abrirModal = function(id) {
   }
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
   const herBase = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const totalHerBase = herBase.reduce((sum, h) => sum + (h.cantidad || 1), 0);
   const herramientas = herBase.map(h =>
     `<div class="modal-herramienta-item"><span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${escapeHtml(h.nombre)}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span></span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
@@ -3528,7 +3531,7 @@ window.abrirModal = function(id) {
     <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
     <div class="modal-campo"><label>Fecha</label><div class="valor">${formatFecha(s.creadoEn)}</div></div>
     <div class="modal-campo">
-      <label>Herramientas solicitadas</label>
+      <label>Herramientas solicitadas <span style="color:var(--verde);font-weight:800">(${totalHerBase} en total)</span></label>
       <div class="modal-herramientas">${herramientas || "—"}</div>
     </div>
     ${s.tieneIncidencias ? `
@@ -4226,7 +4229,7 @@ window.retornoPickerAgregar = function(nombre) {
 
   // Scroll al final para ver la herramienta recién agregada
   lista.scrollTop = lista.scrollHeight;
-  mostrarToast(`✓ ${nombre} agregada al recibo`);
+  mostrarToast(`✓ ${nombre} agregada a la solicitud`);
 };
 
 window.toggleMarcarTodasRetorno = function() {
