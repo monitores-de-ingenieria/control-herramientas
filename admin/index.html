@@ -1874,6 +1874,17 @@
   </div>
 </div>
 
+<div class="modal-overlay" id="modal-confirm-custom" style="z-index:300">
+  <div class="modal" style="max-width:420px">
+    <div class="modal-titulo">⚠️ Confirmar</div>
+    <p id="confirm-custom-msg" style="margin:14px 0;color:var(--texto);font-size:14px;line-height:1.5"></p>
+    <div class="modal-acciones">
+      <button class="btn btn-outline" id="confirm-custom-no">Cancelar</button>
+      <button class="btn btn-verde" id="confirm-custom-si">Sí, continuar</button>
+    </div>
+  </div>
+</div>
+
 <div class="modal-overlay" id="modal-pp-fotos">
   <div class="modal" style="max-width:760px">
     <div class="modal-titulo">
@@ -3880,10 +3891,27 @@ window.confirmarPickerFotosSolicitud = async function() {
   }
 };
 
-window.cerrarModalEntrega = function() {
+function confirmarPersonalizado(mensaje) {
+  return new Promise((resolve) => {
+    document.getElementById("confirm-custom-msg").textContent = mensaje;
+    const modal = document.getElementById("modal-confirm-custom");
+    modal.classList.add("abierto");
+    const btnSi = document.getElementById("confirm-custom-si");
+    const btnNo = document.getElementById("confirm-custom-no");
+    const limpiar = (resultado) => {
+      modal.classList.remove("abierto");
+      btnSi.onclick = null; btnNo.onclick = null;
+      resolve(resultado);
+    };
+    btnSi.onclick = () => limpiar(true);
+    btnNo.onclick = () => limpiar(false);
+  });
+}
+
+window.cerrarModalEntrega = async function() {
   const hayAdicionalesSinGuardar = Object.keys(_entregaAdicionales).length > 0
     || document.querySelectorAll("#lista-adicionales .fila-adicional").length > 0;
-  if (hayAdicionalesSinGuardar && !confirm("Tienes herramientas adicionales sin guardar. ¿Cerrar de todas formas y perder esos cambios?")) {
+  if (hayAdicionalesSinGuardar && !(await confirmarPersonalizado("Tienes herramientas adicionales sin guardar. ¿Cerrar de todas formas y perder esos cambios?"))) {
     return;
   }
   document.getElementById("modal-entrega").classList.remove("abierto");
@@ -3916,8 +3944,11 @@ window.guardarCambiosPendiente = async function() {
       await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: lista });
     } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
     s.herramientas = lista;
+    _entregaAdicionales = {};
+    document.getElementById("lista-adicionales").innerHTML = "";
     renderTabla();
-    cerrarModalEntrega();
+    document.getElementById("modal-entrega").classList.remove("abierto");
+    solicitudActivaId = null;
     mostrarToast("✓ Cambios guardados (aún pendiente de entregar)");
   } catch(e) { console.error("Error al guardar:", e); mostrarToast("Error al guardar: " + e.message, "rojo"); }
 };
@@ -4103,10 +4134,10 @@ window.cerrarModalRetorno = function() {
   solicitudActivaId = null;
 };
 
-window.cerrarModalRetornoConAviso = function() {
+window.cerrarModalRetornoConAviso = async function() {
   const adicionales = document.querySelectorAll("#lista-retorno .fila-herramienta[data-adicional='1']");
   if (adicionales.length > 0) {
-    if (!confirm(`Tienes ${adicionales.length} herramienta(s) adicional(es) seleccionada(s). ¿Cerrar sin guardarlas?`)) return;
+    if (!(await confirmarPersonalizado(`Tienes ${adicionales.length} herramienta(s) adicional(es) seleccionada(s). ¿Cerrar sin guardarlas?`))) return;
   }
   cerrarModalRetorno();
 };
