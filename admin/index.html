@@ -3917,6 +3917,11 @@ window.confirmarEntrega = async function() {
     herramientasEntregadas.push({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" });
   });
 
+  if (herramientasEntregadas.length === 0) {
+    mostrarToast("No hay ninguna herramienta seleccionada para guardar", "rojo");
+    return;
+  }
+
   try {
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), {
       estado: "entregada",
