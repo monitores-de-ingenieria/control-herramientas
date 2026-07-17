@@ -21,7 +21,11 @@ const LABORATORIOS_RESPALDO = [
 // Respaldo inicial de ciclos. A partir de aquí la lista se alimenta sola:
 // cada ciclo nuevo que alguien agregue desde el formulario queda guardado
 // en Firestore (colección "ciclos") y aparece para todos después.
-const CICLOS_RESPALDO = ["2-2027", "1-2027", "2-2026", "1-2026", "2-2025", "1-2025"];
+// IMPORTANTE: no agregar aquí ciclos futuros que todavía no han empezado —
+// el formulario preselecciona automáticamente el primero de la lista una
+// vez ordenada del más reciente al más antiguo, así que si hay un ciclo
+// futuro aquí, el formulario abre marcando ESE en vez del actual.
+const CICLOS_RESPALDO = ["2-2026", "1-2026", "2-2025", "1-2025"];
 
 // Ordena "N-AAAA" del ciclo más reciente al más antiguo.
 function ordenarCiclos(lista) {
