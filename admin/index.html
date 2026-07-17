@@ -2759,9 +2759,9 @@ function actualizarTabs() {
   set("tab-ent",   tots.filter(s => s.estado === "entregada").length);
   set("tab-ret",   tots.filter(s => s.estado === "retornada").length);
   set("tab-can",   tots.filter(s => s.estado === "cancelada").length);
-  const entregadasHoy = tots.filter(s => s.estado === "entregada" || s.estado === "retornada");
+  const entregadasHoy = tots.filter(s => s.estado === "entregada");
   let totalHerr = 0, totalGast = 0;
-  entregadasHoy.forEach(s => (s.herramientas || []).forEach(h => {
+  entregadasHoy.forEach(s => (s.herramientasEntregadas || s.herramientas || []).forEach(h => {
     if (typeof esMaterialGastable === "function" && esMaterialGastable(h.nombre)) totalGast += (h.cantidad || 0);
     else totalHerr += (h.cantidad || 0);
   }));
@@ -2953,7 +2953,10 @@ window.dashIrDia = function(fechaIso) {
   }, 80);
 };
 
+let _dashboardEscuchando = false;
 function cargarDashboard() {
+  if (_dashboardEscuchando) return; // ya hay un listener activo, no crear otro
+  _dashboardEscuchando = true;
   // Escuchar en tiempo real las dos colecciones
   onSnapshot(collection(db, "solicitudes"), snapSol => {
     const todas = snapSol.docs.map(d => ({ id: d.id, ...d.data() }));
