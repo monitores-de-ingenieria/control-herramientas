@@ -3510,7 +3510,8 @@ window.abrirModal = function(id) {
     updateDoc(doc(db, "solicitudes", id), { incidenciaVista: true }).catch(e => console.error(e));
   }
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Solicitud";
-  const herramientas = (s.herramientas || []).map(h =>
+  const herBase = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
+  const herramientas = herBase.map(h =>
     `<div class="modal-herramienta-item"><span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${escapeHtml(h.nombre)}${h.adicional ? '<span style="font-size:10px;color:var(--azul);margin-left:5px">(adicional)</span>' : ""}</span></span><span style="color:var(--verde);font-weight:700">x${h.cantidad}</span></div>`
   ).join("");
 
@@ -4050,11 +4051,11 @@ window.guardarCambiosPendiente = async function() {
   });
 
   try {
-    await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientas: lista });
+    await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientasEntregadas: lista });
     try {
       await updateDoc(doc(db, "activaHoy", s.matricula), { herramientas: lista });
     } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
-    s.herramientas = lista;
+    s.herramientasEntregadas = lista;
     _entregaAdicionales = {};
     renderReciboEntrega();
     renderEntregaPickerGrid();
