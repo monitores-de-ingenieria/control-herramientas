@@ -3923,16 +3923,9 @@ window.agregarFilaAdicionalManual = async function() {
   const cantidad = parseInt(cantidadTexto) || 1;
 
   if (_solPickerModo === "entrega-modal") {
-    const div = document.createElement("div");
-    div.className = "fila-adicional";
-    div.innerHTML = `
-      <div style="position:relative;flex:1">
-        <input type="text" class="nombre-adicional" value="${escapeAttr(nombre.trim())}" readonly style="background:var(--bg);cursor:default">
-      </div>
-      <input type="number" class="cant-adicional" value="${cantidad}" min="1" style="width:60px">
-      <button class="btn-quitar-fila" onclick="this.parentElement.remove()">✕</button>
-    `;
-    document.getElementById("lista-adicionales").appendChild(div);
+    _entregaAdicionales[nombre.trim()] = (_entregaAdicionales[nombre.trim()] || 0) + cantidad;
+    renderReciboEntrega();
+    renderEntregaPickerGrid();
     cerrarPickerFotosSolicitud();
     mostrarToast('Agregada — no olvides "Guardar entrega"');
     return;
@@ -3964,33 +3957,13 @@ window.confirmarPickerFotosSolicitud = async function() {
   if (!seleccion.length) { mostrarToast("Elige al menos una herramienta", "rojo"); return; }
 
   if (_solPickerModo === "entrega-modal") {
-    // Solo agrega filas visuales al modal de entrega (mismo formato que
-    // "agregarFilaAdicional" producía a mano); se guardan de verdad recién
-    // cuando se presiona "Guardar entrega" — cero riesgo, mismo mecanismo
-    // de siempre, solo con selección visual en vez de escribir el nombre.
-    const lista = document.getElementById("lista-adicionales");
+    // Se acumula en el mismo objeto que usa el recibo de entrega; se
+    // guarda de verdad recién cuando se presiona "Guardar entrega".
     seleccion.forEach(([nombre, cantidad]) => {
-      // Si ya hay una fila con este mismo nombre, sumarle la cantidad en
-      // vez de crear una fila repetida.
-      const filaExistente = [...lista.querySelectorAll(".fila-adicional")]
-        .find(f => f.querySelector(".nombre-adicional")?.value === nombre);
-      if (filaExistente) {
-        const inputCant = filaExistente.querySelector(".cant-adicional");
-        inputCant.value = (parseInt(inputCant.value) || 0) + cantidad;
-        return;
-      }
-      const div = document.createElement("div");
-      div.className = "fila-adicional";
-      div.innerHTML = `
-        <div style="position:relative;flex:1">
-          <input type="text" class="nombre-adicional" value="${escapeAttr(nombre)}" readonly
-            style="background:var(--bg);cursor:default">
-        </div>
-        <input type="number" class="cant-adicional" value="${cantidad}" min="1" style="width:60px">
-        <button class="btn-quitar-fila" onclick="this.parentElement.remove()">✕</button>
-      `;
-      lista.appendChild(div);
+      _entregaAdicionales[nombre] = (_entregaAdicionales[nombre] || 0) + cantidad;
     });
+    renderReciboEntrega();
+    renderEntregaPickerGrid();
     cerrarPickerFotosSolicitud();
     mostrarToast(`${seleccion.length} herramienta(s) agregada(s) — no olvides "Guardar entrega"`);
     return;
@@ -4044,8 +4017,7 @@ function confirmarPersonalizado(mensaje) {
 }
 
 window.cerrarModalEntrega = async function() {
-  const hayAdicionalesSinGuardar = Object.keys(_entregaAdicionales).length > 0
-    || document.querySelectorAll("#lista-adicionales .fila-adicional").length > 0;
+  const hayAdicionalesSinGuardar = Object.keys(_entregaAdicionales).length > 0;
   if (hayAdicionalesSinGuardar && !(await confirmarPersonalizado("Tienes herramientas adicionales sin guardar. ¿Cerrar de todas formas y perder esos cambios?"))) {
     return;
   }
@@ -4080,7 +4052,8 @@ window.guardarCambiosPendiente = async function() {
     } catch (errFicha) { console.error("No se pudo sincronizar activaHoy:", errFicha); }
     s.herramientas = lista;
     _entregaAdicionales = {};
-    document.getElementById("lista-adicionales").innerHTML = "";
+    renderReciboEntrega();
+    renderEntregaPickerGrid();
     renderTabla();
     document.getElementById("modal-entrega").classList.remove("abierto");
     solicitudActivaId = null;
