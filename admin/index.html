@@ -4117,7 +4117,8 @@ window.confirmarRetorno = async function() {
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), {
       estado: "retornada",
       retornadoEn: serverTimestamp(),
-      herramientasRetorno: resultado
+      herramientasRetorno: resultado,
+      tieneIncidencias: incidencias.length > 0
     });
     try {
       await updateDoc(doc(db, "activaHoy", s.matricula), { estado: "retornada" });
@@ -4136,7 +4137,7 @@ window.confirmarRetorno = async function() {
     }
 
     const sx = todasSolicitudes.find(x => x.id === solicitudActivaId);
-    if (sx) sx.estado = "retornada";
+    if (sx) { sx.estado = "retornada"; sx.tieneIncidencias = incidencias.length > 0; }
     actualizarContadores();
     renderTabla();
     cargarDashboard();
