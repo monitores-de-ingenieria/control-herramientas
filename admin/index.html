@@ -3722,7 +3722,8 @@ window.renderEntregaPickerGrid = function() {
 };
 
 window.entregaPickerAgregar = function(nombre) {
-  _entregaAdicionales[nombre] = (_entregaAdicionales[nombre] || 0) + 1;
+  if (_entregaAdicionales[nombre]) { mostrarToast("Ya está en la solicitud", "rojo"); return; }
+  _entregaAdicionales[nombre] = 1;
   renderReciboEntrega();
   renderEntregaPickerGrid();
   const lista = document.getElementById("lista-entrega");
