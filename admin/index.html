@@ -2999,7 +2999,7 @@ async function _actualizarDashboard(todas, prestProf) {
     set("res-afuera",     herramientasAfuera);
     set("res-prof-activos", profActivosHoy);
     set("badge-pendientes", pendHoy);
-    set("dash-incidencias",  incidencias);
+    set("dash-incidencias",  incidencias + incidenciasProf);
     set("dash-prof-activos", profActivosHoy);
     set("res-total", deHoy.length);
     actualizarBadgeLateral("badge-incidencias", incidencias + incidenciasProf);
@@ -3486,6 +3486,11 @@ function cerrarModal() {
 window.verDetalleIncidenciaProf = async function(prestamoId) {
   const p = (todosPrestamosProfTodos || todosPrestamosProf).find(x => x.id === prestamoId);
   if (!p) return;
+  // Al abrir el detalle, si tenía una incidencia sin ver, se marca como vista
+  // (mismo comportamiento que el detalle de solicitudes de estudiantes).
+  if (p.tieneIncidencias && !p.incidenciaVista) {
+    updateDoc(doc(db, "prestamos_profesores", prestamoId), { incidenciaVista: true }).catch(e => console.error(e));
+  }
   document.getElementById("modal-titulo-texto").textContent = "Detalle de Incidencia";
   document.getElementById("modal-contenido").innerHTML = `<div class="cargando"><div class="spinner"></div>Cargando detalle...</div>`;
   document.getElementById("modal-acciones").innerHTML = "";
