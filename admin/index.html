@@ -3824,6 +3824,15 @@ window.confirmarPickerFotosSolicitud = async function() {
     // de siempre, solo con selección visual en vez de escribir el nombre.
     const lista = document.getElementById("lista-adicionales");
     seleccion.forEach(([nombre, cantidad]) => {
+      // Si ya hay una fila con este mismo nombre, sumarle la cantidad en
+      // vez de crear una fila repetida.
+      const filaExistente = [...lista.querySelectorAll(".fila-adicional")]
+        .find(f => f.querySelector(".nombre-adicional")?.value === nombre);
+      if (filaExistente) {
+        const inputCant = filaExistente.querySelector(".cant-adicional");
+        inputCant.value = (parseInt(inputCant.value) || 0) + cantidad;
+        return;
+      }
       const div = document.createElement("div");
       div.className = "fila-adicional";
       div.innerHTML = `
@@ -3848,8 +3857,12 @@ window.confirmarPickerFotosSolicitud = async function() {
   if (!s) { mostrarToast("No se encontró la solicitud", "rojo"); cerrarPickerFotosSolicitud(); return; }
 
   const base = (s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || []);
-  const nuevas = seleccion.map(([nombre, cantidad]) => ({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" }));
-  const listaFinal = [...base, ...nuevas];
+  const listaFinal = base.map(h => ({ ...h }));
+  seleccion.forEach(([nombre, cantidad]) => {
+    const existente = listaFinal.find(h => h.nombre === nombre);
+    if (existente) existente.cantidad = (existente.cantidad || 0) + cantidad;
+    else listaFinal.push({ nombre, cantidad, adicional: true, estadoEntrega: "entregada" });
+  });
 
   try {
     await updateDoc(doc(db, "solicitudes", s.id), { herramientasEntregadas: listaFinal });
@@ -3868,6 +3881,11 @@ window.confirmarPickerFotosSolicitud = async function() {
 };
 
 window.cerrarModalEntrega = function() {
+  const hayAdicionalesSinGuardar = Object.keys(_entregaAdicionales).length > 0
+    || document.querySelectorAll("#lista-adicionales .fila-adicional").length > 0;
+  if (hayAdicionalesSinGuardar && !confirm("Tienes herramientas adicionales sin guardar. ¿Cerrar de todas formas y perder esos cambios?")) {
+    return;
+  }
   document.getElementById("modal-entrega").classList.remove("abierto");
   solicitudActivaId = null;
 };
@@ -3886,6 +3904,11 @@ window.guardarCambiosPendiente = async function() {
   Object.entries(_entregaAdicionales).forEach(([nombre, cantidad]) => {
     lista.push({ nombre, cantidad, adicional: true });
   });
+
+  if (lista.length === 0) {
+    mostrarToast("No hay ninguna herramienta seleccionada para guardar", "rojo");
+    return;
+  }
 
   try {
     await updateDoc(doc(db, "solicitudes", solicitudActivaId), { herramientas: lista });
