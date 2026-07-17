@@ -5310,6 +5310,7 @@ window.generarConduce = function(id) {
   const p = todosPrestamosExt.find(x => x.id === id);
   if (!p) return;
   const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
+  const totalHerConduce = (p.herramientas || []).reduce((sum, h) => sum + (h.cantidad || 1), 0);
   const herramientasHtml = (p.herramientas || []).map(h =>
     `<div class="modal-herramienta-item"><span>${escapeHtml(h.nombre)}</span><span style="font-weight:700">×${h.cantidad}</span></div>`
   ).join("") || "—";
@@ -5321,7 +5322,7 @@ window.generarConduce = function(id) {
     </div>
     <div class="modal-campo"><label>Fecha de salida</label><div class="valor">${fecha}</div></div>
     <div class="modal-campo">
-      <label>Herramientas entregadas</label>
+      <label>Herramientas entregadas <span style="color:var(--verde);font-weight:800">(${totalHerConduce} en total)</span></label>
       <div class="modal-herramientas">${herramientasHtml}</div>
     </div>
     <div class="modal-campo"><label>Estado actual</label><span class="badge badge-${p.estado === "prestado" ? "entregada" : "retornada"}">${p.estado === "prestado" ? "Prestado" : "Devuelto"}</span></div>
@@ -7033,6 +7034,7 @@ window.abrirModalHist = function(id, tipo) {
   const estadoIcono = { retornada:"✅", no_retornada:"❌", danada:"🔴", perdida:"⚠️", entregada:"✅" };
   const estadoColor = { retornada:"var(--verde)", no_retornada:"var(--rojo)", danada:"var(--rojo)", perdida:"var(--naranja,#f97316)", entregada:"var(--verde)" };
 
+  const totalHerHist = (r.herramientas||[]).reduce((sum, h) => sum + (h.cantidad || 1), 0);
   const herramientasHtml = (r.herramientas||[]).map(h => `
     <div class="modal-herramienta-item">
       <span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${escapeHtml(h.nombre)}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span></span>
@@ -7087,7 +7089,7 @@ window.abrirModalHist = function(id, tipo) {
     ${r.entregadoEn  ? `<div class="modal-campo"><label>Fecha de entrega</label><div class="valor">${formatFecha(r.entregadoEn)}</div></div>` : ""}
     ${r.retornadoEn  ? `<div class="modal-campo"><label>Fecha de retorno</label><div class="valor">${formatFecha(r.retornadoEn)}</div></div>` : ""}
     <div class="modal-campo">
-      <label>Herramientas solicitadas</label>
+      <label>Herramientas solicitadas <span style="color:var(--verde);font-weight:800">(${totalHerHist} en total)</span></label>
       <div class="modal-herramientas">${herramientasHtml}</div>
     </div>
     ${retornoHtml}
