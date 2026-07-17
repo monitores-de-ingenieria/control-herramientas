@@ -3273,7 +3273,7 @@ function renderTabla() {
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
                 ${s.estado === "pendiente" ? `<button class="btn btn-azul" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
-                ${s.estado === "retornada" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center"><span style="display:inline-flex;line-height:1">👍</span> Retornada</span>` : ""}
+                ${s.estado === "retornada" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center">👍 Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span class="badge badge-cancelada">❌ Cancelada</span>` : ""}
               </div>
             </td>
