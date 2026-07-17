@@ -4041,7 +4041,7 @@ window.guardarCambiosPendiente = async function() {
   });
 
   if (lista.length === 0) {
-    mostrarToast("No hay ninguna herramienta seleccionada para guardar", "rojo");
+    await confirmarPersonalizado("No hay ninguna herramienta seleccionada para guardar.");
     return;
   }
 
