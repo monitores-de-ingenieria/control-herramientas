@@ -3722,7 +3722,10 @@ window.renderEntregaPickerGrid = function() {
 };
 
 window.entregaPickerAgregar = function(nombre) {
-  if (_entregaAdicionales[nombre]) { mostrarToast("Ya está en la solicitud", "rojo"); return; }
+  const s = todasSolicitudes.find(x => x.id === solicitudActivaId);
+  const base = s ? ((s.herramientasEntregadas && s.herramientasEntregadas.length) ? s.herramientasEntregadas : (s.herramientas || [])) : [];
+  const yaEnSolicitud = base.some(h => h.nombre === nombre);
+  if (yaEnSolicitud || _entregaAdicionales[nombre]) { mostrarToast("Ya está en la solicitud", "rojo"); return; }
   _entregaAdicionales[nombre] = 1;
   renderReciboEntrega();
   renderEntregaPickerGrid();
