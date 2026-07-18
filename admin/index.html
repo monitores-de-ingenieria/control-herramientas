@@ -1294,6 +1294,12 @@
       <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
+      <div class="nav-item" title="Herramientas prestadas hoy" style="cursor:default">
+        <span class="nav-icono">🧰</span>
+        <span class="nav-texto">Prestadas hoy</span>
+        <span class="nav-badge" id="tab-total-herramientas-hoy">—</span>
+      </div>
+
       <div class="sb-spacer"></div>
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
@@ -1431,11 +1437,6 @@
           <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde);white-space:nowrap">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
           <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul);white-space:nowrap">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
           <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo);white-space:nowrap">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
-          <span style="margin-left:auto;align-self:center;display:flex;align-items:center;gap:7px;padding:6px 14px;background:linear-gradient(135deg, rgba(63,185,80,.16), rgba(63,185,80,.06));border:1px solid rgba(63,185,80,.4);border-radius:20px;white-space:nowrap;flex-shrink:0;font-size:12px;box-shadow:0 2px 8px rgba(63,185,80,.15)" title="Herramientas prestadas hoy">
-            <span style="font-size:14px">🧰</span>
-            <span style="color:var(--texto-dim);font-weight:600;letter-spacing:.2px">Prestadas hoy</span>
-            <span id="tab-total-herramientas-hoy" style="font-weight:800;color:var(--verde);font-size:14px">—</span>
-          </span>
         </div>
 
         <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
