@@ -440,6 +440,7 @@
     position: relative;
     overflow: hidden;
     transition: transform .2s ease;
+    text-align: center;
   }
   .sb-stat-prestadas::after {
     content: '';
@@ -450,11 +451,10 @@
     background: rgba(255,255,255,0.12);
   }
   .sb-stat-prestadas:hover { transform: translateY(-2px); }
-  .sb-stat-prestadas-top { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; position: relative; z-index: 1; }
-  .sb-stat-prestadas-icono { font-size: 17px; }
-  .sb-stat-prestadas-label { font-size: 10.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; opacity: .9; }
-  .sb-stat-prestadas-numero { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; }
-  .sb-stat-prestadas-sub { font-size: 10.5px; opacity: .85; margin-top: 4px; position: relative; z-index: 1; }
+  .sb-stat-prestadas-top { display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 10px; position: relative; z-index: 1; line-height: 1; }
+  .sb-stat-prestadas-icono { font-size: 18px; line-height: 1; display: inline-flex; align-items: center; }
+  .sb-stat-prestadas-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; opacity: .92; line-height: 1; display: inline-flex; align-items: center; }
+  .sb-stat-prestadas-numero { font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; }
 
   .shell.sidebar-colapsado .sb-stat-prestadas { display: none; }
 
@@ -1324,13 +1324,12 @@
       <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
-      <div class="sb-stat-prestadas" title="Herramientas que salieron del taller hoy">
+      <div class="sb-stat-prestadas" title="Herramientas prestadas hoy en el taller">
         <div class="sb-stat-prestadas-top">
           <span class="sb-stat-prestadas-icono">🧰</span>
           <span class="sb-stat-prestadas-label">Prestadas hoy</span>
         </div>
         <div class="sb-stat-prestadas-numero" id="tab-total-herramientas-hoy">—</div>
-        <div class="sb-stat-prestadas-sub">herramientas en la calle</div>
       </div>
 
       <div class="sb-spacer"></div>
@@ -3545,9 +3544,16 @@ window.abrirModal = function(id) {
       <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${s.laboratorio || "—"}</div></div>
     </div>
     <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
+    <div class="modal-campo"><label>Cantidad de herramientas</label>
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--verde-glow);border:1px solid rgba(63,185,80,0.35);border-radius:10px;padding:8px 14px;margin-top:2px">
+        <span style="font-size:18px">🧰</span>
+        <span style="font-size:20px;font-weight:800;color:var(--verde)">${totalHerBase}</span>
+        <span style="font-size:12.5px;color:var(--texto-dim)">herramienta${totalHerBase===1?"":"s"}</span>
+      </div>
+    </div>
     <div class="modal-campo"><label>Fecha</label><div class="valor">${formatFecha(s.creadoEn)}</div></div>
     <div class="modal-campo">
-      <label>Herramientas solicitadas <span style="color:var(--verde);font-weight:800">(${totalHerBase} en total)</span></label>
+      <label>Herramientas solicitadas</label>
       <div class="modal-herramientas">${herramientas || "—"}</div>
     </div>
     ${s.tieneIncidencias ? `
