@@ -429,35 +429,11 @@
   .shell.sidebar-colapsado .sb-turno { display: none; }
 
   /* Tarjeta "Prestadas hoy" — resumen destacado en el sidebar */
-  .sb-stat-prestadas {
-    margin: 10px 10px 0;
-    padding: 14px;
-    border-radius: var(--radio-md, 12px);
-    background: var(--gradiente-verde);
-    box-shadow: var(--sombra-verde, 0 8px 20px rgba(63,185,80,0.25));
-    color: #fff;
-    cursor: default;
-    position: relative;
-    overflow: hidden;
-    transition: transform .2s ease;
-    text-align: center;
-  }
-  .sb-stat-prestadas::after {
-    content: '';
-    position: absolute;
-    top: -30px; right: -30px;
-    width: 90px; height: 90px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.12);
-  }
-  .sb-stat-prestadas:hover { transform: translateY(-2px); }
-  .sb-stat-prestadas-top { display: flex; align-items: center; justify-content: center; gap: 7px; margin-bottom: 10px; position: relative; z-index: 1; line-height: 1; }
-  .sb-stat-prestadas-icono { font-size: 18px; line-height: 1; display: inline-flex; align-items: center; }
-  .sb-stat-prestadas-label { font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; opacity: .92; line-height: 1; display: inline-flex; align-items: center; }
-  .sb-stat-prestadas-numero { font-size: 36px; font-weight: 800; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; }
-
+  .sb-stat-prestadas { margin: 10px 10px 0; padding: 8px 14px; border-radius: var(--radio-md, 12px); background: var(--gradiente-verde); box-shadow: var(--sombra-verde, 0 8px 20px rgba(63,185,80,0.25)); color: #fff; cursor: default; position: relative; overflow: hidden; text-align: center; }
+  .sb-stat-prestadas-top { display: flex; align-items: center; justify-content: center; gap: 6px; line-height: 1; }
+  .sb-stat-prestadas-icono, .sb-stat-prestadas-label { font-size: 11px; font-weight: 800; line-height: 1; }
+  .sb-stat-prestadas-numero { font-size: 20px; font-weight: 800; line-height: 1.3; }
   .shell.sidebar-colapsado .sb-stat-prestadas { display: none; }
-
   /* ═══════════════════════════════════════════
      CONTENIDO
   ═══════════════════════════════════════════ */
