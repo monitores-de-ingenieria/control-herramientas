@@ -1333,6 +1333,17 @@
       </div>
 
       <div class="sb-spacer"></div>
+
+      <div id="sb-card-prestadas" onclick="navegarVista('solicitudes')" title="Ver solicitudes entregadas hoy"
+        style="margin:0 8px 10px;border-radius:14px;overflow:hidden;cursor:pointer;position:relative;box-shadow:0 4px 16px rgba(0,0,0,0.3);transition:transform .15s"
+        onmouseover="this.style.transform='translateY(-2px)'"
+        onmouseout="this.style.transform=''">
+        <img src="img/her-prestadas-hoy.png" style="width:100%;display:block">
+        <div id="sb-card-prestadas-num"
+          style="position:absolute;bottom:14%;right:15%;font-size:44px;font-weight:900;color:#fff;text-shadow:0 3px 12px rgba(0,0,0,0.5);line-height:1;pointer-events:none">—</div>
+      </div>
+      <style>.shell.sidebar-colapsado #sb-card-prestadas{display:none!important}</style>
+
       <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono">🚪</span><span class="nav-texto">Cerrar Sesión</span></div>
 
 
@@ -3120,6 +3131,8 @@ async function _actualizarDashboard(todas, prestProf) {
     const set = (id, val) => { const el = document.getElementById(id); if (el) el.textContent = val; };
     set("res-pendientes", pendHoy);
     set("res-prestadas",  entregHoy);
+    const sbNum = document.getElementById("sb-card-prestadas-num");
+    if (sbNum) sbNum.textContent = entregHoy;
     set("res-hoy",        retHoy);
     set("res-afuera",     herramientasAfuera);
     set("res-prof-activos", profActivosHoy);
