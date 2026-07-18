@@ -431,7 +431,7 @@
   /* Tarjeta "Prestadas hoy" — resumen destacado en el sidebar, estilo banner */
   .sb-stat-prestadas {
     margin: 10px 10px 0;
-    padding: 16px 12px 14px;
+    padding: 10px;
     border-radius: var(--radio-md, 14px);
     background: linear-gradient(145deg, #0d3d24, #185c37 55%, #1e6e42);
     box-shadow: 0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
@@ -440,7 +440,9 @@
     position: relative;
     overflow: hidden;
     transition: transform .2s ease;
-    text-align: center;
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
   }
   .sb-stat-prestadas::after {
     content: '';
@@ -451,12 +453,11 @@
     background: rgba(255,255,255,0.10);
   }
   .sb-stat-prestadas:hover { transform: translateY(-2px); }
-  .sb-gabinete { width: 46px; height: auto; display: block; margin: 0 auto 6px; filter: drop-shadow(0 4px 8px rgba(0,0,0,.4)); position: relative; z-index: 1; }
-  .sb-stat-prestadas-top { display: flex; flex-direction: column; align-items: center; gap: 4px; margin-bottom: 8px; position: relative; z-index: 1; line-height: 1.15; }
-  .sb-stat-prestadas-icono { font-size: 30px; line-height: 1; display: inline-flex; align-items: center; filter: drop-shadow(0 3px 6px rgba(0,0,0,.35)); }
-  .sb-stat-prestadas-label { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: #fff; }
+  .sb-gabinete { width: 34px; height: auto; align-self: stretch; flex-shrink: 0; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,.4)); position: relative; z-index: 1; }
+  .sb-stat-prestadas-top { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; position: relative; z-index: 1; line-height: 1.15; }
+  .sb-stat-prestadas-label { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; color: #fff; }
   .sb-stat-prestadas-label .hoy { color: #7ee34b; }
-  .sb-stat-prestadas-numero { font-size: 42px; font-weight: 900; line-height: 1; letter-spacing: -1.5px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,.3); }
+  .sb-stat-prestadas-numero { font-size: 26px; font-weight: 900; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,.3); margin-top: 2px; }
 
   .shell.sidebar-colapsado .sb-stat-prestadas { display: none; }
 
@@ -1327,7 +1328,7 @@
       <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
 
       <div class="sb-stat-prestadas" title="Herramientas prestadas hoy en el taller">
-        <svg class="sb-gabinete" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg">
+        <svg class="sb-gabinete" viewBox="0 0 120 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
           <rect x="18" y="8" width="70" height="10" rx="3" fill="#c0392b"/>
           <rect x="14" y="16" width="78" height="112" rx="6" fill="#e74c3c"/>
           <rect x="14" y="16" width="78" height="112" rx="6" fill="none" stroke="#a83226" stroke-width="2"/>
