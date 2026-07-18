@@ -455,9 +455,9 @@
   .sb-stat-prestadas:hover { transform: translateY(-2px); }
   .sb-gabinete { width: 34px; height: auto; align-self: stretch; flex-shrink: 0; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,.4)); position: relative; z-index: 1; }
   .sb-stat-prestadas-top { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; position: relative; z-index: 1; line-height: 1.15; }
-  .sb-stat-prestadas-label { font-size: 9.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .03em; color: #fff; }
+  .sb-stat-prestadas-label { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; color: #fff; }
   .sb-stat-prestadas-label .hoy { color: #7ee34b; }
-  .sb-stat-prestadas-numero { font-size: 26px; font-weight: 900; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,.3); margin-top: 2px; }
+  .sb-stat-prestadas-numero { font-size: 32px; font-weight: 900; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,.3); margin-top: 3px; }
 
   .shell.sidebar-colapsado .sb-stat-prestadas { display: none; }
 
@@ -1259,7 +1259,38 @@
 <div id="pantalla-carga"><div class="spinner"></div>Cargando...</div>
 <div id="pantalla-login">
   <div class="login-box">
-    <div class="login-logo">🔧</div>
+    <div class="login-logo"><svg class="icono-gabinete-login" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" style="width:48px;height:auto;display:inline-block;vertical-align:middle">
+          <rect x="18" y="8" width="70" height="10" rx="3" fill="#c0392b"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="#e74c3c"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="none" stroke="#a83226" stroke-width="2"/>
+          <g fill="#f5b3ac" opacity=".85">
+            <rect x="22" y="24" width="62" height="7" rx="3"/>
+            <rect x="22" y="35" width="62" height="7" rx="3"/>
+            <rect x="22" y="46" width="62" height="7" rx="3"/>
+          </g>
+          <rect x="20" y="58" width="66" height="34" rx="3" fill="#7a1f16"/>
+          <g stroke="#d8d8d8" stroke-width="2.4" stroke-linecap="round">
+            <line x1="27" y1="65" x2="27" y2="86"/>
+            <line x1="33" y1="65" x2="33" y2="86"/>
+            <line x1="39" y1="68" x2="39" y2="83"/>
+            <line x1="45" y1="68" x2="45" y2="83"/>
+          </g>
+          <g stroke="#e8e8e8" stroke-width="2.6" stroke-linecap="round">
+            <line x1="55" y1="64" x2="52" y2="88"/>
+            <line x1="61" y1="64" x2="58" y2="88"/>
+          </g>
+          <path d="M67 66 l10 10 M67 76 l10 -10" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
+          <rect x="76" y="62" width="4" height="20" rx="2" fill="#8a5a2b"/>
+          <circle cx="78" cy="61" r="4" fill="#b0b0b0"/>
+          <rect x="20" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
+          <rect x="53" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
+          <rect x="33" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <rect x="66" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <circle cx="30" cy="140" r="7" fill="#222"/>
+          <circle cx="76" cy="140" r="7" fill="#222"/>
+          <circle cx="30" cy="140" r="2.5" fill="#555"/>
+          <circle cx="76" cy="140" r="2.5" fill="#555"/>
+        </svg></div>
     <h1>Control de Herramientas</h1>
     <p>Taller Mecánica Industrial — Panel Administrativo</p>
 
@@ -1281,7 +1312,38 @@
 
     <div class="topbar">
       <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú">☰</button>
-      <span class="topbar-logo">🔧</span>
+      <span class="topbar-logo"><svg class="icono-gabinete-topbar" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:auto;display:inline-block;vertical-align:middle">
+          <rect x="18" y="8" width="70" height="10" rx="3" fill="#c0392b"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="#e74c3c"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="none" stroke="#a83226" stroke-width="2"/>
+          <g fill="#f5b3ac" opacity=".85">
+            <rect x="22" y="24" width="62" height="7" rx="3"/>
+            <rect x="22" y="35" width="62" height="7" rx="3"/>
+            <rect x="22" y="46" width="62" height="7" rx="3"/>
+          </g>
+          <rect x="20" y="58" width="66" height="34" rx="3" fill="#7a1f16"/>
+          <g stroke="#d8d8d8" stroke-width="2.4" stroke-linecap="round">
+            <line x1="27" y1="65" x2="27" y2="86"/>
+            <line x1="33" y1="65" x2="33" y2="86"/>
+            <line x1="39" y1="68" x2="39" y2="83"/>
+            <line x1="45" y1="68" x2="45" y2="83"/>
+          </g>
+          <g stroke="#e8e8e8" stroke-width="2.6" stroke-linecap="round">
+            <line x1="55" y1="64" x2="52" y2="88"/>
+            <line x1="61" y1="64" x2="58" y2="88"/>
+          </g>
+          <path d="M67 66 l10 10 M67 76 l10 -10" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
+          <rect x="76" y="62" width="4" height="20" rx="2" fill="#8a5a2b"/>
+          <circle cx="78" cy="61" r="4" fill="#b0b0b0"/>
+          <rect x="20" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
+          <rect x="53" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
+          <rect x="33" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <rect x="66" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <circle cx="30" cy="140" r="7" fill="#222"/>
+          <circle cx="76" cy="140" r="7" fill="#222"/>
+          <circle cx="30" cy="140" r="2.5" fill="#555"/>
+          <circle cx="76" cy="140" r="2.5" fill="#555"/>
+        </svg></span>
       <div>
         <div class="topbar-titulo">Control de Herramientas</div>
         <div class="topbar-sub">Taller Mecánica Industrial</div>
@@ -1314,7 +1376,38 @@
       <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
 
       <div class="nav-grupo">Inventario</div>
-      <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono">🧰</span><span class="nav-texto">Herramientas</span></div>
+      <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono"><svg class="icono-gabinete-nav" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:auto;display:inline-block;vertical-align:middle">
+          <rect x="18" y="8" width="70" height="10" rx="3" fill="#c0392b"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="#e74c3c"/>
+          <rect x="14" y="16" width="78" height="112" rx="6" fill="none" stroke="#a83226" stroke-width="2"/>
+          <g fill="#f5b3ac" opacity=".85">
+            <rect x="22" y="24" width="62" height="7" rx="3"/>
+            <rect x="22" y="35" width="62" height="7" rx="3"/>
+            <rect x="22" y="46" width="62" height="7" rx="3"/>
+          </g>
+          <rect x="20" y="58" width="66" height="34" rx="3" fill="#7a1f16"/>
+          <g stroke="#d8d8d8" stroke-width="2.4" stroke-linecap="round">
+            <line x1="27" y1="65" x2="27" y2="86"/>
+            <line x1="33" y1="65" x2="33" y2="86"/>
+            <line x1="39" y1="68" x2="39" y2="83"/>
+            <line x1="45" y1="68" x2="45" y2="83"/>
+          </g>
+          <g stroke="#e8e8e8" stroke-width="2.6" stroke-linecap="round">
+            <line x1="55" y1="64" x2="52" y2="88"/>
+            <line x1="61" y1="64" x2="58" y2="88"/>
+          </g>
+          <path d="M67 66 l10 10 M67 76 l10 -10" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
+          <rect x="76" y="62" width="4" height="20" rx="2" fill="#8a5a2b"/>
+          <circle cx="78" cy="61" r="4" fill="#b0b0b0"/>
+          <rect x="20" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
+          <rect x="53" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
+          <rect x="33" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <rect x="66" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
+          <circle cx="30" cy="140" r="7" fill="#222"/>
+          <circle cx="76" cy="140" r="7" fill="#222"/>
+          <circle cx="30" cy="140" r="2.5" fill="#555"/>
+          <circle cx="76" cy="140" r="2.5" fill="#555"/>
+        </svg></span><span class="nav-texto">Herramientas</span></div>
 
       <div class="nav-grupo">Reportes</div>
       <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial</span></div>
