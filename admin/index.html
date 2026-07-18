@@ -2521,6 +2521,14 @@ const db = getFirestore(app);
 
 // App secundaria: permite crear usuarios nuevos sin cerrar la sesión del admin actual
 const appSecundaria = initializeApp(firebaseConfig, "secundaria");
+// App Check está ligado a la instancia de Firebase, no es global — sin esto,
+// las peticiones de creación de usuario (que pasan por appSecundaria) llegan
+// sin token de App Check y Google las rechaza con 401 Unauthorized antes de
+// siquiera mirar el email/contraseña.
+initializeAppCheck(appSecundaria, {
+  provider: new ReCaptchaEnterpriseProvider("6LfqPUgtAAAAAGotRzMTvetHw4a1pKbj-D5lftbZ"),
+  isTokenAutoRefreshEnabled: true
+});
 const authSecundaria = getAuth(appSecundaria);
 
 // ── UTILIDADES ──
