@@ -2953,7 +2953,12 @@ window.verIncidencias = function() {
                 <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
                 <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
                 <td>${badgeEstado}</td>
-                <td><button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')">👁 Ver</button></td>
+                <td>
+                  <div style="display:flex;gap:6px">
+                    <button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')">👁 Ver</button>
+                    ${p.estado !== "activo" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center">👍 Retornada</span>` : ""}
+                  </div>
+                </td>
               </tr>`;
             }).join("")}
           </tbody>
