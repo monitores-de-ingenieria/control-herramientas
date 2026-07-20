@@ -356,7 +356,10 @@
     flex-shrink: 0;
     position: relative; z-index: 1;
     transition: transform .2s cubic-bezier(.4,0,.2,1), color .2s;
+    display: inline-flex;
+    align-items: center;
   }
+  .nav-icono svg { width: 17px; height: 17px; stroke: currentColor; }
 
   .nav-texto {
     position: relative; z-index: 1;
@@ -1277,6 +1280,7 @@
   .usr-acciones { display:flex; gap:6px; flex-shrink:0; }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -1394,12 +1398,12 @@
         </div>
       </div>
 
-      <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono">🏠</span><span class="nav-texto">Dashboard</span></div>
+      <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono"><i data-feather="home"></i></span><span class="nav-texto">Dashboard</span></div>
 
-      <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono">📋</span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
-      <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono">👨‍🏫</span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
-      <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono">🔄</span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
-      <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono">⚠️</span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
+      <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono"><i data-feather="file-text"></i></span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
+      <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono"><i data-feather="user"></i></span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
+      <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono"><i data-feather="repeat"></i></span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
+      <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono"><i data-feather="alert-triangle"></i></span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
 
       <div class="nav-grupo">Inventario</div>
       <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono"><svg class="icono-gabinete-nav" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" style="width:18px;height:auto;display:inline-block;vertical-align:middle">
@@ -1436,15 +1440,15 @@
         </svg></span><span class="nav-texto">Herramientas</span></div>
 
       <div class="nav-grupo">Reportes</div>
-      <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono">📊</span><span class="nav-texto">Historial</span></div>
-      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono">📜</span><span class="nav-texto">Auditoría</span></div>
+      <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono"><i data-feather="bar-chart-2"></i></span><span class="nav-texto">Historial</span></div>
+      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono"><i data-feather="shield"></i></span><span class="nav-texto">Auditoría</span></div>
 
       <div class="nav-grupo">Configuración</div>
-      <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono">👤</span><span class="nav-texto">Profesores</span></div>
-      <div class="nav-item" data-vista="materias-cfg" title="Materias"><span class="nav-icono">📚</span><span class="nav-texto">Materias</span></div>
-      <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono">🏢</span><span class="nav-texto">Laboratorios / Talleres</span></div>
-      <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono">📅</span><span class="nav-texto">Ciclos</span></div>
-      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono">🔐</span><span class="nav-texto">Usuarios</span></div>
+      <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono"><i data-feather="user"></i></span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="materias-cfg" title="Materias"><span class="nav-icono"><i data-feather="book-open"></i></span><span class="nav-texto">Materias</span></div>
+      <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono"><i data-feather="grid"></i></span><span class="nav-texto">Laboratorios / Talleres</span></div>
+      <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono"><i data-feather="calendar"></i></span><span class="nav-texto">Ciclos</span></div>
+      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono"><i data-feather="users"></i></span><span class="nav-texto">Usuarios</span></div>
 
       <div class="sb-stat-prestadas" title="Herramientas prestadas hoy en el taller">
         <svg class="sb-gabinete" viewBox="0 0 120 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
@@ -7305,6 +7309,9 @@ document.getElementById("modal-hist")?.addEventListener("click", e => {
   if (e.target === document.getElementById("modal-hist"))
     document.getElementById("modal-hist").classList.remove("abierto");
 });
+
+// Dibuja los íconos de línea del sidebar (Feather Icons, cargado por CDN)
+if (window.feather) feather.replace({ "stroke-width": 2 });
 </script>
 
 <script>
