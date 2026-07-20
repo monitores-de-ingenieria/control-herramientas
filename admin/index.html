@@ -583,22 +583,24 @@
   .audit-linea { position: relative; }
   .audit-item {
     position: relative;
-    padding: 0 0 18px 24px;
+    padding: 0 0 18px 34px;
   }
   .audit-item::before {
     content: '';
     position: absolute;
-    left: 7px; top: 14px;
+    left: 12px; top: 26px;
     width: 2px;
-    height: calc(100% - 8px);
+    height: calc(100% - 18px);
     background: var(--borde);
   }
   .audit-item[style*="--audit-linea-alto:0"]::before { display: none; }
   .audit-punto {
     position: absolute;
-    left: 3px; top: 4px;
-    width: 10px; height: 10px;
+    left: 0; top: 0;
+    width: 26px; height: 26px;
     border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px;
     flex-shrink: 0;
   }
   .audit-contenido { min-width: 0; }
@@ -2769,7 +2771,7 @@ function renderAuditoria() {
     })();
     html += `
       <div class="audit-item" style="${esUltimoDelDia ? "--audit-linea-alto:0;" : ""}">
-        <span class="audit-punto" style="background:${color};box-shadow:0 0 0 3px ${color}22"></span>
+        <span class="audit-punto" style="background:${color}22;color:${color}">${AUDIT_ICONOS[a.tipo]||"📌"}</span>
         <div class="audit-contenido">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">
             <span style="font-size:12.5px;color:var(--texto)">${escapeHtml(a.descripcion) || "—"}</span>
