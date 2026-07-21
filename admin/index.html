@@ -436,36 +436,29 @@
 
   .shell.sidebar-colapsado .sb-turno { display: none; }
 
-  /* Tarjeta "Prestadas hoy" — resumen destacado en el sidebar, estilo banner */
+  /* Tarjeta "Prestadas hoy" — resumen del sidebar, acorde al tema (claro/oscuro) */
   .sb-stat-prestadas {
     margin: 10px 10px 0;
-    padding: 16px 10px;
-    border-radius: var(--radio-md, 14px);
-    background: linear-gradient(145deg, #0d3d24, #185c37 55%, #1e6e42);
-    box-shadow: 0 10px 24px rgba(0,0,0,.35), inset 0 1px 0 rgba(255,255,255,.08);
-    color: #fff;
+    padding: 12px 12px;
+    border-radius: var(--radio-md);
+    background: var(--card2);
+    border: 1px solid var(--borde);
+    color: var(--texto);
     cursor: default;
     position: relative;
     overflow: hidden;
-    transition: transform .2s ease;
+    transition: border-color .2s;
     display: flex;
-    align-items: stretch;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
   }
-  .sb-stat-prestadas::after {
-    content: '';
-    position: absolute;
-    top: -34px; right: -34px;
-    width: 100px; height: 100px;
-    border-radius: 50%;
-    background: rgba(255,255,255,0.10);
-  }
-  .sb-stat-prestadas:hover { transform: translateY(-2px); }
-  .sb-gabinete { width: 34px; height: auto; align-self: stretch; flex-shrink: 0; display: block; filter: drop-shadow(0 4px 8px rgba(0,0,0,.4)); position: relative; z-index: 1; }
-  .sb-stat-prestadas-top { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; position: relative; z-index: 1; line-height: 1.15; }
-  .sb-stat-prestadas-label { font-size: 11.5px; font-weight: 800; text-transform: uppercase; letter-spacing: .02em; color: #fff; }
-  .sb-stat-prestadas-label .hoy { color: #7ee34b; }
-  .sb-stat-prestadas-numero { font-size: 32px; font-weight: 900; line-height: 1; letter-spacing: -1px; position: relative; z-index: 1; text-shadow: 0 4px 10px rgba(0,0,0,.3); margin-top: 3px; white-space: nowrap; }
+  .sb-stat-prestadas:hover { border-color: var(--verde); }
+  .sb-gabinete { width: 26px; height: 26px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--verde); }
+  .sb-gabinete i { width: 22px; height: 22px; }
+  .sb-stat-prestadas-top { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; line-height: 1.15; }
+  .sb-stat-prestadas-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--texto-dim); }
+  .sb-stat-prestadas-label .hoy { color: var(--verde); }
+  .sb-stat-prestadas-numero { font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -0.5px; margin-top: 3px; white-space: nowrap; color: var(--texto); }
 
   .shell.sidebar-colapsado .sb-stat-prestadas { display: none; }
 
@@ -1408,42 +1401,11 @@
       </div>
 
       <div class="sb-stat-prestadas" title="Herramientas prestadas hoy en el taller">
-        <svg class="sb-gabinete" viewBox="0 0 120 150" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="18" y="8" width="70" height="10" rx="3" fill="#c0392b"/>
-          <rect x="14" y="16" width="78" height="112" rx="6" fill="#e74c3c"/>
-          <rect x="14" y="16" width="78" height="112" rx="6" fill="none" stroke="#a83226" stroke-width="2"/>
-          <g fill="#f5b3ac" opacity=".85">
-            <rect x="22" y="24" width="62" height="7" rx="3"/>
-            <rect x="22" y="35" width="62" height="7" rx="3"/>
-            <rect x="22" y="46" width="62" height="7" rx="3"/>
-          </g>
-          <rect x="20" y="58" width="66" height="34" rx="3" fill="#7a1f16"/>
-          <g stroke="#d8d8d8" stroke-width="2.4" stroke-linecap="round">
-            <line x1="27" y1="65" x2="27" y2="86"/>
-            <line x1="33" y1="65" x2="33" y2="86"/>
-            <line x1="39" y1="68" x2="39" y2="83"/>
-            <line x1="45" y1="68" x2="45" y2="83"/>
-          </g>
-          <g stroke="#e8e8e8" stroke-width="2.6" stroke-linecap="round">
-            <line x1="55" y1="64" x2="52" y2="88"/>
-            <line x1="61" y1="64" x2="58" y2="88"/>
-          </g>
-          <path d="M67 66 l10 10 M67 76 l10 -10" stroke="#ddd" stroke-width="3" stroke-linecap="round"/>
-          <rect x="76" y="62" width="4" height="20" rx="2" fill="#8a5a2b"/>
-          <circle cx="78" cy="61" r="4" fill="#b0b0b0"/>
-          <rect x="20" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
-          <rect x="53" y="95" width="31" height="30" rx="3" fill="#c0392b"/>
-          <rect x="33" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
-          <rect x="66" y="106" width="5" height="9" rx="1.5" fill="#ddd"/>
-          <circle cx="30" cy="140" r="7" fill="#222"/>
-          <circle cx="76" cy="140" r="7" fill="#222"/>
-          <circle cx="30" cy="140" r="2.5" fill="#555"/>
-          <circle cx="76" cy="140" r="2.5" fill="#555"/>
-        </svg>
+        <span class="sb-gabinete"><i data-feather="tool"></i></span>
         <div class="sb-stat-prestadas-top">
           <span class="sb-stat-prestadas-label">Herramientas Prestadas<br><span class="hoy">HOY</span></span>
+          <div class="sb-stat-prestadas-numero" id="tab-total-herramientas-hoy">—</div>
         </div>
-        <div class="sb-stat-prestadas-numero" id="tab-total-herramientas-hoy">—</div>
       </div>
 
       <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono"><i data-feather="home"></i></span><span class="nav-texto">Dashboard</span></div>
