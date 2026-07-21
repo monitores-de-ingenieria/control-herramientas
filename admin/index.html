@@ -439,26 +439,26 @@
   /* Tarjeta "Prestadas hoy" — resumen del sidebar, acorde al tema (claro/oscuro) */
   .sb-stat-prestadas {
     margin: 10px 10px 0;
-    padding: 12px 12px;
+    padding: 10px 12px;
     border-radius: var(--radio-md);
     background: var(--card2);
-    border: 1px solid var(--borde);
     color: var(--texto);
     cursor: default;
     position: relative;
-    overflow: hidden;
-    transition: border-color .2s;
     display: flex;
     align-items: center;
     gap: 10px;
   }
-  .sb-stat-prestadas:hover { border-color: var(--verde); }
-  .sb-gabinete { width: 26px; height: 26px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--verde); }
-  .sb-gabinete i { width: 22px; height: 22px; }
-  .sb-stat-prestadas-top { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; line-height: 1.15; }
-  .sb-stat-prestadas-label { font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; color: var(--texto-dim); }
-  .sb-stat-prestadas-label .hoy { color: var(--verde); }
-  .sb-stat-prestadas-numero { font-size: 22px; font-weight: 700; line-height: 1; letter-spacing: -0.5px; margin-top: 3px; white-space: nowrap; color: var(--texto); }
+  .sb-gabinete {
+    width: 34px; height: 34px; border-radius: var(--radio-md);
+    background: var(--verde-glow);
+    flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+    color: var(--verde);
+  }
+  .sb-gabinete i { width: 17px; height: 17px; }
+  .sb-stat-prestadas-top { display: flex; flex-direction: column; justify-content: center; flex: 1; min-width: 0; line-height: 1.2; }
+  .sb-stat-prestadas-label { font-size: 10.5px; font-weight: 600; color: var(--texto-dim); white-space: nowrap; }
+  .sb-stat-prestadas-numero { font-size: 20px; font-weight: 800; line-height: 1; letter-spacing: -0.3px; color: var(--verde); }
 
   .shell.sidebar-colapsado .sb-stat-prestadas { display: none; }
 
@@ -1403,7 +1403,7 @@
       <div class="sb-stat-prestadas" title="Herramientas prestadas hoy en el taller">
         <span class="sb-gabinete"><i data-feather="tool"></i></span>
         <div class="sb-stat-prestadas-top">
-          <span class="sb-stat-prestadas-label">Herramientas Prestadas<br><span class="hoy">HOY</span></span>
+          <span class="sb-stat-prestadas-label">Prestadas hoy</span>
           <div class="sb-stat-prestadas-numero" id="tab-total-herramientas-hoy">—</div>
         </div>
       </div>
