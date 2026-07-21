@@ -549,7 +549,11 @@
     font-size: 17px; flex-shrink: 0;
     background: var(--verde-glow);
     transition: transform .2s;
+    color: var(--verde);
   }
+  .kpi-icono i { width: 18px; height: 18px; }
+  .kpi-card.amarillo .kpi-icono { color: var(--amarillo); }
+  .kpi-card.rojo .kpi-icono { color: var(--rojo); }
 
   .kpi-card:hover .kpi-icono { transform: scale(1.1); }
   .kpi-card.amarillo .kpi-icono { background: rgba(210,153,34,0.12); }
@@ -1519,27 +1523,27 @@
 
         <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
           <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
-            <div class="kpi-icono">📋</div>
+            <div class="kpi-icono"><i data-feather="clipboard"></i></div>
             <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes">—</div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
-            <div class="kpi-icono">✅</div>
+            <div class="kpi-icono"><i data-feather="check-circle"></i></div>
             <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas">—</div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
-            <div class="kpi-icono">↩</div>
+            <div class="kpi-icono"><i data-feather="corner-up-left"></i></div>
             <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy">—</div><div class="kpi-sub" id="res-hoy-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
-            <div class="kpi-icono">🧰</div>
+            <div class="kpi-icono"><i data-feather="tool"></i></div>
             <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera">—</div></div>
           </div>
           <div class="kpi-card" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
-            <div class="kpi-icono">👨‍🏫</div>
+            <div class="kpi-icono"><i data-feather="user"></i></div>
             <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos">—</div></div>
           </div>
           <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
-            <div class="kpi-icono">⚠️</div>
+            <div class="kpi-icono"><i data-feather="alert-triangle"></i></div>
             <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias">—</div></div>
           </div>
         </div>
@@ -1717,14 +1721,14 @@
       <div class="vista" id="vista-herramientas-cfg">
         <div class="pagina-titulo">
           <div>
-            <h2>🧰 Herramientas</h2>
+            <h2><i data-feather="tool" style="width:19px;height:19px;vertical-align:-4px;margin-right:6px"></i>Herramientas</h2>
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF">📄 PDF</button>
-            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva">📦 Entrada de stock</button>
-            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-feather="grid" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Excel</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-feather="file-text" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>PDF</button>
+            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-feather="package" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Entrada de stock</button>
+            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar herramienta</button>
           </div>
         </div>
 
@@ -1743,7 +1747,7 @@
       <div class="vista" id="vista-laboratorios">
         <div class="pagina-titulo">
           <div><h2>Laboratorios / Talleres</h2><p>Lista de laboratorios y talleres disponibles para elegir en el formulario del estudiante</p></div>
-          <button class="btn btn-verde" onclick="abrirModalLaboratorio()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo laboratorio o taller">➕ Agregar laboratorio/taller</button>
+          <button class="btn btn-verde" onclick="abrirModalLaboratorio()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo laboratorio o taller"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar laboratorio/taller</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1762,7 +1766,7 @@
       <div class="vista" id="vista-ciclos-cfg">
         <div class="pagina-titulo">
           <div><h2>Ciclos</h2><p>Ciclos académicos disponibles para elegir en el formulario del estudiante (ej. cuando empiece 2027)</p></div>
-          <button class="btn btn-verde" onclick="abrirModalCiclo()" style="padding:9px 18px;font-size:13px" title="Agregar un ciclo nuevo">➕ Agregar ciclo</button>
+          <button class="btn btn-verde" onclick="abrirModalCiclo()" style="padding:9px 18px;font-size:13px" title="Agregar un ciclo nuevo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar ciclo</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1781,12 +1785,12 @@
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
           <div>
-            <h2>📊 Historial de Movimientos</h2>
+            <h2><i data-feather="bar-chart-2" style="width:19px;height:19px;vertical-align:-4px;margin-right:6px"></i>Historial de Movimientos</h2>
             <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel"><i data-feather="grid" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Excel</button>
+            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF"><i data-feather="file-text" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>PDF</button>
           </div>
         </div>
 
@@ -1846,7 +1850,7 @@
       <div class="vista" id="vista-profesores-cfg">
         <div class="pagina-titulo">
           <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
-          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor">➕ Agregar profesor</button>
+          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar profesor</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1868,7 +1872,7 @@
       <div class="vista" id="vista-materias-cfg">
         <div class="pagina-titulo">
           <div><h2>Materias</h2><p>Catálogo de materias con su código, para elegirlas al asignarle horario a un profesor</p></div>
-          <button class="btn btn-verde" onclick="abrirModalMateria()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva materia">➕ Agregar materia</button>
+          <button class="btn btn-verde" onclick="abrirModalMateria()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva materia"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar materia</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1886,7 +1890,7 @@
       <div class="vista" id="vista-usuarios-cfg">
         <div class="pagina-titulo">
           <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
-          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso">➕ Agregar usuario</button>
+          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar usuario</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -1904,10 +1908,10 @@
 
       <div class="vista" id="vista-auditoria-cfg">
         <div class="pagina-titulo">
-          <div><h2>📜 Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
+          <div><h2><i data-feather="shield" style="width:19px;height:19px;vertical-align:-4px;margin-right:6px"></i>Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel"><i data-feather="grid" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Excel</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF"><i data-feather="file-text" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>PDF</button>
           </div>
         </div>
         <div class="seccion-tabla">
@@ -1934,7 +1938,7 @@
     </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
   <div class="modal" style="max-width:480px">
     <div class="modal-titulo">
-      <span id="prof-modal-titulo">➕ Agregar profesor</span>
+      <span id="prof-modal-titulo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar profesor</span>
       <button class="modal-cerrar" onclick="cerrarModalProfesor()">✕</button>
     </div>
     <div class="modal-campo">
@@ -1945,7 +1949,7 @@
     <div class="modal-campo">
       <label style="margin:0">Materias que imparte</label>
       <div id="prof-materias-wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;max-height:340px;overflow-y:auto"></div>
-      <button type="button" class="btn-agregar-materia" onclick="profAgregarFilaMateria()">➕ Agregar materia</button>
+      <button type="button" class="btn-agregar-materia" onclick="profAgregarFilaMateria()"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar materia</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
@@ -1957,7 +1961,7 @@
 <div class="modal-overlay" id="modal-materia-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="materia-modal-titulo">➕ Agregar materia</span>
+      <span id="materia-modal-titulo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar materia</span>
       <button class="modal-cerrar" onclick="cerrarModalMateria()">✕</button>
     </div>
     <div class="modal-campo">
@@ -1980,7 +1984,7 @@
 <div class="modal-overlay" id="modal-laboratorio-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="lab-modal-titulo">➕ Agregar laboratorio/taller</span>
+      <span id="lab-modal-titulo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar laboratorio/taller</span>
       <button class="modal-cerrar" onclick="cerrarModalLaboratorio()">✕</button>
     </div>
     <div class="modal-campo">
@@ -1998,7 +2002,7 @@
 <div class="modal-overlay" id="modal-ciclo-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="ciclo-modal-titulo">➕ Agregar ciclo</span>
+      <span id="ciclo-modal-titulo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar ciclo</span>
       <button class="modal-cerrar" onclick="cerrarModalCiclo()">✕</button>
     </div>
     <div class="modal-campo">
@@ -2043,7 +2047,7 @@
 <div class="modal-overlay" id="modal-usuario-cfg">
   <div class="modal" style="max-width:460px">
     <div class="modal-titulo">
-      <span id="usr-modal-titulo">➕ Agregar usuario</span>
+      <span id="usr-modal-titulo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar usuario</span>
       <button class="modal-cerrar" onclick="cerrarModalUsuario()">✕</button>
     </div>
     <div class="modal-campo">
@@ -2374,7 +2378,7 @@
 <div class="modal-overlay" id="modal-entrada-stock">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span>📦 Entrada de stock</span>
+      <span><i data-feather="package" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Entrada de stock</span>
       <button class="modal-cerrar" onclick="cerrarModalEntradaStock()">✕</button>
     </div>
 
@@ -2434,7 +2438,7 @@
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="her-modal-titulo">➕ Agregar herramienta</span>
+      <span id="her-modal-titulo"><i data-feather="plus" style="width:14px;height:14px;vertical-align:-2px;margin-right:4px"></i>Agregar herramienta</span>
       <button class="modal-cerrar" onclick="cerrarModalHerramienta()">✕</button>
     </div>
     <div class="modal-campo">
