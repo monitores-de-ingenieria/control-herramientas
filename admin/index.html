@@ -166,7 +166,7 @@
   .login-campo input { width:100%; padding:11px 14px; background:var(--bg); border:1px solid var(--borde); border-radius:8px; color:var(--texto); font-size:14px; transition: border-color .15s, box-shadow .15s; }
   .login-campo input:focus { outline:none; border-color:var(--verde); box-shadow: 0 0 0 4px var(--verde-glow); }
   .btn-login { width:100%; padding:12px; background:var(--gradiente-verde); color:#fff; border:none; border-radius:10px; font-size:15px; font-weight:800; cursor:pointer; margin-top:8px; box-shadow: var(--sombra-verde); transition: transform .18s cubic-bezier(.4,0,.2,1), box-shadow .18s; }
-  .btn-login:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(63,185,80,0.34); }
+  .btn-login:hover { transform: translateY(-2px); box-shadow: 0 14px 30px rgba(22,163,74,0.34); }
   .btn-login:active { transform: translateY(0) scale(.98); }
   .login-error { color:var(--rojo); font-size:13px; margin-top:12px; display:none; }
 
@@ -414,7 +414,7 @@
   .shell.sidebar-colapsado .nav-item:hover .nav-icono { background: var(--hover); transform: scale(1.06); }
   .shell.sidebar-colapsado .nav-item.activo .nav-icono {
     background: var(--gradiente-verde);
-    box-shadow: var(--sombra-verde, 0 6px 16px rgba(63,185,80,0.3));
+    box-shadow: var(--sombra-verde, 0 6px 16px rgba(22,163,74,0.3));
   }
   .shell.sidebar-colapsado .nav-item.activo { background: none; }
   .shell.sidebar-colapsado .nav-item::before,
@@ -549,8 +549,8 @@
   .kpi-card.rojo .kpi-icono { color: var(--rojo); }
 
   .kpi-card:hover .kpi-icono { transform: scale(1.1); }
-  .kpi-card.amarillo .kpi-icono { background: rgba(210,153,34,0.12); }
-  .kpi-card.rojo .kpi-icono { background: rgba(248,81,73,0.12); }
+  .kpi-card.amarillo .kpi-icono { background: rgba(180,83,9,0.12); }
+  .kpi-card.rojo .kpi-icono { background: rgba(220,38,38,0.12); }
 
   .kpi-label { font-size: 9px; font-weight: 800; color: var(--texto-dim); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 1px; }
   .kpi-numero { font-size: 22px; font-weight: 800; line-height: 1; letter-spacing: -1px; color: var(--verde); }
@@ -865,19 +865,19 @@
   table { width: 100%; border-collapse: collapse; font-size: 12px; }
 
   th {
-    padding: 9px 14px;
+    padding: 11px 14px;
     text-align: left;
     font-size: 10px;
-    font-weight: 800;
+    font-weight: 700;
     color: var(--texto-dim);
     text-transform: uppercase;
-    letter-spacing: .07em;
+    letter-spacing: .06em;
     border-bottom: 1px solid var(--borde);
     background: var(--card2);
     white-space: nowrap;
   }
 
-  td { padding: 10px 14px; border-bottom: 1px solid var(--borde); vertical-align: middle; }
+  td { padding: 11px 14px; border-bottom: 1px solid var(--borde); vertical-align: middle; transition: background .12s; }
   tr:last-child td { border-bottom: none; }
   tr:hover td { background: var(--hover); }
 
@@ -885,15 +885,21 @@
      BADGES
   ═══════════════════════════════════════════ */
   .badge {
-    display: inline-flex; align-items: center;
-    padding: 3px 9px; border-radius: 20px;
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 999px;
     font-size: 10px; font-weight: 700; letter-spacing: .02em;
   }
+  .badge::before {
+    content: '';
+    width: 6px; height: 6px; border-radius: 50%;
+    background: currentColor;
+    flex-shrink: 0;
+  }
 
-  .badge-pendiente  { background: rgba(210,153,34,0.15); color: var(--amarillo); border: 1px solid rgba(210,153,34,0.3); }
-  .badge-entregada  { background: var(--verde-glow); color: var(--verde); border: 1px solid rgba(63,185,80,0.3); }
-  .badge-retornada  { background: rgba(56,139,253,0.12); color: var(--azul); border: 1px solid rgba(56,139,253,0.25); }
-  .badge-cancelada  { background: rgba(248,81,73,0.1); color: var(--rojo); border: 1px solid rgba(248,81,73,0.25); }
+  .badge-pendiente  { background: color-mix(in srgb, var(--amarillo) 15%, transparent); color: var(--amarillo); }
+  .badge-entregada  { background: var(--verde-glow); color: var(--verde); }
+  .badge-retornada  { background: color-mix(in srgb, var(--azul) 14%, transparent); color: var(--azul); }
+  .badge-cancelada  { background: color-mix(in srgb, var(--rojo) 12%, transparent); color: var(--rojo); }
 
   /* ═══════════════════════════════════════════
      BOTONES
@@ -909,10 +915,10 @@
   .btn-verde:hover { filter: brightness(1.05); box-shadow: 0 10px 22px rgba(34,197,94,0.3); color: #fff; }
   .btn-outline { background: var(--card); border: 1px solid var(--borde); color: var(--texto-dim); }
   .btn-outline:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); }
-  .btn-rojo   { background: rgba(248,81,73,0.1); color: var(--rojo); border: 1px solid rgba(248,81,73,0.2); }
+  .btn-rojo   { background: rgba(220,38,38,0.1); color: var(--rojo); border: 1px solid rgba(220,38,38,0.2); }
   .btn-rojo:hover { background: var(--rojo); color: #fff; border-color: var(--rojo); transform: translateY(-1px); }
-  .btn-azul   { background: rgba(56,139,253,0.1); color: var(--azul); border: 1px solid rgba(56,139,253,0.2); }
-  .btn-amarillo { background: rgba(210,153,34,0.12); color: var(--amarillo); border: 1px solid rgba(210,153,34,0.3); }
+  .btn-azul   { background: rgba(37,99,235,0.1); color: var(--azul); border: 1px solid rgba(37,99,235,0.2); }
+  .btn-amarillo { background: rgba(180,83,9,0.12); color: var(--amarillo); border: 1px solid rgba(180,83,9,0.3); }
   .btn-amarillo:hover { background: var(--amarillo); color: #000; border-color: var(--amarillo); transform: translateY(-1px); }
   .btn-azul:hover { background: var(--azul); color: #fff; border-color: var(--azul); transform: translateY(-1px); }
   .btn:disabled { opacity: .35; cursor: not-allowed; }
@@ -1054,7 +1060,7 @@
     transition: transform .15s, box-shadow .15s, border-color .15s;
   }
   .picker-card:hover { transform: translateY(-3px); box-shadow: 0 12px 26px rgba(0,0,0,.35); border-color: var(--verde); }
-  .picker-card.en-carrito { border-color: var(--verde); box-shadow: 0 0 0 2px rgba(63,185,80,.35); }
+  .picker-card.en-carrito { border-color: var(--verde); box-shadow: 0 0 0 2px rgba(22,163,74,.35); }
   .picker-card .picker-foto { height: 136px; background: var(--card2); display: flex; align-items: center; justify-content: center; font-size: 42px; position: relative; }
   .picker-card .picker-foto img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .picker-card .picker-badge {
@@ -1153,7 +1159,7 @@
   .fila-adicional input:focus { outline: none; border-color: var(--verde); }
   .fila-adicional .cant-adicional { width: 60px; }
   .btn-quitar-fila { background: none; border: none; color: var(--rojo); font-size: 16px; cursor: pointer; padding: 0 4px; }
-  .badge-gastable { font-size:10px;color:var(--amarillo);font-weight:700;background:rgba(210,153,34,0.15);padding:1px 6px;border-radius:10px;border:1px solid rgba(210,153,34,0.3); }
+  .badge-gastable { font-size:10px;color:var(--amarillo);font-weight:700;background:rgba(180,83,9,0.15);padding:1px 6px;border-radius:10px;border:1px solid rgba(180,83,9,0.3); }
 
   /* ═════════════════════════════════════════
      HERRAMIENTAS — pegboard del taller
@@ -1180,13 +1186,13 @@
   .her-foto-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .her-foto-fallback { font-size: 34px; }
   .her-cat-tag { position: absolute; top: 6px; left: 6px; font-size: 9px; font-weight: 800; padding: 2px 7px; border-radius: 20px; white-space: nowrap; }
-  .her-ribbon { position: absolute; top: 6px; right: 6px; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(210,153,34,0.92); color: #000; white-space: nowrap; }
-  .her-ribbon.popular { top: auto; bottom: 6px; right: 6px; background: rgba(63,185,80,0.92); color: #000; }
+  .her-ribbon { position: absolute; top: 6px; right: 6px; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 6px; background: rgba(180,83,9,0.92); color: #000; white-space: nowrap; }
+  .her-ribbon.popular { top: auto; bottom: 6px; right: 6px; background: rgba(22,163,74,0.92); color: #000; }
   .her-cuerpo { padding: 10px 10px 12px; }
   .her-nombre { font-size: 12.5px; font-weight: 700; line-height: 1.25; margin-bottom: 6px; min-height: 31px; color: var(--texto); }
   .her-fila-stock { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 9px; }
   .her-stock-badge { font-size: 11px; font-weight: 800; padding: 1px 8px; border-radius: 20px; background: var(--verde-glow); color: var(--verde); white-space: nowrap; }
-  .her-card.stock-bajo .her-stock-badge { background: rgba(210,153,34,0.15); color: var(--amarillo); }
+  .her-card.stock-bajo .her-stock-badge { background: rgba(180,83,9,0.15); color: var(--amarillo); }
   .her-usos { font-size: 9.5px; color: var(--texto-dim); white-space: nowrap; }
   .her-acciones { display: flex; gap: 6px; }
   .her-acciones button { flex: 1; padding: 5px; font-size: 11px; }
@@ -1261,7 +1267,7 @@
     transition:background .15s, transform .15s;
   }
   .btn-agregar-materia:hover { background:var(--verde-dim); color:#fff; transform:translateY(-1px); }
-  .prof-badge-activos { font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(210,153,34,.15); color:var(--amarillo); white-space:nowrap; }
+  .prof-badge-activos { font-size:10.5px; font-weight:700; padding:2px 9px; border-radius:20px; background:rgba(180,83,9,.15); color:var(--amarillo); white-space:nowrap; }
 
   /* ═════════════════════════════════════════
      USUARIOS (config) — tarjetas de cuenta
@@ -1994,7 +2000,7 @@
         <span style="padding:10px 12px;background:var(--card2);border:1px solid var(--borde);border-radius:0 8px 8px 0;color:var(--texto-dim);font-size:14px;white-space:nowrap">@taller.com</span>
       </div>
     </div>
-    <div class="modal-campo" id="usr-pass-info" style="background:rgba(56,139,253,0.08);border:1px solid rgba(56,139,253,0.25);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--texto-dim)">
+    <div class="modal-campo" id="usr-pass-info" style="background:rgba(37,99,235,0.08);border:1px solid rgba(37,99,235,0.25);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--texto-dim)">
       🔒 El encargado iniciará con una contraseña temporal que tú le asignas. Al entrar por primera vez, el sistema le pedirá que la cambie.
     </div>
     <div class="modal-campo" id="usr-pass-temporal-wrap">
@@ -2776,7 +2782,7 @@ window.exportarAuditoriaPDF = function() {
     head: [["Fecha","Hora","Tipo","Acción","Descripción","Usuario"]],
     body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f.Acción, f.Descripción, f.Usuario]),
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [63,185,80] }
+    headStyles: { fillColor: [22,163,74] }
   });
   doc.save(`auditoria_${new Date().toISOString().slice(0,10)}.pdf`);
 };
@@ -3329,7 +3335,7 @@ async function _actualizarDashboard(todas, prestProf) {
             <div style="font-size:12.5px;font-weight:600;color:var(--texto);overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(h.nombre)}</div>
             <div style="font-size:9.5px;color:var(--texto-dim)">${h.categoria || "Sin categoría"}</div>
           </div>
-          <span style="font-size:11px;font-weight:800;color:var(--amarillo);background:rgba(210,153,34,.12);padding:2px 8px;border-radius:20px;white-space:nowrap">${h.cantidadDisponible} disp.</span>
+          <span style="font-size:11px;font-weight:800;color:var(--amarillo);background:rgba(180,83,9,.12);padding:2px 8px;border-radius:20px;white-space:nowrap">${h.cantidadDisponible} disp.</span>
         </div>`;
       }).join("") : '<div class="vacio" style="padding:10px"><p>Sin alertas de stock. 👍</p></div>';
     }
@@ -3666,7 +3672,7 @@ window.abrirModal = function(id) {
     </div>
     <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
     <div class="modal-campo"><label>Cantidad de herramientas</label>
-      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--verde-glow);border:1px solid rgba(63,185,80,0.35);border-radius:10px;padding:8px 14px;margin-top:2px">
+      <div style="display:inline-flex;align-items:center;gap:8px;background:var(--verde-glow);border:1px solid rgba(22,163,74,0.35);border-radius:10px;padding:8px 14px;margin-top:2px">
         <span style="font-size:18px">🧰</span>
         <span style="font-size:20px;font-weight:800;color:var(--verde)">${totalHerBase}</span>
         <span style="font-size:12.5px;color:var(--texto-dim)">herramienta${totalHerBase===1?"":"s"}</span>
@@ -4714,7 +4720,7 @@ function ppRenderTabla() {
             <div class="pp-lab">${escapeHtml(p.laboratorio) || "—"}</div>
           </div>
           ${estadoTag}
-          ${(p.estado === "activo" && !esDeHoy) ? '<span class="pp-estado-tag" style="background:rgba(210,153,34,.15);color:var(--amarillo)" title="Sin retornar desde un día anterior">⏳ Sin retornar</span>' : ''}
+          ${(p.estado === "activo" && !esDeHoy) ? '<span class="pp-estado-tag" style="background:rgba(180,83,9,.15);color:var(--amarillo)" title="Sin retornar desde un día anterior">⏳ Sin retornar</span>' : ''}
         </div>
         <div class="pp-herr-list">${herramientasHtml}</div>
         <div class="pp-fecha-row">🕒 ${fecha}${p.tieneIncidencias ? ` · <span style="color:var(--rojo)">⚠️ con incidencia</span>${!p.incidenciaVista ? ` <button onclick="marcarIncidenciaVistaPP('${p.id}')" style="background:none;border:none;color:var(--azul);font-size:10px;cursor:pointer;text-decoration:underline">marcar vista</button>` : ''}` : ''}</div>
@@ -7023,7 +7029,7 @@ window.exportarHistorialPDF = function() {
     head: [["Fecha","Hora","Tipo","Nombre/Profesor","Matrícula/Ref.","N° herr.","Estado","Incidencia"]],
     body: filas.map(f => [f.Fecha, f.Hora, f.Tipo, f["Nombre/Profesor"], f["Matrícula/Ref."], f["N° herramientas"], f.Estado, f.Incidencia]),
     styles: { fontSize: 8 },
-    headStyles: { fillColor: [63,185,80] }
+    headStyles: { fillColor: [22,163,74] }
   });
   doc.save(`historial_${new Date().toISOString().slice(0,10)}.pdf`);
 };
