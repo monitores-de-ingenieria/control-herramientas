@@ -10,72 +10,75 @@
 <link rel="apple-touch-icon" href="../img/icons/icon-192.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <style>
   /* ═══════════════════════════════════════════
      VARIABLES — TEMA OSCURO (default)
   ═══════════════════════════════════════════ */
   :root {
-    --bg:        #0d1117;
-    --sidebar:   #161b22;
-    --card:      #1c2128;
-    --card2:     #22272e;
-    --verde:     #3fb950;
-    --verde-dim: #2ea043;
-    --verde-glow:rgba(63,185,80,0.15);
-    --amarillo:  #d29922;
-    --rojo:      #f85149;
-    --azul:      #388bfd;
-    --texto:     #e6edf3;
-    --texto-dim: #7d8590;
-    --borde:     #30363d;
-    --hover:     #262c34;
-    --tb-bg:     #161b22;
-    --tb-txt:    #e6edf3;
-    --tb-sub:    #7d8590;
-    --av-bg:     #3fb950;
-    --av-txt:    #000;
+    --bg:        #0b0d10;
+    --sidebar:   #101317;
+    --card:      #15181d;
+    --card2:     #1b1f26;
+    --verde:     #22c55e;
+    --verde-dim: #16a34a;
+    --verde-glow:rgba(34,197,94,0.12);
+    --amarillo:  #eab308;
+    --rojo:      #f87171;
+    --azul:      #60a5fa;
+    --texto:     #e5e7eb;
+    --texto-dim: #8b93a1;
+    --borde:     #262b33;
+    --hover:     #1d2129;
+    --tb-bg:     #15181d;
+    --tb-txt:    #e5e7eb;
+    --tb-sub:    #8b93a1;
+    --av-bg:     #22c55e;
+    --av-txt:    #0b0d10;
 
-    /* — Capa premium (misma identidad visual que el formulario público) — */
-    --gradiente-verde: linear-gradient(135deg, #3fb950 0%, #2ea043 100%);
-    --gradiente-tb:     linear-gradient(120deg, #1b2c20 0%, #161b22 65%);
-    --sombra-sm:  0 2px 10px rgba(0,0,0,0.18);
-    --sombra-md:  0 10px 28px rgba(0,0,0,0.28);
-    --sombra-lg:  0 22px 56px rgba(0,0,0,0.42);
-    --sombra-verde: 0 10px 24px rgba(63,185,80,0.28);
-    --radio-md:  12px;
-    --radio-lg:  20px;
-    --fuente-titulo: 'Poppins', 'Segoe UI', Arial, sans-serif;
-    --fuente-cuerpo: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --gradiente-verde: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradiente-tb:     var(--card);
+    --sombra-sm:  0 1px 2px rgba(0,0,0,0.24), 0 1px 1px rgba(0,0,0,0.16);
+    --sombra-md:  0 4px 14px rgba(0,0,0,0.32), 0 1px 3px rgba(0,0,0,0.2);
+    --sombra-lg:  0 24px 60px rgba(0,0,0,0.5), 0 2px 8px rgba(0,0,0,0.3);
+    --sombra-verde: 0 6px 18px rgba(34,197,94,0.22);
+    --radio-md:  10px;
+    --radio-lg:  16px;
+    --fuente-titulo: 'Inter', -apple-system, sans-serif;
+    --fuente-cuerpo: 'Inter', -apple-system, sans-serif;
   }
 
   /* ═══════════════════════════════════════════
      VARIABLES — TEMA CLARO
   ═══════════════════════════════════════════ */
   body.tema-claro {
-    --bg:        #f0f4f8;
+    --bg:        #f1f5f9;
     --sidebar:   #ffffff;
     --card:      #ffffff;
-    --card2:     #f4f7fa;
-    --verde:     #1b6e3c;
-    --verde-dim: #155c31;
-    --verde-glow:rgba(27,110,60,0.1);
-    --amarillo:  #9a6308;
-    --rojo:      #b3261e;
-    --azul:      #0b5fad;
-    --texto:     #1a2026;
-    --texto-dim: #5b6572;
-    --borde:     #d8e0e8;
-    --hover:     #eef3f7;
-    --tb-bg:     #155c31;
-    --tb-txt:    #ffffff;
-    --tb-sub:    rgba(255,255,255,0.7);
-    --av-bg:     #ffffff;
-    --av-txt:    #155c31;
+    --card2:     #f8fafc;
+    --verde:     #16a34a;
+    --verde-dim: #15803d;
+    --verde-glow:rgba(22,163,74,0.08);
+    --amarillo:  #b45309;
+    --rojo:      #dc2626;
+    --azul:      #2563eb;
+    --texto:     #0f172a;
+    --texto-dim: #64748b;
+    --borde:     #e2e8f0;
+    --hover:     #f1f5f9;
+    --tb-bg:     #ffffff;
+    --tb-txt:    #0f172a;
+    --tb-sub:    #64748b;
+    --av-bg:     #16a34a;
+    --av-txt:    #ffffff;
 
-    --gradiente-verde: linear-gradient(135deg, #1f8a4c 0%, #155c31 100%);
-    --gradiente-tb:     linear-gradient(120deg, #1b6e3c 0%, #155c31 100%);
-    --sombra-verde: 0 10px 24px rgba(27,110,60,0.22);
+    --gradiente-verde: linear-gradient(135deg, #22c55e 0%, #15803d 100%);
+    --gradiente-tb:     var(--card);
+    --sombra-sm:  0 1px 2px rgba(15,23,42,0.05);
+    --sombra-md:  0 8px 20px rgba(15,23,42,0.08), 0 2px 6px rgba(15,23,42,0.04);
+    --sombra-lg:  0 24px 56px rgba(15,23,42,0.16);
+    --sombra-verde: 0 8px 20px rgba(22,163,74,0.16);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -212,7 +215,7 @@
   .topbar-admin { display:flex; align-items:center; gap:8px; color:var(--tb-txt); font-size:12px; }
 
   .avatar {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 30px; height: 30px; border-radius: 8px;
     background: var(--av-bg);
     display: flex; align-items: center; justify-content: center;
     font-weight: 800; font-size: 12px; color: var(--av-txt);
@@ -220,27 +223,27 @@
   }
 
   .btn-toggle-sidebar {
-    background: rgba(255,255,255,0.08); border: none;
-    color: var(--tb-txt); font-size: 17px; cursor: pointer;
-    padding: 6px 8px; border-radius: 6px; line-height: 1; flex-shrink: 0;
-    transition: background .15s;
+    background: transparent; border: 1px solid transparent;
+    color: var(--texto-dim); font-size: 16px; cursor: pointer;
+    padding: 6px 9px; border-radius: 8px; line-height: 1; flex-shrink: 0;
+    transition: background .15s, color .15s;
   }
-  .btn-toggle-sidebar:hover { background: rgba(255,255,255,0.16); }
+  .btn-toggle-sidebar:hover { background: var(--hover); color: var(--texto); }
 
   .btn-tema {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    color: var(--tb-txt);
-    border-radius: 20px;
-    padding: 4px 12px;
-    font-size: 11px;
-    font-weight: 700;
+    background: var(--card2);
+    border: 1px solid var(--borde);
+    color: var(--texto);
+    border-radius: 8px;
+    padding: 6px 13px;
+    font-size: 11.5px;
+    font-weight: 600;
     cursor: pointer;
-    display: flex; align-items: center; gap: 5px;
-    margin-right: 10px;
-    transition: background .15s;
+    display: flex; align-items: center; gap: 6px;
+    margin-right: 12px;
+    transition: border-color .15s, background .15s;
   }
-  .btn-tema:hover { background: rgba(255,255,255,0.2); }
+  .btn-tema:hover { border-color: var(--verde); background: var(--verde-glow); }
 
   /* ═══════════════════════════════════════════
      SIDEBAR con efectos hover animados
@@ -305,14 +308,16 @@
     display: flex;
     align-items: center;
     gap: 10px;
-    padding: 8px 16px;
-    font-size: 12px;
+    padding: 8px 12px;
+    margin: 1px 8px;
+    border-radius: 8px;
+    font-size: 12.5px;
     cursor: pointer;
     color: var(--texto-dim);
     position: relative;
     overflow: hidden;
     white-space: nowrap;
-    transition: color .2s;
+    transition: color .15s, background .15s;
   }
 
   /* Línea izquierda animada */
@@ -897,15 +902,15 @@
      BOTONES
   ═══════════════════════════════════════════ */
   .btn {
-    padding: 6px 12px; border-radius: 7px; border: none;
-    font-size: 11px; font-weight: 700; cursor: pointer;
+    padding: 7px 13px; border-radius: 8px; border: none;
+    font-size: 11.5px; font-weight: 600; cursor: pointer;
     display: inline-flex; align-items: center; gap: 5px;
     transition: all .15s;
   }
 
   .btn-verde  { background: var(--gradiente-verde); color: #fff; box-shadow: var(--sombra-verde); }
-  .btn-verde:hover { transform: translateY(-1px); box-shadow: 0 12px 26px rgba(63,185,80,0.34); color: #fff; }
-  .btn-outline { background: transparent; border: 1px solid var(--borde); color: var(--texto-dim); }
+  .btn-verde:hover { filter: brightness(1.05); box-shadow: 0 10px 22px rgba(34,197,94,0.3); color: #fff; }
+  .btn-outline { background: var(--card); border: 1px solid var(--borde); color: var(--texto-dim); }
   .btn-outline:hover { border-color: var(--verde); color: var(--verde); transform: translateY(-1px); }
   .btn-rojo   { background: rgba(248,81,73,0.1); color: var(--rojo); border: 1px solid rgba(248,81,73,0.2); }
   .btn-rojo:hover { background: var(--rojo); color: #fff; border-color: var(--rojo); transform: translateY(-1px); }
