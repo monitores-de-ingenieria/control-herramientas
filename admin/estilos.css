@@ -1,67 +1,68 @@
-  /* ═══════════════════════════════════════════
-     VARIABLES — TEMA OSCURO (default)
+/* ═══════════════════════════════════════════
+     VARIABLES — TEMA OSCURO
   ═══════════════════════════════════════════ */
   :root {
-    --bg:        #0d1117;
-    --sidebar:   #161b22;
-    --card:      #1c2128;
-    --card2:     #22272e;
-    --verde:     #3fb950;
-    --verde-dim: #2ea043;
-    --verde-glow:rgba(63,185,80,0.15);
-    --amarillo:  #d29922;
-    --rojo:      #f85149;
-    --azul:      #388bfd;
-    --texto:     #e6edf3;
-    --texto-dim: #7d8590;
-    --borde:     #30363d;
-    --hover:     #262c34;
-    --tb-bg:     #161b22;
-    --tb-txt:    #e6edf3;
-    --tb-sub:    #7d8590;
-    --av-bg:     #3fb950;
-    --av-txt:    #000;
+    --bg:        #0f172a;
+    --sidebar:   #0b1220;
+    --card:      #111827;
+    --card2:     #1a2333;
+    --verde:     #4ade80;
+    --verde-dim: #22c55e;
+    --verde-glow:rgba(74,222,128,0.15);
+    --amarillo:  #facc15;
+    --rojo:      #f87171;
+    --azul:      #60a5fa;
+    --texto:     #f1f5f9;
+    --texto-dim: #94a3b8;
+    --borde:     #263248;
+    --hover:     #1a2333;
+    --tb-bg:     #0b1220;
+    --tb-txt:    #f1f5f9;
+    --tb-sub:    #94a3b8;
+    --av-bg:     #f1f5f9;
+    --av-txt:    #0f172a;
 
-    /* — Capa premium (misma identidad visual que el formulario público) — */
-    --gradiente-verde: linear-gradient(135deg, #3fb950 0%, #2ea043 100%);
-    --gradiente-tb:     linear-gradient(120deg, #1b2c20 0%, #161b22 65%);
-    --sombra-sm:  0 2px 10px rgba(0,0,0,0.18);
-    --sombra-md:  0 10px 28px rgba(0,0,0,0.28);
-    --sombra-lg:  0 22px 56px rgba(0,0,0,0.42);
-    --sombra-verde: 0 10px 24px rgba(63,185,80,0.28);
-    --radio-md:  12px;
+    --gradiente-verde: linear-gradient(135deg, #22c55e 0%, #16a34a 100%);
+    --gradiente-tb:     linear-gradient(120deg, #0f172a 0%, #0b1220 65%);
+    --sombra-sm:  0 4px 12px rgba(0,0,0,0.25);
+    --sombra-md:  0 10px 26px rgba(0,0,0,0.32);
+    --sombra-lg:  0 22px 56px rgba(0,0,0,0.45);
+    --sombra-verde: 0 8px 20px rgba(34,197,94,0.25);
+    --radio-md:  14px;
     --radio-lg:  20px;
-    --fuente-titulo: 'Poppins', 'Segoe UI', Arial, sans-serif;
-    --fuente-cuerpo: 'Inter', 'Segoe UI', Arial, sans-serif;
+    --fuente-titulo: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    --fuente-cuerpo: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   }
 
   /* ═══════════════════════════════════════════
-     VARIABLES — TEMA CLARO
+     VARIABLES — TEMA CLARO (default) — estilo tipo
+     tarjetas/timeline: fondo slate suave, blanco,
+     acentos en pastilla (pill).
   ═══════════════════════════════════════════ */
   body.tema-claro {
-    --bg:        #f0f4f8;
+    --bg:        #f1f5f9;
     --sidebar:   #ffffff;
     --card:      #ffffff;
-    --card2:     #f4f7fa;
-    --verde:     #1b6e3c;
-    --verde-dim: #155c31;
-    --verde-glow:rgba(27,110,60,0.1);
-    --amarillo:  #9a6308;
-    --rojo:      #b3261e;
-    --azul:      #0b5fad;
-    --texto:     #1a2026;
-    --texto-dim: #5b6572;
-    --borde:     #d8e0e8;
-    --hover:     #eef3f7;
-    --tb-bg:     #155c31;
-    --tb-txt:    #ffffff;
-    --tb-sub:    rgba(255,255,255,0.7);
-    --av-bg:     #ffffff;
-    --av-txt:    #155c31;
+    --card2:     #f8fafc;
+    --verde:     #166534;
+    --verde-dim: #14532d;
+    --verde-glow:#dcfce7;
+    --amarillo:  #92400e;
+    --rojo:      #b91c1c;
+    --azul:      #1d4ed8;
+    --texto:     #0f172a;
+    --texto-dim: #64748b;
+    --borde:     #e2e8f0;
+    --hover:     #f8fafc;
+    --tb-bg:     #ffffff;
+    --tb-txt:    #0f172a;
+    --tb-sub:    #64748b;
+    --av-bg:     #0f172a;
+    --av-txt:    #ffffff;
 
-    --gradiente-verde: linear-gradient(135deg, #1f8a4c 0%, #155c31 100%);
-    --gradiente-tb:     linear-gradient(120deg, #1b6e3c 0%, #155c31 100%);
-    --sombra-verde: 0 10px 24px rgba(27,110,60,0.22);
+    --gradiente-verde: linear-gradient(135deg, #16a34a 0%, #15803d 100%);
+    --gradiente-tb:     linear-gradient(120deg, #ffffff 0%, #ffffff 100%);
+    --sombra-verde: 0 8px 20px rgba(22,163,74,0.18);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -180,9 +181,8 @@
   ═══════════════════════════════════════════ */
   .topbar {
     grid-column: 1/-1;
-    background: var(--gradiente-tb);
+    background: var(--tb-bg);
     border-bottom: 1px solid var(--borde);
-    box-shadow: var(--sombra-sm);
     display: flex;
     align-items: center;
     padding: 0 16px;
@@ -192,41 +192,41 @@
   }
 
   .topbar-logo { font-size: 20px; flex-shrink: 0; }
-  .topbar-titulo { font-weight: 800; font-size: 14px; color: var(--tb-txt); letter-spacing: -.3px; }
+  .topbar-titulo { font-weight: 700; font-size: 14px; color: var(--tb-txt); letter-spacing: -.3px; }
   .topbar-sub { font-size: 11px; color: var(--tb-sub); }
   .topbar-spacer { flex: 1; }
   .topbar-admin { display:flex; align-items:center; gap:8px; color:var(--tb-txt); font-size:12px; }
 
   .avatar {
-    width: 30px; height: 30px; border-radius: 50%;
+    width: 30px; height: 30px; border-radius: 9px;
     background: var(--av-bg);
     display: flex; align-items: center; justify-content: center;
-    font-weight: 800; font-size: 12px; color: var(--av-txt);
+    font-weight: 700; font-size: 12px; color: var(--av-txt);
     flex-shrink: 0;
   }
 
   .btn-toggle-sidebar {
-    background: rgba(255,255,255,0.08); border: none;
+    background: var(--hover); border: 1px solid var(--borde);
     color: var(--tb-txt); font-size: 17px; cursor: pointer;
-    padding: 6px 8px; border-radius: 6px; line-height: 1; flex-shrink: 0;
+    padding: 6px 8px; border-radius: 8px; line-height: 1; flex-shrink: 0;
     transition: background .15s;
   }
-  .btn-toggle-sidebar:hover { background: rgba(255,255,255,0.16); }
+  .btn-toggle-sidebar:hover { background: var(--borde); }
 
   .btn-tema {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
+    background: var(--hover);
+    border: 1px solid var(--borde);
     color: var(--tb-txt);
-    border-radius: 20px;
+    border-radius: 40px;
     padding: 4px 12px;
     font-size: 11px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
     display: flex; align-items: center; gap: 5px;
     margin-right: 10px;
     transition: background .15s;
   }
-  .btn-tema:hover { background: rgba(255,255,255,0.2); }
+  .btn-tema:hover { background: var(--borde); }
 
   /* ═══════════════════════════════════════════
      SIDEBAR con efectos hover animados
@@ -255,8 +255,8 @@
 
   .sb-brand-icon {
     width: 34px; height: 34px;
-    background: var(--verde);
-    border-radius: 8px;
+    background: var(--av-bg);
+    border-radius: 9px;
     display: flex; align-items: center; justify-content: center;
     font-size: 18px;
     flex-shrink: 0;
