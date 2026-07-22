@@ -13,7 +13,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="estilos.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/feather-icons/4.29.0/feather.min.js"></script>
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.1/jspdf.plugin.autotable.min.js"></script>
 </head>
@@ -170,31 +170,31 @@
         <div class="sb-stat-prestadas-numero" id="tab-total-herramientas-hoy">—</div>
       </div>
 
-      <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono"><i data-feather="home"></i></span><span class="nav-texto">Dashboard</span></div>
+      <div class="nav-item" data-vista="dashboard" title="Dashboard"><span class="nav-icono"><i data-lucide="layout-dashboard"></i></span><span class="nav-texto">Dashboard</span></div>
 
-      <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono"><i data-feather="file-text"></i></span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
-      <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono"><i data-feather="user"></i></span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
-      <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono"><i data-feather="repeat"></i></span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
-      <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono"><i data-feather="alert-triangle"></i></span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
+      <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono"><i data-lucide="clipboard-list"></i></span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
+      <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono"><i data-lucide="user-round"></i></span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
+      <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono"><i data-lucide="arrow-left-right"></i></span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
+      <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono"><i data-lucide="triangle-alert"></i></span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
 
       <div class="nav-grupo">Inventario</div>
-      <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono"><i data-feather="tool"></i></span><span class="nav-texto">Herramientas</span></div>
+      <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono"><i data-lucide="wrench"></i></span><span class="nav-texto">Herramientas</span></div>
 
       <div class="nav-grupo">Reportes</div>
-      <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono"><i data-feather="bar-chart-2"></i></span><span class="nav-texto">Historial</span></div>
-      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono"><i data-feather="shield"></i></span><span class="nav-texto">Auditoría</span></div>
+      <div class="nav-item" data-vista="historial" title="Historial"><span class="nav-icono"><i data-lucide="chart-bar-big"></i></span><span class="nav-texto">Historial</span></div>
+      <div class="nav-item" data-vista="auditoria-cfg" id="nav-auditoria" title="Auditoría"><span class="nav-icono"><i data-lucide="shield-check"></i></span><span class="nav-texto">Auditoría</span></div>
 
       <div class="nav-grupo">Configuración</div>
-      <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono"><i data-feather="user"></i></span><span class="nav-texto">Profesores</span></div>
-      <div class="nav-item" data-vista="materias-cfg" title="Materias"><span class="nav-icono"><i data-feather="book-open"></i></span><span class="nav-texto">Materias</span></div>
-      <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono"><i data-feather="grid"></i></span><span class="nav-texto">Laboratorios / Talleres</span></div>
-      <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono"><i data-feather="calendar"></i></span><span class="nav-texto">Ciclos</span></div>
-      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono"><i data-feather="users"></i></span><span class="nav-texto">Usuarios</span></div>
+      <div class="nav-item" data-vista="profesores-cfg" title="Profesores"><span class="nav-icono"><i data-lucide="user-round"></i></span><span class="nav-texto">Profesores</span></div>
+      <div class="nav-item" data-vista="materias-cfg" title="Materias"><span class="nav-icono"><i data-lucide="book-open"></i></span><span class="nav-texto">Materias</span></div>
+      <div class="nav-item" data-vista="laboratorios" title="Laboratorios / Talleres"><span class="nav-icono"><i data-lucide="building-2"></i></span><span class="nav-texto">Laboratorios / Talleres</span></div>
+      <div class="nav-item" data-vista="ciclos-cfg" title="Ciclos"><span class="nav-icono"><i data-lucide="calendar-days"></i></span><span class="nav-texto">Ciclos</span></div>
+      <div class="nav-item" data-vista="usuarios-cfg" id="nav-usuarios" title="Usuarios"><span class="nav-icono"><i data-lucide="users-round"></i></span><span class="nav-texto">Usuarios</span></div>
 
       
 
       <div class="sb-spacer"></div>
-      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono"><i data-feather="log-out"></i></span><span class="nav-texto">Cerrar Sesión</span></div>
+      <div class="nav-item nav-cerrar" id="btn-cerrar-sesion" title="Cerrar Sesión"><span class="nav-icono"><i data-lucide="log-out"></i></span><span class="nav-texto">Cerrar Sesión</span></div>
 
 
     </div>
@@ -216,7 +216,7 @@
 
         <div class="kpi-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))" id="dash-kpis">
           <div class="kpi-card" data-vista="solicitudes" data-estado="pendiente" title="Ver solicitudes pendientes de hoy">
-            <div class="kpi-icono">📋</div>
+            <div class="kpi-icono"><i data-lucide="clipboard-list"></i></div>
             <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes">—</div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
@@ -228,15 +228,15 @@
             <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy">—</div><div class="kpi-sub" id="res-hoy-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
-            <div class="kpi-icono">🧰</div>
+            <div class="kpi-icono"><i data-lucide="toolbox"></i></div>
             <div><div class="kpi-label">Herramientas afuera</div><div class="kpi-numero" id="res-afuera">—</div></div>
           </div>
           <div class="kpi-card" data-vista="prestamos-prof" title="Ver profesores con préstamos activos">
-            <div class="kpi-icono">👨‍🏫</div>
+            <div class="kpi-icono"><i data-lucide="graduation-cap"></i></div>
             <div><div class="kpi-label">Profesores c/préstamo</div><div class="kpi-numero" id="res-prof-activos">—</div></div>
           </div>
           <div class="kpi-card rojo" id="dash-kpi-incidencias" onclick="verIncidencias()" title="Ver incidencias abiertas">
-            <div class="kpi-icono">⚠️</div>
+            <div class="kpi-icono"><i data-lucide="triangle-alert"></i></div>
             <div><div class="kpi-label">Incidencias abiertas</div><div class="kpi-numero" id="dash-incidencias">—</div></div>
           </div>
         </div>
@@ -268,7 +268,7 @@
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🔧 Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para abrir</span></div>
+            <div class="dash-panel-header"><h3>Herramientas más solicitadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para abrir</span></div>
             <div id="grafico-herramientas" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
@@ -277,7 +277,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>⚠️ Stock bajo</h3><span style="font-size:10px;color:var(--texto-dim)">clic para gestionar</span></div>
+            <div class="dash-panel-header"><h3>Stock bajo</h3><span style="font-size:10px;color:var(--texto-dim)">clic para gestionar</span></div>
             <div id="dash-stock-bajo" style="padding:12px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
@@ -333,7 +333,7 @@
         </div>
 
         <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
-          <h3>⚠️ Solicitudes de Estudiantes con incidencias</h3>
+          <h3>Solicitudes de Estudiantes con incidencias</h3>
         </div>
 
         <div class="seccion-tabla">
@@ -347,7 +347,7 @@
         </div>
         <div class="seccion-tabla" id="panel-incidencias-prof" style="display:none;margin-top:16px">
           <div class="tabla-header">
-            <h3>⚠️ Préstamos a Profesores con incidencias</h3>
+            <h3>Préstamos a Profesores con incidencias</h3>
           </div>
           <div id="tabla-incidencias-prof-wrap"></div>
         </div>
@@ -414,13 +414,13 @@
       <div class="vista" id="vista-herramientas-cfg">
         <div class="pagina-titulo">
           <div>
-            <h2>🧰 Herramientas</h2>
+            <h2>Herramientas</h2>
             <p>Pegboard del taller — inventario, categorías y uso (incluye materiales gastables)</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF">📄 PDF</button>
-            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva">📦 Entrada de stock</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
+            <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
             <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
           </div>
         </div>
@@ -478,12 +478,12 @@
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
           <div>
-            <h2>📊 Historial de Movimientos</h2>
+            <h2>Historial de Movimientos</h2>
             <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF"><i data-lucide="file-text"></i> PDF</button>
           </div>
         </div>
 
@@ -603,8 +603,8 @@
         <div class="pagina-titulo">
           <div><h2>📜 Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel">📊 Excel</button>
-            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF">📄 PDF</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF"><i data-lucide="file-text"></i> PDF</button>
           </div>
         </div>
         <div class="seccion-tabla">
@@ -713,7 +713,7 @@
 <!-- MODAL CAMBIO OBLIGATORIO DE CONTRASEÑA -->
 <div class="modal-overlay" id="modal-cambiar-pass" style="z-index:999">
   <div class="modal" style="max-width:400px;text-align:center">
-    <div style="font-size:36px;margin-bottom:8px">🔐</div>
+    <div style="font-size:36px;margin-bottom:8px"><i data-lucide="shield-alert" style="width:36px;height:36px;color:var(--rojo)"></i></div>
     <h3 style="margin-bottom:6px">Debes crear tu contraseña</h3>
     <p style="font-size:13px;color:var(--texto-dim);margin-bottom:20px">Es tu primera vez accediendo. Por seguridad, define tu propia contraseña antes de continuar.</p>
     <div class="modal-campo" style="text-align:left">
@@ -733,7 +733,7 @@
     </div>
     <div id="nueva-pass-error" style="color:var(--rojo);font-size:12px;margin-bottom:8px;display:none"></div>
     <button id="btn-confirmar-nueva-pass" class="btn btn-verde" style="width:100%;padding:12px;font-size:14px;margin-top:8px">Guardar contraseña</button>
-    <button onclick="window._signOut()" style="margin-top:10px;width:100%;padding:10px;background:none;border:none;color:var(--rojo);font-size:12px;cursor:pointer;font-weight:700">🚪 Cerrar sesión e intentar de nuevo</button>
+    <button onclick="window._signOut()" style="margin-top:10px;width:100%;padding:10px;background:none;border:none;color:var(--rojo);font-size:12px;cursor:pointer;font-weight:700"><i data-lucide="log-out"></i> Cerrar sesión e intentar de nuevo</button>
   </div>
 </div>
 
@@ -835,7 +835,7 @@
 
 <div class="modal-overlay" id="modal-confirm-custom" style="z-index:300">
   <div class="modal" style="max-width:420px">
-    <div class="modal-titulo">⚠️ Confirmar</div>
+    <div class="modal-titulo"><i data-lucide="triangle-alert"></i> Confirmar</div>
     <p id="confirm-custom-msg" style="margin:14px 0;color:var(--texto);font-size:14px;line-height:1.5"></p>
     <div class="modal-acciones">
       <button class="btn btn-outline" id="confirm-custom-no">Cancelar</button>
@@ -1071,7 +1071,7 @@
 <div class="modal-overlay" id="modal-entrada-stock">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span>📦 Entrada de stock</span>
+      <span><i data-lucide="package-plus"></i> Entrada de stock</span>
       <button class="modal-cerrar" onclick="cerrarModalEntradaStock()">✕</button>
     </div>
 

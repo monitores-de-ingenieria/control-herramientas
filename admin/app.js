@@ -4810,4 +4810,4 @@ document.getElementById("modal-hist")?.addEventListener("click", e => {
 });
 
 // Dibuja los íconos de línea del sidebar (Feather Icons, cargado por CDN)
-if (window.feather) feather.replace({ "stroke-width": 2 });
+if (window.lucide) lucide.createIcons();
