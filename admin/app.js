@@ -1073,13 +1073,13 @@ function renderTabla() {
                 <span style="font-size:11px;color:var(--texto-dim)">herramientas</span>
               </span>
             </td>
-            <td style="white-space:nowrap"><span class="badge badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}${s.estado === "pendiente" && (Date.now() - fechaDe(s.creadoEn).getTime()) > 15*60*1000 ? ' <span class="badge badge-cancelada" title="Pendiente hace más de 15 minutos">⏰</span>' : ''}</td>
+            <td style="white-space:nowrap"><span class="badge badge-dot badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}${s.estado === "pendiente" && (Date.now() - fechaDe(s.creadoEn).getTime()) > 15*60*1000 ? ' <span class="badge badge-cancelada" title="Pendiente hace más de 15 minutos">⏰</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-amarillo" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
-                ${s.estado === "retornada" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center">👍 Retornada</span>` : ""}
+                ${s.estado === "retornada" ? `<span class="badge badge-dot badge-entregada" style="cursor:default">Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span class="badge badge-cancelada">❌ Cancelada</span>` : ""}
               </div>
             </td>
