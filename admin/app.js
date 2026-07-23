@@ -4758,9 +4758,9 @@ window.abrirModalHist = function(id, tipo) {
       </div>
     </div>` : "";
 
-  document.getElementById("modal-hist-titulo").textContent =
+  document.getElementById("modal-hist-titulo").innerHTML =
     tipo === "estudiante" ? '<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Solicitud de Estudiante' :
-    tipo === "profesor"   ? '<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo a Profesor' : '<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i> Salida a Departamento Externo';
+    tipo === "profesor"   ? '<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo a Profesor' : '<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i> Salida a Departamento Externo';
 
   const datosPersona = tipo === "externo" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
