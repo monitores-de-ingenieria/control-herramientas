@@ -292,51 +292,55 @@
 
       <div class="vista activa" id="vista-solicitudes">
         <div class="pagina-titulo">
-          <div>
-            <h2>Solicitudes</h2>
-            <p>Gestiona las solicitudes de herramientas y materiales</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono"><i data-lucide=clipboard-list></i></div>
+            <div>
+              <h2>Solicitudes</h2>
+              <p>Gestiona las solicitudes de herramientas y materiales</p>
+            </div>
           </div>
-        </div>
-
-        <div class="filtros" style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-          <div class="buscar-wrap" style="flex:1;min-width:200px">
-            <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
-              style="width:100%">
-            <span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
-          </div>
-          <select id="filtro-estado" style="min-width:150px;flex-shrink:0">
-            <option value="">Estado: Todos</option>
-            <option value="pendiente">Pendiente</option>
-            <option value="entregada">Entregada</option>
-            <option value="retornada">Retornada</option>
-            <option value="cancelada">Cancelada</option>
-            <option value="incidencia"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Con Incidencia</option>
-          </select>
-          <select id="filtro-profesor" style="min-width:150px;flex-shrink:0">
-            <option value="">Profesor: Todos</option>
-          </select>
-        </div>
-
-        <!-- Tags de filtros activos -->
-        <div id="filtros-activos-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-          <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros activos:</span>
-          <div id="filtros-tags" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
-          <button id="btn-limpiar-filtros" style="padding:4px 10px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar filtros</button>
-        </div>
-
-        <div class="tabs-filtro" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;row-gap:8px">
-          <button class="tab-btn activo" data-tab-estado="" style="white-space:nowrap">Todos <span class="tab-badge" id="tab-todos">—</span></button>
-          <button class="tab-btn" data-tab-estado="pendiente" style="color:var(--amarillo);white-space:nowrap">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
-          <button class="tab-btn" data-tab-estado="entregada" style="color:var(--verde);white-space:nowrap">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
-          <button class="tab-btn" data-tab-estado="retornada" style="color:var(--azul);white-space:nowrap">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
-          <button class="tab-btn" data-tab-estado="cancelada" style="color:var(--rojo);white-space:nowrap">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
-        </div>
-
-        <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
-          <h3>Solicitudes de Estudiantes con incidencias</h3>
         </div>
 
         <div class="seccion-tabla">
+          <div class="toolbar-tabla">
+            <div class="filtros">
+              <div class="buscar-wrap" style="flex:1;min-width:200px">
+                <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
+                  style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+              <select id="filtro-estado" style="min-width:150px;flex-shrink:0">
+                <option value="">Estado: Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="entregada">Entregada</option>
+                <option value="retornada">Retornada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="incidencia">Con Incidencia</option>
+              </select>
+              <select id="filtro-profesor" style="min-width:150px;flex-shrink:0">
+                <option value="">Profesor: Todos</option>
+              </select>
+            </div>
+
+            <div id="filtros-activos-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px">
+              <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros activos:</span>
+              <div id="filtros-tags" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
+              <button id="btn-limpiar-filtros" style="padding:4px 10px;background:rgba(220,38,38,.1);color:var(--rojo);border:1px solid rgba(220,38,38,.25);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar filtros</button>
+            </div>
+
+            <div class="tabs-segmentado" style="margin-top:14px">
+              <button class="tab-btn tab-seg activo" data-tab-estado="">Todos <span class="tab-badge" id="tab-todos">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="pendiente">Pendientes <span class="tab-badge" id="tab-pend">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="entregada">Entregados <span class="tab-badge" id="tab-ent">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="retornada">Retorno pendiente <span class="tab-badge" id="tab-ret">—</span></button>
+              <button class="tab-btn tab-seg" data-tab-estado="cancelada">Canceladas <span class="tab-badge" id="tab-can">—</span></button>
+            </div>
+          </div>
+
+          <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
+            <h3>Solicitudes de Estudiantes con incidencias</h3>
+          </div>
+
           <div id="tabla-solicitudes-wrap">
             <div class="cargando"><div class="spinner"></div>Cargando solicitudes...</div>
           </div>
