@@ -211,7 +211,7 @@ async function registrarAuditoria(tipo, accion, descripcion) {
 }
 
 let _auditoriaLista = [];
-const AUDIT_ICONOS = { herramienta:"<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", profesor:"<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>", materia:"<i data-lucide="book-open" style="width:1em;height:1em;vertical-align:-2px"></i>", usuario:"<i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i>", prestamo:"<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>", stock:"<i data-lucide="package" style="width:1em;height:1em;vertical-align:-2px"></i>" };
+const AUDIT_ICONOS = { herramienta:'<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', profesor:'<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>', materia:'<i data-lucide="book-open" style="width:1em;height:1em;vertical-align:-2px"></i>', usuario:'<i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i>', prestamo:'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>', stock:'<i data-lucide="package" style="width:1em;height:1em;vertical-align:-2px"></i>' };
 const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
 
 async function cargarAuditoria() {
@@ -274,7 +274,7 @@ function renderAuditoria() {
     })();
     html += `
       <div class="audit-item" style="${esUltimoDelDia ? "--audit-linea-alto:0;" : ""}">
-        <span class="audit-punto" style="background:${color}22;color:${color}">${AUDIT_ICONOS[a.tipo]||"<i data-lucide="pin" style="width:1em;height:1em;vertical-align:-2px"></i>"}</span>
+        <span class="audit-punto" style="background:${color}22;color:${color}">${AUDIT_ICONOS[a.tipo]||'<i data-lucide="pin" style="width:1em;height:1em;vertical-align:-2px"></i>'}</span>
         <div class="audit-contenido">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">
             <span style="font-size:12.5px;color:var(--texto)">${escapeHtml(a.descripcion) || "—"}</span>
@@ -384,7 +384,7 @@ async function aplicarRolUsuario(user) {
           await updateDoc(doc(db, "usuarios", user.uid), { debeCambiarContrasena: false });
           _lastLoginPass = nueva;
           document.getElementById("modal-cambiar-pass").classList.remove("abierto");
-          mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Contraseña guardada correctamente");
+          mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Contraseña guardada correctamente');
         } catch(err) {
           console.error(err);
           const msg = err.code === "auth/wrong-password" || err.code === "auth/invalid-credential"
@@ -873,7 +873,7 @@ async function _actualizarDashboard(todas, prestProf) {
     if (stockEl) {
       const bajos = (_herListaActual || []).filter(h => (Number.isFinite(h.cantidadDisponible)?h.cantidadDisponible:0) <= UMBRAL_STOCK_BAJO);
       stockEl.innerHTML = bajos.length ? bajos.slice(0,6).map(h => {
-        const meta = CATEGORIAS_HERRAMIENTA[h.categoria] || { icono:"<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#8b949e" };
+        const meta = CATEGORIAS_HERRAMIENTA[h.categoria] || { icono:'<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#8b949e" };
         const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
         const miniatura = fotoUrl
           ? `<img src="${fotoUrl}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -897,13 +897,13 @@ async function _actualizarDashboard(todas, prestProf) {
       const eventos = [];
       todas.forEach(s => {
         const nombre = escapeHtml(`${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante");
-        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:"<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#3fb950" });
-        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#388bfd" });
-        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:"<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#d29922" });
+        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#3fb950" });
+        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#388bfd" });
+        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#d29922" });
       });
       prestProf.forEach(p => {
-        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#388bfd" });
-        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:"<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#a371f7" });
+        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#388bfd" });
+        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:'<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>', color:"#a371f7" });
       });
       eventos.sort((a,b) => b.ts - a.ts);
       actEl.innerHTML = eventos.length ? eventos.slice(0,6).map(e => `
@@ -1151,7 +1151,7 @@ function actualizarFiltrosUI() {
 
   if (buscar) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i data-lucide="search" style="width:1em;height:1em;vertical-align:-2px"></i> "${buscar}"</span>`;
   if (estado) {
-    const etiquetas = { pendiente:"⏳ Pendiente", entregada:"<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Entregada", retornada:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada", cancelada:"<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada", incidencia:"<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i> Con Incidencia" };
+    const etiquetas = { pendiente:"⏳ Pendiente", entregada:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Entregada', retornada:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada', cancelada:'<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada', incidencia:'<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i> Con Incidencia' };
     tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${etiquetas[estado]||estado}</span>`;
   }
   if (profesor) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i> ${profesor}</span>`;
@@ -1560,7 +1560,7 @@ window.renderPickerFotosSolicitud = function renderPickerFotosSolicitud() {
   }).join("");
 
   // Si lo escrito no coincide con nada del catálogo, se ofrece agregarlo
-  // tal cual (reemplaza el viejo botón aparte "<i data-lucide="square-pen" style="width:1em;height:1em;vertical-align:-2px"></i> Escribir").
+  // tal cual (reemplaza el viejo botón aparte '<i data-lucide="square-pen" style="width:1em;height:1em;vertical-align:-2px"></i> Escribir').
   const yaExiste = q && _herListaActual.some(h => h.nombre.toLowerCase() === q);
   if (q && !yaExiste) {
     html += `<div class="picker-card-custom" onclick="solPickerAjustar('${escapeAttr(qCruda.trim())}',1)">
@@ -1653,7 +1653,7 @@ window.agregarFilaAdicionalManual = async function() {
     renderTabla();
     cargarDashboard();
     cerrarPickerFotosSolicitud();
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta adicional agregada");
+    mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta adicional agregada');
   } catch (e) {
     console.error("Error al agregar adicional:", e);
     mostrarToast("Error al agregar: " + e.message, "rojo");
@@ -1700,7 +1700,7 @@ window.confirmarPickerFotosSolicitud = async function() {
     renderTabla();
     cargarDashboard();
     cerrarPickerFotosSolicitud();
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas adicionales agregadas");
+    mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas adicionales agregadas');
   } catch (e) {
     console.error("Error al agregar adicional:", e);
     mostrarToast("Error al agregar: " + e.message, "rojo");
@@ -1765,7 +1765,7 @@ window.guardarCambiosPendiente = async function() {
     renderTabla();
     document.getElementById("modal-entrega").classList.remove("abierto");
     solicitudActivaId = null;
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Cambios guardados (aún pendiente de entregar)");
+    mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Cambios guardados (aún pendiente de entregar)');
   } catch(e) { console.error("Error al guardar:", e); mostrarToast("Error al guardar: " + e.message, "rojo"); }
 };
 
@@ -1810,7 +1810,7 @@ window.confirmarEntrega = async function() {
     renderTabla();
     cargarDashboard();
     cerrarModalEntrega();
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas entregadas correctamente");
+    mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas entregadas correctamente');
   } catch(e) { console.error("Error al entregar:", e); mostrarToast("Error al entregar: " + e.message, "rojo"); }
 };
 
@@ -2041,7 +2041,7 @@ window.confirmarRetorno = async function() {
     if (incidencias.length > 0) {
       mostrarToast(`<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado · ${incidencias.length} incidencia(s) registrada(s)`, "rojo");
     } else {
-      mostrarToast("<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Todas las herramientas retornadas correctamente");
+      mostrarToast('<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Todas las herramientas retornadas correctamente');
     }
   } catch(e) { mostrarToast("Error al registrar retorno", "rojo"); }
 };
@@ -2054,61 +2054,61 @@ window.confirmarRetorno = async function() {
 // responde, lo que retrasaba ocultar #pantalla-carga (mismo síntoma que el
 // flicker del login que ya se había resuelto antes).
 const HERRAMIENTAS_LISTA = [
-  { codigo: "HER-001", nombre: "Aceitera",               icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Insumos" },
-  { codigo: "HER-002", nombre: "Alicate",                icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-003", nombre: "Alicate de presión",     icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-004", nombre: "Broca",                  icono: "<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 10, categoria: "Perforación" },
-  { codigo: "HER-005", nombre: "Brocha",                 icono: "<i data-lucide="paintbrush" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 10, categoria: "Insumos" },
-  { codigo: "HER-006", nombre: "Cepillo de alambre",     icono: "<i data-lucide="paintbrush" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-007", nombre: "Cinta adhesiva",         icono: "<i data-lucide="film" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 10, categoria: "Insumos" },
-  { codigo: "HER-008", nombre: "Cinta métrica",          icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-009", nombre: "Cuchilla",                icono: "<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Corte" },
-  { codigo: "HER-010", nombre: "Destornillador plano",   icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 8,  categoria: "Sujeción" },
-  { codigo: "HER-011", nombre: "Destornillador estrella",icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 8,  categoria: "Sujeción" },
-  { codigo: "HER-012", nombre: "Electrodo",               icono: "<i data-lucide="zap" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 20, categoria: "Material Gastable" },
-  { codigo: "HER-013", nombre: "Escuadra falsa",          icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-014", nombre: "Gira tuerca",             icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-015", nombre: "Granetero",               icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Golpe" },
-  { codigo: "HER-016", nombre: "Guantes",                 icono: "<i data-lucide="hand" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 10, categoria: "Seguridad" },
-  { codigo: "HER-017", nombre: "Lente",                   icono: "<i data-lucide="shield" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 10, categoria: "Seguridad" },
-  { codigo: "HER-018", nombre: "Lima cuadrada",           icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-019", nombre: "Lima triangular",         icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-020", nombre: "Lima media caña",         icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-021", nombre: "Lima redonda",            icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-022", nombre: "Llave ajustable",         icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-023", nombre: "Llave allen",             icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-024", nombre: "Llave de mandril",        icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-025", nombre: "Llave de tomo",           icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-026", nombre: "Llave de tuercas",        icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-027", nombre: "Máscara de soldar",       icono: "<i data-lucide="shield" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Soldadura" },
-  { codigo: "HER-028", nombre: "Marcador numérico",       icono: "<i data-lucide="hash" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Insumos" },
-  { codigo: "HER-029", nombre: "Martillo",                icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 8,  categoria: "Golpe" },
-  { codigo: "HER-030", nombre: "Mazo de goma",            icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Golpe" },
-  { codigo: "HER-031", nombre: "Macho de 1/2",            icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Perforación" },
-  { codigo: "HER-032", nombre: "Nivel magnético",         icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-033", nombre: "Nivel 90",                icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-034", nombre: "Pie de rey",              icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-035", nombre: "Pinzas",                  icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-036", nombre: "Piqueta",                 icono: "<i data-lucide="pickaxe" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Golpe" },
-  { codigo: "HER-037", nombre: "Porta broca",             icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Perforación" },
-  { codigo: "HER-038", nombre: "Segueta",                 icono: "<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Corte" },
-  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",       icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Perforación" }
+  { codigo: "HER-001", nombre: "Aceitera",               icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Insumos" },
+  { codigo: "HER-002", nombre: "Alicate",                icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-003", nombre: "Alicate de presión",     icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-004", nombre: "Broca",                  icono: '<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 10, categoria: "Perforación" },
+  { codigo: "HER-005", nombre: "Brocha",                 icono: '<i data-lucide="paintbrush" style="width:1em;height:1em;vertical-align:-2px"></i>', cantidadDisponible: 10, categoria: "Insumos" },
+  { codigo: "HER-006", nombre: "Cepillo de alambre",     icono: '<i data-lucide="paintbrush" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-007", nombre: "Cinta adhesiva",         icono: '<i data-lucide="film" style="width:1em;height:1em;vertical-align:-2px"></i>', cantidadDisponible: 10, categoria: "Insumos" },
+  { codigo: "HER-008", nombre: "Cinta métrica",          icono: '<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-009", nombre: "Cuchilla",                icono: '<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Corte" },
+  { codigo: "HER-010", nombre: "Destornillador plano",   icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 8,  categoria: "Sujeción" },
+  { codigo: "HER-011", nombre: "Destornillador estrella",icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 8,  categoria: "Sujeción" },
+  { codigo: "HER-012", nombre: "Electrodo",               icono: '<i data-lucide="zap" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 20, categoria: "Material Gastable" },
+  { codigo: "HER-013", nombre: "Escuadra falsa",          icono: '<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-014", nombre: "Gira tuerca",             icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-015", nombre: "Granetero",               icono: '<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-016", nombre: "Guantes",                 icono: '<i data-lucide="hand" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 10, categoria: "Seguridad" },
+  { codigo: "HER-017", nombre: "Lente",                   icono: '<i data-lucide="shield" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 10, categoria: "Seguridad" },
+  { codigo: "HER-018", nombre: "Lima cuadrada",           icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-019", nombre: "Lima triangular",         icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-020", nombre: "Lima media caña",         icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-021", nombre: "Lima redonda",            icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-022", nombre: "Llave ajustable",         icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-023", nombre: "Llave allen",             icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-024", nombre: "Llave de mandril",        icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-025", nombre: "Llave de tomo",           icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-026", nombre: "Llave de tuercas",        icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-027", nombre: "Máscara de soldar",       icono: '<i data-lucide="shield" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Soldadura" },
+  { codigo: "HER-028", nombre: "Marcador numérico",       icono: '<i data-lucide="hash" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Insumos" },
+  { codigo: "HER-029", nombre: "Martillo",                icono: '<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 8,  categoria: "Golpe" },
+  { codigo: "HER-030", nombre: "Mazo de goma",            icono: '<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-031", nombre: "Macho de 1/2",            icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Perforación" },
+  { codigo: "HER-032", nombre: "Nivel magnético",         icono: '<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-033", nombre: "Nivel 90",                icono: '<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-034", nombre: "Pie de rey",              icono: '<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-035", nombre: "Pinzas",                  icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-036", nombre: "Piqueta",                 icono: '<i data-lucide="pickaxe" style="width:1em;height:1em;vertical-align:-2px"></i>', cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-037", nombre: "Porta broca",             icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Perforación" },
+  { codigo: "HER-038", nombre: "Segueta",                 icono: '<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Corte" },
+  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",       icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>',  cantidadDisponible: 5,  categoria: "Perforación" }
 ];
 
 // Categorías del inventario: icono + color de acento para chips/etiquetas.
 // Los colores son fijos (no ligados a --verde/--azul del tema) porque son
 // datos, no elementos de tema — se ven bien tanto en claro como en oscuro.
 const CATEGORIAS_HERRAMIENTA = {
-  "Medición":         { icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#388bfd" },
-  "Corte":            { icono: "<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#f85149" },
-  "Golpe":            { icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#d29922" },
-  "Sujeción":         { icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#3fb950" },
-  "Perforación":      { icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#a371f7" },
-  "Acabado":          { icono: "<i data-lucide="square" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#db61a2" },
-  "Soldadura":        { icono: "<i data-lucide="zap" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#ff9800" },
-  "Seguridad":        { icono: "<i data-lucide="hard-hat" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#39c5cf" },
-  "Insumos":          { icono: "<i data-lucide="droplet" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#8b949e" },
-  "Material Gastable":{ icono: "<i data-lucide="toolbox" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#eab308" }
+  "Medición":         { icono: '<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#388bfd" },
+  "Corte":            { icono: '<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#f85149" },
+  "Golpe":            { icono: '<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#d29922" },
+  "Sujeción":         { icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#3fb950" },
+  "Perforación":      { icono: '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#a371f7" },
+  "Acabado":          { icono: '<i data-lucide="square" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#db61a2" },
+  "Soldadura":        { icono: '<i data-lucide="zap" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#ff9800" },
+  "Seguridad":        { icono: '<i data-lucide="hard-hat" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#39c5cf" },
+  "Insumos":          { icono: '<i data-lucide="droplet" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#8b949e" },
+  "Material Gastable":{ icono: '<i data-lucide="toolbox" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#eab308" }
 };
 // A partir de esta cantidad disponible (inclusive) se marca "stock bajo".
 const UMBRAL_STOCK_BAJO = 2;
@@ -2504,7 +2504,7 @@ window.confirmarPickerFotosPP = async function() {
         else { mapa[nombre] = { nombre, cantidad, adicional: true }; }
       });
       await updateDoc(ref, { herramientas: Object.values(mapa) });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas adicionales agregadas al préstamo");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas adicionales agregadas al préstamo');
     } catch (e) {
       console.error(e);
       mostrarToast("Error al agregar herramientas", "rojo");
@@ -2543,7 +2543,7 @@ window.confirmarNuevoPrestamoProf = async function() {
       tieneIncidencias: false,
       creadoEn: serverTimestamp()
     });
-    mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo registrado correctamente");
+    mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo registrado correctamente');
     registrarAuditoria("prestamo", "entregar", `Entregó ${herramientas.length} herramienta(s) al profesor "${profesor}" (${laboratorio})`);
     cerrarModalNuevoProf();
   } catch(e) {
@@ -2611,7 +2611,7 @@ window.ppRetornoAgregarAdicional = async function(nombre) {
     const existentes = snap.data()?.herramientas || [];
     existentes.push({ nombre, cantidad: 1, adicional: true });
     await updateDoc(ref, { herramientas: existentes });
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada");
+    mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada');
     abrirRetornoProf(ppActivoId);
   } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
 };
@@ -2668,7 +2668,7 @@ window.confirmarRetornoProf = async function() {
     if (incidencias.length > 0) {
       mostrarToast(`<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
     } else {
-      mostrarToast("<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado correctamente");
+      mostrarToast('<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado correctamente');
     }
 
     const panel = document.getElementById("panel-incidencias-prof");
@@ -2891,7 +2891,7 @@ window.confirmarNuevoPrestamoExt = async function() {
       tieneIncidencias: false,
       creadoEn: serverTimestamp()
     });
-    mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Salida registrada correctamente");
+    mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Salida registrada correctamente');
     cerrarModalNuevoExt();
   } catch(e) {
     mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
@@ -2949,7 +2949,7 @@ window.extRetornoAgregarAdicional = async function(nombre) {
     const existentes = snap.data()?.herramientas || [];
     existentes.push({ nombre, cantidad: 1, adicional: true });
     await updateDoc(ref, { herramientas: existentes });
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada");
+    mostrarToast('<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada');
     abrirRetornoExt(extActivoId);
   } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
 };
@@ -2998,7 +2998,7 @@ window.confirmarRetornoExt = async function() {
     if (incidencias.length > 0) {
       mostrarToast(`<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
     } else {
-      mostrarToast("<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado correctamente");
+      mostrarToast('<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado correctamente');
     }
   } catch(e) {
     mostrarToast("Error al registrar retorno", "rojo");
@@ -3118,7 +3118,7 @@ function renderHerramientasCfg(lista) {
       : "";
     let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="" title="Ver todas las categorías">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
     chipsHtml += Object.keys(categoriasPresentes).sort((a, b) => a.localeCompare(b)).map(cat => {
-      const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#8b949e" };
+      const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: '<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#8b949e" };
       const n = categoriasPresentes[cat];
       const activo = herCategoriaActiva === cat;
       const estilo = activo
@@ -3185,7 +3185,7 @@ function renderHerramientasCfg(lista) {
     const cantidad = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0;
     const bajo = cantidad <= UMBRAL_STOCK_BAJO;
     const cat = h.categoria || "Sin categoría";
-    const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#8b949e" };
+    const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: '<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>', color: "#8b949e" };
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
     const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
     const usos = conteoUsos[h.nombre] || 0;
@@ -3404,18 +3404,18 @@ window.guardarHerramienta = async function() {
     btn.textContent = "Guardando...";
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta actualizada");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta actualizada');
       registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesDeEditar)}`);
     } else {
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
         const antesExistente = { id: snap.docs[0].id, ...snap.docs[0].data() };
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ya existía esa herramienta — se actualizó en vez de duplicarla");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ya existía esa herramienta — se actualizó en vez de duplicarla');
         registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesExistente)}`);
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada');
         registrarAuditoria("herramienta", "crear", `Agregó la herramienta "${nombreFinal}"${categoria ? " ("+categoria+")" : ""}`);
       }
       // Si veníamos de una herramienta "de respaldo" (aún no en Firestore) y le
@@ -3520,7 +3520,7 @@ document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e =>
 // Ya no es una colección aparte: un material gastable es simplemente una
 // herramienta con categoria === "Material Gastable". Esta función se usa
 // en toda la app (badges de solicitudes, retornos, historial) para saber
-// si una herramienta debe mostrarse con la etiqueta "<i data-lucide="toolbox" style="width:1em;height:1em;vertical-align:-2px"></i> gastable".
+// si una herramienta debe mostrarse con la etiqueta '<i data-lucide="toolbox" style="width:1em;height:1em;vertical-align:-2px"></i> gastable'.
 window.esMaterialGastable = function(nombreHerramienta) {
   const h = _herListaActual.find(h => h.nombre.toLowerCase() === (nombreHerramienta || "").toLowerCase());
   return h?.categoria === "Material Gastable";
@@ -3846,11 +3846,11 @@ window.guardarMateria = async function() {
   try {
     if (materiaCfgEditar) {
       await updateDoc(doc(db, "materias", materiaCfgEditar), { codigo, nombre });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Materia actualizada");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Materia actualizada');
       registrarAuditoria("materia", "editar", `Editó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
     } else {
       await addDoc(collection(db, "materias"), { codigo, nombre, creadoEn: serverTimestamp() });
-      mostrarToast(window._materiaLocalNombre ? "<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Materia de respaldo guardada en Firestore" : "<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Materia agregada");
+      mostrarToast(window._materiaLocalNombre ? '<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Materia de respaldo guardada en Firestore' : '<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Materia agregada');
       registrarAuditoria("materia", "crear", `Agregó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
       // Si veníamos de una materia "de respaldo" y le cambiaron el nombre,
       // marcamos el nombre original como eliminado para que no reaparezca
@@ -3912,22 +3912,22 @@ window.guardarProfesor = async function() {
   try {
     if (profCfgEditar) {
       await updateDoc(doc(db, "profesores", profCfgEditar), { nombre, materias });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor actualizado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor actualizado');
       registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
     } else if (window._profLocalNombre) {
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre, materias });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor actualizado");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor actualizado');
         registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
       } else {
         await addDoc(collection(db, "profesores"), { nombre, materias, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor guardado");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor guardado');
         registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "profesores"), { nombre, materias, creadoEn: serverTimestamp() });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor agregado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor agregado');
       registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
     }
     cerrarModalProfesor();
@@ -4040,22 +4040,22 @@ window.guardarLaboratorio = async function() {
   try {
     if (labCfgEditar) {
       await updateDoc(doc(db, "laboratorios", labCfgEditar), { nombre });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio actualizado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio actualizado');
       registrarAuditoria("laboratorio", "editar", `Editó el laboratorio "${nombre}"`);
     } else if (window._labLocalNombre) {
       const snap = await getDocs(query(collection(db, "laboratorios"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "laboratorios", snap.docs[0].id), { nombre });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio actualizado");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio actualizado');
         registrarAuditoria("laboratorio", "editar", `Editó el laboratorio "${nombre}"`);
       } else {
         await addDoc(collection(db, "laboratorios"), { nombre, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio guardado");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio guardado');
         registrarAuditoria("laboratorio", "crear", `Agregó el laboratorio "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "laboratorios"), { nombre, creadoEn: serverTimestamp() });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio agregado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio agregado');
       registrarAuditoria("laboratorio", "crear", `Agregó el laboratorio "${nombre}"`);
     }
     cerrarModalLaboratorio();
@@ -4196,22 +4196,22 @@ window.guardarCiclo = async function() {
   try {
     if (cicloCfgEditar) {
       await updateDoc(doc(db, "ciclos", cicloCfgEditar), { nombre });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo actualizado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo actualizado');
       registrarAuditoria("ciclo", "editar", `Editó el ciclo "${nombre}"`);
     } else if (window._cicloLocalNombre) {
       const snap = await getDocs(query(collection(db, "ciclos"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "ciclos", snap.docs[0].id), { nombre });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo actualizado");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo actualizado');
         registrarAuditoria("ciclo", "editar", `Editó el ciclo "${nombre}"`);
       } else {
         await addDoc(collection(db, "ciclos"), { nombre, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo guardado");
+        mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo guardado');
         registrarAuditoria("ciclo", "crear", `Agregó el ciclo "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "ciclos"), { nombre, creadoEn: serverTimestamp() });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo agregado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo agregado');
       registrarAuditoria("ciclo", "crear", `Agregó el ciclo "${nombre}"`);
     }
     cerrarModalCiclo();
@@ -4346,7 +4346,7 @@ window.guardarUsuario = async function() {
   try {
     if (usrCfgEditarId) {
       await updateDoc(doc(db, "usuarios", usrCfgEditarId), { nombre, rol, secciones });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Usuario actualizado");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Usuario actualizado');
       registrarAuditoria("usuario", "editar", `Editó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     } else {
@@ -4364,7 +4364,7 @@ window.guardarUsuario = async function() {
         debeCambiarContrasena: rol === "encargado",
         creadoEn: serverTimestamp()
       });
-      mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Usuario creado. Le llegará un correo para definir su contraseña.");
+      mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Usuario creado. Le llegará un correo para definir su contraseña.');
       registrarAuditoria("usuario", "crear", `Creó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     }
@@ -4410,7 +4410,7 @@ window.exportarHerramientasExcel = function() {
   ws["!cols"] = [{ wch: 4 }, { wch: 28 }, { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, ws, "Inventario");
   XLSX.writeFile(wb, `inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.xlsx`);
-  mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a Excel");
+  mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a Excel');
 };
 
 window.exportarHerramientasPDF = function() {
@@ -4458,7 +4458,7 @@ window.exportarHerramientasPDF = function() {
     doc.text(`Página ${i} de ${pags}`, 196, 290, { align: "right" });
   }
   doc.save(`inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.pdf`);
-  mostrarToast("<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a PDF");
+  mostrarToast('<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a PDF');
 };
 
 // ── TEMA ──
@@ -4602,9 +4602,9 @@ function histActualizarFiltrosUI() {
   tags.innerHTML = "";
   const chip = (txt) => `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${txt}</span>`;
   if (buscar) tags.innerHTML += chip(`<i data-lucide="search" style="width:1em;height:1em;vertical-align:-2px"></i> "${buscar}"`);
-  if (tipo)   tags.innerHTML += chip(tipo === "estudiante" ? "<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Estudiante" : "<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor");
+  if (tipo)   tags.innerHTML += chip(tipo === "estudiante" ? '<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Estudiante' : '<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor');
   if (estado) {
-    const et = { pendiente:"⏳ Pendiente", entregada:"<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Entregada", retornada:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada", cancelada:"<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada", incidencia:"<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i> Con Incidencia" };
+    const et = { pendiente:"⏳ Pendiente", entregada:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Entregada', retornada:'<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada', cancelada:'<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada', incidencia:'<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i> Con Incidencia' };
     tags.innerHTML += chip(et[estado] || estado);
   }
   if (fecha)  tags.innerHTML += chip(`<i data-lucide="calendar-days" style="width:1em;height:1em;vertical-align:-2px"></i> ${fecha}`);
@@ -4620,7 +4620,7 @@ function histActualizarFiltrosUI() {
 
 function histEstadoInfo(r) {
   if (r.tipo !== "estudiante" && r.estado === "activo")   return { cls: "pendiente", txt: "⏳ Sin retornar" };
-  if (r.tipo !== "estudiante" && r.estado === "retornado") return { cls: "retornada", txt: "<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornado" };
+  if (r.tipo !== "estudiante" && r.estado === "retornado") return { cls: "retornada", txt: '<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornado' };
   return { cls: r.estado || "", txt: r.estado || "—" };
 }
 
@@ -4638,7 +4638,7 @@ function histRenderTabla() {
     return;
   }
 
-  const tipoIcono  = { estudiante:"<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i>", profesor:"<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>", externo:"<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i>" };
+  const tipoIcono  = { estudiante:'<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i>', profesor:'<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>', externo:'<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i>' };
   const tipoLabel  = { estudiante:"Estudiante", profesor:"Profesor", externo:"Dep. Externo" };
 
   wrap.innerHTML = `
@@ -4674,7 +4674,7 @@ function histRenderTabla() {
           <tr style="cursor:pointer" onclick="abrirModalHist('${r.id}','${r.tipo}')">
             <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
             <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(r.creadoEn)}</td>
-            <td><span style="font-size:13px">${tipoIcono[r.tipo]||"<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>"}</span> <span style="font-size:11px;color:var(--texto-dim)">${tipoLabel[r.tipo]||r.tipo}</span></td>
+            <td><span style="font-size:13px">${tipoIcono[r.tipo]||'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>'}</span> <span style="font-size:11px;color:var(--texto-dim)">${tipoLabel[r.tipo]||r.tipo}</span></td>
             <td>
               <div class="est-avatar">
                 <div class="est-circulo" style="background:${colorEstudiante(nombreMostrar)}22;color:${colorEstudiante(nombreMostrar)}">
@@ -4733,7 +4733,7 @@ window.abrirModalHist = function(id, tipo) {
   const r = historialDatos.find(x => x.id === id && x.tipo === tipo);
   if (!r) return;
 
-  const estadoIcono = { retornada:"<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>", no_retornada:"<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i>", danada:"<i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i>", perdida:"<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i>", entregada:"<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>" };
+  const estadoIcono = { retornada:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>', no_retornada:'<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i>', danada:'<i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i>', perdida:'<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i>', entregada:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>' };
   const estadoColor = { retornada:"var(--verde)", no_retornada:"var(--rojo)", danada:"var(--rojo)", perdida:"var(--naranja,#f97316)", entregada:"var(--verde)" };
 
   const totalHerHist = (r.herramientas||[]).reduce((sum, h) => sum + (h.cantidad || 1), 0);
@@ -4758,8 +4758,8 @@ window.abrirModalHist = function(id, tipo) {
     </div>` : "";
 
   document.getElementById("modal-hist-titulo").textContent =
-    tipo === "estudiante" ? "<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Solicitud de Estudiante" :
-    tipo === "profesor"   ? "<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo a Profesor" : "<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i> Salida a Departamento Externo";
+    tipo === "estudiante" ? '<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Solicitud de Estudiante' :
+    tipo === "profesor"   ? '<i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo a Profesor' : '<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i> Salida a Departamento Externo';
 
   const datosPersona = tipo === "externo" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
