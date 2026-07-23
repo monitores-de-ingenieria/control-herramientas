@@ -4816,6 +4816,9 @@ if (window.lucide) lucide.createIcons();
 // insertan después vía innerHTML — este observer los detecta y los "pinta"
 // automáticamente, sin tener que llamar createIcons() a mano en cada render.
 const _lucideObserver = new MutationObserver(() => {
-  if (window.lucide) lucide.createIcons();
+  if (!window.lucide) return;
+  _lucideObserver.disconnect();
+  lucide.createIcons();
+  _lucideObserver.observe(document.body, { childList: true, subtree: true });
 });
 _lucideObserver.observe(document.body, { childList: true, subtree: true });
