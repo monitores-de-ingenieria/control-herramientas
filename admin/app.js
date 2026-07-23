@@ -4822,3 +4822,20 @@ const _lucideObserver = new MutationObserver(() => {
   _lucideObserver.observe(document.body, { childList: true, subtree: true });
 });
 _lucideObserver.observe(document.body, { childList: true, subtree: true });
+
+/* Fix: botones circulares (eliminar, cerrar, quitar) que se deformaban
+   en óvalo porque el ícono SVG de Lucide no tenía tamaño fijo y estiraba
+   la altura del botón. Fuerza que el ícono siempre mida igual que el
+   texto y que el botón centre su contenido sin crecer. */
+.btn-rojo, .btn-outline, .btn-azul, .btn-verde, .btn-amarillo, .btn,
+.modal-cerrar, .btn-quitar-fila, .btn-quitar-horario,
+.picker-cart-item button, .pm-header button {
+  line-height: 1;
+}
+.btn-rojo svg, .btn-outline svg, .btn-azul svg, .btn-verde svg, .btn svg,
+.modal-cerrar svg, .btn-quitar-fila svg, .btn-quitar-horario svg,
+.picker-cart-item button svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
