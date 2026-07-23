@@ -105,7 +105,7 @@ function formatFecha(ts) {
 
 function mostrarToast(msg, tipo = "verde") {
   const t = document.getElementById("toast");
-  t.innerHTML = msg;
+  t.textContent = msg;
   t.className = tipo;
   t.style.display = "block";
   setTimeout(() => t.style.display = "none", 3000);
@@ -211,7 +211,7 @@ async function registrarAuditoria(tipo, accion, descripcion) {
 }
 
 let _auditoriaLista = [];
-const AUDIT_ICONOS = { herramienta:"<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", profesor:"<i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i>", materia:"<i data-lucide="book-open" style="width:1em;height:1em;vertical-align:-2px"></i>", usuario:"<i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i>", prestamo:"<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>", stock:"<i data-lucide="package" style="width:1em;height:1em;vertical-align:-2px"></i>" };
+const AUDIT_ICONOS = { herramienta:"🔧", profesor:"👤", materia:"📚", usuario:"🔐", prestamo:"📋", stock:"📦" };
 const AUDIT_ACCION_COLOR = { crear:"var(--verde)", editar:"var(--azul)", eliminar:"var(--rojo)", entrada:"var(--amarillo)", entregar:"var(--verde)", retornar:"var(--azul)" };
 
 async function cargarAuditoria() {
@@ -229,12 +229,12 @@ async function cargarAuditoria() {
         // "auditoria", índice faltante, etc.) porque onSnapshot no tenía
         // callback de error. Ahora sí se avisa qué pasó.
         console.error("Error cargando auditoría:", err);
-        if (wrap) wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No se pudo cargar la auditoría (' + (err.code || err.message || "error desconocido") + '). Revisa las reglas de Firestore para la colección "auditoria".</p></div>';
+        if (wrap) wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">⚠️</div><p>No se pudo cargar la auditoría (' + (err.code || err.message || "error desconocido") + '). Revisa las reglas de Firestore para la colección "auditoria".</p></div>';
       }
     );
   } catch(e) {
     console.error("Error cargando auditoría:", e);
-    if (wrap) wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No se pudo cargar la auditoría. Verifica tu conexión.</p></div>';
+    if (wrap) wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">⚠️</div><p>No se pudo cargar la auditoría. Verifica tu conexión.</p></div>';
   }
 }
 
@@ -248,7 +248,7 @@ function renderAuditoria() {
   if (buscar) lista = lista.filter(a => (a.descripcion||"").toLowerCase().includes(buscar) || (a.usuario||"").toLowerCase().includes(buscar));
 
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono"><i data-lucide="scroll-text" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay movimientos registrados todavía.</p></div>';
+    wrap.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">📜</div><p>No hay movimientos registrados todavía.</p></div>';
     return;
   }
 
@@ -274,13 +274,13 @@ function renderAuditoria() {
     })();
     html += `
       <div class="audit-item" style="${esUltimoDelDia ? "--audit-linea-alto:0;" : ""}">
-        <span class="audit-punto" style="background:${color}22;color:${color}">${AUDIT_ICONOS[a.tipo]||"<i data-lucide="pin" style="width:1em;height:1em;vertical-align:-2px"></i>"}</span>
+        <span class="audit-punto" style="background:${color}22;color:${color}">${AUDIT_ICONOS[a.tipo]||"📌"}</span>
         <div class="audit-contenido">
           <div style="display:flex;justify-content:space-between;gap:10px;align-items:baseline">
             <span style="font-size:12.5px;color:var(--texto)">${escapeHtml(a.descripcion) || "—"}</span>
             <span style="font-size:10.5px;color:var(--texto-dim);white-space:nowrap;flex-shrink:0">${hora}</span>
           </div>
-          <div style="font-size:10px;color:var(--texto-dim);margin-top:2px"><i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i> ${escapeHtml(a.usuario) || "Desconocido"}</div>
+          <div style="font-size:10px;color:var(--texto-dim);margin-top:2px">👤 ${escapeHtml(a.usuario) || "Desconocido"}</div>
         </div>
       </div>`;
   });
@@ -384,7 +384,7 @@ async function aplicarRolUsuario(user) {
           await updateDoc(doc(db, "usuarios", user.uid), { debeCambiarContrasena: false });
           _lastLoginPass = nueva;
           document.getElementById("modal-cambiar-pass").classList.remove("abierto");
-          mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Contraseña guardada correctamente");
+          mostrarToast("✅ Contraseña guardada correctamente");
         } catch(err) {
           console.error(err);
           const msg = err.code === "auth/wrong-password" || err.code === "auth/invalid-credential"
@@ -464,7 +464,7 @@ window.verIncidencias = function() {
     const wrap = document.getElementById("tabla-incidencias-prof-wrap");
     const lista = (todosPrestamosProfTodos || []).filter(p => p.tieneIncidencias);
     if (!lista.length) {
-      wrap.innerHTML = '<div class="vacio" style="padding:20px;text-align:center;color:var(--texto-dim)"><i data-lucide="inbox" style="width:1em;height:1em;vertical-align:-2px"></i> No hay préstamos a profesores con incidencias.</div>';
+      wrap.innerHTML = '<div class="vacio" style="padding:20px;text-align:center;color:var(--texto-dim)">📭 No hay préstamos a profesores con incidencias.</div>';
     } else {
       wrap.innerHTML = `
         <table>
@@ -493,8 +493,8 @@ window.verIncidencias = function() {
                 <td>${badgeEstado}</td>
                 <td>
                   <div style="display:flex;gap:6px">
-                    <button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')"><i data-lucide="eye" style="width:1em;height:1em;vertical-align:-2px"></i> Ver</button>
-                    ${p.estado !== "activo" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center"><i data-lucide="thumbs-up" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada</span>` : ""}
+                    <button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')">👁 Ver</button>
+                    ${p.estado !== "activo" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center">👍 Retornada</span>` : ""}
                   </div>
                 </td>
               </tr>`;
@@ -873,7 +873,7 @@ async function _actualizarDashboard(todas, prestProf) {
     if (stockEl) {
       const bajos = (_herListaActual || []).filter(h => (Number.isFinite(h.cantidadDisponible)?h.cantidadDisponible:0) <= UMBRAL_STOCK_BAJO);
       stockEl.innerHTML = bajos.length ? bajos.slice(0,6).map(h => {
-        const meta = CATEGORIAS_HERRAMIENTA[h.categoria] || { icono:"<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#8b949e" };
+        const meta = CATEGORIAS_HERRAMIENTA[h.categoria] || { icono:"🔧", color:"#8b949e" };
         const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
         const miniatura = fotoUrl
           ? `<img src="${fotoUrl}" style="width:34px;height:34px;border-radius:8px;object-fit:cover;flex-shrink:0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
@@ -888,7 +888,7 @@ async function _actualizarDashboard(todas, prestProf) {
           </div>
           <span style="font-size:11px;font-weight:800;color:var(--amarillo);background:rgba(210,153,34,.12);padding:2px 8px;border-radius:20px;white-space:nowrap">${h.cantidadDisponible} disp.</span>
         </div>`;
-      }).join("") : '<div class="vacio" style="padding:10px"><p>Sin alertas de stock. <i data-lucide="thumbs-up" style="width:1em;height:1em;vertical-align:-2px"></i></p></div>';
+      }).join("") : '<div class="vacio" style="padding:10px"><p>Sin alertas de stock. 👍</p></div>';
     }
 
     // ── Actividad reciente (últimos movimientos) ──
@@ -897,13 +897,13 @@ async function _actualizarDashboard(todas, prestProf) {
       const eventos = [];
       todas.forEach(s => {
         const nombre = escapeHtml(`${s.nombre||""} ${s.apellido||""}`.trim() || "Estudiante");
-        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:"<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#3fb950" });
-        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#388bfd" });
-        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:"<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#d29922" });
+        if (s.entregadoEn)  eventos.push({ ts: fechaDe(s.entregadoEn),  texto: `${nombre} recibió herramientas`, icono:"✅", color:"#3fb950" });
+        if (s.retornadoEn)  eventos.push({ ts: fechaDe(s.retornadoEn),  texto: `${nombre} retornó herramientas`, icono:"↩", color:"#388bfd" });
+        if (!s.entregadoEn && !s.retornadoEn && s.creadoEn) eventos.push({ ts: fechaDe(s.creadoEn), texto: `${nombre} hizo una solicitud`, icono:"📋", color:"#d29922" });
       });
       prestProf.forEach(p => {
-        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#388bfd" });
-        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:"<i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>", color:"#a371f7" });
+        if (p.retornadoEn) eventos.push({ ts: fechaDe(p.retornadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} retornó herramientas`, icono:"↩", color:"#388bfd" });
+        else if (p.creadoEn) eventos.push({ ts: fechaDe(p.creadoEn), texto: `${escapeHtml(p.profesor)||"Profesor"} tomó herramientas`, icono:"👨‍🏫", color:"#a371f7" });
       });
       eventos.sort((a,b) => b.ts - a.ts);
       actEl.innerHTML = eventos.length ? eventos.slice(0,6).map(e => `
@@ -1027,7 +1027,7 @@ function renderTabla() {
   const wrap = document.getElementById("tabla-solicitudes-wrap");
 
   if (pagina.length === 0) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="inbox" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay solicitudes que coincidan.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay solicitudes que coincidan.</p></div>';
     document.getElementById("pag-info").textContent = "";
     document.getElementById("pag-btns").innerHTML = "";
     return;
@@ -1046,7 +1046,7 @@ function renderTabla() {
     filas += `
       <tr>
         <td colspan="9" style="padding:10px 16px 6px;background:var(--card2);border-bottom:2px solid var(--verde)">
-          <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--verde)"><i data-lucide="factory" style="width:1em;height:1em;vertical-align:-2px"></i> ${taller}</span>
+          <span style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--verde)">🏭 ${taller}</span>
           <span style="font-size:11px;color:var(--texto-dim);margin-left:8px">${solicitudes.length} solicitud(es)</span>
         </td>
       </tr>`;
@@ -1076,11 +1076,11 @@ function renderTabla() {
             <td style="white-space:nowrap"><span class="badge badge-dot badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠️</span>' : ''}${s.estado === "pendiente" && (Date.now() - fechaDe(s.creadoEn).getTime()) > 15*60*1000 ? ' <span class="badge badge-cancelada" title="Pendiente hace más de 15 minutos">⏰</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
-                <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')"><i data-lucide="eye" style="width:1em;height:1em;vertical-align:-2px"></i> Ver</button>
+                <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')">👁 Ver</button>
                 ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
-                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')"><i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornar</button>` : ""}
+                ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')">↩ Retornar</button>` : ""}
                 ${s.estado === "retornada" ? `<span class="badge badge-dot badge-entregada" style="cursor:default">Retornada</span>` : ""}
-                ${s.estado === "cancelada" ? `<span class="badge badge-cancelada"><i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada</span>` : ""}
+                ${s.estado === "cancelada" ? `<span class="badge badge-cancelada">❌ Cancelada</span>` : ""}
               </div>
             </td>
           </tr>`;
@@ -1149,12 +1149,12 @@ function actualizarFiltrosUI() {
   bar.style.display = hayFiltro ? "flex" : "none";
   tags.innerHTML = "";
 
-  if (buscar) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i data-lucide="search" style="width:1em;height:1em;vertical-align:-2px"></i> "${buscar}"</span>`;
+  if (buscar) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">🔍 "${buscar}"</span>`;
   if (estado) {
-    const etiquetas = { pendiente:"⏳ Pendiente", entregada:"<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Entregada", retornada:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada", cancelada:"<i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada", incidencia:"<i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Con Incidencia" };
+    const etiquetas = { pendiente:"⏳ Pendiente", entregada:"✅ Entregada", retornada:"↩ Retornada", cancelada:"❌ Cancelada", incidencia:"⚠️ Con Incidencia" };
     tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${etiquetas[estado]||estado}</span>`;
   }
-  if (profesor) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700"><i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i> ${profesor}</span>`;
+  if (profesor) tags.innerHTML += `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">👤 ${profesor}</span>`;
 }
 
 document.getElementById("btn-limpiar-filtros")?.addEventListener("click", () => {
@@ -1224,7 +1224,7 @@ window.abrirModal = function(id) {
     <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
     <div class="modal-campo"><label>Cantidad de herramientas</label>
       <div style="display:inline-flex;align-items:center;gap:8px;background:var(--verde-glow);border:1px solid rgba(63,185,80,0.35);border-radius:10px;padding:8px 14px;margin-top:2px">
-        <span style="font-size:18px"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></span>
+        <span style="font-size:18px">🧰</span>
         <span style="font-size:20px;font-weight:800;color:var(--verde)">${totalHerBase}</span>
         <span style="font-size:12.5px;color:var(--texto-dim)">herramienta${totalHerBase===1?"":"s"}</span>
       </div>
@@ -1236,7 +1236,7 @@ window.abrirModal = function(id) {
     </div>
     ${s.tieneIncidencias ? `
     <div class="modal-campo">
-      <label><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Incidencias registradas</label>
+      <label>⚠️ Incidencias registradas</label>
       <div class="modal-herramientas" id="modal-incidencias-est"><div class="cargando"><div class="spinner"></div>Cargando incidencias...</div></div>
     </div>` : ""}
   `;
@@ -1379,7 +1379,7 @@ function renderReciboEntrega() {
   if (herAdicPrevias.length > 0) {
     listaHtml += `<div style="display:flex;align-items:center;gap:8px;margin:8px 4px 4px">
       <div style="flex:1;height:1px;background:var(--borde)"></div>
-      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap"><i data-lucide="plus" style="width:1em;height:1em;vertical-align:-2px"></i> ADICIONALES</span>
+      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES</span>
       <div style="flex:1;height:1px;background:var(--borde)"></div>
     </div>` + renderFilas(herAdicPrevias, herOrig.length);
   }
@@ -1407,12 +1407,12 @@ window.renderEntregaPickerGrid = function() {
   const q = (document.getElementById("entrega-picker-buscar").value || "").toLowerCase();
   const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>';
+    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>';
     return;
   }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -1480,7 +1480,7 @@ window.entregar = async function(id) {
     if (!snapHist.empty) {
       const items = snapHist.docs.map(d => d.data());
       alertaEl.style.display = "block";
-      alertaEl.innerHTML = `<i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> <strong>Este estudiante tiene ${items.length} incidencia(s) previa(s):</strong><br>` +
+      alertaEl.innerHTML = `⚠️ <strong>Este estudiante tiene ${items.length} incidencia(s) previa(s):</strong><br>` +
         items.map(i => `• ${i.herramienta} — <em>${i.tipo}</em> (${i.fecha || "sin fecha"})`).join("<br>");
     } else {
       alertaEl.style.display = "none";
@@ -1539,7 +1539,7 @@ window.renderPickerFotosSolicitud = function renderPickerFotosSolicitud() {
 
   let html = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='${icono}'">`
       : icono;
@@ -1560,15 +1560,15 @@ window.renderPickerFotosSolicitud = function renderPickerFotosSolicitud() {
   }).join("");
 
   // Si lo escrito no coincide con nada del catálogo, se ofrece agregarlo
-  // tal cual (reemplaza el viejo botón aparte "<i data-lucide="pencil" style="width:1em;height:1em;vertical-align:-2px"></i> Escribir").
+  // tal cual (reemplaza el viejo botón aparte "✏️ Escribir").
   const yaExiste = q && _herListaActual.some(h => h.nombre.toLowerCase() === q);
   if (q && !yaExiste) {
     html += `<div class="picker-card-custom" onclick="solPickerAjustar('${escapeAttr(qCruda.trim())}',1)">
-      <i data-lucide="plus" style="width:1em;height:1em;vertical-align:-2px"></i>&nbsp; Agregar "<b>${escapeHtml(qCruda.trim())}</b>" de todas formas (no está en el catálogo)
+      ➕&nbsp; Agregar "<b>${escapeHtml(qCruda.trim())}</b>" de todas formas (no está en el catálogo)
     </div>`;
   }
   if (!lista.length && !q) {
-    html = '<div class="picker-vacio"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i> No hay herramientas en el catálogo todavía.</div>';
+    html = '<div class="picker-vacio">🧰 No hay herramientas en el catálogo todavía.</div>';
   }
 
   wrap.innerHTML = html;
@@ -1653,7 +1653,7 @@ window.agregarFilaAdicionalManual = async function() {
     renderTabla();
     cargarDashboard();
     cerrarPickerFotosSolicitud();
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta adicional agregada");
+    mostrarToast("✓ Herramienta adicional agregada");
   } catch (e) {
     console.error("Error al agregar adicional:", e);
     mostrarToast("Error al agregar: " + e.message, "rojo");
@@ -1700,7 +1700,7 @@ window.confirmarPickerFotosSolicitud = async function() {
     renderTabla();
     cargarDashboard();
     cerrarPickerFotosSolicitud();
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas adicionales agregadas");
+    mostrarToast("✓ Herramientas adicionales agregadas");
   } catch (e) {
     console.error("Error al agregar adicional:", e);
     mostrarToast("Error al agregar: " + e.message, "rojo");
@@ -1765,7 +1765,7 @@ window.guardarCambiosPendiente = async function() {
     renderTabla();
     document.getElementById("modal-entrega").classList.remove("abierto");
     solicitudActivaId = null;
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Cambios guardados (aún pendiente de entregar)");
+    mostrarToast("✓ Cambios guardados (aún pendiente de entregar)");
   } catch(e) { console.error("Error al guardar:", e); mostrarToast("Error al guardar: " + e.message, "rojo"); }
 };
 
@@ -1810,7 +1810,7 @@ window.confirmarEntrega = async function() {
     renderTabla();
     cargarDashboard();
     cerrarModalEntrega();
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas entregadas correctamente");
+    mostrarToast("✓ Herramientas entregadas correctamente");
   } catch(e) { console.error("Error al entregar:", e); mostrarToast("Error al entregar: " + e.message, "rojo"); }
 };
 
@@ -1831,15 +1831,15 @@ window.retornar = function(id) {
     <div class="fila-herramienta">
       <input type="checkbox" id="chk-r-${i}" data-idx="${i}" checked${gastable ? ' disabled' : ''}>
       ${herFotoHtmlPorNombre(h.nombre)}
-      <span class="h-nombre">${escapeHtml(h.nombre)}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${gastable ? ' <span class="badge-gastable"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i> gastable</span>' : ""}</span>
+      <span class="h-nombre">${escapeHtml(h.nombre)}${h.adicional ? ' <span style="font-size:10px;color:var(--azul)">(adicional)</span>' : ""}${gastable ? ' <span class="badge-gastable">🧰 gastable</span>' : ""}</span>
       <span class="h-cant">x${h.cantidad}</span>
       ${gastable
-        ? `<span class="select-estado" style="opacity:.65;cursor:not-allowed"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i> Consumido</span><select id="estado-r-${i}" style="display:none"><option value="retornada" selected>retornada</option></select>`
+        ? `<span class="select-estado" style="opacity:.65;cursor:not-allowed">🧰 Consumido</span><select id="estado-r-${i}" style="display:none"><option value="retornada" selected>retornada</option></select>`
         : `<select class="select-estado" id="estado-r-${i}">
-        <option value="retornada"><i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada</option>
-        <option value="dañada"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i> Dañada</option>
-        <option value="no_retornada"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> No retornada</option>
-        <option value="perdida"><i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Perdida</option>
+        <option value="retornada">✅ Retornada</option>
+        <option value="dañada">🔴 Dañada</option>
+        <option value="no_retornada">⚠️ No retornada</option>
+        <option value="perdida">❌ Perdida</option>
       </select>`}
     </div>
   `;
@@ -1867,10 +1867,10 @@ window.renderRetornoPickerGrid = function() {
   const wrap = document.getElementById("retorno-picker-grid");
   const q = (document.getElementById("retorno-picker-buscar").value || "").toLowerCase();
   const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
-  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>'; return; }
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -1896,7 +1896,7 @@ window.retornoPickerAgregar = function(nombre) {
     sep.className = "separador-adicionales";
     sep.style.cssText = "display:flex;align-items:center;gap:8px;margin:8px 4px 4px";
     sep.innerHTML = `<div style="flex:1;height:1px;background:var(--borde)"></div>
-      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap"><i data-lucide="plus" style="width:1em;height:1em;vertical-align:-2px"></i> ADICIONALES</span>
+      <span style="font-size:10px;font-weight:800;color:var(--amarillo);white-space:nowrap">➕ ADICIONALES</span>
       <div style="flex:1;height:1px;background:var(--borde)"></div>`;
     lista.appendChild(sep);
   }
@@ -1910,12 +1910,12 @@ window.retornoPickerAgregar = function(nombre) {
     <span class="h-nombre">${nombre} <span style="font-size:10px;color:var(--azul)">(adicional)</span></span>
     <span class="h-cant" style="color:var(--verde);font-weight:700">x1</span>
     <select class="select-estado" id="estado-r-${idx}">
-      <option value="retornada"><i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada</option>
-      <option value="dañada"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i> Dañada</option>
-      <option value="no_retornada"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> No retornada</option>
-      <option value="perdida"><i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Perdida</option>
+      <option value="retornada">✅ Retornada</option>
+      <option value="dañada">🔴 Dañada</option>
+      <option value="no_retornada">⚠️ No retornada</option>
+      <option value="perdida">❌ Perdida</option>
     </select>
-    <button onclick="this.closest('.fila-herramienta').remove()" style="background:none;border:none;color:var(--rojo);cursor:pointer;font-size:16px;padding:0 4px"><i data-lucide="x" style="width:1em;height:1em;vertical-align:-2px"></i></button>
+    <button onclick="this.closest('.fila-herramienta').remove()" style="background:none;border:none;color:var(--rojo);cursor:pointer;font-size:16px;padding:0 4px">✕</button>
   `;
   lista.appendChild(div);
 
@@ -1929,7 +1929,7 @@ window.retornoPickerAgregar = function(nombre) {
 
   // Scroll al final para ver la herramienta recién agregada
   lista.scrollTop = lista.scrollHeight;
-  mostrarToast(`<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> ${nombre} agregada a la solicitud`);
+  mostrarToast(`✓ ${nombre} agregada a la solicitud`);
 };
 
 window.toggleMarcarTodasRetorno = function() {
@@ -1976,7 +1976,7 @@ window.confirmarAdicionalesRetorno = async function() {
     s.herramientasEntregadas = listaFinal;
     // Quitar marcador de adicional para que queden como parte del recibo normal
     adicionales.forEach(f => { delete f.dataset.adicional; });
-    mostrarToast(`<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> ${nuevas.length} herramienta(s) adicional(es) entregada(s)`);
+    mostrarToast(`✅ ${nuevas.length} herramienta(s) adicional(es) entregada(s)`);
   } catch(e) { mostrarToast("Error al guardar adicionales: " + e.message, "rojo"); }
 };
 
@@ -2039,9 +2039,9 @@ window.confirmarRetorno = async function() {
     cerrarModalRetorno();
 
     if (incidencias.length > 0) {
-      mostrarToast(`<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado · ${incidencias.length} incidencia(s) registrada(s)`, "rojo");
+      mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s) registrada(s)`, "rojo");
     } else {
-      mostrarToast("<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Todas las herramientas retornadas correctamente");
+      mostrarToast("↩ Todas las herramientas retornadas correctamente");
     }
   } catch(e) { mostrarToast("Error al registrar retorno", "rojo"); }
 };
@@ -2054,61 +2054,61 @@ window.confirmarRetorno = async function() {
 // responde, lo que retrasaba ocultar #pantalla-carga (mismo síntoma que el
 // flicker del login que ya se había resuelto antes).
 const HERRAMIENTAS_LISTA = [
-  { codigo: "HER-001", nombre: "Aceitera",               icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Insumos" },
-  { codigo: "HER-002", nombre: "Alicate",                icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-003", nombre: "Alicate de presión",     icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-004", nombre: "Broca",                  icono: "<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 10, categoria: "Perforación" },
-  { codigo: "HER-005", nombre: "Brocha",                 icono: "<i data-lucide="paintbrush" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 10, categoria: "Insumos" },
-  { codigo: "HER-006", nombre: "Cepillo de alambre",     icono: "<i data-lucide="paintbrush" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-007", nombre: "Cinta adhesiva",         icono: "<i data-lucide="film" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 10, categoria: "Insumos" },
-  { codigo: "HER-008", nombre: "Cinta métrica",          icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-009", nombre: "Cuchilla",                icono: "<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Corte" },
-  { codigo: "HER-010", nombre: "Destornillador plano",   icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 8,  categoria: "Sujeción" },
-  { codigo: "HER-011", nombre: "Destornillador estrella",icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 8,  categoria: "Sujeción" },
-  { codigo: "HER-012", nombre: "Electrodo",               icono: "<i data-lucide="zap" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 20, categoria: "Material Gastable" },
-  { codigo: "HER-013", nombre: "Escuadra falsa",          icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-014", nombre: "Gira tuerca",             icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-015", nombre: "Granetero",               icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Golpe" },
-  { codigo: "HER-016", nombre: "Guantes",                 icono: "<i data-lucide="hand" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 10, categoria: "Seguridad" },
-  { codigo: "HER-017", nombre: "Lente",                   icono: "<i data-lucide="shield" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 10, categoria: "Seguridad" },
-  { codigo: "HER-018", nombre: "Lima cuadrada",           icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-019", nombre: "Lima triangular",         icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-020", nombre: "Lima media caña",         icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-021", nombre: "Lima redonda",            icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Acabado" },
-  { codigo: "HER-022", nombre: "Llave ajustable",         icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-023", nombre: "Llave allen",             icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-024", nombre: "Llave de mandril",        icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-025", nombre: "Llave de tomo",           icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-026", nombre: "Llave de tuercas",        icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-027", nombre: "Máscara de soldar",       icono: "<i data-lucide="shield" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Soldadura" },
-  { codigo: "HER-028", nombre: "Marcador numérico",       icono: "<i data-lucide="hash" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Insumos" },
-  { codigo: "HER-029", nombre: "Martillo",                icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 8,  categoria: "Golpe" },
-  { codigo: "HER-030", nombre: "Mazo de goma",            icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Golpe" },
-  { codigo: "HER-031", nombre: "Macho de 1/2",            icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Perforación" },
-  { codigo: "HER-032", nombre: "Nivel magnético",         icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-033", nombre: "Nivel 90",                icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-034", nombre: "Pie de rey",              icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Medición" },
-  { codigo: "HER-035", nombre: "Pinzas",                  icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Sujeción" },
-  { codigo: "HER-036", nombre: "Piqueta",                 icono: "<i data-lucide="pickaxe" style="width:1em;height:1em;vertical-align:-2px"></i>", cantidadDisponible: 5,  categoria: "Golpe" },
-  { codigo: "HER-037", nombre: "Porta broca",             icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Perforación" },
-  { codigo: "HER-038", nombre: "Segueta",                 icono: "<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Corte" },
-  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",       icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>",  cantidadDisponible: 5,  categoria: "Perforación" }
+  { codigo: "HER-001", nombre: "Aceitera",               icono: "🔧",  cantidadDisponible: 5,  categoria: "Insumos" },
+  { codigo: "HER-002", nombre: "Alicate",                icono: "🛠️", cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-003", nombre: "Alicate de presión",     icono: "🛠️", cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-004", nombre: "Broca",                  icono: "🔩",  cantidadDisponible: 10, categoria: "Perforación" },
+  { codigo: "HER-005", nombre: "Brocha",                 icono: "🖌️", cantidadDisponible: 10, categoria: "Insumos" },
+  { codigo: "HER-006", nombre: "Cepillo de alambre",     icono: "🪥",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-007", nombre: "Cinta adhesiva",         icono: "🎞️", cantidadDisponible: 10, categoria: "Insumos" },
+  { codigo: "HER-008", nombre: "Cinta métrica",          icono: "📏",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-009", nombre: "Cuchilla",                icono: "🔪",  cantidadDisponible: 5,  categoria: "Corte" },
+  { codigo: "HER-010", nombre: "Destornillador plano",   icono: "🪛",  cantidadDisponible: 8,  categoria: "Sujeción" },
+  { codigo: "HER-011", nombre: "Destornillador estrella",icono: "🪛",  cantidadDisponible: 8,  categoria: "Sujeción" },
+  { codigo: "HER-012", nombre: "Electrodo",               icono: "⚡",  cantidadDisponible: 20, categoria: "Material Gastable" },
+  { codigo: "HER-013", nombre: "Escuadra falsa",          icono: "📐",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-014", nombre: "Gira tuerca",             icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-015", nombre: "Granetero",               icono: "🔨",  cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-016", nombre: "Guantes",                 icono: "🧤",  cantidadDisponible: 10, categoria: "Seguridad" },
+  { codigo: "HER-017", nombre: "Lente",                   icono: "🥽",  cantidadDisponible: 10, categoria: "Seguridad" },
+  { codigo: "HER-018", nombre: "Lima cuadrada",           icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-019", nombre: "Lima triangular",         icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-020", nombre: "Lima media caña",         icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-021", nombre: "Lima redonda",            icono: "🔧",  cantidadDisponible: 5,  categoria: "Acabado" },
+  { codigo: "HER-022", nombre: "Llave ajustable",         icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-023", nombre: "Llave allen",             icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-024", nombre: "Llave de mandril",        icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-025", nombre: "Llave de tomo",           icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-026", nombre: "Llave de tuercas",        icono: "🔧",  cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-027", nombre: "Máscara de soldar",       icono: "🥽",  cantidadDisponible: 5,  categoria: "Soldadura" },
+  { codigo: "HER-028", nombre: "Marcador numérico",       icono: "🔢",  cantidadDisponible: 5,  categoria: "Insumos" },
+  { codigo: "HER-029", nombre: "Martillo",                icono: "🔨",  cantidadDisponible: 8,  categoria: "Golpe" },
+  { codigo: "HER-030", nombre: "Mazo de goma",            icono: "🔨",  cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-031", nombre: "Macho de 1/2",            icono: "🔧",  cantidadDisponible: 5,  categoria: "Perforación" },
+  { codigo: "HER-032", nombre: "Nivel magnético",         icono: "📐",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-033", nombre: "Nivel 90",                icono: "📐",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-034", nombre: "Pie de rey",              icono: "📏",  cantidadDisponible: 5,  categoria: "Medición" },
+  { codigo: "HER-035", nombre: "Pinzas",                  icono: "🛠️", cantidadDisponible: 5,  categoria: "Sujeción" },
+  { codigo: "HER-036", nombre: "Piqueta",                 icono: "⛏️", cantidadDisponible: 5,  categoria: "Golpe" },
+  { codigo: "HER-037", nombre: "Porta broca",             icono: "🔧",  cantidadDisponible: 5,  categoria: "Perforación" },
+  { codigo: "HER-038", nombre: "Segueta",                 icono: "🪚",  cantidadDisponible: 5,  categoria: "Corte" },
+  { codigo: "HER-039", nombre: "Tarraja de 1/2x13",       icono: "🔧",  cantidadDisponible: 5,  categoria: "Perforación" }
 ];
 
 // Categorías del inventario: icono + color de acento para chips/etiquetas.
 // Los colores son fijos (no ligados a --verde/--azul del tema) porque son
 // datos, no elementos de tema — se ven bien tanto en claro como en oscuro.
 const CATEGORIAS_HERRAMIENTA = {
-  "Medición":         { icono: "<i data-lucide="ruler" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#388bfd" },
-  "Corte":            { icono: "<i data-lucide="scissors" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#f85149" },
-  "Golpe":            { icono: "<i data-lucide="hammer" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#d29922" },
-  "Sujeción":         { icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#3fb950" },
-  "Perforación":      { icono: "<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#a371f7" },
-  "Acabado":          { icono: "<i data-lucide="square" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#db61a2" },
-  "Soldadura":        { icono: "<i data-lucide="zap" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#ff9800" },
-  "Seguridad":        { icono: "<i data-lucide="hard-hat" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#39c5cf" },
-  "Insumos":          { icono: "<i data-lucide="droplet" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#8b949e" },
-  "Material Gastable":{ icono: "<i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#eab308" }
+  "Medición":         { icono: "📏", color: "#388bfd" },
+  "Corte":            { icono: "✂️", color: "#f85149" },
+  "Golpe":            { icono: "🔨", color: "#d29922" },
+  "Sujeción":         { icono: "🔧", color: "#3fb950" },
+  "Perforación":      { icono: "🪛", color: "#a371f7" },
+  "Acabado":          { icono: "🧽", color: "#db61a2" },
+  "Soldadura":        { icono: "⚡", color: "#ff9800" },
+  "Seguridad":        { icono: "🦺", color: "#39c5cf" },
+  "Insumos":          { icono: "🧴", color: "#8b949e" },
+  "Material Gastable":{ icono: "🧰", color: "#eab308" }
 };
 // A partir de esta cantidad disponible (inclusive) se marca "stock bajo".
 const UMBRAL_STOCK_BAJO = 2;
@@ -2139,7 +2139,7 @@ function herFotoHtmlPorNombre(nombre, size = 32) {
       + ' style="width:' + s + ';height:' + s + ';border-radius:' + r + ';object-fit:cover;border:1px solid var(--borde);flex-shrink:0;cursor:zoom-in"'
       + ' onerror="this.style.display=\'none\'">';
   }
-  return '<span style="width:' + s + ';height:' + s + ';border-radius:' + r + ';background:var(--card2);border:1px solid var(--borde);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:' + Math.round(size*0.55) + 'px"><i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i></span>';
+  return '<span style="width:' + s + ';height:' + s + ';border-radius:' + r + ';background:var(--card2);border:1px solid var(--borde);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:' + Math.round(size*0.55) + 'px">🔧</span>';
 }
 
 window.anular = async function(id) {
@@ -2204,10 +2204,10 @@ function ppActualizarStats() {
   const wrap = document.getElementById("pp-stats-strip");
   if (!wrap) return;
   wrap.innerHTML = `
-    <div class="her-stat-pill"><span class="her-stat-icono"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${activos.length}</div><div class="her-stat-label">Activos hoy</div></div></div>
-    <div class="her-stat-pill"><span class="her-stat-icono"><i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${todosPrestamosProf.length}</div><div class="her-stat-label">Registrados hoy</div></div></div>
-    <div class="her-stat-pill"><span class="her-stat-icono"><i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${new Set(activos.map(p=>p.profesor)).size}</div><div class="her-stat-label">Profesores con herramientas hoy</div></div></div>
-    <div class="her-stat-pill${conInc.length?' alerta':''}"><span class="her-stat-icono"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${conInc.length}</div><div class="her-stat-label">Con incidencias hoy</div></div></div>`;
+    <div class="her-stat-pill"><span class="her-stat-icono">🟢</span><div><div class="her-stat-num">${activos.length}</div><div class="her-stat-label">Activos hoy</div></div></div>
+    <div class="her-stat-pill"><span class="her-stat-icono">📋</span><div><div class="her-stat-num">${todosPrestamosProf.length}</div><div class="her-stat-label">Registrados hoy</div></div></div>
+    <div class="her-stat-pill"><span class="her-stat-icono">👨‍🏫</span><div><div class="her-stat-num">${new Set(activos.map(p=>p.profesor)).size}</div><div class="her-stat-label">Profesores con herramientas hoy</div></div></div>
+    <div class="her-stat-pill${conInc.length?' alerta':''}"><span class="her-stat-icono">⚠️</span><div><div class="her-stat-num">${conInc.length}</div><div class="her-stat-label">Con incidencias hoy</div></div></div>`;
 }
 
 window.ppFiltrarChip = function(estado, el) {
@@ -2241,7 +2241,7 @@ function ppRenderTabla() {
   const lista = ppFiltrados();
   const wrap  = document.getElementById("pp-tabla-wrap");
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="inbox" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay préstamos registrados hoy ni activos pendientes de retorno.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay préstamos registrados hoy ni activos pendientes de retorno.</p></div>';
     return;
   }
   wrap.innerHTML = lista.map(p => {
@@ -2255,13 +2255,13 @@ function ppRenderTabla() {
     const ini   = (p.profesor || "P")[0].toUpperCase();
     const herramientasHtml = (p.herramientas || []).map(h => `<b>${escapeHtml(h.nombre)}</b> ×${h.cantidad}${h.adicional ? ' <span style="background:var(--azul);color:#fff;font-size:9px;font-weight:800;padding:1px 5px;border-radius:20px">+ADIC</span>' : ''}`).join(", ") || "—";
     const estadoTag = p.estado === "activo"
-      ? `<span class="pp-estado-tag" style="background:var(--verde-glow);color:var(--verde)"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i> Activo</span>`
-      : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i> Retornado</span>`;
+      ? `<span class="pp-estado-tag" style="background:var(--verde-glow);color:var(--verde)">🟢 Activo</span>`
+      : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)">⚪ Retornado</span>`;
     const acciones = p.estado === "activo"
       ? (esDeHoy
           ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')" title="Agregar una herramienta adicional a este préstamo">➕ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button>`
           : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Revisar y registrar el retorno de un préstamo anterior">🔍 Revisar y retornar</button>`)
-      : `<span style="font-size:11px;color:var(--verde);font-weight:700"><i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Completado</span>`;
+      : `<span style="font-size:11px;color:var(--verde);font-weight:700">✅ Completado</span>`;
     return `
       <div class="pp-card${p.tieneIncidencias ? ' con-incidencia' : ''}">
         <div class="pp-card-top">
@@ -2274,7 +2274,7 @@ function ppRenderTabla() {
           ${(p.estado === "activo" && !esDeHoy) ? '<span class="pp-estado-tag" style="background:rgba(210,153,34,.15);color:var(--amarillo)" title="Sin retornar desde un día anterior">⏳ Sin retornar</span>' : ''}
         </div>
         <div class="pp-herr-list">${herramientasHtml}</div>
-        <div class="pp-fecha-row"><i data-lucide="clock" style="width:1em;height:1em;vertical-align:-2px"></i> ${fecha}${p.tieneIncidencias ? ` · <span style="color:var(--rojo)"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> con incidencia</span>${!p.incidenciaVista ? ` <button onclick="marcarIncidenciaVistaPP('${p.id}')" style="background:none;border:none;color:var(--azul);font-size:10px;cursor:pointer;text-decoration:underline">marcar vista</button>` : ''}` : ''}</div>
+        <div class="pp-fecha-row">🕒 ${fecha}${p.tieneIncidencias ? ` · <span style="color:var(--rojo)">⚠️ con incidencia</span>${!p.incidenciaVista ? ` <button onclick="marcarIncidenciaVistaPP('${p.id}')" style="background:none;border:none;color:var(--azul);font-size:10px;cursor:pointer;text-decoration:underline">marcar vista</button>` : ''}` : ''}</div>
         <div class="pp-acciones">${acciones}</div>
       </div>`;
   }).join("");
@@ -2333,10 +2333,10 @@ window.renderPPPickerGridInline = function() {
   const wrap = document.getElementById("pp-picker-grid-inline");
   const q = (document.getElementById("pp-picker-buscar-inline").value || "").toLowerCase();
   const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
-  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>'; return; }
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -2372,7 +2372,7 @@ function renderPPReciboInline() {
       <button type="button" class="btn btn-outline" onclick="ppNuevoAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
       <span class="h-cant">x${cant}</span>
       <button type="button" class="btn btn-outline" onclick="ppNuevoAjustar('${escapeAttr(nombre)}',1)" style="padding:2px 8px">+</button>
-      <button type="button" class="btn btn-rojo" onclick="ppNuevoQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px"><i data-lucide="x" style="width:1em;height:1em;vertical-align:-2px"></i></button>
+      <button type="button" class="btn btn-rojo" onclick="ppNuevoQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px">✕</button>
     </div>`).join("") : "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas agregadas todavía</div>";
 }
 
@@ -2395,7 +2395,7 @@ window.ppAgregarFila = function() {
     </div>
     <input type="number" min="1" value="1" placeholder="Cant."
       style="width:70px;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px">
-    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px"><i data-lucide="x" style="width:1em;height:1em;vertical-align:-2px"></i></button>`;
+    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px">✕</button>`;
   contenedor.appendChild(div);
 };
 
@@ -2454,12 +2454,12 @@ function renderPickerFotosPP() {
   const q = (document.getElementById("pp-picker-buscar").value || "").toLowerCase();
   const lista = _herListaActual.filter(h => h.nombre.toLowerCase().includes(q));
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>';
+    wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🔧</div><p>Sin resultados.</p></div>';
     return;
   }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -2504,7 +2504,7 @@ window.confirmarPickerFotosPP = async function() {
         else { mapa[nombre] = { nombre, cantidad, adicional: true }; }
       });
       await updateDoc(ref, { herramientas: Object.values(mapa) });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Herramientas adicionales agregadas al préstamo");
+      mostrarToast("✅ Herramientas adicionales agregadas al préstamo");
     } catch (e) {
       console.error(e);
       mostrarToast("Error al agregar herramientas", "rojo");
@@ -2543,7 +2543,7 @@ window.confirmarNuevoPrestamoProf = async function() {
       tieneIncidencias: false,
       creadoEn: serverTimestamp()
     });
-    mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo registrado correctamente");
+    mostrarToast("✅ Préstamo registrado correctamente");
     registrarAuditoria("prestamo", "entregar", `Entregó ${herramientas.length} herramienta(s) al profesor "${profesor}" (${laboratorio})`);
     cerrarModalNuevoProf();
   } catch(e) {
@@ -2574,9 +2574,9 @@ window.abrirRetornoProf = function(id) {
       <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${escapeHtml(h.nombre)} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
       <select id="pp-estado-r-${i}"
         style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
-        <option value="retornada"><i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada</option>
-        <option value="danada"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Dañada</option>
-        <option value="perdida"><i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Perdida</option>
+        <option value="retornada">✅ Retornada</option>
+        <option value="danada">⚠️ Dañada</option>
+        <option value="perdida">❌ Perdida</option>
       </select>
     </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
   document.getElementById("pp-retorno-picker-buscar").value = "";
@@ -2588,10 +2588,10 @@ window.renderPPRetornoPickerGrid = function() {
   const wrap = document.getElementById("pp-retorno-picker-grid");
   const q = (document.getElementById("pp-retorno-picker-buscar").value || "").toLowerCase();
   const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
-  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>'; return; }
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -2611,7 +2611,7 @@ window.ppRetornoAgregarAdicional = async function(nombre) {
     const existentes = snap.data()?.herramientas || [];
     existentes.push({ nombre, cantidad: 1, adicional: true });
     await updateDoc(ref, { herramientas: existentes });
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada");
+    mostrarToast("✓ Herramienta agregada");
     abrirRetornoProf(ppActivoId);
   } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
 };
@@ -2666,9 +2666,9 @@ window.confirmarRetornoProf = async function() {
     cerrarModalRetornoProf();
     registrarAuditoria("prestamo", "retornar", `Registró retorno del préstamo de "${p.profesor}"${incidencias.length ? " con incidencia" : ""}`);
     if (incidencias.length > 0) {
-      mostrarToast(`<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
+      mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
     } else {
-      mostrarToast("<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado correctamente");
+      mostrarToast("↩ Retorno registrado correctamente");
     }
 
     const panel = document.getElementById("panel-incidencias-prof");
@@ -2718,7 +2718,7 @@ function extRenderTabla() {
   const lista = extFiltrados();
   const wrap  = document.getElementById("ext-tabla-wrap");
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio" style="padding:40px;text-align:center;color:var(--texto-dim)"><i data-lucide="inbox" style="width:1em;height:1em;vertical-align:-2px"></i> No hay herramientas prestadas a otros departamentos.</div>';
+    wrap.innerHTML = '<div class="vacio" style="padding:40px;text-align:center;color:var(--texto-dim)">📭 No hay herramientas prestadas a otros departamentos.</div>';
     return;
   }
   wrap.innerHTML = `
@@ -2787,10 +2787,10 @@ window.renderExtPickerGrid = function() {
   const wrap = document.getElementById("ext-picker-grid");
   const q = (document.getElementById("ext-picker-buscar").value || "").toLowerCase();
   const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
-  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>'; return; }
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -2826,7 +2826,7 @@ function renderExtReciboInline() {
       <button type="button" class="btn btn-outline" onclick="extNuevoAjustar('${escapeAttr(nombre)}',-1)" style="padding:2px 8px">−</button>
       <span class="h-cant">x${cant}</span>
       <button type="button" class="btn btn-outline" onclick="extNuevoAjustar('${escapeAttr(nombre)}',1)" style="padding:2px 8px">+</button>
-      <button type="button" class="btn btn-rojo" onclick="extNuevoQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px"><i data-lucide="x" style="width:1em;height:1em;vertical-align:-2px"></i></button>
+      <button type="button" class="btn btn-rojo" onclick="extNuevoQuitar('${escapeAttr(nombre)}')" style="padding:2px 8px">✕</button>
     </div>`).join("") : "<div style='padding:12px;color:var(--texto-dim)'>Sin herramientas agregadas todavía</div>";
 }
 
@@ -2848,7 +2848,7 @@ window.extAgregarFila = function() {
     </div>
     <input type="number" min="1" value="1" placeholder="Cant."
       style="width:70px;padding:8px 10px;background:var(--card2);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:13px">
-    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px"><i data-lucide="x" style="width:1em;height:1em;vertical-align:-2px"></i></button>`;
+    <button type="button" onclick="this.parentNode.remove()" style="background:rgba(239,68,68,0.15);color:var(--rojo);border:none;border-radius:7px;padding:6px 10px;cursor:pointer;font-size:14px">✕</button>`;
   contenedor.appendChild(div);
 };
 
@@ -2891,7 +2891,7 @@ window.confirmarNuevoPrestamoExt = async function() {
       tieneIncidencias: false,
       creadoEn: serverTimestamp()
     });
-    mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Salida registrada correctamente");
+    mostrarToast("✅ Salida registrada correctamente");
     cerrarModalNuevoExt();
   } catch(e) {
     mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
@@ -2912,9 +2912,9 @@ window.abrirRetornoExt = function(id) {
       <span style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600">${herFotoHtmlPorNombre(h.nombre)}${escapeHtml(h.nombre)} <span style="color:var(--texto-dim);font-weight:400">×${h.cantidad}</span></span>
       <select id="ext-estado-r-${i}"
         style="padding:6px 10px;background:var(--bg);border:1px solid var(--borde);border-radius:7px;color:var(--texto);font-size:12px">
-        <option value="retornada"><i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada</option>
-        <option value="danada"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Dañada</option>
-        <option value="perdida"><i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Perdida</option>
+        <option value="retornada">✅ Retornada</option>
+        <option value="danada">⚠️ Dañada</option>
+        <option value="perdida">❌ Perdida</option>
       </select>
     </div>`).join("") || '<p style="color:var(--texto-dim);font-size:13px">Sin herramientas registradas.</p>';
   document.getElementById("ext-retorno-picker-buscar").value = "";
@@ -2926,10 +2926,10 @@ window.renderExtRetornoPickerGrid = function() {
   const wrap = document.getElementById("ext-retorno-picker-grid");
   const q = (document.getElementById("ext-retorno-picker-buscar").value || "").toLowerCase();
   const lista = (_herListaActual || []).filter(h => h.nombre.toLowerCase().includes(q));
-  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Sin resultados.</p></div>'; return; }
+  if (!lista.length) { wrap.innerHTML = '<div class="vacio" style="grid-column:1/-1"><div class="vacio-icono">🧰</div><p>Sin resultados.</p></div>'; return; }
   wrap.innerHTML = lista.map(h => {
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const foto = fotoUrl
       ? `<img src="${fotoUrl}" onerror="this.parentNode.innerHTML='<span class=\\'her-foto-fallback\\'>${icono}</span>'">`
       : `<span class="her-foto-fallback">${icono}</span>`;
@@ -2949,7 +2949,7 @@ window.extRetornoAgregarAdicional = async function(nombre) {
     const existentes = snap.data()?.herramientas || [];
     existentes.push({ nombre, cantidad: 1, adicional: true });
     await updateDoc(ref, { herramientas: existentes });
-    mostrarToast("<i data-lucide="check" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada");
+    mostrarToast("✓ Herramienta agregada");
     abrirRetornoExt(extActivoId);
   } catch(e) { mostrarToast("Error al agregar: " + e.message, "rojo"); }
 };
@@ -2996,9 +2996,9 @@ window.confirmarRetornoExt = async function() {
 
     cerrarModalRetornoExt();
     if (incidencias.length > 0) {
-      mostrarToast(`<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
+      mostrarToast(`↩ Retorno registrado · ${incidencias.length} incidencia(s)`, "rojo");
     } else {
-      mostrarToast("<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retorno registrado correctamente");
+      mostrarToast("↩ Retorno registrado correctamente");
     }
   } catch(e) {
     mostrarToast("Error al registrar retorno", "rojo");
@@ -3118,7 +3118,7 @@ function renderHerramientasCfg(lista) {
       : "";
     let chipsHtml = `<div class="her-chip" style="${estiloTodas}" data-cat="" title="Ver todas las categorías">Todas <span style="opacity:.7">(${lista.length})</span></div>`;
     chipsHtml += Object.keys(categoriasPresentes).sort((a, b) => a.localeCompare(b)).map(cat => {
-      const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#8b949e" };
+      const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "🔩", color: "#8b949e" };
       const n = categoriasPresentes[cat];
       const activo = herCategoriaActiva === cat;
       const estilo = activo
@@ -3152,30 +3152,30 @@ function renderHerramientasCfg(lista) {
     });
     statsWrap.innerHTML = `
       <div class="her-stat-pill">
-        <span class="her-stat-icono"><i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i></span>
+        <span class="her-stat-icono">🧰</span>
         <div><div class="her-stat-num">${lista.length}</div><div class="her-stat-label">Total herramientas</div></div>
       </div>
       <div class="her-stat-pill${stockBajoCount > 0 ? ' alerta' : ''}">
-        <span class="her-stat-icono"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></span>
+        <span class="her-stat-icono">⚠️</span>
         <div><div class="her-stat-num">${stockBajoCount}</div><div class="her-stat-label">Stock bajo (≤ ${UMBRAL_STOCK_BAJO})</div></div>
       </div>
       <div class="her-stat-pill">
-        <span class="her-stat-icono"><i data-lucide="tag" style="width:1em;height:1em;vertical-align:-2px"></i></span>
+        <span class="her-stat-icono">🏷️</span>
         <div><div class="her-stat-num">${numCategorias}</div><div class="her-stat-label">Categorías</div></div>
       </div>
       <div class="her-stat-pill">
-        <span class="her-stat-icono"><i data-lucide="flame" style="width:1em;height:1em;vertical-align:-2px"></i></span>
+        <span class="her-stat-icono">🔥</span>
         <div><div class="her-stat-num" style="font-size:13px">${masSolicitada || "—"}</div><div class="her-stat-label">${masSolicitada ? masSolicitadaN + ' solicitudes · más pedida' : 'Sin solicitudes aún'}</div></div>
       </div>`;
   }
 
   if (!filtrada.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay herramientas que coincidan.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔧</div><p>No hay herramientas que coincidan.</p></div>';
     return;
   }
 
   // Top 3 más pedidas del inventario completo (no solo la vista filtrada),
-  // para la cinta <i data-lucide="flame" style="width:1em;height:1em;vertical-align:-2px"></i> en la tarjeta.
+  // para la cinta 🔥 en la tarjeta.
   const topUsadas = new Set(
     Object.entries(conteoUsos).sort((a, b) => b[1] - a[1]).slice(0, 3)
       .filter(([, n]) => n > 0).map(([nombre]) => nombre)
@@ -3185,9 +3185,9 @@ function renderHerramientasCfg(lista) {
     const cantidad = Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0;
     const bajo = cantidad <= UMBRAL_STOCK_BAJO;
     const cat = h.categoria || "Sin categoría";
-    const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "<i data-lucide="cog" style="width:1em;height:1em;vertical-align:-2px"></i>", color: "#8b949e" };
+    const meta = CATEGORIAS_HERRAMIENTA[cat] || { icono: "🔩", color: "#8b949e" };
     const fotoUrl = h.fotoUrl || (h.codigo ? '../img/herramientas/' + h.codigo + '.jpg' : '');
-    const icono = h.icono || '<i data-lucide="wrench" style="width:1em;height:1em;vertical-align:-2px"></i>';
+    const icono = h.icono || '🔧';
     const usos = conteoUsos[h.nombre] || 0;
     const esPopular = topUsadas.has(h.nombre);
     const local = h.local ? ' <span style="font-size:9px;color:var(--texto-dim)">(resp.)</span>' : '';
@@ -3206,11 +3206,11 @@ function renderHerramientasCfg(lista) {
         <div class="her-foto-wrap">
           ${fotoHtml}
           <span class="her-cat-tag" style="background:${meta.color}dd;color:#fff">${meta.icono} ${cat}</span>
-          ${bajo ? '<span class="her-ribbon"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Stock bajo</span>' : (esNueva ? '<span class="her-ribbon" style="background:rgba(163,113,247,0.92)">🆕 NUEVA</span>' : (esPopular ? '<span class="her-ribbon popular"><i data-lucide="flame" style="width:1em;height:1em;vertical-align:-2px"></i> Top pedida</span>' : ''))}
+          ${bajo ? '<span class="her-ribbon">⚠ Stock bajo</span>' : (esNueva ? '<span class="her-ribbon" style="background:rgba(163,113,247,0.92)">🆕 NUEVA</span>' : (esPopular ? '<span class="her-ribbon popular">🔥 Top pedida</span>' : ''))}
         </div>
         <div class="her-cuerpo">
           <div class="her-nombre">${escapeHtml(h.nombre)}${local}</div>
-          ${h.practica ? `<div style="font-size:10px;color:var(--verde);font-weight:700;margin-bottom:6px"><i data-lucide="tag" style="width:1em;height:1em;vertical-align:-2px"></i> ${h.practica}</div>` : ''}
+          ${h.practica ? `<div style="font-size:10px;color:var(--verde);font-weight:700;margin-bottom:6px">🏷️ ${h.practica}</div>` : ''}
           <div class="her-fila-stock">
             <span class="her-stock-badge">${cantidad} disp.</span>
             <span class="her-usos">${usos > 0 ? usos + ' pedidas' : 'sin pedidos'}</span>
@@ -3369,15 +3369,15 @@ window.guardarHerramienta = async function() {
   function describirCambios(antes) {
     if (!antes) return "";
     const cambios = [];
-    if (antes.nombre !== nombreFinal) cambios.push(`nombre: "${antes.nombre}" <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> "${nombreFinal}"`);
-    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`categoría: "${antes.categoria || "Sin categoría"}" <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> "${categoria || "Sin categoría"}"`);
+    if (antes.nombre !== nombreFinal) cambios.push(`nombre: "${antes.nombre}" → "${nombreFinal}"`);
+    if ((antes.categoria || "Sin categoría") !== (categoria || "Sin categoría")) cambios.push(`categoría: "${antes.categoria || "Sin categoría"}" → "${categoria || "Sin categoría"}"`);
     const cantidadAntes = Number.isFinite(antes.cantidadDisponible) ? antes.cantidadDisponible : 0;
     if (cantidadAntes !== cantidad) {
       const diferencia = cantidad - cantidadAntes;
       const signo = diferencia > 0 ? "+" : "";
-      cambios.push(`cantidad: ${cantidadAntes} <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> ${cantidad} (${signo}${diferencia})`);
+      cambios.push(`cantidad: ${cantidadAntes} → ${cantidad} (${signo}${diferencia})`);
     }
-    if ((antes.practica || "") !== (practica || "")) cambios.push(`práctica/combo: "${antes.practica || "ninguna"}" <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> "${practica || "ninguna"}"`);
+    if ((antes.practica || "") !== (practica || "")) cambios.push(`práctica/combo: "${antes.practica || "ninguna"}" → "${practica || "ninguna"}"`);
     if (herFotoArchivo) cambios.push("foto actualizada");
     return cambios.length ? ` — ${cambios.join(" · ")}` : " (sin cambios detectados)";
   }
@@ -3404,18 +3404,18 @@ window.guardarHerramienta = async function() {
     btn.textContent = "Guardando...";
     if (herCfgEditar) {
       await updateDoc(doc(db, "herramientas", herCfgEditar), datos);
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta actualizada");
+      mostrarToast("✅ Herramienta actualizada");
       registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesDeEditar)}`);
     } else {
       const snap = await getDocs(query(collection(db, "herramientas"), where("nombre", "==", nombreFinal)));
       if (!snap.empty) {
         const antesExistente = { id: snap.docs[0].id, ...snap.docs[0].data() };
         await updateDoc(doc(db, "herramientas", snap.docs[0].id), datos);
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Ya existía esa herramienta — se actualizó en vez de duplicarla");
+        mostrarToast("✅ Ya existía esa herramienta — se actualizó en vez de duplicarla");
         registrarAuditoria("herramienta", "editar", `Editó la herramienta "${nombreFinal}"${describirCambios(antesExistente)}`);
       } else {
         await addDoc(collection(db, "herramientas"), { ...datos, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Herramienta agregada");
+        mostrarToast("✅ Herramienta agregada");
         registrarAuditoria("herramienta", "crear", `Agregó la herramienta "${nombreFinal}"${categoria ? " ("+categoria+")" : ""}`);
       }
       // Si veníamos de una herramienta "de respaldo" (aún no en Firestore) y le
@@ -3485,7 +3485,7 @@ window.guardarEntradaStock = async function() {
         btn.disabled = false; btn.textContent = "✅ Registrar entrada"; return;
       }
       await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: cantidad, categoria, creadoEn: serverTimestamp() });
-      mostrarToast(`<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> "${nombre}" agregada con ${cantidad} en stock`);
+      mostrarToast(`✅ "${nombre}" agregada con ${cantidad} en stock`);
       registrarAuditoria("stock", "entrada", `Entrada de stock (nueva): +${cantidad} de "${nombre}"${nota ? " — " + nota : ""}`);
     } else {
       const id = document.getElementById("entrada-select-herramienta").value;
@@ -3498,7 +3498,7 @@ window.guardarEntradaStock = async function() {
       } else {
         await updateDoc(doc(db, "herramientas", id), { cantidadDisponible: nuevaCantidad });
       }
-      mostrarToast(`<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Entrada registrada: +${cantidad} ${h.nombre}`);
+      mostrarToast(`✅ Entrada registrada: +${cantidad} ${h.nombre}`);
       registrarAuditoria("stock", "entrada", `Entrada de stock: +${cantidad} de "${h.nombre}"${nota ? " — " + nota : ""} (quedó en ${nuevaCantidad})`);
     }
     cerrarModalEntradaStock();
@@ -3520,7 +3520,7 @@ document.getElementById("modal-herramienta-cfg")?.addEventListener("click", e =>
 // Ya no es una colección aparte: un material gastable es simplemente una
 // herramienta con categoria === "Material Gastable". Esta función se usa
 // en toda la app (badges de solicitudes, retornos, historial) para saber
-// si una herramienta debe mostrarse con la etiqueta "<i data-lucide="briefcase" style="width:1em;height:1em;vertical-align:-2px"></i> gastable".
+// si una herramienta debe mostrarse con la etiqueta "🧰 gastable".
 window.esMaterialGastable = function(nombreHerramienta) {
   const h = _herListaActual.find(h => h.nombre.toLowerCase() === (nombreHerramienta || "").toLowerCase());
   return h?.categoria === "Material Gastable";
@@ -3574,10 +3574,10 @@ function renderProfesoresCfg() {
   const lista  = buscar ? profCfgLista.filter(p => p.nombre.toLowerCase().includes(buscar)) : profCfgLista;
 
   const resumen = document.getElementById("prof-resumen");
-  if (resumen) resumen.innerHTML = `<i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i> <b>${profCfgLista.length}</b> profesor${profCfgLista.length === 1 ? "" : "es"} registrado${profCfgLista.length === 1 ? "" : "s"}`;
+  if (resumen) resumen.innerHTML = `👤 <b>${profCfgLista.length}</b> profesor${profCfgLista.length === 1 ? "" : "es"} registrado${profCfgLista.length === 1 ? "" : "s"}`;
 
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay profesores registrados.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">👤</div><p>No hay profesores registrados.</p></div>';
     return;
   }
   wrap.innerHTML = lista.map(p => {
@@ -3686,7 +3686,7 @@ window.profAgregarFilaMateria = function(m = {}) {
       <button type="button" class="btn-quitar-fila" onclick="this.closest('.prof-materia-fila').remove()" title="Quitar esta materia">✕</button>
     </div>
     <div class="pm-horarios-wrap"></div>
-    <button type="button" class="pm-btn-horario" onclick="profAgregarHorario(this)"><i data-lucide="clock" style="width:1em;height:1em;vertical-align:-2px"></i> Agregar horario a esta materia</button>`;
+    <button type="button" class="pm-btn-horario" onclick="profAgregarHorario(this)">🕐 Agregar horario a esta materia</button>`;
   wrap.appendChild(fila);
 
   // Compatibilidad: materias guardadas antes de que existiera "horarios"
@@ -3786,7 +3786,7 @@ async function cargarMateriasCfg() {
     }, err => {
       console.error("Error cargando materias:", err);
       const w = document.getElementById("materia-cfg-wrap");
-      if (w) w.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No se pudo cargar (' + (err.code || err.message) + '). Revisa las reglas de Firestore para la colección "materias".</p></div>';
+      if (w) w.innerHTML = '<div class="vacio" style="padding:20px"><div class="vacio-icono">⚠️</div><p>No se pudo cargar (' + (err.code || err.message) + '). Revisa las reglas de Firestore para la colección "materias".</p></div>';
     });
   } catch(e) {
     const w = document.getElementById("materia-cfg-wrap");
@@ -3802,7 +3802,7 @@ function renderMateriasCfg() {
     ? materiaCfgLista.filter(m => m.nombre.toLowerCase().includes(buscar) || (m.codigo || "").toLowerCase().includes(buscar))
     : materiaCfgLista;
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="book-open" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay materias registradas todavía.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📚</div><p>No hay materias registradas todavía.</p></div>';
     return;
   }
   wrap.innerHTML = '<table><thead><tr><th>#</th><th>Código</th><th>Nombre</th><th>Acciones</th></tr></thead><tbody>'
@@ -3846,11 +3846,11 @@ window.guardarMateria = async function() {
   try {
     if (materiaCfgEditar) {
       await updateDoc(doc(db, "materias", materiaCfgEditar), { codigo, nombre });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Materia actualizada");
+      mostrarToast("✅ Materia actualizada");
       registrarAuditoria("materia", "editar", `Editó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
     } else {
       await addDoc(collection(db, "materias"), { codigo, nombre, creadoEn: serverTimestamp() });
-      mostrarToast(window._materiaLocalNombre ? "<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Materia de respaldo guardada en Firestore" : "<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Materia agregada");
+      mostrarToast(window._materiaLocalNombre ? "✅ Materia de respaldo guardada en Firestore" : "✅ Materia agregada");
       registrarAuditoria("materia", "crear", `Agregó la materia "${nombre}"${codigo ? " (" + codigo + ")" : ""}`);
       // Si veníamos de una materia "de respaldo" y le cambiaron el nombre,
       // marcamos el nombre original como eliminado para que no reaparezca
@@ -3912,22 +3912,22 @@ window.guardarProfesor = async function() {
   try {
     if (profCfgEditar) {
       await updateDoc(doc(db, "profesores", profCfgEditar), { nombre, materias });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor actualizado");
+      mostrarToast("✅ Profesor actualizado");
       registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
     } else if (window._profLocalNombre) {
       const snap = await getDocs(query(collection(db, "profesores"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "profesores", snap.docs[0].id), { nombre, materias });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor actualizado");
+        mostrarToast("✅ Profesor actualizado");
         registrarAuditoria("profesor", "editar", `Editó el profesor "${nombre}"`);
       } else {
         await addDoc(collection(db, "profesores"), { nombre, materias, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor guardado");
+        mostrarToast("✅ Profesor guardado");
         registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "profesores"), { nombre, materias, creadoEn: serverTimestamp() });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor agregado");
+      mostrarToast("✅ Profesor agregado");
       registrarAuditoria("profesor", "crear", `Agregó el profesor "${nombre}"`);
     }
     cerrarModalProfesor();
@@ -3951,7 +3951,7 @@ document.getElementById("prof-buscar")?.addEventListener("input", renderProfesor
 
 // ── LABORATORIOS / TALLERES ──
 // Mismo patrón que Profesores. El formulario del estudiante ya lee esta
-// colección en tiempo real (js/inventario.js <i data-lucide="chevron-right" style="width:1em;height:1em;vertical-align:-2px"></i> cargarLaboratorios()), así
+// colección en tiempo real (js/inventario.js → cargarLaboratorios()), así
 // que lo que se agregue/edite/elimine aquí aparece allá sin tocar nada más.
 const LABORATORIOS_RESPALDO_ADMIN = [
   "Taller mecánica básica",
@@ -3991,10 +3991,10 @@ function renderLaboratoriosCfg() {
   const lista  = buscar ? labCfgLista.filter(l => l.nombre.toLowerCase().includes(buscar)) : labCfgLista;
 
   const resumen = document.getElementById("lab-resumen");
-  if (resumen) resumen.innerHTML = `<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i> <b>${labCfgLista.length}</b> laboratorio${labCfgLista.length === 1 ? "" : "s"}/taller${labCfgLista.length === 1 ? "" : "es"} registrado${labCfgLista.length === 1 ? "" : "s"}`;
+  if (resumen) resumen.innerHTML = `🏢 <b>${labCfgLista.length}</b> laboratorio${labCfgLista.length === 1 ? "" : "s"}/taller${labCfgLista.length === 1 ? "" : "es"} registrado${labCfgLista.length === 1 ? "" : "s"}`;
 
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay laboratorios registrados.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🏢</div><p>No hay laboratorios registrados.</p></div>';
     return;
   }
   wrap.innerHTML = lista.map(l => {
@@ -4004,7 +4004,7 @@ function renderLaboratoriosCfg() {
       <div class="prof-fila">
         <div class="prof-fila-top">
           <div class="est-avatar">
-            <div class="est-circulo" style="background:${colorEstudiante(l.nombre)}22;color:${colorEstudiante(l.nombre)}"><i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i></div>
+            <div class="est-circulo" style="background:${colorEstudiante(l.nombre)}22;color:${colorEstudiante(l.nombre)}">🏢</div>
             <div style="min-width:0;flex:1">
               <div class="est-nombre">${l.nombre}${local}</div>
             </div>
@@ -4040,22 +4040,22 @@ window.guardarLaboratorio = async function() {
   try {
     if (labCfgEditar) {
       await updateDoc(doc(db, "laboratorios", labCfgEditar), { nombre });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio actualizado");
+      mostrarToast("✅ Laboratorio actualizado");
       registrarAuditoria("laboratorio", "editar", `Editó el laboratorio "${nombre}"`);
     } else if (window._labLocalNombre) {
       const snap = await getDocs(query(collection(db, "laboratorios"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "laboratorios", snap.docs[0].id), { nombre });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio actualizado");
+        mostrarToast("✅ Laboratorio actualizado");
         registrarAuditoria("laboratorio", "editar", `Editó el laboratorio "${nombre}"`);
       } else {
         await addDoc(collection(db, "laboratorios"), { nombre, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio guardado");
+        mostrarToast("✅ Laboratorio guardado");
         registrarAuditoria("laboratorio", "crear", `Agregó el laboratorio "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "laboratorios"), { nombre, creadoEn: serverTimestamp() });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Laboratorio agregado");
+      mostrarToast("✅ Laboratorio agregado");
       registrarAuditoria("laboratorio", "crear", `Agregó el laboratorio "${nombre}"`);
     }
     cerrarModalLaboratorio();
@@ -4124,10 +4124,10 @@ function renderCiclosCfg() {
   const lista  = buscar ? cicloCfgLista.filter(c => c.nombre.toLowerCase().includes(buscar)) : cicloCfgLista;
 
   const resumen = document.getElementById("ciclo-resumen");
-  if (resumen) resumen.innerHTML = `<i data-lucide="calendar" style="width:1em;height:1em;vertical-align:-2px"></i> <b>${cicloCfgLista.length}</b> ciclo${cicloCfgLista.length === 1 ? "" : "s"} registrado${cicloCfgLista.length === 1 ? "" : "s"}`;
+  if (resumen) resumen.innerHTML = `📅 <b>${cicloCfgLista.length}</b> ciclo${cicloCfgLista.length === 1 ? "" : "s"} registrado${cicloCfgLista.length === 1 ? "" : "s"}`;
 
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="calendar" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay ciclos registrados.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📅</div><p>No hay ciclos registrados.</p></div>';
     return;
   }
 
@@ -4145,7 +4145,7 @@ function renderCiclosCfg() {
     const ciclosDelAnio = porAnio[anio];
     return `
       <div class="ciclo-anio-grupo">
-        <div class="ciclo-anio-header"><i data-lucide="calendar" style="width:1em;height:1em;vertical-align:-2px"></i> ${anio} <span class="ciclo-anio-cuenta">${ciclosDelAnio.length} ciclo${ciclosDelAnio.length !== 1 ? "s" : ""}</span></div>
+        <div class="ciclo-anio-header">📅 ${anio} <span class="ciclo-anio-cuenta">${ciclosDelAnio.length} ciclo${ciclosDelAnio.length !== 1 ? "s" : ""}</span></div>
         <div class="ciclo-anio-fila">
           ${ciclosDelAnio.map(c => {
             const local = c.local ? ' <span style="font-size:10px;color:var(--texto-dim)">(respaldo)</span>' : '';
@@ -4154,7 +4154,7 @@ function renderCiclosCfg() {
               <div class="prof-fila" style="flex:1;min-width:210px">
                 <div class="prof-fila-top">
                   <div class="est-avatar">
-                    <div class="est-circulo" style="background:${colorEstudiante(c.nombre)}22;color:${colorEstudiante(c.nombre)}"><i data-lucide="calendar" style="width:1em;height:1em;vertical-align:-2px"></i></div>
+                    <div class="est-circulo" style="background:${colorEstudiante(c.nombre)}22;color:${colorEstudiante(c.nombre)}">📅</div>
                     <div style="min-width:0;flex:1">
                       <div class="est-nombre">${c.nombre}${local}</div>
                     </div>
@@ -4196,22 +4196,22 @@ window.guardarCiclo = async function() {
   try {
     if (cicloCfgEditar) {
       await updateDoc(doc(db, "ciclos", cicloCfgEditar), { nombre });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo actualizado");
+      mostrarToast("✅ Ciclo actualizado");
       registrarAuditoria("ciclo", "editar", `Editó el ciclo "${nombre}"`);
     } else if (window._cicloLocalNombre) {
       const snap = await getDocs(query(collection(db, "ciclos"), where("nombre", "==", nombre)));
       if (!snap.empty) {
         await updateDoc(doc(db, "ciclos", snap.docs[0].id), { nombre });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo actualizado");
+        mostrarToast("✅ Ciclo actualizado");
         registrarAuditoria("ciclo", "editar", `Editó el ciclo "${nombre}"`);
       } else {
         await addDoc(collection(db, "ciclos"), { nombre, creadoEn: serverTimestamp() });
-        mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo guardado");
+        mostrarToast("✅ Ciclo guardado");
         registrarAuditoria("ciclo", "crear", `Agregó el ciclo "${nombre}"`);
       }
     } else {
       await addDoc(collection(db, "ciclos"), { nombre, creadoEn: serverTimestamp() });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Ciclo agregado");
+      mostrarToast("✅ Ciclo agregado");
       registrarAuditoria("ciclo", "crear", `Agregó el ciclo "${nombre}"`);
     }
     cerrarModalCiclo();
@@ -4261,11 +4261,11 @@ function renderUsuariosCfg() {
   if (resumen) {
     const nAdmin = usrCfgLista.filter(u => u.rol === "administrador").length;
     const nEnc   = usrCfgLista.length - nAdmin;
-    resumen.innerHTML = `<i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i> <b>${usrCfgLista.length}</b> cuenta${usrCfgLista.length===1?"":"s"} &nbsp;·&nbsp; <i data-lucide="crown" style="width:1em;height:1em;vertical-align:-2px"></i> <b>${nAdmin}</b> administrador${nAdmin===1?"":"es"} &nbsp;·&nbsp; <i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i> <b>${nEnc}</b> encargado${nEnc===1?"":"s"}`;
+    resumen.innerHTML = `🔐 <b>${usrCfgLista.length}</b> cuenta${usrCfgLista.length===1?"":"s"} &nbsp;·&nbsp; 👑 <b>${nAdmin}</b> administrador${nAdmin===1?"":"es"} &nbsp;·&nbsp; 🔒 <b>${nEnc}</b> encargado${nEnc===1?"":"s"}`;
   }
 
   if (!lista.length) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay usuarios registrados todavía.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">🔐</div><p>No hay usuarios registrados todavía.</p></div>';
     return;
   }
   const etiquetasSecciones = {
@@ -4277,8 +4277,8 @@ function renderUsuariosCfg() {
   wrap.innerHTML = lista.map(u => {
     const esAdmin = u.rol === "administrador";
     const rolBadge = esAdmin
-      ? '<span class="badge badge-entregada"><i data-lucide="crown" style="width:1em;height:1em;vertical-align:-2px"></i> Administrador</span>'
-      : '<span class="badge badge-retornada"><i data-lucide="lock" style="width:1em;height:1em;vertical-align:-2px"></i> Encargado</span>';
+      ? '<span class="badge badge-entregada">👑 Administrador</span>'
+      : '<span class="badge badge-retornada">🔒 Encargado</span>';
     const inicialesU = ((u.nombre||"?").trim().split(/\s+/).map(p=>p[0]).slice(0,2).join("")||"?").toUpperCase();
     const secciones = esAdmin
       ? '<span class="usr-chip-sec" style="color:var(--texto-dim)">Acceso total al sistema</span>'
@@ -4288,7 +4288,7 @@ function renderUsuariosCfg() {
         <div class="usr-avatar" style="background:${esAdmin ? "#eab30822" : "var(--azul)22"};color:${esAdmin ? "#eab308" : "var(--azul)"}">${inicialesU}</div>
         <div class="usr-info">
           <div class="usr-nombre-fila">${u.nombre || "—"} ${rolBadge}</div>
-          <div class="usr-email"><i data-lucide="mail" style="width:1em;height:1em;vertical-align:-2px"></i> ${u.email || "—"}</div>
+          <div class="usr-email">✉️ ${u.email || "—"}</div>
           <div class="usr-secciones">${secciones}</div>
         </div>
         <div class="usr-acciones">
@@ -4346,7 +4346,7 @@ window.guardarUsuario = async function() {
   try {
     if (usrCfgEditarId) {
       await updateDoc(doc(db, "usuarios", usrCfgEditarId), { nombre, rol, secciones });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Usuario actualizado");
+      mostrarToast("✅ Usuario actualizado");
       registrarAuditoria("usuario", "editar", `Editó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     } else {
@@ -4364,7 +4364,7 @@ window.guardarUsuario = async function() {
         debeCambiarContrasena: rol === "encargado",
         creadoEn: serverTimestamp()
       });
-      mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Usuario creado. Le llegará un correo para definir su contraseña.");
+      mostrarToast("✅ Usuario creado. Le llegará un correo para definir su contraseña.");
       registrarAuditoria("usuario", "crear", `Creó al usuario "${nombre}" (${rol})`);
       cerrarModalUsuario();
     }
@@ -4410,7 +4410,7 @@ window.exportarHerramientasExcel = function() {
   ws["!cols"] = [{ wch: 4 }, { wch: 28 }, { wch: 20 }, { wch: 20 }, { wch: 12 }, { wch: 12 }];
   XLSX.utils.book_append_sheet(wb, ws, "Inventario");
   XLSX.writeFile(wb, `inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.xlsx`);
-  mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a Excel");
+  mostrarToast("✅ Inventario exportado a Excel");
 };
 
 window.exportarHerramientasPDF = function() {
@@ -4458,7 +4458,7 @@ window.exportarHerramientasPDF = function() {
     doc.text(`Página ${i} de ${pags}`, 196, 290, { align: "right" });
   }
   doc.save(`inventario_herramientas_${new Date().toLocaleDateString("es-DO").replace(/\//g,"-")}.pdf`);
-  mostrarToast("<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Inventario exportado a PDF");
+  mostrarToast("✅ Inventario exportado a PDF");
 };
 
 // ── TEMA ──
@@ -4510,7 +4510,7 @@ async function cargarHistorial() {
   } catch(e) {
     console.error(e);
     document.getElementById("hist-tabla-wrap").innerHTML =
-      '<div class="vacio"><div class="vacio-icono"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>Error al cargar el historial.</p></div>';
+      '<div class="vacio"><div class="vacio-icono">⚠️</div><p>Error al cargar el historial.</p></div>';
   }
 }
 
@@ -4601,13 +4601,13 @@ function histActualizarFiltrosUI() {
 
   tags.innerHTML = "";
   const chip = (txt) => `<span style="background:rgba(34,197,94,.15);color:var(--verde);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700">${txt}</span>`;
-  if (buscar) tags.innerHTML += chip(`<i data-lucide="search" style="width:1em;height:1em;vertical-align:-2px"></i> "${buscar}"`);
-  if (tipo)   tags.innerHTML += chip(tipo === "estudiante" ? "<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Estudiante" : "<i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Profesor");
+  if (buscar) tags.innerHTML += chip(`🔍 "${buscar}"`);
+  if (tipo)   tags.innerHTML += chip(tipo === "estudiante" ? "🎓 Estudiante" : "👨‍🏫 Profesor");
   if (estado) {
-    const et = { pendiente:"⏳ Pendiente", entregada:"<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Entregada", retornada:"<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada", cancelada:"<i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada", incidencia:"<i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Con Incidencia" };
+    const et = { pendiente:"⏳ Pendiente", entregada:"✅ Entregada", retornada:"↩ Retornada", cancelada:"❌ Cancelada", incidencia:"⚠️ Con Incidencia" };
     tags.innerHTML += chip(et[estado] || estado);
   }
-  if (fecha)  tags.innerHTML += chip(`<i data-lucide="calendar" style="width:1em;height:1em;vertical-align:-2px"></i> ${fecha}`);
+  if (fecha)  tags.innerHTML += chip(`📅 ${fecha}`);
 
   ["hist-buscar","hist-tipo","hist-estado","hist-fecha"].forEach(id => {
     const el = document.getElementById(id);
@@ -4620,7 +4620,7 @@ function histActualizarFiltrosUI() {
 
 function histEstadoInfo(r) {
   if (r.tipo !== "estudiante" && r.estado === "activo")   return { cls: "pendiente", txt: "⏳ Sin retornar" };
-  if (r.tipo !== "estudiante" && r.estado === "retornado") return { cls: "retornada", txt: "<i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornado" };
+  if (r.tipo !== "estudiante" && r.estado === "retornado") return { cls: "retornada", txt: "↩ Retornado" };
   return { cls: r.estado || "", txt: r.estado || "—" };
 }
 
@@ -4632,13 +4632,13 @@ function histRenderTabla() {
   const wrap   = document.getElementById("hist-tabla-wrap");
 
   if (pagina.length === 0) {
-    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono"><i data-lucide="inbox" style="width:1em;height:1em;vertical-align:-2px"></i></div><p>No hay registros que coincidan.</p></div>';
+    wrap.innerHTML = '<div class="vacio"><div class="vacio-icono">📭</div><p>No hay registros que coincidan.</p></div>';
     document.getElementById("hist-pag-info").textContent = "";
     document.getElementById("hist-pag-btns").innerHTML = "";
     return;
   }
 
-  const tipoIcono  = { estudiante:"<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i>", profesor:"<i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i>", externo:"<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i>" };
+  const tipoIcono  = { estudiante:"🎓", profesor:"👨‍🏫", externo:"🏢" };
   const tipoLabel  = { estudiante:"Estudiante", profesor:"Profesor", externo:"Dep. Externo" };
 
   wrap.innerHTML = `
@@ -4674,7 +4674,7 @@ function histRenderTabla() {
           <tr style="cursor:pointer" onclick="abrirModalHist('${r.id}','${r.tipo}')">
             <td style="color:var(--texto-dim)">${inicio + i + 1}</td>
             <td style="font-size:12px;color:var(--texto-dim)">${formatFecha(r.creadoEn)}</td>
-            <td><span style="font-size:13px">${tipoIcono[r.tipo]||"<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>"}</span> <span style="font-size:11px;color:var(--texto-dim)">${tipoLabel[r.tipo]||r.tipo}</span></td>
+            <td><span style="font-size:13px">${tipoIcono[r.tipo]||"📋"}</span> <span style="font-size:11px;color:var(--texto-dim)">${tipoLabel[r.tipo]||r.tipo}</span></td>
             <td>
               <div class="est-avatar">
                 <div class="est-circulo" style="background:${colorEstudiante(nombreMostrar)}22;color:${colorEstudiante(nombreMostrar)}">
@@ -4687,7 +4687,7 @@ function histRenderTabla() {
             <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${(r.herramientas||[]).length}</span></td>
             <td>
               <span class="badge badge-${histEstadoInfo(r).cls}">${histEstadoInfo(r).txt}</span>
-              ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:4px"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i></span>' : ""}
+              ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:4px">⚠️</span>' : ""}
             </td>
           </tr>`;}).join("")}
       </tbody>
@@ -4733,7 +4733,7 @@ window.abrirModalHist = function(id, tipo) {
   const r = historialDatos.find(x => x.id === id && x.tipo === tipo);
   if (!r) return;
 
-  const estadoIcono = { retornada:"<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i>", no_retornada:"<i data-lucide="x-circle" style="width:1em;height:1em;vertical-align:-2px"></i>", danada:"<i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i>", perdida:"<i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i>", entregada:"<i data-lucide="check-circle" style="width:1em;height:1em;vertical-align:-2px"></i>" };
+  const estadoIcono = { retornada:"✅", no_retornada:"❌", danada:"🔴", perdida:"⚠️", entregada:"✅" };
   const estadoColor = { retornada:"var(--verde)", no_retornada:"var(--rojo)", danada:"var(--rojo)", perdida:"var(--naranja,#f97316)", entregada:"var(--verde)" };
 
   const totalHerHist = (r.herramientas||[]).reduce((sum, h) => sum + (h.cantidad || 1), 0);
@@ -4758,8 +4758,8 @@ window.abrirModalHist = function(id, tipo) {
     </div>` : "";
 
   document.getElementById("modal-hist-titulo").textContent =
-    tipo === "estudiante" ? "<i data-lucide="graduation-cap" style="width:1em;height:1em;vertical-align:-2px"></i> Solicitud de Estudiante" :
-    tipo === "profesor"   ? "<i data-lucide="user" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i> Préstamo a Profesor" : "<i data-lucide="building-2" style="width:1em;height:1em;vertical-align:-2px"></i> Salida a Departamento Externo";
+    tipo === "estudiante" ? "🎓 Solicitud de Estudiante" :
+    tipo === "profesor"   ? "👨‍🏫 Préstamo a Profesor" : "🏢 Salida a Departamento Externo";
 
   const datosPersona = tipo === "externo" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -4785,7 +4785,7 @@ window.abrirModalHist = function(id, tipo) {
     ${datosPersona}
     <div class="modal-campo"><label>Estado</label>
       <span class="badge badge-${histEstadoInfo(r).cls}">${histEstadoInfo(r).txt}</span>
-      ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:6px"><i data-lucide="alert-triangle" style="width:1em;height:1em;vertical-align:-2px"></i> Con incidencias</span>' : ""}
+      ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:6px">⚠️ Con incidencias</span>' : ""}
     </div>
     <div class="modal-campo"><label>Fecha de solicitud</label><div class="valor">${formatFecha(r.creadoEn)}</div></div>
     ${r.entregadoEn  ? `<div class="modal-campo"><label>Fecha de entrega</label><div class="valor">${formatFecha(r.entregadoEn)}</div></div>` : ""}
@@ -4797,7 +4797,7 @@ window.abrirModalHist = function(id, tipo) {
     ${retornoHtml}
     ${(tipo === "profesor" && r.estado === "activo") ? `
     <div class="modal-acciones">
-      <button class="btn btn-azul" onclick="document.getElementById('modal-hist').classList.remove('abierto');abrirRetornoProf('${r.id}')"><i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Registrar retorno</button>
+      <button class="btn btn-azul" onclick="document.getElementById('modal-hist').classList.remove('abierto');abrirRetornoProf('${r.id}')">↩ Registrar retorno</button>
     </div>` : ""}
   `;
 
@@ -4811,11 +4811,3 @@ document.getElementById("modal-hist")?.addEventListener("click", e => {
 
 // Dibuja los íconos de línea del sidebar (Feather Icons, cargado por CDN)
 if (window.lucide) lucide.createIcons();
-
-// Los íconos que se generan dinámicamente (tarjetas, badges, modales) se
-// insertan después vía innerHTML — este observer los detecta y los "pinta"
-// automáticamente, sin tener que llamar createIcons() a mano en cada render.
-const _lucideObserver = new MutationObserver(() => {
-  if (window.lucide) lucide.createIcons();
-});
-_lucideObserver.observe(document.body, { childList: true, subtree: true });
