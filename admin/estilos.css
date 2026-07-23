@@ -765,6 +765,14 @@ tr:hover td { background: var(--hover); }
   border-radius: 16px; padding: 24px;
   width: 100%; max-width: 560px; max-height: 92vh; overflow-y: auto;
   box-shadow: var(--sombra-lg);
+  position: relative;
+}
+.modal::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 4px;
+  background: var(--gradiente-verde);
+  border-radius: 16px 16px 0 0;
 }
 
 .modal-titulo {
