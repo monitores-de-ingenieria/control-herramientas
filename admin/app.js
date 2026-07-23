@@ -1592,7 +1592,7 @@ function renderPickerCart() {
         <button type="button" onclick="solPickerAjustar('${nombreEsc}',-1)">−</button>
         <span class="cant">${cant}</span>
         <button type="button" class="mas" onclick="solPickerAjustar('${nombreEsc}',1)">+</button>
-        <button type="button" class="quitar" onclick="solPickerQuitar('${nombreEsc}')" title="Quitar"></button>
+        <button type="button" class="quitar" onclick="solPickerQuitar('${nombreEsc}')" title="Quitar"><i data-lucide="x" style="width:1em;height:1em;vertical-align:-2px"></i></button>
       </div>`;
   }).join("");
 }
@@ -3217,7 +3217,7 @@ function renderHerramientasCfg(lista) {
           </div>
           <div class="her-acciones">
             <button class="btn btn-outline" onclick="abrirModalHerramienta('${h.id}','${nombreEsc}',${cantidad},${h.local || false},'${catEsc}')" title="Editar herramienta">Editar</button>
-            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})" title="Eliminar herramienta"></button>
+            <button class="btn btn-rojo" onclick="eliminarHerramienta('${h.id}','${nombreEsc}',${h.local || false})" title="Eliminar herramienta"><i data-lucide="trash-2" style="width:1em;height:1em;vertical-align:-2px"></i></button>
           </div>
         </div>
       </div>`;
@@ -3619,7 +3619,7 @@ function renderProfesoresCfg() {
           ${sinRetViejos > 0 ? `<span class="prof-badge-activos" style="cursor:pointer;background:rgba(239,68,68,.15);color:var(--rojo)" title="Ver y cerrar préstamo" onclick="abrirRetornoProf('${sinRetornar.find(x=>!esMismodia(x.creadoEn)).id}')">${sinRetViejos} atrasado(s)</span>` : ""}
           <div class="acciones-celda">
             <button class="btn btn-outline" onclick="abrirModalProfesor('${p.id}','${nombreEsc}',${p.local||false})" title="Editar profesor">Editar</button>
-            ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')" title="Eliminar profesor"></button>`}
+            ${p.local ? "" : `<button class="btn btn-rojo" onclick="eliminarProfesor('${p.id}','${nombreEsc}')" title="Eliminar profesor"><i data-lucide="trash-2" style="width:1em;height:1em;vertical-align:-2px"></i></button>`}
           </div>
         </div>
         ${listaMaterias}
@@ -3816,7 +3816,7 @@ function renderMateriasCfg() {
           + '<td><div class="est-nombre">' + escapeHtml(m.nombre) + local + '</div></td>'
           + '<td><div class="acciones-celda">'
           + '<button class="btn btn-outline" onclick="abrirModalMateria(\'' + m.id + '\',\'' + codigoEsc + '\',\'' + nombreEsc + '\',' + (m.local||false) + ')" title="Editar materia">Editar</button>'
-          + '<button class="btn btn-rojo" onclick="eliminarMateria(\'' + m.id + '\',\'' + nombreEsc + '\',' + (m.local||false) + ')" title="Eliminar materia"></button>'
+          + '<button class="btn btn-rojo" onclick="eliminarMateria(\'' + m.id + '\',\'' + nombreEsc + '\',' + (m.local||false) + ')" title="Eliminar materia"><i data-lucide="trash-2" style="width:1em;height:1em;vertical-align:-2px"></i></button>'
           + '</div></td>'
           + '</tr>';
       }).join("")
@@ -4011,7 +4011,7 @@ function renderLaboratoriosCfg() {
           </div>
           <div class="acciones-celda">
             <button class="btn btn-outline" onclick="abrirModalLaboratorio('${l.id}','${nombreEsc}',${l.local||false})" title="Editar">Editar</button>
-            ${l.local ? "" : `<button class="btn btn-rojo" onclick="eliminarLaboratorio('${l.id}','${nombreEsc}')" title="Eliminar"></button>`}
+            ${l.local ? "" : `<button class="btn btn-rojo" onclick="eliminarLaboratorio('${l.id}','${nombreEsc}')" title="Eliminar"><i data-lucide="trash-2" style="width:1em;height:1em;vertical-align:-2px"></i></button>`}
           </div>
         </div>
       </div>`;
@@ -4161,7 +4161,7 @@ function renderCiclosCfg() {
                   </div>
                   <div class="acciones-celda">
                     <button class="btn btn-outline" onclick="abrirModalCiclo('${c.id}','${nombreEsc}',${c.local||false})" title="Editar">Editar</button>
-                    ${c.local ? "" : `<button class="btn btn-rojo" onclick="eliminarCiclo('${c.id}','${nombreEsc}')" title="Eliminar"></button>`}
+                    ${c.local ? "" : `<button class="btn btn-rojo" onclick="eliminarCiclo('${c.id}','${nombreEsc}')" title="Eliminar"><i data-lucide="trash-2" style="width:1em;height:1em;vertical-align:-2px"></i></button>`}
                   </div>
                 </div>
               </div>`;
@@ -4293,7 +4293,7 @@ function renderUsuariosCfg() {
         </div>
         <div class="usr-acciones">
           <button class="btn btn-outline" onclick="abrirModalUsuario('${u.id}')" title="Editar usuario">Editar</button>
-          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')" title="Revocar acceso y eliminar usuario"></button>
+          <button class="btn btn-rojo" onclick="eliminarUsuario('${u.id}','${(u.nombre||"").replace(/'/g,"\\'")}')" title="Revocar acceso y eliminar usuario"><i data-lucide="trash-2" style="width:1em;height:1em;vertical-align:-2px"></i></button>
         </div>
       </div>`;
   }).join("");

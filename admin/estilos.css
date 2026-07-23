@@ -1017,3 +1017,21 @@ tr:hover td { background: var(--hover); }
 .usr-secciones { margin-top:6px; display:flex; flex-wrap:wrap; gap:4px; }
 .usr-chip-sec { background:var(--card2); padding:2px 8px; border-radius:20px; font-size:10px; color:var(--texto-dim); }
 .usr-acciones { display:flex; gap:6px; flex-shrink:0; }
+
+/* Fix: las tablas con muchas columnas (Solicitudes, Historial, Prestadas
+   externas, Incidencias) se cortaban por la derecha porque .seccion-tabla
+   usa overflow:hidden (para las esquinas redondeadas). Se le da scroll
+   horizontal propio a cada contenedor de tabla, así ninguna columna
+   queda tapada — con scroll en vez de perderse. */
+#tabla-solicitudes-wrap,
+#tabla-incidencias-prof-wrap,
+#ext-tabla-wrap,
+#hist-tabla-wrap {
+  overflow-x: auto;
+}
+#tabla-solicitudes-wrap table,
+#tabla-incidencias-prof-wrap table,
+#ext-tabla-wrap table,
+#hist-tabla-wrap table {
+  min-width: 720px;
+}
