@@ -74,7 +74,7 @@
   <div class="shell">
 
     <div class="topbar">
-      <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú">☰</button>
+      <button class="btn-toggle-sidebar" id="btn-toggle-sidebar" title="Colapsar menú"><i data-lucide=menu style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
       <span class="topbar-logo"><svg class="icono-gabinete-topbar" viewBox="0 0 120 150" xmlns="http://www.w3.org/2000/svg" style="width:28px;height:auto;display:inline-block;vertical-align:middle">
           <rect x="18" y="8" width="70" height="10" rx="3" fill="#c0392b"/>
           <rect x="14" y="16" width="78" height="112" rx="6" fill="#e74c3c"/>
@@ -112,7 +112,7 @@
         <div class="topbar-sub">Taller Mecánica Industrial</div>
       </div>
       <div class="topbar-spacer"></div>
-      <button class="btn-tema" id="btn-tema" onclick="toggleTema()">☀️ Claro</button>
+      <button class="btn-tema" id="btn-tema" onclick="toggleTema()"><i data-lucide=sun style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Claro</button>
       <div class="topbar-admin">
         <div class="avatar" id="admin-avatar">A</div>
         <div>
@@ -124,7 +124,7 @@
 
     <div class="sidebar">
       <div class="sb-brand">
-        <div class="sb-brand-icon">⚙️</div>
+        <div class="sb-brand-icon"><i data-lucide=settings style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
         <div>
           <div class="sb-brand-title">Taller</div>
           <div class="sb-brand-sub">Mecánica Industrial</div>
@@ -209,8 +209,8 @@
             <p>Resumen del sistema · Todo está bajo control</p>
           </div>
           <div class="dash-fecha">
-            <span>📅 <span id="dash-fecha-txt"></span></span>
-            <span>🕐 <span id="dash-hora-txt"></span></span>
+            <span><i data-lucide=calendar style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> <span id="dash-fecha-txt"></span></span>
+            <span><i data-lucide=clock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> <span id="dash-hora-txt"></span></span>
           </div>
         </div>
 
@@ -220,11 +220,11 @@
             <div><div class="kpi-label">Pendientes hoy</div><div class="kpi-numero" id="res-pendientes">—</div><div class="kpi-sub" id="res-pendientes-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Ver solicitudes entregadas hoy">
-            <div class="kpi-icono">✅</div>
+            <div class="kpi-icono"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
             <div><div class="kpi-label">Entregadas hoy</div><div class="kpi-numero" id="res-prestadas">—</div><div class="kpi-sub" id="res-prestadas-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="retornada" title="Ver solicitudes retornadas hoy">
-            <div class="kpi-icono">↩</div>
+            <div class="kpi-icono"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></div>
             <div><div class="kpi-label">Retornadas hoy</div><div class="kpi-numero" id="res-hoy">—</div><div class="kpi-sub" id="res-hoy-trend"></div></div>
           </div>
           <div class="kpi-card" data-vista="solicitudes" data-estado="entregada" title="Herramientas actualmente prestadas y sin retornar">
@@ -244,17 +244,17 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🍩 Solicitudes de hoy</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un estado</span></div>
+            <div class="dash-panel-header"><h3><i data-lucide=pie-chart style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Solicitudes de hoy</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un estado</span></div>
             <div id="grafico-estado-hoy" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🏷️ Categorías más usadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para filtrar</span></div>
+            <div class="dash-panel-header"><h3><i data-lucide=tag style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Categorías más usadas</h3><span style="font-size:10px;color:var(--texto-dim)">clic para filtrar</span></div>
             <div id="grafico-categorias" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🎯 Tasa de incidencias</h3><span style="font-size:10px;color:var(--texto-dim)">clic para ver</span></div>
+            <div class="dash-panel-header"><h3><i data-lucide=target style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Tasa de incidencias</h3><span style="font-size:10px;color:var(--texto-dim)">clic para ver</span></div>
             <div id="grafico-gauge-incidencias" style="padding:14px;cursor:pointer" onclick="verIncidencias()" title="Ver incidencias abiertas"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
@@ -263,7 +263,7 @@
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1.4fr));gap:12px;margin-bottom:12px">
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>📈 Tendencia — últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un día</span></div>
+            <div class="dash-panel-header"><h3><i data-lucide=trending-up style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Tendencia — últimos 7 días</h3><span style="font-size:10px;color:var(--texto-dim)">clic en un día</span></div>
             <div id="grafico-semana" style="padding:14px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
@@ -282,7 +282,7 @@
           </div>
 
           <div class="dash-panel">
-            <div class="dash-panel-header"><h3>🕓 Actividad reciente</h3><span style="font-size:10px;color:var(--texto-dim)">últimos movimientos</span></div>
+            <div class="dash-panel-header"><h3><i data-lucide=clock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Actividad reciente</h3><span style="font-size:10px;color:var(--texto-dim)">últimos movimientos</span></div>
             <div id="dash-actividad" style="padding:12px"><div class="cargando"><div class="spinner"></div>Calculando...</div></div>
           </div>
 
@@ -302,7 +302,7 @@
           <div class="buscar-wrap" style="flex:1;min-width:200px">
             <input type="text" id="filtro-buscar" placeholder="Buscar por nombre, matrícula o profesor..."
               style="width:100%">
-            <span class="buscar-icono">🔍</span>
+            <span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
           </div>
           <select id="filtro-estado" style="min-width:150px;flex-shrink:0">
             <option value="">Estado: Todos</option>
@@ -310,7 +310,7 @@
             <option value="entregada">Entregada</option>
             <option value="retornada">Retornada</option>
             <option value="cancelada">Cancelada</option>
-            <option value="incidencia">⚠️ Con Incidencia</option>
+            <option value="incidencia"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Con Incidencia</option>
           </select>
           <select id="filtro-profesor" style="min-width:150px;flex-shrink:0">
             <option value="">Profesor: Todos</option>
@@ -321,7 +321,7 @@
         <div id="filtros-activos-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">
           <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros activos:</span>
           <div id="filtros-tags" style="display:flex;gap:6px;flex-wrap:wrap;flex:1"></div>
-          <button id="btn-limpiar-filtros" style="padding:4px 10px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer">✕ Limpiar filtros</button>
+          <button id="btn-limpiar-filtros" style="padding:4px 10px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:6px;font-size:11px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar filtros</button>
         </div>
 
         <div class="tabs-filtro" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;row-gap:8px">
@@ -361,7 +361,7 @@
 
         <div style="margin-bottom:16px">
           <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:14px">
-            ➕ Registrar préstamo a profesor
+            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar préstamo a profesor
           </button>
         </div>
 
@@ -370,10 +370,10 @@
         <div class="her-toolbar">
           <div class="her-categoria-chips" id="pp-chips">
             <div class="her-chip activo" data-pp-estado="" style="border-color:var(--verde);color:var(--verde)" onclick="ppFiltrarChip('',this)">Todos</div>
-            <div class="her-chip" data-pp-estado="activo" style="color:var(--verde)" onclick="ppFiltrarChip('activo',this)">🟢 Activos</div>
-            <div class="her-chip" data-pp-estado="retornado" style="color:var(--texto-dim)" onclick="ppFiltrarChip('retornado',this)">⚪ Retornados</div>
+            <div class="her-chip" data-pp-estado="activo" style="color:var(--verde)" onclick="ppFiltrarChip('activo',this)"><i data-lucide=circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Activos</div>
+            <div class="her-chip" data-pp-estado="retornado" style="color:var(--texto-dim)" onclick="ppFiltrarChip('retornado',this)"><i data-lucide=circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retornados</div>
           </div>
-          <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
+          <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
         </div>
 
         <div id="pp-tabla-wrap" class="pp-grid">
@@ -389,7 +389,7 @@
 
         <div style="margin-bottom:16px">
           <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()" style="padding:10px 20px;font-size:14px">
-            ➕ Registrar salida a otro departamento
+            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida a otro departamento
           </button>
         </div>
 
@@ -397,7 +397,7 @@
           <div class="tabla-header">
             <h3>Historial de herramientas prestadas</h3>
             <div class="filtros">
-              <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px"></div>
+              <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px"></div>
               <select id="ext-filtro-estado">
                 <option value="">Todos los estados</option>
                 <option value="prestado">Prestado</option>
@@ -421,7 +421,7 @@
             <button class="btn btn-outline" onclick="exportarHerramientasExcel()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarHerramientasPDF()" style="padding:9px 14px;font-size:12px" title="Exportar inventario a PDF"><i data-lucide="file-text"></i> PDF</button>
             <button class="btn btn-outline" onclick="abrirModalEntradaStock()" style="padding:9px 16px;font-size:13px" title="Registrar entrada de stock de una herramienta existente o nueva"><i data-lucide="package-plus"></i> Entrada de stock</button>
-            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario">➕ Agregar herramienta</button>
+            <button class="btn btn-verde" onclick="abrirModalHerramienta()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva herramienta al inventario"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</button>
           </div>
         </div>
 
@@ -429,7 +429,7 @@
 
         <div class="her-toolbar">
           <div class="her-categoria-chips" id="her-chips"></div>
-          <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="her-buscar" placeholder="Buscar herramienta..."></div>
+          <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="her-buscar" placeholder="Buscar herramienta..."></div>
         </div>
 
         <div id="her-cfg-wrap" class="her-grid">
@@ -440,7 +440,7 @@
       <div class="vista" id="vista-laboratorios">
         <div class="pagina-titulo">
           <div><h2>Laboratorios / Talleres</h2><p>Lista de laboratorios y talleres disponibles para elegir en el formulario del estudiante</p></div>
-          <button class="btn btn-verde" onclick="abrirModalLaboratorio()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo laboratorio o taller">➕ Agregar laboratorio/taller</button>
+          <button class="btn btn-verde" onclick="abrirModalLaboratorio()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo laboratorio o taller"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar laboratorio/taller</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -459,7 +459,7 @@
       <div class="vista" id="vista-ciclos-cfg">
         <div class="pagina-titulo">
           <div><h2>Ciclos</h2><p>Ciclos académicos disponibles para elegir en el formulario del estudiante (ej. cuando empiece 2027)</p></div>
-          <button class="btn btn-verde" onclick="abrirModalCiclo()" style="padding:9px 18px;font-size:13px" title="Agregar un ciclo nuevo">➕ Agregar ciclo</button>
+          <button class="btn btn-verde" onclick="abrirModalCiclo()" style="padding:9px 18px;font-size:13px" title="Agregar un ciclo nuevo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar ciclo</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -492,24 +492,24 @@
           <div style="flex:1;min-width:200px;position:relative">
             <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..."
               style="width:100%;padding:10px 14px 10px 38px;background:var(--card);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:13px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:15px">🔍</span>
+            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:15px"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
           </div>
           <select id="hist-tipo" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
             <option value="">Tipo: Todos</option>
-            <option value="estudiante">🎓 Estudiante</option>
-            <option value="profesor">👨‍🏫 Profesor</option>
-            <option value="externo">🏢 Dep. Externo</option>
+            <option value="estudiante"><i data-lucide=graduation-cap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Estudiante</option>
+            <option value="profesor"><i data-lucide=graduation-cap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Profesor</option>
+            <option value="externo"><i data-lucide=building-2 style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Dep. Externo</option>
           </select>
           <select id="hist-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
             <option value="">Estado: Todos</option>
             <option value="pendiente">⏳ Pendiente</option>
-            <option value="entregada">✅ Entregada</option>
-            <option value="retornada">↩ Retornada</option>
-            <option value="cancelada">❌ Cancelada</option>
-            <option value="incidencia">⚠️ Con Incidencia</option>
+            <option value="entregada"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregada</option>
+            <option value="retornada"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retornada</option>
+            <option value="cancelada"><i data-lucide=x-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cancelada</option>
+            <option value="incidencia"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Con Incidencia</option>
           </select>
           <input type="date" id="hist-fecha" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-          <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer">✕ Limpiar</button>
+          <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar</button>
         </div>
 
         <!-- Tags activos -->
@@ -534,7 +534,7 @@
         <div class="modal" style="max-width:560px">
           <div class="modal-titulo">
             <span id="modal-hist-titulo">Detalle</span>
-            <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')">✕</button>
+            <button class="modal-cerrar" onclick="document.getElementById('modal-hist').classList.remove('abierto')"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
           </div>
           <div id="modal-hist-contenido"></div>
         </div>
@@ -543,15 +543,15 @@
       <div class="vista" id="vista-profesores-cfg">
         <div class="pagina-titulo">
           <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
-          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor">➕ Agregar profesor</button>
+          <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar profesor</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Lista de profesores</h3>
             <div class="filtros">
               <div style="position:relative">
-                <input type="text" id="prof-buscar" placeholder="🔍  Buscar profesor..." style="padding:8px 14px 8px 36px;border:1.5px solid var(--borde);border-radius:10px;font-size:12px;background:var(--bg);color:var(--texto);width:200px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
-                <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--texto-dim)">🔍</span>
+                <input type="text" id="prof-buscar" placeholder=" Buscar profesor..." style="padding:8px 14px 8px 36px;border:1.5px solid var(--borde);border-radius:10px;font-size:12px;background:var(--bg);color:var(--texto);width:200px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
+                <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--texto-dim)"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
               </div>
             </div>
           </div>
@@ -565,7 +565,7 @@
       <div class="vista" id="vista-materias-cfg">
         <div class="pagina-titulo">
           <div><h2>Materias</h2><p>Catálogo de materias con su código, para elegirlas al asignarle horario a un profesor</p></div>
-          <button class="btn btn-verde" onclick="abrirModalMateria()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva materia">➕ Agregar materia</button>
+          <button class="btn btn-verde" onclick="abrirModalMateria()" style="padding:9px 18px;font-size:13px" title="Agregar una nueva materia"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar materia</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
@@ -583,13 +583,13 @@
       <div class="vista" id="vista-usuarios-cfg">
         <div class="pagina-titulo">
           <div><h2>Usuarios</h2><p>Crea cuentas de acceso y define qué puede ver cada una</p></div>
-          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso">➕ Agregar usuario</button>
+          <button class="btn btn-verde" onclick="abrirModalUsuario()" style="padding:9px 18px;font-size:13px" title="Crear una nueva cuenta de acceso"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar usuario</button>
         </div>
         <div class="seccion-tabla">
           <div class="tabla-header">
             <h3>Cuentas del sistema</h3>
             <div class="filtros">
-              <div class="buscar-wrap"><span class="buscar-icono">🔍</span><input type="text" id="usr-buscar" placeholder="Buscar usuario..."></div>
+              <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="usr-buscar" placeholder="Buscar usuario..."></div>
             </div>
           </div>
           <div class="usr-resumen" id="usr-resumen"></div>
@@ -601,7 +601,7 @@
 
       <div class="vista" id="vista-auditoria-cfg">
         <div class="pagina-titulo">
-          <div><h2>📜 Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
+          <div><h2><i data-lucide=shield style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF"><i data-lucide="file-text"></i> PDF</button>
@@ -613,11 +613,11 @@
             <div class="filtros">
               <select id="audit-filtro-tipo" style="padding:7px 10px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
                 <option value="">Todos los tipos</option>
-                <option value="herramienta">🔧 Herramientas</option>
-                <option value="profesor">👤 Profesores</option>
-                <option value="usuario">🔐 Usuarios</option>
-                <option value="prestamo">📋 Préstamos</option>
-                <option value="stock">📦 Entradas de stock</option>
+                <option value="herramienta"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Herramientas</option>
+                <option value="profesor"><i data-lucide=user style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Profesores</option>
+                <option value="usuario"><i data-lucide=lock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Usuarios</option>
+                <option value="prestamo"><i data-lucide=clipboard style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Préstamos</option>
+                <option value="stock"><i data-lucide=package style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entradas de stock</option>
               </select>
               <input type="text" id="audit-buscar" placeholder="Buscar...">
             </div>
@@ -631,8 +631,8 @@
     </div></div></div><div class="modal-overlay" id="modal-profesor-cfg">
   <div class="modal" style="max-width:480px">
     <div class="modal-titulo">
-      <span id="prof-modal-titulo">➕ Agregar profesor</span>
-      <button class="modal-cerrar" onclick="cerrarModalProfesor()">✕</button>
+      <span id="prof-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar profesor</span>
+      <button class="modal-cerrar" onclick="cerrarModalProfesor()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Nombre completo</label>
@@ -642,11 +642,11 @@
     <div class="modal-campo">
       <label style="margin:0">Materias que imparte</label>
       <div id="prof-materias-wrap" style="display:flex;flex-direction:column;gap:10px;margin-top:8px;max-height:340px;overflow-y:auto"></div>
-      <button type="button" class="btn-agregar-materia" onclick="profAgregarFilaMateria()">➕ Agregar materia</button>
+      <button type="button" class="btn-agregar-materia" onclick="profAgregarFilaMateria()"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar materia</button>
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalProfesor()">Cancelar</button>
-      <button class="btn btn-verde" id="prof-btn-guardar" onclick="guardarProfesor()">✅ Guardar</button>
+      <button class="btn btn-verde" id="prof-btn-guardar" onclick="guardarProfesor()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
     </div>
   </div>
 </div>
@@ -654,8 +654,8 @@
 <div class="modal-overlay" id="modal-materia-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="materia-modal-titulo">➕ Agregar materia</span>
-      <button class="modal-cerrar" onclick="cerrarModalMateria()">✕</button>
+      <span id="materia-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar materia</span>
+      <button class="modal-cerrar" onclick="cerrarModalMateria()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Código</label>
@@ -669,7 +669,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalMateria()">Cancelar</button>
-      <button class="btn btn-verde" id="materia-btn-guardar" onclick="guardarMateria()">✅ Guardar</button>
+      <button class="btn btn-verde" id="materia-btn-guardar" onclick="guardarMateria()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
     </div>
   </div>
 </div>
@@ -677,8 +677,8 @@
 <div class="modal-overlay" id="modal-laboratorio-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="lab-modal-titulo">➕ Agregar laboratorio/taller</span>
-      <button class="modal-cerrar" onclick="cerrarModalLaboratorio()">✕</button>
+      <span id="lab-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar laboratorio/taller</span>
+      <button class="modal-cerrar" onclick="cerrarModalLaboratorio()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Nombre</label>
@@ -687,7 +687,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalLaboratorio()">Cancelar</button>
-      <button class="btn btn-verde" id="lab-btn-guardar" onclick="guardarLaboratorio()">✅ Guardar</button>
+      <button class="btn btn-verde" id="lab-btn-guardar" onclick="guardarLaboratorio()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
     </div>
   </div>
 </div>
@@ -695,8 +695,8 @@
 <div class="modal-overlay" id="modal-ciclo-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="ciclo-modal-titulo">➕ Agregar ciclo</span>
-      <button class="modal-cerrar" onclick="cerrarModalCiclo()">✕</button>
+      <span id="ciclo-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar ciclo</span>
+      <button class="modal-cerrar" onclick="cerrarModalCiclo()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Ciclo (formato N-AAAA)</label>
@@ -705,7 +705,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalCiclo()">Cancelar</button>
-      <button class="btn btn-verde" id="ciclo-btn-guardar" onclick="guardarCiclo()">✅ Guardar</button>
+      <button class="btn btn-verde" id="ciclo-btn-guardar" onclick="guardarCiclo()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
     </div>
   </div>
 </div>
@@ -740,8 +740,8 @@
 <div class="modal-overlay" id="modal-usuario-cfg">
   <div class="modal" style="max-width:460px">
     <div class="modal-titulo">
-      <span id="usr-modal-titulo">➕ Agregar usuario</span>
-      <button class="modal-cerrar" onclick="cerrarModalUsuario()">✕</button>
+      <span id="usr-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar usuario</span>
+      <button class="modal-cerrar" onclick="cerrarModalUsuario()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Nombre completo</label>
@@ -757,7 +757,7 @@
       </div>
     </div>
     <div class="modal-campo" id="usr-pass-info" style="background:rgba(56,139,253,0.08);border:1px solid rgba(56,139,253,0.25);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--texto-dim)">
-      🔒 El encargado iniciará con una contraseña temporal que tú le asignas. Al entrar por primera vez, el sistema le pedirá que la cambie.
+      <i data-lucide=lock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> El encargado iniciará con una contraseña temporal que tú le asignas. Al entrar por primera vez, el sistema le pedirá que la cambie.
     </div>
     <div class="modal-campo" id="usr-pass-temporal-wrap">
       <label>Contraseña temporal <span style="color:var(--rojo)">*</span></label>
@@ -769,8 +769,8 @@
       <label>Rol</label>
       <select id="usr-input-rol" onchange="usrToggleSecciones()"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
-        <option value="administrador">👑 Administrador (acceso total)</option>
-        <option value="encargado">🔒 Encargado (acceso limitado)</option>
+        <option value="administrador"><i data-lucide=crown style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Administrador (acceso total)</option>
+        <option value="encargado"><i data-lucide=lock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Encargado (acceso limitado)</option>
       </select>
     </div>
     <div class="modal-campo" id="usr-secciones-wrap" style="display:none">
@@ -792,7 +792,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalUsuario()">Cancelar</button>
-      <button class="btn btn-verde" id="usr-btn-guardar" onclick="guardarUsuario()">✅ Guardar</button>
+      <button class="btn btn-verde" id="usr-btn-guardar" onclick="guardarUsuario()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
     </div>
   </div>
 </div>
@@ -800,8 +800,8 @@
 <div class="modal-overlay" id="modal-nuevo-pp">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
-      ➕ Nuevo préstamo a profesor
-      <button class="modal-cerrar" onclick="cerrarModalNuevoProf()">✕</button>
+      <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Nuevo préstamo a profesor
+      <button class="modal-cerrar" onclick="cerrarModalNuevoProf()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Profesor</label>
@@ -817,7 +817,7 @@
     </div>
     <div class="picking-layout">
       <div class="picking-buscar">
-        <input type="text" id="pp-picker-buscar-inline" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderPPPickerGridInline()"
+        <input type="text" id="pp-picker-buscar-inline" placeholder="Buscar herramienta para agregar..." oninput="renderPPPickerGridInline()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="pp-picker-grid-inline" class="her-grid picking-grid"></div>
       </div>
@@ -826,7 +826,7 @@
         <div id="pp-lista-herramientas" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalNuevoProf()">Cancelar</button>
-          <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor">✅ Registrar entrega</button>
+          <button class="btn btn-verde" id="pp-btn-confirmar" onclick="confirmarNuevoPrestamoProf()" title="Registrar la entrega de herramientas al profesor"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar entrega</button>
         </div>
       </div>
     </div>
@@ -847,8 +847,8 @@
 <div class="modal-overlay" id="modal-pp-fotos">
   <div class="modal" style="max-width:760px">
     <div class="modal-titulo">
-      <span id="pp-picker-titulo">📷 Elegir herramientas</span>
-      <button class="modal-cerrar" onclick="cerrarPickerFotosPP()">✕</button>
+      <span id="pp-picker-titulo"><i data-lucide=camera style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Elegir herramientas</span>
+      <button class="modal-cerrar" onclick="cerrarPickerFotosPP()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <input type="text" id="pp-picker-buscar" placeholder="Buscar herramienta..." oninput="renderPickerFotosPP()"
@@ -857,7 +857,7 @@
     <div id="pp-picker-grid" class="her-grid" style="max-height:48vh;overflow-y:auto;padding-right:4px"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarPickerFotosPP()">Cancelar</button>
-      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()" title="Agregar las herramientas seleccionadas al préstamo">✅ Agregar seleccionadas</button>
+      <button class="btn btn-verde" onclick="confirmarPickerFotosPP()" title="Agregar las herramientas seleccionadas al préstamo"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar seleccionadas</button>
     </div>
   </div>
 </div>
@@ -865,27 +865,27 @@
 <div class="modal-overlay" id="modal-fotos-solicitud" style="z-index:200">
   <div class="modal picker-modal">
     <div class="picker-header">
-      <span id="sol-picker-titulo">📷 Elegir herramientas adicionales</span>
-      <button class="modal-cerrar" onclick="cerrarPickerFotosSolicitud()">✕</button>
+      <span id="sol-picker-titulo"><i data-lucide=camera style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Elegir herramientas adicionales</span>
+      <button class="modal-cerrar" onclick="cerrarPickerFotosSolicitud()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="picker-body">
       <div class="picker-main">
         <div class="picker-search-wrap">
-          <span class="picker-search-icono">🔍</span>
+          <span class="picker-search-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
           <input type="text" id="sol-picker-buscar" placeholder="Buscar herramienta por nombre..." oninput="renderPickerFotosSolicitud()">
         </div>
         <div id="sol-picker-grid" class="picker-grid"></div>
       </div>
       <div class="picker-cart">
         <div class="picker-cart-header">
-          <span>🧾 Ficha de picking</span>
+          <span><i data-lucide=receipt style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ficha de picking</span>
           <span id="sol-picker-cart-count" class="picker-cart-count">0</span>
         </div>
         <div class="picker-cart-perforado"></div>
         <div id="sol-picker-cart-lista" class="picker-cart-lista"></div>
         <div class="picker-cart-footer">
           <button class="btn btn-outline" onclick="cerrarPickerFotosSolicitud()">Cancelar</button>
-          <button class="btn btn-verde" onclick="confirmarPickerFotosSolicitud()">✅ Agregar</button>
+          <button class="btn btn-verde" onclick="confirmarPickerFotosSolicitud()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar</button>
         </div>
       </div>
     </div>
@@ -896,12 +896,12 @@
 <div class="modal-overlay" id="modal-retorno-pp">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
-      ↩ Retorno — <span id="pp-retorno-nombre"></span>
-      <button class="modal-cerrar" onclick="cerrarModalRetornoProf()">✕</button>
+      <i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="pp-retorno-nombre"></span>
+      <button class="modal-cerrar" onclick="cerrarModalRetornoProf()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="picking-layout">
       <div class="picking-buscar">
-        <input type="text" id="pp-retorno-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderPPRetornoPickerGrid()"
+        <input type="text" id="pp-retorno-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderPPRetornoPickerGrid()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="pp-retorno-picker-grid" class="her-grid picking-grid"></div>
       </div>
@@ -915,7 +915,7 @@
         </div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalRetornoProf()">Cancelar</button>
-          <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor">✅ Confirmar retorno</button>
+          <button class="btn btn-verde" onclick="confirmarRetornoProf()" title="Confirmar el retorno de las herramientas del profesor"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar retorno</button>
         </div>
       </div>
     </div>
@@ -926,11 +926,11 @@
   <div class="modal">
     <div class="modal-titulo">
       <span id="modal-titulo-texto">Detalle de Solicitud</span>
-      <button class="modal-cerrar" id="modal-cerrar">✕</button>
+      <button class="modal-cerrar" id="modal-cerrar"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div id="modal-contenido"></div>
     <div class="modal-acciones" id="modal-acciones">
-      <button class="btn btn-outline" onclick="cerrarModal()">✕ Cerrar</button>
+      <button class="btn btn-outline" onclick="cerrarModal()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cerrar</button>
     </div>
   </div>
 </div>
@@ -938,8 +938,8 @@
 <div class="modal-overlay" id="modal-nuevo-ext">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
-      ➕ Registrar salida a otro departamento
-      <button class="modal-cerrar" onclick="cerrarModalNuevoExt()">✕</button>
+      <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida a otro departamento
+      <button class="modal-cerrar" onclick="cerrarModalNuevoExt()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Departamento</label>
@@ -953,7 +953,7 @@
     </div>
     <div class="picking-layout">
       <div class="picking-buscar">
-        <input type="text" id="ext-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderExtPickerGrid()"
+        <input type="text" id="ext-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderExtPickerGrid()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="ext-picker-grid" class="her-grid picking-grid"></div>
       </div>
@@ -962,7 +962,7 @@
         <div id="ext-lista-herramientas" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalNuevoExt()">Cancelar</button>
-          <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento">✅ Registrar salida</button>
+          <button class="btn btn-verde" id="ext-btn-confirmar" onclick="confirmarNuevoPrestamoExt()" title="Registrar la salida de herramientas al departamento"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida</button>
         </div>
       </div>
     </div>
@@ -972,12 +972,12 @@
 <div class="modal-overlay" id="modal-retorno-ext">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
-      ↩ Retorno — <span id="ext-retorno-nombre"></span>
-      <button class="modal-cerrar" onclick="cerrarModalRetornoExt()">✕</button>
+      <i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retorno — <span id="ext-retorno-nombre"></span>
+      <button class="modal-cerrar" onclick="cerrarModalRetornoExt()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="picking-layout">
       <div class="picking-buscar">
-        <input type="text" id="ext-retorno-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderExtRetornoPickerGrid()"
+        <input type="text" id="ext-retorno-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderExtRetornoPickerGrid()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="ext-retorno-picker-grid" class="her-grid picking-grid"></div>
       </div>
@@ -986,7 +986,7 @@
         <div id="ext-retorno-lista" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalRetornoExt()">Cancelar</button>
-          <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento">✅ Confirmar retorno</button>
+          <button class="btn btn-verde" onclick="confirmarRetornoExt()" title="Confirmar el retorno de las herramientas del departamento"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar retorno</button>
         </div>
       </div>
     </div>
@@ -996,13 +996,13 @@
 <div class="modal-overlay" id="modal-conduce">
   <div class="modal" style="max-width:520px">
     <div class="modal-titulo">
-      📄 Conduce de Salida
-      <button class="modal-cerrar" onclick="cerrarModalConduce()">✕</button>
+      <i data-lucide=file-text style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Conduce de Salida
+      <button class="modal-cerrar" onclick="cerrarModalConduce()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div id="conduce-contenido"></div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalConduce()">Cerrar</button>
-      <button class="btn btn-verde" onclick="window.print()">🖨️ Imprimir</button>
+      <button class="btn btn-verde" onclick="window.print()"><i data-lucide=printer style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Imprimir</button>
     </div>
   </div>
 </div>
@@ -1010,12 +1010,12 @@
 <div class="modal-overlay" id="modal-entrega">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
-      ✓ Entregar Herramientas
-      <button class="modal-cerrar" onclick="cerrarModalEntrega()">✕</button>
+      <i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregar Herramientas
+      <button class="modal-cerrar" onclick="cerrarModalEntrega()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="picking-layout">
       <div class="picking-buscar">
-        <input type="text" id="entrega-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderEntregaPickerGrid()"
+        <input type="text" id="entrega-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderEntregaPickerGrid()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="entrega-picker-grid" class="her-grid picking-grid"></div>
       </div>
@@ -1029,8 +1029,8 @@
         <div id="lista-entrega" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px">
           <button class="btn btn-outline" onclick="cerrarModalEntrega()">Cerrar</button>
-          <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía">💾 Guardar cambios</button>
-          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante">✓ Confirmar Entrega</button>
+          <button class="btn btn-azul" id="btn-guardar-sin-entregar" onclick="guardarCambiosPendiente()" style="display:none" title="Guarda los cambios en la lista sin marcarla como entregada todavía"><i data-lucide=save style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar cambios</button>
+          <button class="btn btn-verde" onclick="confirmarEntrega()" title="Confirmar la entrega de las herramientas al estudiante"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Entrega</button>
         </div>
       </div>
     </div>
@@ -1040,12 +1040,12 @@
 <div class="modal-overlay" id="modal-retorno">
   <div class="modal modal-picking" style="max-width:1100px">
     <div class="modal-titulo">
-      ↩ Registrar Retorno
-      <button class="modal-cerrar" onclick="cerrarModalRetorno()">✕</button>
+      <i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar Retorno
+      <button class="modal-cerrar" onclick="cerrarModalRetorno()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="picking-layout">
       <div class="picking-buscar">
-        <input type="text" id="retorno-picker-buscar" placeholder="🔍 Buscar herramienta para agregar..." oninput="renderRetornoPickerGrid()"
+        <input type="text" id="retorno-picker-buscar" placeholder="Buscar herramienta para agregar..." oninput="renderRetornoPickerGrid()"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <div id="retorno-picker-grid" class="her-grid picking-grid"></div>
       </div>
@@ -1053,13 +1053,13 @@
         <div id="info-retorno" style="margin-bottom:10px;font-size:13px;color:var(--texto-dim)"></div>
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
           <span style="font-size:11px;font-weight:700;color:var(--texto-dim);text-transform:uppercase">Estado de cada herramienta</span>
-          <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas ✅</button>
+          <button class="btn btn-outline" id="btn-toggle-retorno" onclick="toggleMarcarTodasRetorno()" style="padding:4px 10px;font-size:11px" title="Marcar todas las herramientas como retornadas en buen estado">Marcar todas <i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
         </div>
         <div id="lista-retorno" class="picking-recibo-lista"></div>
         <div class="modal-acciones" style="margin-top:auto;padding-top:10px;flex-wrap:wrap;gap:6px">
           <button class="btn btn-outline" onclick="cerrarModalRetornoConAviso()">Cerrar</button>
-          <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px;color:var(--azul);border-color:var(--azul)">➕ Confirmar adicionales</button>
-          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="font-weight:800">↩ Confirmar Retorno</button>
+          <button class="btn btn-outline" onclick="confirmarAdicionalesRetorno()" title="Registrar entrega de herramientas adicionales al estudiante" style="font-size:11px;color:var(--azul);border-color:var(--azul)"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar adicionales</button>
+          <button class="btn btn-verde" onclick="confirmarRetorno()" title="Confirmar el retorno de las herramientas del estudiante" style="font-weight:800"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Confirmar Retorno</button>
         </div>
       </div>
     </div>
@@ -1072,7 +1072,7 @@
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
       <span><i data-lucide="package-plus"></i> Entrada de stock</span>
-      <button class="modal-cerrar" onclick="cerrarModalEntradaStock()">✕</button>
+      <button class="modal-cerrar" onclick="cerrarModalEntradaStock()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
 
     <div id="entrada-modo-existente">
@@ -1082,7 +1082,7 @@
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         </select>
       </div>
-      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva">➕ No está en la lista — agregar como nueva</button>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(true)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: registrar una herramienta nueva"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> No está en la lista — agregar como nueva</button>
     </div>
 
     <div id="entrada-modo-nueva" style="display:none">
@@ -1096,19 +1096,19 @@
         <select id="entrada-categoria-nueva"
           style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
           <option value="">Sin categoría</option>
-          <option value="Medición">📏 Medición</option>
-          <option value="Corte">✂️ Corte</option>
-          <option value="Golpe">🔨 Golpe</option>
-          <option value="Sujeción">🔧 Sujeción</option>
-          <option value="Perforación">🪛 Perforación</option>
-          <option value="Acabado">🧽 Acabado</option>
-          <option value="Soldadura">⚡ Soldadura</option>
-          <option value="Seguridad">🦺 Seguridad (EPP)</option>
-          <option value="Insumos">🧴 Insumos</option>
-          <option value="Material Gastable">🧰 Material Gastable</option>
+          <option value="Medición"><i data-lucide=ruler style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Medición</option>
+          <option value="Corte"><i data-lucide=scissors style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Corte</option>
+          <option value="Golpe"><i data-lucide=hammer style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Golpe</option>
+          <option value="Sujeción"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Sujeción</option>
+          <option value="Perforación"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Perforación</option>
+          <option value="Acabado"><i data-lucide=sparkles style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Acabado</option>
+          <option value="Soldadura"><i data-lucide=zap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Soldadura</option>
+          <option value="Seguridad"><i data-lucide=shield style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Seguridad (EPP)</option>
+          <option value="Insumos"><i data-lucide=droplet style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Insumos</option>
+          <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
         </select>
       </div>
-      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente">← Ya existe, elegir de la lista</button>
+      <button type="button" class="btn btn-outline" onclick="toggleEntradaNueva(false)" style="width:100%;margin-bottom:14px;font-size:12.5px" title="Cambiar a modo: elegir una herramienta ya existente"><i data-lucide=arrow-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Ya existe, elegir de la lista</button>
     </div>
 
     <div class="modal-campo">
@@ -1123,7 +1123,7 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalEntradaStock()">Cancelar</button>
-      <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()">✅ Registrar entrada</button>
+      <button class="btn btn-verde" id="entrada-btn-guardar" onclick="guardarEntradaStock()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar entrada</button>
     </div>
   </div>
 </div>
@@ -1131,8 +1131,8 @@
 <div class="modal-overlay" id="modal-herramienta-cfg">
   <div class="modal" style="max-width:420px">
     <div class="modal-titulo">
-      <span id="her-modal-titulo">➕ Agregar herramienta</span>
-      <button class="modal-cerrar" onclick="cerrarModalHerramienta()">✕</button>
+      <span id="her-modal-titulo"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar herramienta</span>
+      <button class="modal-cerrar" onclick="cerrarModalHerramienta()"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
     </div>
     <div class="modal-campo">
       <label>Nombre</label>
@@ -1144,16 +1144,16 @@
       <select id="her-input-categoria"
         style="width:100%;padding:10px 12px;background:var(--bg);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:14px">
         <option value="">Sin categoría</option>
-        <option value="Medición">📏 Medición</option>
-        <option value="Corte">✂️ Corte</option>
-        <option value="Golpe">🔨 Golpe</option>
-        <option value="Sujeción">🔧 Sujeción</option>
-        <option value="Perforación">🪛 Perforación</option>
-        <option value="Acabado">🧽 Acabado</option>
-        <option value="Soldadura">⚡ Soldadura</option>
-        <option value="Seguridad">🦺 Seguridad (EPP)</option>
-        <option value="Insumos">🧴 Insumos</option>
-        <option value="Material Gastable">🧰 Material Gastable</option>
+        <option value="Medición"><i data-lucide=ruler style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Medición</option>
+        <option value="Corte"><i data-lucide=scissors style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Corte</option>
+        <option value="Golpe"><i data-lucide=hammer style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Golpe</option>
+        <option value="Sujeción"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Sujeción</option>
+        <option value="Perforación"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Perforación</option>
+        <option value="Acabado"><i data-lucide=sparkles style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Acabado</option>
+        <option value="Soldadura"><i data-lucide=zap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Soldadura</option>
+        <option value="Seguridad"><i data-lucide=shield style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Seguridad (EPP)</option>
+        <option value="Insumos"><i data-lucide=droplet style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Insumos</option>
+        <option value="Material Gastable"><i data-lucide=briefcase style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Material Gastable</option>
       </select>
       <small style="color:var(--texto-dim);font-size:11px">Marca "Material Gastable" para ítems que se consumen en la práctica (aparecerán con etiqueta especial en retornos)</small>
     </div>
@@ -1163,7 +1163,7 @@
         <input type="file" id="her-input-foto" accept="image/*" style="position:absolute;inset:0;opacity:0;cursor:pointer">
         <div id="her-drop-contenido">
           <div id="her-foto-preview-wrap" style="width:84px;height:84px;border-radius:10px;border:1px solid var(--borde);overflow:hidden;margin:0 auto 8px;display:flex;align-items:center;justify-content:center;background:var(--card2);font-size:30px">
-            <span id="her-foto-preview-icono">🔧</span>
+            <span id="her-foto-preview-icono"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
             <img id="her-foto-preview-img" style="display:none;width:100%;height:100%;object-fit:cover">
           </div>
           <div style="font-size:12px;color:var(--texto-dim)" id="her-drop-texto">Arrastra una imagen aquí o haz clic para seleccionarla</div>
@@ -1175,7 +1175,7 @@
         </div>
         <div id="her-progreso-texto" style="font-size:11px;color:var(--texto-dim);margin-top:4px">Subiendo... 0%</div>
       </div>
-      <div id="her-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700">✅ Foto cargada correctamente</div>
+      <div id="her-foto-exito" style="display:none;margin-top:6px;font-size:12px;color:var(--verde);font-weight:700"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Foto cargada correctamente</div>
     </div>
     <div class="modal-campo">
       <label>Cantidad disponible</label>
@@ -1191,14 +1191,14 @@
     </div>
     <div class="modal-acciones">
       <button class="btn btn-outline" onclick="cerrarModalHerramienta()">Cancelar</button>
-      <button class="btn btn-verde" id="her-btn-guardar" onclick="guardarHerramienta()">✅ Guardar</button>
+      <button class="btn btn-verde" id="her-btn-guardar" onclick="guardarHerramienta()"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Guardar</button>
     </div>
   </div>
 </div>
 
 <!-- ===== LIGHTBOX: ampliar foto de herramienta al tocarla ===== -->
 <div class="modal-overlay" id="lightbox-herramienta">
-  <button id="lightbox-cerrar" type="button" aria-label="Cerrar">✕</button>
+  <button id="lightbox-cerrar" type="button" aria-label="Cerrar"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></button>
   <img id="lightbox-img" src="" alt="">
 </div>
 

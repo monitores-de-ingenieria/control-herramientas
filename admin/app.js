@@ -484,7 +484,7 @@ window.verIncidencias = function() {
               const herramientasTexto = (p.herramientas || []).map(h => `${escapeHtml(h.nombre)} ×${h.cantidad}`).join(", ") || "—";
               const badgeEstado = p.estado === "activo"
                 ? '<span class="badge badge-entregada">Activo</span>'
-                : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠</span>' : ''}`;
+                : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>' : ''}`;
               return `<tr style="cursor:pointer" onclick="verDetalleIncidenciaProf('${p.id}')">
                 <td>${escapeHtml(p.profesor) || "—"}</td>
                 <td style="font-size:13px">${escapeHtml(p.laboratorio) || "—"}</td>
@@ -1073,11 +1073,11 @@ function renderTabla() {
                 <span style="font-size:11px;color:var(--texto-dim)">herramientas</span>
               </span>
             </td>
-            <td style="white-space:nowrap"><span class="badge badge-dot badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias">⚠</span>' : ''}${s.estado === "pendiente" && (Date.now() - fechaDe(s.creadoEn).getTime()) > 15*60*1000 ? ' <span class="badge badge-cancelada" title="Pendiente hace más de 15 minutos">⏰</span>' : ''}</td>
+            <td style="white-space:nowrap"><span class="badge badge-dot badge-${s.estado}">${s.estado}</span>${s.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>' : ''}${s.estado === "pendiente" && (Date.now() - fechaDe(s.creadoEn).getTime()) > 15*60*1000 ? ' <span class="badge badge-cancelada" title="Pendiente hace más de 15 minutos">⏰</span>' : ''}</td>
             <td>
               <div style="display:flex;gap:6px">
                 <button class="btn btn-outline" onclick="event.stopPropagation();abrirModal('${s.id}')"><i data-lucide="eye" style="width:1em;height:1em;vertical-align:-2px"></i> Ver</button>
-                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud">✓ Entregar</button>` : ""}
+                ${s.estado === "pendiente" ? `<button class="btn btn-verde" onclick="event.stopPropagation();entregar('${s.id}')" title="Registrar la entrega de esta solicitud"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregar</button>` : ""}
                 ${s.estado === "entregada" ? `<button class="btn btn-azul" onclick="event.stopPropagation();retornar('${s.id}')"><i data-lucide="corner-up-left" style="width:1em;height:1em;vertical-align:-2px"></i> Retornar</button>` : ""}
                 ${s.estado === "retornada" ? `<span class="badge badge-dot badge-entregada" style="cursor:default">Retornada</span>` : ""}
                 ${s.estado === "cancelada" ? `<span class="badge badge-cancelada"><i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i> Cancelada</span>` : ""}
@@ -1271,7 +1271,7 @@ window.abrirModal = function(id) {
   bCerrar.onclick = cerrarModal;
   if (s.estado === "pendiente") {
     const b = document.createElement("button");
-    b.className = "btn btn-azul"; b.textContent = "✓ Entregar";
+    b.className = "btn btn-azul"; b.textContent = "Entregar";
     b.onclick = () => { cerrarModal(); entregar(id); };
     acciones.appendChild(b);
     const bc = document.createElement("button");
@@ -1285,7 +1285,7 @@ window.abrirModal = function(id) {
     ba.onclick = () => { cerrarModal(); entregar(id); };
     acciones.appendChild(ba);
     const b = document.createElement("button");
-    b.className = "btn btn-azul"; b.textContent = "↩ Retornar";
+    b.className = "btn btn-azul"; b.textContent = "Retornar";
     b.onclick = () => { cerrarModal(); retornar(id); };
     acciones.appendChild(b);
   }
@@ -1857,7 +1857,7 @@ window.retornar = function(id) {
     }
   });
 
-  document.getElementById("btn-toggle-retorno").textContent = "Desmarcar todas ✓";
+  document.getElementById("btn-toggle-retorno").textContent = "Desmarcar todas ";
   document.getElementById("retorno-picker-buscar").value = "";
   renderRetornoPickerGrid();
   document.getElementById("modal-retorno").classList.add("abierto");
@@ -1942,7 +1942,7 @@ window.toggleMarcarTodasRetorno = function() {
     if (sel && !chk.checked) sel.value = "no_retornada";
     else if (sel && sel.value === "no_retornada") sel.value = "retornada";
   });
-  document.getElementById("btn-toggle-retorno").textContent = todasMarcadas ? "Marcar todas ✓" : "Desmarcar todas ✓";
+  document.getElementById("btn-toggle-retorno").textContent = todasMarcadas ? "Marcar todas " : "Desmarcar todas ";
 };
 
 window.cerrarModalRetorno = function() {
@@ -2259,7 +2259,7 @@ function ppRenderTabla() {
       : `<span class="pp-estado-tag" style="background:var(--card2);color:var(--texto-dim)"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i> Retornado</span>`;
     const acciones = p.estado === "activo"
       ? (esDeHoy
-          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')" title="Agregar una herramienta adicional a este préstamo">+ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button>`
+          ? `<button class="btn btn-outline" onclick="abrirAdicionalPP('${p.id}')" title="Agregar una herramienta adicional a este préstamo">+ Adicional</button><button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Registrar el retorno de las herramientas"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retornar</button>`
           : `<button class="btn btn-azul" onclick="abrirRetornoProf('${p.id}')" title="Revisar y registrar el retorno de un préstamo anterior">Revisar y retornar</button>`)
       : `<span style="font-size:11px;color:var(--verde);font-weight:700"><i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> Completado</span>`;
     return `
@@ -2549,7 +2549,7 @@ window.confirmarNuevoPrestamoProf = async function() {
   } catch(e) {
     mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
   } finally {
-    btn.disabled = false; btn.textContent = "✓ Registrar entrega";
+    btn.disabled = false; btn.textContent = "Registrar entrega";
   }
 };
 
@@ -2745,8 +2745,8 @@ function extRenderTabla() {
               ? '<span class="badge badge-cancelada">Con incidencias</span>'
               : '<span class="badge badge-retornada">Devuelto</span>';
           const acciones = p.estado === "prestado"
-            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')" title="Registrar el retorno de las herramientas">↩ Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible">📄 Conduce</button>`
-            : `<span style="font-size:11px;color:var(--verde);font-weight:700">✓ Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible">📄 Conduce</button>`;
+            ? `<button class="btn btn-azul" onclick="abrirRetornoExt('${p.id}')" title="Registrar el retorno de las herramientas"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retornar</button> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible"><i data-lucide=file-text style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Conduce</button>`
+            : `<span style="font-size:11px;color:var(--verde);font-weight:700"><i data-lucide=check style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Completada</span> <button class="btn btn-outline" onclick="generarConduce('${p.id}')" title="Generar el conduce de salida imprimible"><i data-lucide=file-text style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Conduce</button>`;
           return `
             <tr>
               <td>
@@ -2896,7 +2896,7 @@ window.confirmarNuevoPrestamoExt = async function() {
   } catch(e) {
     mostrarToast("Error al guardar. Verifica la conexión.", "rojo");
   } finally {
-    btn.disabled = false; btn.textContent = "✓ Registrar salida";
+    btn.disabled = false; btn.textContent = "Registrar salida";
   }
 };
 
@@ -3338,7 +3338,7 @@ function herComprimirFoto(archivo) {
         ctx.drawImage(img, 0, 0, width, height);
         const dataUrl = canvas.toDataURL("image/jpeg", 0.88);
         barra.style.width = "100%";
-        texto.textContent = "✓ Carga completa";
+        texto.textContent = "Carga completa";
         resolve(dataUrl);
       };
       img.onerror = () => reject(new Error("No se pudo procesar la imagen"));
@@ -3388,7 +3388,7 @@ window.guardarHerramienta = async function() {
       const duplicada = snapDup.docs.find(d => d.id !== herCfgEditar);
       if (duplicada) {
         mostrarToast('Ya existe otra herramienta con el nombre "' + nombreFinal + '"', "rojo");
-        btn.disabled = false; btn.textContent = "✓ Guardar";
+        btn.disabled = false; btn.textContent = "Guardar";
         return;
       }
     }
@@ -3427,7 +3427,7 @@ window.guardarHerramienta = async function() {
     }
     cerrarModalHerramienta();
   } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✓ Guardar"; }
+  finally { btn.disabled = false; btn.textContent = "Guardar"; }
 };
 
 window.eliminarHerramienta = async function(id, nombre, esLocal = false) {
@@ -3478,18 +3478,18 @@ window.guardarEntradaStock = async function() {
     if (esNueva) {
       const nombre = document.getElementById("entrada-nombre-nueva").value.trim();
       const categoria = document.getElementById("entrada-categoria-nueva").value;
-      if (!nombre) { mostrarToast("Escribe el nombre", "rojo"); btn.disabled = false; btn.textContent = "✓ Registrar entrada"; return; }
+      if (!nombre) { mostrarToast("Escribe el nombre", "rojo"); btn.disabled = false; btn.textContent = "Registrar entrada"; return; }
       const yaExiste = (_herListaActual || []).find(h => h.nombre.toLowerCase() === nombre.toLowerCase());
       if (yaExiste) {
         mostrarToast('Ya existe una herramienta con ese nombre — selecciónala de la lista en vez de crear otra', "rojo");
-        btn.disabled = false; btn.textContent = "✓ Registrar entrada"; return;
+        btn.disabled = false; btn.textContent = "Registrar entrada"; return;
       }
       await addDoc(collection(db, "herramientas"), { nombre, cantidadDisponible: cantidad, categoria, creadoEn: serverTimestamp() });
       mostrarToast(`<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i> "${nombre}" agregada con ${cantidad} en stock`);
       registrarAuditoria("stock", "entrada", `Entrada de stock (nueva): +${cantidad} de "${nombre}"${nota ? " — " + nota : ""}`);
     } else {
       const id = document.getElementById("entrada-select-herramienta").value;
-      if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); btn.disabled = false; btn.textContent = "✓ Registrar entrada"; return; }
+      if (!id) { mostrarToast("Selecciona una herramienta", "rojo"); btn.disabled = false; btn.textContent = "Registrar entrada"; return; }
       const h = (_herListaActual || []).find(x => x.id === id);
       if (!h) return;
       const nuevaCantidad = (Number.isFinite(h.cantidadDisponible) ? h.cantidadDisponible : 0) + cantidad;
@@ -3503,7 +3503,7 @@ window.guardarEntradaStock = async function() {
     }
     cerrarModalEntradaStock();
   } catch(e) { mostrarToast("Error al registrar la entrada", "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✓ Registrar entrada"; }
+  finally { btn.disabled = false; btn.textContent = "Registrar entrada"; }
 };
 
 document.getElementById("her-buscar")?.addEventListener("input", () => renderHerramientasCfg(_herListaActual));
@@ -3861,7 +3861,7 @@ window.guardarMateria = async function() {
     }
     cerrarModalMateria();
   } catch(e) { mostrarToast("Error al guardar: " + e.message, "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✓ Guardar"; }
+  finally { btn.disabled = false; btn.textContent = "Guardar"; }
 };
 
 window.eliminarMateria = async function(id, nombre, esLocal = false) {
@@ -3932,7 +3932,7 @@ window.guardarProfesor = async function() {
     }
     cerrarModalProfesor();
   } catch(e) { mostrarToast("Error al guardar", "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✓ Guardar"; }
+  finally { btn.disabled = false; btn.textContent = "Guardar"; }
 };
 
 window.eliminarProfesor = async function(id, nombre) {
@@ -4060,7 +4060,7 @@ window.guardarLaboratorio = async function() {
     }
     cerrarModalLaboratorio();
   } catch(e) { mostrarToast("Error al guardar", "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✓ Guardar"; }
+  finally { btn.disabled = false; btn.textContent = "Guardar"; }
 };
 
 window.eliminarLaboratorio = async function(id, nombre) {
@@ -4216,7 +4216,7 @@ window.guardarCiclo = async function() {
     }
     cerrarModalCiclo();
   } catch(e) { mostrarToast("Error al guardar", "rojo"); }
-  finally { btn.disabled = false; btn.textContent = "✓ Guardar"; }
+  finally { btn.disabled = false; btn.textContent = "Guardar"; }
 };
 
 window.eliminarCiclo = async function(id, nombre) {
@@ -4353,7 +4353,7 @@ window.guardarUsuario = async function() {
       const passTemporal = document.getElementById("usr-input-pass-temp")?.value.trim();
       if (!passTemporal || passTemporal.length < 6) {
         mostrarToast("La contraseña temporal debe tener al menos 6 caracteres", "rojo");
-        btn.disabled = false; btn.textContent = "✓ Guardar";
+        btn.disabled = false; btn.textContent = "Guardar";
         return;
       }
       const cred = await createUserWithEmailAndPassword(authSecundaria, email, passTemporal);
@@ -4374,7 +4374,7 @@ window.guardarUsuario = async function() {
       : "Error al guardar el usuario";
     mostrarToast(msg, "rojo");
   } finally {
-    btn.disabled = false; btn.textContent = "✓ Guardar";
+    btn.disabled = false; btn.textContent = "Guardar";
   }
 };
 
@@ -4465,10 +4465,10 @@ window.exportarHerramientasPDF = function() {
 function aplicarTema(tema) {
   if (tema === 'claro') {
     document.body.classList.add('tema-claro');
-    document.getElementById('btn-tema').textContent = '🌙 Oscuro';
+    document.getElementById('btn-tema').textContent = 'Oscuro';
   } else {
     document.body.classList.remove('tema-claro');
-    document.getElementById('btn-tema').textContent = '☀️ Claro';
+    document.getElementById('btn-tema').textContent = 'Claro';
   }
   localStorage.setItem('tema-admin', tema);
 }
@@ -4550,7 +4550,7 @@ function _histFilasExport() {
       Tipo: tipoLabelExport[r.tipo] || r.tipo || "",
       "Nombre/Profesor": nombre,
       "Matrícula/Ref.": ref,
-      "N° herramientas": (r.herramientas||[]).length,
+      "N° herramientas": ((r.herramientasEntregadas && r.herramientasEntregadas.length) ? r.herramientasEntregadas : (r.herramientas||[])).length,
       Estado: histEstadoInfo(r).txt,
       Incidencia: r.tieneIncidencias ? "Sí" : "No"
     };
@@ -4684,7 +4684,7 @@ function histRenderTabla() {
               </div>
             </td>
             <td style="font-size:12px">${escapeHtml(refMostrar)}</td>
-            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${(r.herramientas||[]).length}</span></td>
+            <td><span style="background:var(--card2);padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700">${((r.herramientasEntregadas && r.herramientasEntregadas.length) ? r.herramientasEntregadas : (r.herramientas||[])).length}</span></td>
             <td>
               <span class="badge badge-${histEstadoInfo(r).cls}">${histEstadoInfo(r).txt}</span>
               ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:4px"><i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i></span>' : ""}
@@ -4736,8 +4736,9 @@ window.abrirModalHist = function(id, tipo) {
   const estadoIcono = { retornada:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>', no_retornada:'<i data-lucide="circle-x" style="width:1em;height:1em;vertical-align:-2px"></i>', danada:'<i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i>', perdida:'<i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i>', entregada:'<i data-lucide="circle-check" style="width:1em;height:1em;vertical-align:-2px"></i>' };
   const estadoColor = { retornada:"var(--verde)", no_retornada:"var(--rojo)", danada:"var(--rojo)", perdida:"var(--naranja,#f97316)", entregada:"var(--verde)" };
 
-  const totalHerHist = (r.herramientas||[]).reduce((sum, h) => sum + (h.cantidad || 1), 0);
-  const herramientasHtml = (r.herramientas||[]).map(h => `
+  const herHistBase = ((r.herramientasEntregadas && r.herramientasEntregadas.length) ? r.herramientasEntregadas : (r.herramientas||[]));
+  const totalHerHist = herHistBase.reduce((sum, h) => sum + (h.cantidad || 1), 0);
+  const herramientasHtml = herHistBase.map(h => `
     <div class="modal-herramienta-item">
       <span style="display:flex;align-items:center;gap:8px">${herFotoHtmlPorNombre(h.nombre)}<span>${escapeHtml(h.nombre)}${h.adicional ? ' <span style="color:var(--verde);font-size:10px">(adicional)</span>' : ""}</span></span>
       <span style="color:var(--verde);font-weight:700">x${h.cantidad}</span>
