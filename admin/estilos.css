@@ -1079,3 +1079,61 @@ tr:hover td { background: var(--hover); }
 #hist-tabla-wrap table {
   min-width: 720px;
 }
+
+/* ═══ Identidad propia de "Herramientas" — taller, no SaaS genérico ═══
+   Acento ámbar (no verde), ícono circular (no cuadrado como los demás
+   módulos), textura de pegboard detrás de las tarjetas, y chips de
+   categoría más "físicos" usando su color real. */
+
+/* Ícono circular ámbar en el header, en vez del cuadrado verde genérico */
+.pagina-icono-taller {
+  border-radius: 50% !important;
+  background: rgba(245,158,11,0.12) !important;
+  color: #f59e0b !important;
+}
+
+/* Textura sutil de pegboard (puntos) detrás de la grilla de tarjetas */
+#vista-herramientas-cfg .her-grid {
+  padding: 10px;
+  background-image: radial-gradient(var(--borde) 1px, transparent 1px);
+  background-size: 22px 22px;
+  border-radius: 14px;
+}
+body.tema-claro #vista-herramientas-cfg .her-grid {
+  background-image: radial-gradient(#d8e0e8 1px, transparent 1px);
+}
+
+/* Stats con acento ámbar/taller en vez del verde de los demás módulos */
+#vista-herramientas-cfg .her-stat-pill {
+  border-left-color: #f59e0b;
+}
+#vista-herramientas-cfg .her-stat-pill .her-stat-icono {
+  color: #f59e0b;
+}
+#vista-herramientas-cfg .her-stat-pill.alerta {
+  border-left-color: var(--rojo);
+}
+
+/* Chips de categoría: pill redondeada, más "física", con su color real */
+#vista-herramientas-cfg .her-categoria-chips {
+  gap: 8px;
+}
+#vista-herramientas-cfg .her-chip {
+  border-radius: 20px;
+  padding: 6px 14px;
+  font-weight: 600;
+  border-width: 1.5px;
+  transition: transform .12s ease;
+}
+#vista-herramientas-cfg .her-chip:hover {
+  transform: translateY(-1px);
+}
+
+/* Barra de herramientas como "repisa" — fondo propio, se separa de las
+   .toolbar-tabla planas que usan los módulos con tablas */
+#vista-herramientas-cfg .her-toolbar {
+  background: var(--card2);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 12px 14px;
+}
