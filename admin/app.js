@@ -446,63 +446,16 @@ function mostrarSoloSecciones(secciones) {
 
 // ── VER INCIDENCIAS (con columna de estado y badge) ──
 window.verIncidencias = function() {
-  document.querySelectorAll(".nav-item").forEach(n => n.classList.remove("activo"));
-  document.querySelectorAll(`.nav-item[data-vista="solicitudes"]`).forEach(n => n.classList.add("activo"));
-  document.querySelectorAll(".vista").forEach(v => v.classList.remove("activa"));
-  document.getElementById("vista-solicitudes")?.classList.add("activa");
-  setTimeout(() => {
-    const filtroEstado = document.getElementById("filtro-estado");
-    if (filtroEstado) {
-      filtroEstado.value = "incidencia";
-      filtroEstado.dispatchEvent(new Event("change"));
+  navegarVista("historial");
+  cargarHistorial().then(() => {
+    const sel = document.getElementById("hist-estado");
+    if (sel) {
+      sel.value = "incidencia";
+      histActualizarFiltrosUI();
+      histPagina = 1;
+      histRenderTabla();
     }
-  }, 100);
-  document.getElementById("titulo-incidencias-est")?.style.setProperty("display", "block");
-  const panel = document.getElementById("panel-incidencias-prof");
-  if (panel) {
-    panel.style.display = "block";
-    const wrap = document.getElementById("tabla-incidencias-prof-wrap");
-    const lista = (todosPrestamosProfTodos || []).filter(p => p.tieneIncidencias);
-    if (!lista.length) {
-      wrap.innerHTML = '<div class="vacio" style="padding:20px;text-align:center;color:var(--texto-dim)"><i data-lucide="inbox" style="width:1em;height:1em;vertical-align:-2px"></i> No hay préstamos a profesores con incidencias.</div>';
-    } else {
-      wrap.innerHTML = `
-        <table>
-          <thead>
-            <tr>
-              <th>Profesor</th>
-              <th>Laboratorio</th>
-              <th>Herramientas</th>
-              <th>Fecha</th>
-              <th>Estado</th>
-              <th>Acciones</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${lista.map(p => {
-              const fecha = p.creadoEn?.toDate ? p.creadoEn.toDate().toLocaleString("es-DO") : "—";
-              const herramientasTexto = (p.herramientas || []).map(h => `${escapeHtml(h.nombre)} ×${h.cantidad}`).join(", ") || "—";
-              const badgeEstado = p.estado === "activo"
-                ? '<span class="badge badge-entregada">Activo</span>'
-                : `<span class="badge badge-retornada">Retornado</span>${p.tieneIncidencias ? ' <span class="badge badge-cancelada" title="Tiene incidencias"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>' : ''}`;
-              return `<tr style="cursor:pointer" onclick="verDetalleIncidenciaProf('${p.id}')">
-                <td>${escapeHtml(p.profesor) || "—"}</td>
-                <td style="font-size:13px">${escapeHtml(p.laboratorio) || "—"}</td>
-                <td style="font-size:12px;color:var(--texto-dim);max-width:200px">${herramientasTexto}</td>
-                <td style="font-size:12px;color:var(--texto-dim)">${fecha}</td>
-                <td>${badgeEstado}</td>
-                <td>
-                  <div style="display:flex;gap:6px">
-                    <button class="btn btn-outline" onclick="event.stopPropagation();verDetalleIncidenciaProf('${p.id}')"><i data-lucide="eye" style="width:1em;height:1em;vertical-align:-2px"></i> Ver</button>
-                    ${p.estado !== "activo" ? `<span class="btn btn-verde" style="cursor:default;justify-content:center"><i data-lucide="thumbs-up" style="width:1em;height:1em;vertical-align:-2px"></i> Retornada</span>` : ""}
-                  </div>
-                </td>
-              </tr>`;
-            }).join("")}
-          </tbody>
-        </table>`;
-    }
-  }
+  });
 };
 
 function ocultarPanelIncidenciasProf() {
@@ -518,7 +471,6 @@ document.getElementById("btn-toggle-sidebar").addEventListener("click", () => {
   shell.classList.toggle("sidebar-colapsado");
 });
 
-document.getElementById("nav-incidencias").addEventListener("click", verIncidencias);
 
 // ── KPI CARDS navegables ──
 function navegarVista(vista) {

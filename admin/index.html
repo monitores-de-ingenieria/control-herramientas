@@ -175,7 +175,6 @@
       <div class="nav-item activo" data-vista="solicitudes" title="Solicitudes"><span class="nav-icono"><i data-lucide="clipboard-list"></i></span><span class="nav-texto">Solicitudes</span><span class="nav-badge" id="badge-pendientes">0</span></div>
       <div class="nav-item" data-vista="prestamos-prof" title="Préstamos Profesores"><span class="nav-icono"><i data-lucide="user-round"></i></span><span class="nav-texto">Préstamos Profesores</span><span class="nav-badge" id="badge-prestamos-prof" style="display:none">0</span></div>
       <div class="nav-item" data-vista="prestadas" title="Herramientas Prestadas"><span class="nav-icono"><i data-lucide="arrow-left-right"></i></span><span class="nav-texto">Herramientas Prestadas</span><span class="nav-badge" id="badge-prestadas" style="display:none">0</span></div>
-      <div class="nav-item" id="nav-incidencias" title="Incidencias"><span class="nav-icono"><i data-lucide="triangle-alert"></i></span><span class="nav-texto">Incidencias</span><span class="nav-badge" id="badge-incidencias" style="display:none;background:var(--rojo);color:#fff">0</span></div>
 
       <div class="nav-grupo">Inventario</div>
       <div class="nav-item" data-vista="herramientas-cfg" title="Herramientas"><span class="nav-icono"><i data-lucide="wrench"></i></span><span class="nav-texto">Herramientas</span></div>
@@ -337,10 +336,6 @@
             </div>
           </div>
 
-          <div class="tabla-header" id="titulo-incidencias-est" style="display:none">
-            <h3>Solicitudes de Estudiantes con incidencias</h3>
-          </div>
-
           <div id="tabla-solicitudes-wrap">
             <div class="cargando"><div class="spinner"></div>Cargando solicitudes...</div>
           </div>
@@ -348,12 +343,6 @@
             <span id="pag-info"></span>
             <div class="paginacion-btns" id="pag-btns"></div>
           </div>
-        </div>
-        <div class="seccion-tabla" id="panel-incidencias-prof" style="display:none;margin-top:16px">
-          <div class="tabla-header">
-            <h3>Préstamos a Profesores con incidencias</h3>
-          </div>
-          <div id="tabla-incidencias-prof-wrap"></div>
         </div>
       </div>
 
@@ -377,7 +366,7 @@
             <button class="tab-btn tab-seg activo" data-pp-estado="activo" onclick="ppFiltrarChip('activo',this)">Activos</button>
             <button class="tab-btn tab-seg" data-pp-estado="retornado" onclick="ppFiltrarChip('retornado',this)">Retornados</button>
           </div>
-          <div class="buscar-wrap" style="max-width:240px;margin-left:auto"><span class="buscar-icono"><i data-lucide=search></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
+          <div class="buscar-wrap" style="max-width:240px;margin-left:auto"><span class="buscar-icono"><i data-lucide=search></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..." style="width:100%"></div>
         </div>
 
         <div id="pp-tabla-wrap" class="pp-grid">
@@ -481,48 +470,50 @@
 
       <div class="vista" id="vista-historial">
         <div class="pagina-titulo">
-          <div>
-            <h2>Historial de Movimientos</h2>
-            <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono"><i data-lucide=bar-chart-2></i></div>
+            <div>
+              <h2>Historial de Movimientos</h2>
+              <p>Todas las solicitudes, préstamos a profesores y salidas a departamentos</p>
+            </div>
           </div>
           <div style="display:flex;gap:8px">
-            <button class="btn btn-outline" onclick="exportarHistorialExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
-            <button class="btn btn-outline" onclick="exportarHistorialPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar el historial a PDF"><i data-lucide="file-text"></i> PDF</button>
+            <button class="btn btn-outline" onclick="exportarHistorialExcel()" title="Exportar el historial a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
+            <button class="btn btn-outline" onclick="exportarHistorialPDF()" title="Exportar el historial a PDF"><i data-lucide="file-text"></i> PDF</button>
           </div>
-        </div>
-
-        <!-- Filtros -->
-        <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap;align-items:center">
-          <div style="flex:1;min-width:200px;position:relative">
-            <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..."
-              style="width:100%;padding:10px 14px 10px 38px;background:var(--card);border:1.5px solid var(--borde);border-radius:10px;color:var(--texto);font-size:13px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
-            <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--texto-dim);font-size:15px"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
-          </div>
-          <select id="hist-tipo" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-            <option value="">Tipo: Todos</option>
-            <option value="estudiante"><i data-lucide=graduation-cap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Estudiante</option>
-            <option value="profesor"><i data-lucide=graduation-cap style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Profesor</option>
-            <option value="externo"><i data-lucide=building-2 style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Dep. Externo</option>
-          </select>
-          <select id="hist-estado" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-            <option value="">Estado: Todos</option>
-            <option value="pendiente">⏳ Pendiente</option>
-            <option value="entregada"><i data-lucide=check-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entregada</option>
-            <option value="retornada"><i data-lucide=corner-up-left style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retornada</option>
-            <option value="cancelada"><i data-lucide=x-circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Cancelada</option>
-            <option value="incidencia"><i data-lucide=alert-triangle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Con Incidencia</option>
-          </select>
-          <input type="date" id="hist-fecha" style="padding:8px 12px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
-          <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(239,68,68,.15);color:var(--rojo);border:1px solid var(--rojo);border-radius:7px;font-size:12px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar</button>
-        </div>
-
-        <!-- Tags activos -->
-        <div id="hist-tags-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-bottom:10px">
-          <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros:</span>
-          <div id="hist-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
         </div>
 
         <div class="seccion-tabla">
+          <div class="toolbar-tabla">
+            <div class="filtros">
+              <div class="buscar-wrap" style="flex:1;min-width:200px">
+                <input type="text" id="hist-buscar" placeholder="Buscar por nombre, matrícula..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+              <select id="hist-tipo" style="min-width:140px">
+                <option value="">Tipo: Todos</option>
+                <option value="estudiante">Estudiante</option>
+                <option value="profesor">Profesor</option>
+                <option value="externo">Dep. Externo</option>
+              </select>
+              <select id="hist-estado" style="min-width:150px">
+                <option value="">Estado: Todos</option>
+                <option value="pendiente">Pendiente</option>
+                <option value="entregada">Entregada</option>
+                <option value="retornada">Retornada</option>
+                <option value="cancelada">Cancelada</option>
+                <option value="incidencia">Con Incidencia</option>
+              </select>
+              <input type="date" id="hist-fecha">
+              <button id="hist-btn-limpiar" style="display:none;padding:7px 12px;background:rgba(220,38,38,.1);color:var(--rojo);border:1px solid rgba(220,38,38,.25);border-radius:8px;font-size:12px;font-weight:700;cursor:pointer"><i data-lucide=x style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Limpiar</button>
+            </div>
+
+            <div id="hist-tags-bar" style="display:none;align-items:center;gap:6px;flex-wrap:wrap;margin-top:10px">
+              <span style="font-size:11px;color:var(--texto-dim);font-weight:600">Filtros:</span>
+              <div id="hist-tags" style="display:flex;gap:6px;flex-wrap:wrap"></div>
+            </div>
+          </div>
+
           <div id="hist-tabla-wrap">
             <div class="cargando"><div class="spinner"></div>Cargando historial...</div>
           </div>
