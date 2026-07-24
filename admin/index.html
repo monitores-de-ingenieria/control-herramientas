@@ -546,16 +546,18 @@
 
       <div class="vista" id="vista-profesores-cfg">
         <div class="pagina-titulo">
-          <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-profesores"><i data-lucide=graduation-cap></i></div>
+            <div><h2>Profesores</h2><p>Gestión de profesores disponibles en el sistema</p></div>
+          </div>
           <button class="btn btn-verde" onclick="abrirModalProfesor()" style="padding:9px 18px;font-size:13px" title="Agregar un nuevo profesor"><i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Agregar profesor</button>
         </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Lista de profesores</h3>
+        <div class="seccion-tabla seccion-profesores">
+          <div class="toolbar-tabla">
             <div class="filtros">
-              <div style="position:relative">
-                <input type="text" id="prof-buscar" placeholder=" Buscar profesor..." style="padding:8px 14px 8px 36px;border:1.5px solid var(--borde);border-radius:10px;font-size:12px;background:var(--bg);color:var(--texto);width:200px;transition:border-color .2s,box-shadow .2s;font-family:inherit">
-                <span style="position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--texto-dim)"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span>
+              <div class="buscar-wrap" style="max-width:260px">
+                <input type="text" id="prof-buscar" placeholder="Buscar profesor..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
               </div>
             </div>
           </div>

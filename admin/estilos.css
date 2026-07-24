@@ -1169,3 +1169,14 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
   border-color: #6366f1 !important;
   box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
 }
+
+/* ═══ Identidad "Profesores" — azul académico, círculo de persona ═══ */
+.pagina-icono-profesores {
+  border-radius: 50% !important;
+  background: rgba(56,139,253,0.12) !important;
+  color: var(--azul) !important;
+}
+.seccion-profesores #prof-buscar:focus {
+  border-color: var(--azul) !important;
+  box-shadow: 0 0 0 3px rgba(56,139,253,0.12) !important;
+}
