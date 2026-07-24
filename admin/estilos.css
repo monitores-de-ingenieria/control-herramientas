@@ -1137,3 +1137,35 @@ body.tema-claro #vista-herramientas-cfg .her-grid {
   border-radius: 12px;
   padding: 12px 14px;
 }
+
+/* ═══ Identidad propia de "Auditoría" — bitácora/registro oficial ═══
+   Acento índigo (no verde ni ámbar), esquinas más rectas (no círculo
+   como Herramientas), línea de tiempo con línea punteada tipo "ledger"
+   y los puntos con anillo en vez de fondo sólido. */
+
+/* Ícono con esquinas rectas + color índigo, distinto del círculo ámbar
+   de Herramientas y del cuadrado verde de los demás módulos */
+.pagina-icono-auditoria {
+  border-radius: 8px !important;
+  background: rgba(99,102,241,0.12) !important;
+  color: #6366f1 !important;
+}
+
+/* Línea de tiempo tipo bitácora: punteada en vez de sólida */
+.seccion-auditoria .audit-item::before {
+  background: repeating-linear-gradient(to bottom, var(--borde) 0, var(--borde) 3px, transparent 3px, transparent 7px);
+  width: 1.5px;
+}
+
+/* Puntos con anillo (como un sello), en vez de fondo sólido de color */
+.seccion-auditoria .audit-punto {
+  border: 1.5px solid currentColor;
+  background: var(--card) !important;
+}
+
+/* Foco índigo en los filtros de esta vista, no verde */
+.seccion-auditoria select#audit-filtro-tipo:focus,
+.seccion-auditoria #audit-buscar:focus {
+  border-color: #6366f1 !important;
+  box-shadow: 0 0 0 3px rgba(99,102,241,0.12) !important;
+}

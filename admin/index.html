@@ -605,25 +605,33 @@
 
       <div class="vista" id="vista-auditoria-cfg">
         <div class="pagina-titulo">
-          <div><h2><i data-lucide=shield style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Auditoría</h2><p>Historial de cambios realizados en el sistema</p></div>
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono pagina-icono-auditoria"><i data-lucide=shield-check></i></div>
+            <div>
+              <h2>Auditoría</h2>
+              <p>Historial de cambios realizados en el sistema</p>
+            </div>
+          </div>
           <div style="display:flex;gap:8px">
             <button class="btn btn-outline" onclick="exportarAuditoriaExcel()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a Excel"><i data-lucide="file-spreadsheet"></i> Excel</button>
             <button class="btn btn-outline" onclick="exportarAuditoriaPDF()" style="padding:9px 14px;font-size:12.5px" title="Exportar la auditoría a PDF"><i data-lucide="file-text"></i> PDF</button>
           </div>
         </div>
-        <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Registro de cambios</h3>
+        <div class="seccion-tabla seccion-auditoria">
+          <div class="toolbar-tabla">
             <div class="filtros">
               <select id="audit-filtro-tipo" style="padding:7px 10px;background:var(--card);border:1px solid var(--borde);border-radius:8px;color:var(--texto);font-size:12px">
                 <option value="">Todos los tipos</option>
-                <option value="herramienta"><i data-lucide=wrench style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Herramientas</option>
-                <option value="profesor"><i data-lucide=user style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Profesores</option>
-                <option value="usuario"><i data-lucide=lock style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Usuarios</option>
-                <option value="prestamo"><i data-lucide=clipboard style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Préstamos</option>
-                <option value="stock"><i data-lucide=package style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Entradas de stock</option>
+                <option value="herramienta">Herramientas</option>
+                <option value="profesor">Profesores</option>
+                <option value="usuario">Usuarios</option>
+                <option value="prestamo">Préstamos</option>
+                <option value="stock">Entradas de stock</option>
               </select>
-              <input type="text" id="audit-buscar" placeholder="Buscar...">
+              <div class="buscar-wrap" style="flex:1;min-width:180px">
+                <input type="text" id="audit-buscar" placeholder="Buscar..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
             </div>
           </div>
           <div id="audit-wrap">
