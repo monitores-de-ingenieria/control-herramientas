@@ -2643,12 +2643,20 @@ async function cargarPrestamosExternos() {
   }
 }
 
+let _extFiltroEstado = "";
+
+window.extFiltrarChip = function(estado, el) {
+  _extFiltroEstado = estado;
+  document.querySelectorAll("#ext-chips .tab-seg").forEach(c => c.classList.remove("activo"));
+  el.classList.add("activo");
+  extRenderTabla();
+};
+
 function extFiltrados() {
   const buscar = (document.getElementById("ext-buscar")?.value || "").toLowerCase();
-  const estado = document.getElementById("ext-filtro-estado")?.value || "";
   return todosPrestamosExt.filter(p => {
     const matchBuscar = !buscar || (p.departamento || "").toLowerCase().includes(buscar);
-    const matchEstado = !estado || p.estado === estado;
+    const matchEstado = !_extFiltroEstado || p.estado === _extFiltroEstado;
     return matchBuscar && matchEstado;
   });
 }
@@ -2705,10 +2713,7 @@ function extRenderTabla() {
     </table>`;
 }
 
-["ext-buscar","ext-filtro-estado"].forEach(id => {
-  document.getElementById(id)?.addEventListener("input",  extRenderTabla);
-  document.getElementById(id)?.addEventListener("change", extRenderTabla);
-});
+document.getElementById("ext-buscar")?.addEventListener("input", extRenderTabla);
 
 let _extNuevoCant = {};
 

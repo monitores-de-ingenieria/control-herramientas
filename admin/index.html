@@ -376,28 +376,34 @@
 
       <div class="vista" id="vista-prestadas">
         <div class="pagina-titulo">
-          <h2>Herramientas Prestadas</h2>
-          <p>Herramientas que salen del taller hacia otros departamentos</p>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()" style="padding:10px 20px;font-size:14px">
-            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida a otro departamento
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono"><i data-lucide=arrow-left-right></i></div>
+            <div>
+              <h2>Herramientas Prestadas</h2>
+              <p>Herramientas que salen del taller hacia otros departamentos</p>
+            </div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoExt()">
+            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar salida
           </button>
         </div>
 
         <div class="seccion-tabla">
-          <div class="tabla-header">
-            <h3>Historial de herramientas prestadas</h3>
+          <div class="toolbar-tabla">
             <div class="filtros">
-              <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:180px"></div>
-              <select id="ext-filtro-estado">
-                <option value="">Todos los estados</option>
-                <option value="prestado">Prestado</option>
-                <option value="devuelto">Devuelto</option>
-              </select>
+              <div class="buscar-wrap" style="flex:1;min-width:200px">
+                <input type="text" id="ext-buscar" placeholder="Buscar departamento..." style="width:100%">
+                <span class="buscar-icono"><i data-lucide=search></i></span>
+              </div>
+            </div>
+
+            <div class="tabs-segmentado" id="ext-chips" style="margin-top:14px">
+              <button class="tab-btn tab-seg activo" data-ext-estado="" onclick="extFiltrarChip('',this)">Todos</button>
+              <button class="tab-btn tab-seg" data-ext-estado="prestado" onclick="extFiltrarChip('prestado',this)">Prestado</button>
+              <button class="tab-btn tab-seg" data-ext-estado="devuelto" onclick="extFiltrarChip('devuelto',this)">Devuelto</button>
             </div>
           </div>
+
           <div id="ext-tabla-wrap">
             <div class="cargando"><div class="spinner"></div>Cargando préstamos...</div>
           </div>
