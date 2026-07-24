@@ -359,25 +359,30 @@
 
       <div class="vista" id="vista-prestamos-prof">
         <div class="pagina-titulo">
-          <h2>Préstamos a Profesores</h2>
-          <p>Registro directo de herramientas entregadas a profesores</p>
-        </div>
-
-        <div style="margin-bottom:16px">
-          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()" style="padding:10px 20px;font-size:14px">
-            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar préstamo a profesor
+          <div style="display:flex;align-items:center;gap:12px">
+            <div class="pagina-icono"><i data-lucide=graduation-cap></i></div>
+            <div>
+              <h2>Préstamos a Profesores</h2>
+              <p>Registro directo de herramientas entregadas a profesores</p>
+            </div>
+          </div>
+          <button class="btn btn-verde" onclick="abrirModalNuevoPrestamoProf()">
+            <i data-lucide=plus style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Registrar préstamo
           </button>
         </div>
 
-        <div class="her-stats-strip" id="pp-stats-strip"></div>
-
-        <div class="her-toolbar">
-          <div class="her-categoria-chips" id="pp-chips">
-            <div class="her-chip activo" data-pp-estado="" style="border-color:var(--verde);color:var(--verde)" onclick="ppFiltrarChip('',this)">Todos</div>
-            <div class="her-chip" data-pp-estado="activo" style="color:var(--verde)" onclick="ppFiltrarChip('activo',this)"><i data-lucide=circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Activos</div>
-            <div class="her-chip" data-pp-estado="retornado" style="color:var(--texto-dim)" onclick="ppFiltrarChip('retornado',this)"><i data-lucide=circle style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i> Retornados</div>
+        <div class="seccion-tabla" style="margin-bottom:16px">
+          <div class="toolbar-tabla">
+            <div class="her-stats-strip" id="pp-stats-strip" style="margin-bottom:14px"></div>
+            <div class="her-toolbar" style="margin-bottom:0">
+              <div class="tabs-segmentado" id="pp-chips">
+                <button class="tab-btn tab-seg activo" data-pp-estado="" onclick="ppFiltrarChip('',this)">Todos</button>
+                <button class="tab-btn tab-seg" data-pp-estado="activo" onclick="ppFiltrarChip('activo',this)">Activos</button>
+                <button class="tab-btn tab-seg" data-pp-estado="retornado" onclick="ppFiltrarChip('retornado',this)">Retornados</button>
+              </div>
+              <div class="buscar-wrap" style="max-width:240px;margin-left:auto"><span class="buscar-icono"><i data-lucide=search></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
+            </div>
           </div>
-          <div class="buscar-wrap"><span class="buscar-icono"><i data-lucide=search style=width:1em;height:1em;vertical-align:-0.15em;display:inline-block></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
         </div>
 
         <div id="pp-tabla-wrap" class="pp-grid">

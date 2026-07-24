@@ -2212,12 +2212,8 @@ function ppActualizarStats() {
 
 window.ppFiltrarChip = function(estado, el) {
   _ppFiltroEstado = estado;
-  document.querySelectorAll("#pp-chips .her-chip").forEach(c => {
-    c.classList.remove("activo");
-    c.style.background = "var(--card)";
-  });
+  document.querySelectorAll("#pp-chips .tab-seg").forEach(c => c.classList.remove("activo"));
   el.classList.add("activo");
-  el.style.background = "var(--card2)";
   ppRenderTabla();
 };
 
