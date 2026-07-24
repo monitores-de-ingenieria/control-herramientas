@@ -2169,7 +2169,7 @@ let todosPrestamosProfTodos = [];
 let todosPrestamosProfVisible = [];
 let _ppRetornoNotaObligatoria = false;
 
-let _ppFiltroEstado = "";
+let _ppFiltroEstado = "activo"; // por defecto se muestran los prestamos activos, que es lo que mas se usa
 
 async function cargarPrestamosProf() {
   try {
@@ -2197,17 +2197,8 @@ async function cargarPrestamosProf() {
 }
 
 function ppActualizarStats() {
-  const activos = todosPrestamosProf.filter(p => p.estado === "activo");
-  const conInc  = todosPrestamosProf.filter(p => p.tieneIncidencias);
   const activosTotal = todosPrestamosProfTodos.filter(p => p.estado === "activo").length;
   actualizarBadgeLateral("badge-prestamos-prof", activosTotal);
-  const wrap = document.getElementById("pp-stats-strip");
-  if (!wrap) return;
-  wrap.innerHTML = `
-    <div class="her-stat-pill"><span class="her-stat-icono"><i data-lucide="circle" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${activos.length}</div><div class="her-stat-label">Activos hoy</div></div></div>
-    <div class="her-stat-pill"><span class="her-stat-icono"><i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${todosPrestamosProf.length}</div><div class="her-stat-label">Registrados hoy</div></div></div>
-    <div class="her-stat-pill"><span class="her-stat-icono"><i data-lucide="user-round" style="width:1em;height:1em;vertical-align:-2px"></i>‍<i data-lucide="school" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${new Set(activos.map(p=>p.profesor)).size}</div><div class="her-stat-label">Profesores con herramientas hoy</div></div></div>
-    <div class="her-stat-pill${conInc.length?' alerta':''}"><span class="her-stat-icono"><i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i></span><div><div class="her-stat-num">${conInc.length}</div><div class="her-stat-label">Con incidencias hoy</div></div></div>`;
 }
 
 window.ppFiltrarChip = function(estado, el) {

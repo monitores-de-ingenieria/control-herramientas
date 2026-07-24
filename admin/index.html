@@ -371,18 +371,13 @@
           </button>
         </div>
 
-        <div class="seccion-tabla" style="margin-bottom:16px">
-          <div class="toolbar-tabla">
-            <div class="her-stats-strip" id="pp-stats-strip" style="margin-bottom:14px"></div>
-            <div class="her-toolbar" style="margin-bottom:0">
-              <div class="tabs-segmentado" id="pp-chips">
-                <button class="tab-btn tab-seg activo" data-pp-estado="" onclick="ppFiltrarChip('',this)">Todos</button>
-                <button class="tab-btn tab-seg" data-pp-estado="activo" onclick="ppFiltrarChip('activo',this)">Activos</button>
-                <button class="tab-btn tab-seg" data-pp-estado="retornado" onclick="ppFiltrarChip('retornado',this)">Retornados</button>
-              </div>
-              <div class="buscar-wrap" style="max-width:240px;margin-left:auto"><span class="buscar-icono"><i data-lucide=search></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
-            </div>
+        <div class="her-toolbar" style="margin-bottom:16px">
+          <div class="tabs-segmentado" id="pp-chips">
+            <button class="tab-btn tab-seg" data-pp-estado="" onclick="ppFiltrarChip('',this)">Todos</button>
+            <button class="tab-btn tab-seg activo" data-pp-estado="activo" onclick="ppFiltrarChip('activo',this)">Activos</button>
+            <button class="tab-btn tab-seg" data-pp-estado="retornado" onclick="ppFiltrarChip('retornado',this)">Retornados</button>
           </div>
+          <div class="buscar-wrap" style="max-width:240px;margin-left:auto"><span class="buscar-icono"><i data-lucide=search></i></span><input type="text" id="pp-buscar" placeholder="Buscar profesor..."></div>
         </div>
 
         <div id="pp-tabla-wrap" class="pp-grid">
