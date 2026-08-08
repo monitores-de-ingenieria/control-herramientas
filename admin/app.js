@@ -132,7 +132,6 @@ function vacioHTML({ icono = "inbox", titulo, texto = "", ctaTexto = "", ctaOncl
 // Colores fijos (no usan las variables de tema claro/oscuro) a propósito:
 // la idea es que se vea como una tarjeta física, igual en cualquier tema.
 function carneHTML(s) {
-  if (!s.fotoCarnet) return "";
   const idPreview = "carne-" + (s.id || Math.random().toString(36).slice(2, 8));
   return `
     <div style="margin-bottom:10px">
@@ -154,7 +153,9 @@ function carneHTML(s) {
             ${s.ciclo ? `<div class="carne-preview-campo"><i data-lucide="calendar" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px;color:#15803d"></i><b>Ciclo:</b> ${escapeHtml(s.ciclo)}</div>` : ""}
             ${s.telefono ? `<div class="carne-preview-campo"><i data-lucide="phone" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px;color:#15803d"></i><b>Teléfono:</b> ${escapeHtml(s.telefono)}</div>` : ""}
           </div>
-          <img src="${s.fotoCarnet}" alt="Foto del carné de ${escapeAttr(s.nombre || "")}" class="carne-preview-foto foto-zoom">
+          ${s.fotoCarnet
+            ? `<img src="${s.fotoCarnet}" alt="Foto del carné de ${escapeAttr(s.nombre || "")}" class="carne-preview-foto foto-zoom">`
+            : `<div class="carne-preview-foto carne-preview-sinfoto"><i data-lucide="image-off" style="width:18px;height:18px"></i><span>Sin foto</span></div>`}
         </div>
       </div>
     </div>`;
@@ -1595,13 +1596,7 @@ window.entregar = async function(id) {
 
   document.getElementById("info-entrega").innerHTML = `
     ${carneHTML(s)}
-    ${!s.fotoCarnet ? `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <i data-lucide=user-round style="width:16px;height:16px;color:var(--verde)"></i>
-      <strong style="font-size:14.5px">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong>
-    </div>` : ""}
     <div style="display:flex;flex-wrap:wrap;gap:6px">
-      ${!s.fotoCarnet ? `<span class="chip-dato"><i data-lucide="id-card" style="width:12px;height:12px;color:var(--verde)"></i><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
       <span class="chip-dato"><i data-lucide="building-2" style="width:12px;height:12px;color:var(--verde)"></i><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
       ${s.profesor ? `<span class="chip-dato"><i data-lucide="graduation-cap" style="width:12px;height:12px;color:var(--verde)"></i><b>Profesor:</b> ${escapeHtml(s.profesor)}</span>` : ""}
     </div>`;
@@ -1990,13 +1985,7 @@ window.retornar = function(id) {
 
   document.getElementById("info-retorno").innerHTML = `
     ${carneHTML(s)}
-    ${!s.fotoCarnet ? `
-    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
-      <i data-lucide=user-round style="width:16px;height:16px;color:var(--verde)"></i>
-      <strong style="font-size:14.5px">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong>
-    </div>` : ""}
     <div style="display:flex;flex-wrap:wrap;gap:6px">
-      ${!s.fotoCarnet ? `<span class="chip-dato"><i data-lucide="id-card" style="width:12px;height:12px;color:var(--verde)"></i><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
       <span class="chip-dato"><i data-lucide="building-2" style="width:12px;height:12px;color:var(--verde)"></i><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
     </div>`;
 

@@ -309,6 +309,11 @@ body:not(.tema-claro) .switch-tema-icono-luna { opacity: 1; }
   width: 108px; height: 68px; object-fit: cover; border-radius: 8px;
   border: 1px solid #dfe4e1; flex-shrink: 0; cursor: zoom-in;
 }
+.carne-preview-sinfoto {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 3px; background: #f1f4f2; color: #94a3b8; cursor: default;
+}
+.carne-preview-sinfoto span { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .03em; }
 .carne-preview::after { content: ""; display: block; height: 5px; background: var(--gradiente-verde); }
 
 /* ═══════════════════════════════════════════
