@@ -149,10 +149,10 @@ function carneHTML(s) {
         </div>
         <div class="carne-preview-cuerpo">
           <div class="carne-preview-datos">
-            <div class="carne-preview-nombre">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div>
-            <div class="carne-preview-campo"><i data-lucide="id-card" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i><b>Matrícula:</b> ${escapeHtml(s.matricula) || "—"}</div>
-            ${s.ciclo ? `<div class="carne-preview-campo"><i data-lucide="calendar" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i><b>Ciclo:</b> ${escapeHtml(s.ciclo)}</div>` : ""}
-            ${s.telefono ? `<div class="carne-preview-campo"><i data-lucide="phone" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i><b>Teléfono:</b> ${escapeHtml(s.telefono)}</div>` : ""}
+            <div class="carne-preview-nombre"><i data-lucide="user-round" style="width:12px;height:12px;vertical-align:-1px;margin-right:3px;color:#15803d"></i>${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div>
+            <div class="carne-preview-campo"><i data-lucide="id-card" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px;color:#15803d"></i><b>Matrícula:</b> ${escapeHtml(s.matricula) || "—"}</div>
+            ${s.ciclo ? `<div class="carne-preview-campo"><i data-lucide="calendar" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px;color:#15803d"></i><b>Ciclo:</b> ${escapeHtml(s.ciclo)}</div>` : ""}
+            ${s.telefono ? `<div class="carne-preview-campo"><i data-lucide="phone" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px;color:#15803d"></i><b>Teléfono:</b> ${escapeHtml(s.telefono)}</div>` : ""}
           </div>
           <img src="${s.fotoCarnet}" alt="Foto del carné de ${escapeAttr(s.nombre || "")}" class="carne-preview-foto foto-zoom">
         </div>
@@ -1601,9 +1601,9 @@ window.entregar = async function(id) {
       <strong style="font-size:14.5px">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong>
     </div>` : ""}
     <div style="display:flex;flex-wrap:wrap;gap:6px">
-      ${!s.fotoCarnet ? `<span class="chip-dato"><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
-      <span class="chip-dato"><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
-      ${s.profesor ? `<span class="chip-dato"><b>Profesor:</b> ${escapeHtml(s.profesor)}</span>` : ""}
+      ${!s.fotoCarnet ? `<span class="chip-dato"><i data-lucide="id-card" style="width:12px;height:12px;color:var(--verde)"></i><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
+      <span class="chip-dato"><i data-lucide="building-2" style="width:12px;height:12px;color:var(--verde)"></i><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
+      ${s.profesor ? `<span class="chip-dato"><i data-lucide="graduation-cap" style="width:12px;height:12px;color:var(--verde)"></i><b>Profesor:</b> ${escapeHtml(s.profesor)}</span>` : ""}
     </div>`;
 
   _entregaAdicionales = {};
@@ -1996,8 +1996,8 @@ window.retornar = function(id) {
       <strong style="font-size:14.5px">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong>
     </div>` : ""}
     <div style="display:flex;flex-wrap:wrap;gap:6px">
-      ${!s.fotoCarnet ? `<span class="chip-dato"><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
-      <span class="chip-dato"><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
+      ${!s.fotoCarnet ? `<span class="chip-dato"><i data-lucide="id-card" style="width:12px;height:12px;color:var(--verde)"></i><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
+      <span class="chip-dato"><i data-lucide="building-2" style="width:12px;height:12px;color:var(--verde)"></i><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
     </div>`;
 
   const herramientas = s.herramientasEntregadas || s.herramientas || [];
