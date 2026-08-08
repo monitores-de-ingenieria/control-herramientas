@@ -5065,25 +5065,25 @@ window.abrirModalHist = function(id, tipo) {
 
   const datosPersona = tipo === "externo" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="modal-campo"><label>Departamento</label><div class="valor">${escapeHtml(r.departamento)||"—"}</div></div>
-      <div class="modal-campo"><label>Responsable que retira</label><div class="valor">${escapeHtml(r.responsable)||"—"}</div></div>
+      <div class="modal-campo"><label><i data-lucide="building-2" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Departamento</label><div class="valor">${escapeHtml(r.departamento)||"—"}</div></div>
+      <div class="modal-campo"><label><i data-lucide="user-round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Responsable que retira</label><div class="valor">${escapeHtml(r.responsable)||"—"}</div></div>
     </div>` : tipo === "profesor" ? `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(r.profesor)||"—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(r.laboratorio)||"—"}</div></div>
+      <div class="modal-campo"><label><i data-lucide="graduation-cap" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Profesor</label><div class="valor">${escapeHtml(r.profesor)||"—"}</div></div>
+      <div class="modal-campo"><label><i data-lucide="building-2" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Laboratorio / Taller</label><div class="valor">${escapeHtml(r.laboratorio)||"—"}</div></div>
     </div>` : `
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="modal-campo"><label>Nombre</label><div class="valor">${escapeHtml(r.nombre)||""} ${escapeHtml(r.apellido)||""}</div></div>
-      <div class="modal-campo"><label>Matrícula</label><div class="valor">${escapeHtml(r.matricula)||"—"}</div></div>
-      ${r.ciclo    ? `<div class="modal-campo"><label>Ciclo</label><div class="valor">${escapeHtml(r.ciclo)}</div></div>` : ""}
-      ${r.telefono ? `<div class="modal-campo"><label>Teléfono</label><div class="valor">${escapeHtml(r.telefono)}</div></div>` : ""}
-      <div class="modal-campo"><label>Profesor</label><div class="valor">${escapeHtml(r.profesor)||escapeHtml(r.nombreProfesor)||"—"}</div></div>
-      <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${escapeHtml(r.laboratorio)||escapeHtml(r.taller)||"—"}</div></div>
+      <div class="modal-campo"><label><i data-lucide="user-round" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Nombre</label><div class="valor">${escapeHtml(r.nombre)||""} ${escapeHtml(r.apellido)||""}</div></div>
+      <div class="modal-campo"><label><i data-lucide="id-card" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Matrícula</label><div class="valor">${escapeHtml(r.matricula)||"—"}</div></div>
+      ${r.ciclo    ? `<div class="modal-campo"><label><i data-lucide="calendar" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Ciclo</label><div class="valor">${escapeHtml(r.ciclo)}</div></div>` : ""}
+      ${r.telefono ? `<div class="modal-campo"><label><i data-lucide="phone" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Teléfono</label><div class="valor">${escapeHtml(r.telefono)}</div></div>` : ""}
+      <div class="modal-campo"><label><i data-lucide="graduation-cap" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Profesor</label><div class="valor">${escapeHtml(r.profesor)||escapeHtml(r.nombreProfesor)||"—"}</div></div>
+      <div class="modal-campo"><label><i data-lucide="building-2" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Laboratorio / Taller</label><div class="valor">${escapeHtml(r.laboratorio)||escapeHtml(r.taller)||"—"}</div></div>
     </div>`;
 
   document.getElementById("modal-hist-contenido").innerHTML = `
     <div class="detalle-solicitud">
-    <div class="modal-campo"><label>Número / Referencia</label>
+    <div class="modal-campo"><label><i data-lucide="hash" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Número / Referencia</label>
       <div class="valor" style="font-size:15px;font-weight:700">${r.numeroSolicitud || r.id.slice(0,10)}</div></div>
 
     <div class="detalle-sep"></div>
@@ -5091,13 +5091,13 @@ window.abrirModalHist = function(id, tipo) {
 
     <div class="detalle-sep"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
-      <div class="modal-campo"><label>Estado</label>
+      <div class="modal-campo"><label><i data-lucide="circle-dot" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Estado</label>
         <span class="badge badge-${histEstadoInfo(r).cls}">${histEstadoInfo(r).txt}</span>
         ${r.tieneIncidencias ? '<span class="badge badge-cancelada" style="margin-left:6px"><i data-lucide="triangle-alert" style="width:1em;height:1em;vertical-align:-2px"></i> Con incidencias</span>' : ""}
       </div>
-      <div class="modal-campo"><label>Fecha de solicitud</label><div class="valor">${formatFecha(r.creadoEn)}</div></div>
-      ${r.entregadoEn  ? `<div class="modal-campo"><label>Fecha de entrega</label><div class="valor">${formatFecha(r.entregadoEn)}</div></div>` : ""}
-      ${r.retornadoEn  ? `<div class="modal-campo"><label>Fecha de retorno</label><div class="valor">${formatFecha(r.retornadoEn)}</div></div>` : ""}
+      <div class="modal-campo"><label><i data-lucide="calendar-plus" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Fecha de solicitud</label><div class="valor">${formatFecha(r.creadoEn)}</div></div>
+      ${r.entregadoEn  ? `<div class="modal-campo"><label><i data-lucide="package-check" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Fecha de entrega</label><div class="valor">${formatFecha(r.entregadoEn)}</div></div>` : ""}
+      ${r.retornadoEn  ? `<div class="modal-campo"><label><i data-lucide="corner-up-left" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Fecha de retorno</label><div class="valor">${formatFecha(r.retornadoEn)}</div></div>` : ""}
       ${r.fotoCarnet ? `
       <div class="modal-campo">
         <label><i data-lucide="id-card" style="width:1em;height:1em;vertical-align:-2px"></i> Foto del carnet</label>
@@ -5108,7 +5108,7 @@ window.abrirModalHist = function(id, tipo) {
 
     <div class="detalle-sep"></div>
     <div class="modal-campo">
-      <label>Herramientas solicitadas <span style="color:var(--verde);font-weight:800">(${totalHerHist} en total)</span></label>
+      <label><i data-lucide="wrench" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>Herramientas solicitadas <span style="color:var(--verde);font-weight:800">(${totalHerHist} en total)</span></label>
       <div class="modal-herramientas">${herramientasHtml}</div>
     </div>
     ${retornoHtml}
