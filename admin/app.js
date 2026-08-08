@@ -1594,12 +1594,13 @@ window.entregar = async function(id) {
 
   document.getElementById("info-entrega").innerHTML = `
     ${carneHTML(s)}
+    ${!s.fotoCarnet ? `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
       <i data-lucide=user-round style="width:16px;height:16px;color:var(--verde)"></i>
       <strong style="font-size:14.5px">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong>
-    </div>
+    </div>` : ""}
     <div style="display:flex;flex-wrap:wrap;gap:6px">
-      <span class="chip-dato"><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>
+      ${!s.fotoCarnet ? `<span class="chip-dato"><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
       <span class="chip-dato"><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
       ${s.profesor ? `<span class="chip-dato"><b>Profesor:</b> ${escapeHtml(s.profesor)}</span>` : ""}
     </div>`;
@@ -1988,12 +1989,13 @@ window.retornar = function(id) {
 
   document.getElementById("info-retorno").innerHTML = `
     ${carneHTML(s)}
+    ${!s.fotoCarnet ? `
     <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
       <i data-lucide=user-round style="width:16px;height:16px;color:var(--verde)"></i>
       <strong style="font-size:14.5px">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</strong>
-    </div>
+    </div>` : ""}
     <div style="display:flex;flex-wrap:wrap;gap:6px">
-      <span class="chip-dato"><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>
+      ${!s.fotoCarnet ? `<span class="chip-dato"><b>Matrícula:</b> ${escapeHtml(s.matricula)}</span>` : ""}
       <span class="chip-dato"><b>Taller:</b> ${escapeHtml(s.laboratorio) || "—"}</span>
     </div>`;
 

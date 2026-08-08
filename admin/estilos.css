@@ -306,7 +306,7 @@ body:not(.tema-claro) .switch-tema-icono-luna { opacity: 1; }
 .carne-preview-campo { font-size: 11.5px; color: #334155; margin-bottom: 3px; }
 .carne-preview-campo b { color: #0f172a; }
 .carne-preview-foto {
-  width: 72px; height: 92px; object-fit: cover; border-radius: 8px;
+  width: 108px; height: 68px; object-fit: cover; border-radius: 8px;
   border: 1px solid #dfe4e1; flex-shrink: 0; cursor: zoom-in;
 }
 .carne-preview::after { content: ""; display: block; height: 5px; background: var(--gradiente-verde); }
