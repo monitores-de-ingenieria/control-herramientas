@@ -152,7 +152,7 @@ function carneHTML(s) {
             <div class="carne-preview-nombre">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div>
             <div class="carne-preview-campo"><b>Matrícula:</b> ${escapeHtml(s.matricula) || "—"}</div>
             ${s.ciclo ? `<div class="carne-preview-campo"><b>Ciclo:</b> ${escapeHtml(s.ciclo)}</div>` : ""}
-            ${s.telefono ? `<div class="carne-preview-campo"><b>Teléfono:</b> ${escapeHtml(s.telefono)}</div>` : ""}
+            ${s.telefono ? `<div class="carne-preview-campo"><i data-lucide="phone" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i><b>Teléfono:</b> ${escapeHtml(s.telefono)}</div>` : ""}
           </div>
           <img src="${s.fotoCarnet}" alt="Foto del carné de ${escapeAttr(s.nombre || "")}" class="carne-preview-foto foto-zoom">
         </div>
