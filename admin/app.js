@@ -4978,9 +4978,11 @@ function histRenderTabla() {
             <td><span style="font-size:13px">${tipoIcono[r.tipo]||'<i data-lucide="clipboard-list" style="width:1em;height:1em;vertical-align:-2px"></i>'}</span> <span style="font-size:11px;color:var(--texto-dim)">${tipoLabel[r.tipo]||r.tipo}</span></td>
             <td>
               <div class="est-avatar">
-                <div class="est-circulo" style="background:${colorEstudiante(nombreMostrar)}22;color:${colorEstudiante(nombreMostrar)}">
-                  ${escapeHtml(inicialesMostrar)}
-                </div>
+                ${r.fotoCarnet
+                  ? `<img src="${r.fotoCarnet}" alt="Foto de ${escapeAttr(nombreMostrar)}" class="est-circulo foto-zoom" style="object-fit:cover;cursor:zoom-in">`
+                  : `<div class="est-circulo" style="background:${colorEstudiante(nombreMostrar)}22;color:${colorEstudiante(nombreMostrar)}">
+                      ${escapeHtml(inicialesMostrar)}
+                    </div>`}
                 <div class="est-nombre">${escapeHtml(nombreMostrar)}</div>
               </div>
             </td>
