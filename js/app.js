@@ -205,6 +205,7 @@ async function procesarFotoSeleccionada(file, inputQueLaDisparo) {
   try {
     fotoCarnetBase64 = await comprimirImagenACarnetConReintentos(file);
     fotoPreview.src = fotoCarnetBase64; // el preview usa la versión ya comprimida
+    guardarDatosPersonales();
   } catch (err) {
     console.error("Error al procesar la foto del carnet:", err);
     fotoCarnetBase64 = null;
@@ -246,6 +247,7 @@ btnQuitarFoto.addEventListener("click", () => {
   inputCamara.value = "";
   fotoPreviewWrap.classList.add("oculto");
   fotoCarnetBase64 = null;
+  guardarDatosPersonales();
 });
 
 // ---- Recordar datos personales en este dispositivo (localStorage) ----
@@ -300,6 +302,7 @@ function guardarDatosPersonales() {
   datos.profesor    = selectProfesor.value;
   datos.laboratorio = selectLaboratorio.value;
   datos.ciclo       = selectCiclo.value;
+  datos.fotoCarnet  = fotoCarnetBase64 || null;
   try { localStorage.setItem(CLAVE_DATOS_GUARDADOS, JSON.stringify(datos)); } catch {}
 }
 
@@ -312,6 +315,11 @@ function precargarCamposTexto() {
     const el = document.getElementById(id);
     if (el && datos[id]) el.value = datos[id];
   });
+  if (datos.fotoCarnet) {
+    fotoCarnetBase64 = datos.fotoCarnet;
+    fotoPreview.src = fotoCarnetBase64;
+    fotoPreviewWrap.classList.remove("oculto");
+  }
 }
 
 function precargarSelects() {
@@ -340,6 +348,9 @@ btnOlvidarDatos?.addEventListener("click", () => {
   document.getElementById("apellido").value = "";
   document.getElementById("matricula").value = "";
   document.getElementById("telefono").value = "";
+  fotoCarnetBase64 = null;
+  fotoPreview.src = "";
+  fotoPreviewWrap.classList.add("oculto");
   mostrarError("Se olvidaron tus datos guardados en este dispositivo.");
 });
 
