@@ -145,7 +145,7 @@ function carneHTML(s) {
       <div id="${idPreview}" class="carne-preview">
         <div class="carne-preview-header">
           <span class="carne-preview-marca">UTESA</span>
-          <span class="carne-preview-tipo">CARNÉ ESTUDIANTIL</span>
+          <span class="carne-preview-tipo"><i data-lucide="id-card" style="width:11px;height:11px;vertical-align:-1px;margin-right:2px"></i>CARNÉ ESTUDIANTIL</span>
         </div>
         <div class="carne-preview-cuerpo">
           <div class="carne-preview-datos">
