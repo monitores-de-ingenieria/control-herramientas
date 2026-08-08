@@ -1311,7 +1311,9 @@ window.abrirModal = function(id) {
 
   document.getElementById("modal-contenido").innerHTML = `
     <div class="detalle-solicitud">
-    <div class="modal-campo"><label>Número de solicitud</label><div class="valor">${s.numeroSolicitud || s.id.slice(0,8)}</div></div>
+    <div class="modal-campo"><label>Número de solicitud</label><div class="valor" style="font-size:15px;font-weight:700">${s.numeroSolicitud || s.id.slice(0,8)}</div></div>
+
+    <div class="detalle-sep"></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div class="modal-campo"><label>Nombre</label><div class="valor">${escapeHtml(s.nombre)} ${escapeHtml(s.apellido)}</div></div>
       <div class="modal-campo"><label>Matrícula</label><div class="valor">${s.matricula || "—"}</div></div>
@@ -1319,10 +1321,12 @@ window.abrirModal = function(id) {
       <div class="modal-campo"><label>Teléfono</label><div class="valor">${escapeHtml(s.telefono) || "—"}</div></div>
       <div class="modal-campo"><label>Profesor</label><div class="valor">${s.profesor || "—"}</div></div>
       <div class="modal-campo"><label>Laboratorio / Taller</label><div class="valor">${s.laboratorio || "—"}</div></div>
+    </div>
+
+    <div class="detalle-sep"></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
       <div class="modal-campo"><label>Estado</label><span class="badge badge-${s.estado}">${s.estado}</span></div>
       <div class="modal-campo"><label>Fecha</label><div class="valor">${formatFecha(s.creadoEn)}</div></div>
-    </div>
-    <div style="display:grid;grid-template-columns:${s.fotoCarnet ? "1fr 1fr" : "1fr"};gap:10px;align-items:start">
       <div class="modal-campo"><label>Cantidad de herramientas</label>
         <div style="display:inline-flex;align-items:center;gap:8px;background:var(--verde-glow);border:1px solid rgba(63,185,80,0.35);border-radius:10px;padding:8px 14px;margin-top:2px">
           <span style="font-size:18px"><i data-lucide="toolbox" style="width:1em;height:1em;vertical-align:-2px"></i></span>
@@ -1337,6 +1341,8 @@ window.abrirModal = function(id) {
           style="width:100%;max-width:220px;height:150px;border-radius:10px;object-fit:contain;background:var(--bg);border:1px solid var(--borde);cursor:zoom-in;display:block">
       </div>` : ""}
     </div>
+
+    <div class="detalle-sep"></div>
     <div class="modal-campo">
       <label>Herramientas solicitadas</label>
       <div class="modal-herramientas">${herramientas || "—"}</div>

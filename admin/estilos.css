@@ -1005,6 +1005,7 @@ tr:hover td { background: var(--hover); }
 
 /* Detalle de Solicitud: campos más juntos para reducir el scroll del modal */
 .detalle-solicitud .modal-campo { margin-bottom: 8px; }
+.detalle-sep { height: 1px; background: var(--borde); margin: 14px 0; }
 
 .modal-herramientas { background: var(--bg); border-radius: 10px; padding: 10px; margin-top: 4px; border: 1px solid var(--borde); }
 .modal-herramienta-item { display: flex; justify-content: space-between; padding: 7px 2px; border-bottom: 1px solid var(--borde); font-size: 12.5px; }
